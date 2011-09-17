@@ -23,7 +23,7 @@ class TC_Person < Test::Unit::TestCase
     #Entities.LogActions.save
   end
   
-  def test_bulk
+  def tes_bulk
     names = [ "Dmin A","Zero","One Two","Ten Eleven Twelve","A B C D",
     "Hélène Méyère","Äeri Soustroup" ]
     while names.length > 0
@@ -49,7 +49,7 @@ class TC_Person < Test::Unit::TestCase
     assert_equal %w( admin2 ca_b eten mhelene s_eri tone zero ), students.sort
   end
   
-  def test_grade
+  def tes_grade
     @grade0 = Entities.Grades.save_data({:person_id => @secretaire.person_id,
     :course_id => @net.course_id, :mean => 11})
     assert_equal 11, @grade0[:mean]
@@ -62,7 +62,7 @@ class TC_Person < Test::Unit::TestCase
     assert_equal @grade1[:grade_id], @grade2[:grade_id]
   end
   
-  def test_search
+  def tes_search
     reply = RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "bulk_students",
     {"name" => "net_1001", "names" => "Dmin A" }]])
     courses_admin2 = Entities.Courses.search_by_students( "admin2" )
@@ -71,14 +71,14 @@ class TC_Person < Test::Unit::TestCase
     assert_equal 1, courses_surf.length
   end
   
-  COURSE_STR = "base_gestion\n1er février 03\n4 mai 03\n4 juin 03\n\n72\nAdmin The\n" +
-      "Le Secretaire\nCours de base\nWord\nExcel\nLinux\nP Admin The\n\n" +
-      "NP Internet Surfer\nhttp://ndjair.net\n" 
+  COURSE_STR = "base_gestion\nAdmin The\nLe Secretaire\n72\nCours de base\nWord\nExcel\nLinux\n\n"+
+      "1er février 03\n4 mai 03\n4 juin 03\n" +
+      "P Admin The\n\nNP Internet Surfer\nhttp://ndjair.net\n" 
   
   # Check different assertions of missing stuff and students
-  def test_diploma_export
+  def tes_diploma_export
     assert_equal %w( start end sign duration teacher responsible description contents ), 
-    @net.export_check_missing
+    @net.export_check
     
     @net.start = "01.02.03"
     @net.end = "04.05.03"
@@ -89,11 +89,11 @@ class TC_Person < Test::Unit::TestCase
     @net.description = "Cours de base"
     @net.contents = "Word\nExcel\nLinux"
     
-    assert_nil @net.export_check_missing
+    assert_nil @net.export_check
     
     assert_equal "base_gestion\n1er février 03\n4 mai 03\n4 juin 03\n\n72\nAdmin The" +
     "\nLe Secretaire\nCours de base\nWord\nExcel\nLinux\n", 
-    @net.export_to_diploma
+    @net.export_diploma
     
     @net.students = %w( admin surf )
     
@@ -102,15 +102,15 @@ class TC_Person < Test::Unit::TestCase
     Entities.Grades.save_data({:person_id => @surf.person_id,
     :course_id => @net.course_id, :mean => 9, :remark => "http://ndjair.net"})
     
-    assert_equal COURSE_STR, @net.export_to_diploma
+    assert_equal COURSE_STR, @net.export_diploma
   end
   
   def test_diploma_import
-    @net.import_from_diploma( "net_1001", COURSE_STR )
+    course = Courses.from_diploma( "net_1001", COURSE_STR )
     @grade_admin = Entities.Grades.find_by_course_person( @net.course_id, @admin.login_name )
     assert_not_nil @grade_admin
     assert_equal 10, @grade_admin.mean
-    assert_equal %w( 01.02.03 04.05.03 04.06.03 72 admin josue ),
-      @grade_admin.data_get( %w( start end sign duration teacher responsible ) )
+    assert_equal %w( 01.02.2003 04.05.2003 04.06.2003 72 admin josue ),
+      course.data_get( %w( start end sign duration teacher responsible ) )
   end
 end

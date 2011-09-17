@@ -8,7 +8,6 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 UserFriendly:
-	- CourseModify: when exporting second time, :attestations doesn't get expanded
 	- Default focus and button:
 		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
 		- Make also focus for windows
@@ -22,6 +21,7 @@ UserFriendly:
 
 FEATURES:
 	- Printing attestations
+		- exporting and importing grades
 	- Person*: Search pops up windows
 	- use language file to replace name of the fields
 	

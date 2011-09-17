@@ -54,6 +54,77 @@ class Courses < Entities
     return %w( base maint int net site )
   end
 
+  def self.grade_to_mean( g )
+    case g
+    when /P/ then 10
+    when /AB/ then 13
+    when /B/ then 15
+    when /TB/ then 17
+    when /E/ then 19
+    else
+    9
+    end
+  end
+
+  def self.from_data_fr( str )
+    day, month, year = str.split(' ')
+    day = day.gsub( /^0/, '' )
+    if day == "1er"
+      day = "1"
+    end
+    month = %w( janvier février mars avril mai juin juillet août
+    septembre octobre novembre décembre ).index( month ) + 1
+    "#{day.to_s.rjust(2, '0')}.#{month.to_s.rjust(2, '0')}.#{year.to_s.rjust(4, '2000')}"
+  end
+
+  def self.from_diploma( course_name, course_str )
+    dputs 1, "Importing #{course_name}: #{course_str.gsub(/\n/,'*')}"
+    course = Entities.Courses.find_by_name( course_name ) or
+    Entities.Courses.create( :name => course_name )
+
+    lines = course_str.split( "\n" )
+    template = lines.shift
+    dputs 1, "Template is: #{template}"
+    dputs 1, "lines are: #{lines.inspect}"
+    case template
+    when /base_gestion/ then
+      course.teacher, course.responsible = lines.shift( 2 ).collect{|p|
+        Entities.Persons.find_full_name( p )
+      }
+      if not course.teacher or not course.responsible then
+        return nil
+      end
+      course.teacher, course.responsible = course.teacher.login_name, course.responsible.login_name
+      course.duration, course.description = lines.shift( 2 )
+      course.contents = ""
+      while lines[0].size > 0
+        course.contents += lines.shift
+      end
+      dputs 1, "Course contents: #{course.contents}"
+      lines.shift
+      course.start, course.end, course.sign =
+      lines.shift( 3 ).collect{|d| self.from_data_fr( d ) }
+      lines.shift if lines[0].size == 0
+
+      course.students = []
+      while lines.size > 0
+        grade, name = lines.shift.split( ' ', 2 )
+        student = Entities.Persons.find_name_or_create( name )
+        course.students.push( student.login_name )
+        g = Entities.Grades.find_by_course_person( course.course_id, student.login_name )
+        if g then
+        g.mean, g.remark = self.grade_to_mean( grade ), lines.shift
+        else
+          Entities.Grades.create( :course_id => course.course_id, :person_id => student.person_id,
+          :mean => self.grade_to_mean( grade ), :remark => lines.shift )
+        end
+      end
+      dputs 0, "#{course.inspect}"
+    else
+    import_old( lines )
+    end
+    course
+  end
 end
 
 
@@ -85,7 +156,7 @@ class Course < Entity
   end
 
   # Tests if we have everything necessary handy
-  def export_check_missing
+  def export_check
     missing_data = []
     %w( start end sign duration teacher responsible description contents ).each{ |s|
       d = data_get s
@@ -121,21 +192,9 @@ class Course < Entity
     else "NP"
     end
   end
-  
-  def grade_to_mean( g )
-    case g
-    when /P/ then 10
-    when /AB/ then 13
-    when /B/ then 15
-    when /TB/ then 17
-    when /E/ then 19
-    else
-      9
-    end
-  end
 
-  def export_to_diploma
-    return if export_check_missing
+  def export_diploma
+    return if export_check
 
     d_start, d_end, d_sign = data_get( %w( start end sign ) )
     same_year = 0
@@ -149,15 +208,15 @@ class Course < Entity
     }
     txt = <<-END
 base_gestion
+#{Entities.Persons.find_by_login_name( data_get :teacher ).full_name}
+#{Entities.Persons.find_by_login_name( data_get :responsible ).full_name}
+#{data_get :duration}
+#{data_get :description}
+#{data_get :contents}
+
 #{data_fr(d_start, same_year)}
 #{data_fr(d_end, same_year)}
 #{data_fr(d_sign)}
-
-#{data_get :duration}
-#{Entities.Persons.find_by_login_name( data_get :teacher ).full_name}
-#{Entities.Persons.find_by_login_name( data_get :responsible ).full_name}
-#{data_get :description}
-#{data_get :contents}
 END
     data_get( :students ).each{|s|
       grade = Entities.Grades.find_by_course_person( data_get( :course_id ), s )
@@ -170,32 +229,4 @@ END
     txt
   end
 
-  def import_from_diploma( course_name, course_str )
-    course = Entities.Courses.find_by_name( course_name ) or
-    Entities.Courses.create( :name => course_name )
-    
-    template, lines = course_str.split( "\n" )
-    case template
-    when /base_gestion/ then
-      course.teacher, course.resp, course.duration, course.description = lines.shift 4
-      course.contents = ""
-      while lines[0].size > 0
-        course.contents += lines.shift
-      end
-      lines.shift
-      course.start, course.end, course.sign = lines.shift 3
-      lines.shift if lines[0].size == 0
-      
-      course.students = []
-      while lines.size > 0
-        grade, name = lines.shift.split( ' ', 2 )
-        student = Entities.Persons.find_name_or_create
-        course.students.push( student.login_name )
-        Entities.Grade.create( :course_id => course.course_id, :person_id => student.person_id,
-          :mean => grade_to_mean( grade ), lines.shift )
-      end
-    else
-    import_old( lines )
-    end
-  end
 end
