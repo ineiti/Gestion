@@ -1,0 +1,18 @@
+#!/bin/bash
+
+BASE=/var/www
+if [ ! "$1" ]; then
+  BASE=$BASE/test
+fi
+
+echo Pushing Gestion
+hg commit
+hg push $1
+echo Pushing QooxView
+cd ../QooxView
+hg commit
+hg push $1
+for a in Gestion QooxView; do
+  echo Updating $a
+  ssh root@solar.wifi "cd $BASE/$a; hg up"
+done

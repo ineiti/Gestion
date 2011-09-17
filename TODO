@@ -1,0 +1,102 @@
+BUGS:
+	- DropBoxes are not updated:
+		- TaskEdit: "client" and "person" should get new entries automatically
+		- CourseModify: "teacher" and "assistant"
+	- 1000 crashes when not operating "properly"
+	
+Rare bugs:
+	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
+	
+UserFriendly:
+	- CourseModify: when exporting second time, :attestations doesn't get expanded
+	- Default focus and button:
+		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
+		- Make also focus for windows
+	- CourseGrade: 
+		- when selecting a course, cursor goes to "mean"
+		- when pressing "save", cursor goes to "mean"
+		- Add a method "focus" to Frontend
+	- Make a dropbox when using _find
+	- Graying out fields not usable (PersonModify, CashAdd, ...)
+	- Make 2-dimensional field with "Course, Person, Cash, ..." on top and rest on left
+
+FEATURES:
+	- Printing attestations
+	- Person*: Search pops up windows
+	- use language file to replace name of the fields
+	
+Programming:
+	- Really slow search or something when starting up
+		- also in CourseModify
+	- having lists and dropbox with additional hidden "index" that is returned for chosen entries
+		- Tasks reference a "person" which can change instead of a "person_id"
+		- Can't change name of courses
+		- Adding or changing names of persons is not reflected in list_drop (see TaskList)
+		- Add a method "select" instead of sending a list-item twice
+	- make class to easy allow for a "add/delete"-list
+	
+DOMINIQUE:
+	- Statistiques de "Cours::accounting"
+	
+NELBE:
+	- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
+
+VERIFY:
+	- B 110711: Persons::data_create doesn't copy directory to buzz
+	- B 110826: It's possible to click other tab while first starting up: re-activate the
+	  correct tab when getting "update" or "show"
+	- B 110909: When adding too many users in CourseModify::bulk_add, it crashes due to a timeout
+		in the RPC-handler -> add one user at the time, and give feedback between front and back
+
+FIXED:
+	- UF110906: Show "wrong password" or "no permission"
+	- UF110906: CourseGrade: 
+		- when selecting a course, first user is selected
+		- when pressing "save", next user is selected
+	- F 110906: Course::list_courses respects dates
+	- B 110827: TaskList: error on listing years as integers
+	- B 110827: TaskEdit: when adding a task and entering a date like "22.6.11", it crashes
+	- B 110827: CourseModify::add_course not working correctly - forgot a "+"
+	- B 110827: Selecting course "base_1104" in CourseModify or CourseGrade, selection isn't shown.
+	            Probably because index is 0 - yup, this was not good
+	- B 110722: Multiple wrong datasets with regard to array/string 
+	- P 110722: Code duplication in Frontend/Lib/Fields.js
+	- UF110718: Change the way new users are created: make a new PersonAdd-view
+	- B 110712-110716: CourseModify::add_students doesn't integrate in Moodle / Captive:
+		- scripts called when adding student
+		- new service for internal stuff to check for students and other things
+		- call moodle to activate new student
+	- B 110711: PersonModify::birthday is not deleted
+	- WL110707: Dominique - Coût du cours - Rémunération du prof et de l'assistant 
+				- Nombre d'étudiants qui ont fini
+	- UF110707: Don't call _find for each new letter, but only after 1.5 seconds and gray out
+	- B 110707: When clicking 'add_block', permissions get deleted!
+	- B 110707: Students grades are not saved!
+	- F 110703: being able to sign in students and give notes
+	- F 110701: Easy entering of students for courses
+	- B 110701: Took out PersonModify::groups and CashAdd::services_active as it doesn't
+	  			work yet
+	- B 110701: Leftover choices in PersonModify::permissions
+	- B 110701: Data of lists coming back which give the chosen ones don't work with
+	  			"save" and probably other stuff. Problem: choice <> data, but it's what
+	  			is saved :( - delete list of things we don't want
+	- B 110630: internet_none disappears when saved from PersonModify, as the Frontend only sends
+	  			back an empty array (because nothing is chosen)
+	- B 110630: internet_none is parsed wrongly from LDAP-entry (PersonModify)
+	- B 110630: internet_none is not cleared when user changes (PersonModify)
+	- B 110630: CSV-data gets lost from time to time!!!
+				created first a .tmp-file, then "mv csv.tmp csv"
+	- B 110630: Changing tabs when starting up doesn't work - blocking when starting up
+	- F 110630: change password with LDAP
+	- B 110630: LDAP create doesn't add MaN-Cash-field
+	- B 110630: LDAP create doesn't fetch right uid
+	- F 110629: CourseModify-Windows should close on adding a course or students
+	- F 110628: LDAP doesn't create a new entry
+	- F 110627: Students are not really linked to Courses
+				possible to add and delete studdents
+	- B 110627: Prevent clients fields from overwriting users fields (credit_due in CashAdd and others)
+	- F make windows available with a label (for window_show and window_hide)
+	- B Changing tabs while old tab is still loading creates an error
+	- B Changing date in TaskList gives error
+	- B 110602: Entities.data and Entity.data are not synched - why aren't they the same anyway?
+	- F 110601: List-methods in View-shows don't get updated automatically
