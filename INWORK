@@ -1,0 +1,7 @@
+110917:
+- Doing work on exporting and importing grades, so that the attestations can be used
+ in a decent way.
+ - a test-case has been done in ge_course
+ - most of it seems to be OK
+ - adjust debug-statements
+ - check double-grades and new persons
