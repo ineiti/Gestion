@@ -12,7 +12,6 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 UserFriendly:
-	- TaskList: give tasks in chronological order 
 	- Default focus and button:
 		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
 		- Make also focus for windows
@@ -52,6 +51,7 @@ VERIFY:
 		in the RPC-handler -> add one user at the time, and give feedback between front and back
 
 FIXED:
+	- UF110929: TaskList: give tasks in chronological order w/o name and w/o "-" at start 
 	- UF110906: Show "wrong password" or "no permission"
 	- UF110906: CourseGrade: 
 		- when selecting a course, first user is selected

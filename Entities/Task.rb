@@ -28,23 +28,12 @@ class Tasks < Entities
     Time.utc( *t )
   end
 
-  def time_to_str( t )
-    t.strftime( "%d.%m.%y-%H.%M-")
-  end
-  
-  def list_tasks
-    @data.values.collect{ |d| 
-      data_to_time( d ) }.sort.reverse.collect{ |t|
-      d = find_tasks( time_to_str( t ) )
-      time_to_str( t ) + d[:person].to_s
-    }
-  end
-  
-  def find_tasks( dt )
-    @data.values.select{|d|
-      dputs 5, "Searching #{d.inspect} in #{dt}"
-      dt =~ /^#{time_to_str( data_to_time( d ) )}/
-    }.first
+  def listp_tasks
+    @data.values.collect{ |d|
+      [ d[:task_id], data_to_time(d).strftime("%d.%m.%y") + " - " + d[:person].to_s]
+      }.sort{|a,b|
+        a[1] <=> b[1]
+        }.reverse
   end
   
   def list_task_month( worker, year, month, client )

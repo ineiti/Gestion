@@ -41,9 +41,9 @@ class TaskList < View
     dputs 3, list.inspect
     tasks = ""
     hours = 0.0
-    list.each{|l|
-      tasks +=  "#{l[:date]} - #{l[:person]} - #{l[:duration_hours]} hours\n" +
-      " - #{l[:work]}\n\n"
+    list.sort{|a,b| a[:date] <=> b[:date] }.each{|l|
+      tasks +=  "#{l[:date]} - #{l[:duration_hours]} hours\n" +
+      "#{l[:work]}\n\n"
       hours += l[:duration_hours].to_f
     }
     price = worker.function[0] == "assistant" ? client.price_assistant : client.price_expert
