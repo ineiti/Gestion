@@ -42,8 +42,9 @@ class TaskList < View
     tasks = ""
     hours = 0.0
     list.sort{|a,b| a[:date] <=> b[:date] }.each{|l|
-      tasks +=  "#{l[:date]} - #{l[:duration_hours]} hours\n" +
-      "#{l[:work]}\n\n"
+      duration = l[:duration_hours] 
+      tasks +=  "#{l[:date]} - #{duration} hour#{ duration.to_f < 2 ? '' : 's'}\n" +
+      "#{l[:work]}\n"
       hours += l[:duration_hours].to_f
     }
     price = worker.function[0] == "assistant" ? client.price_assistant : client.price_expert

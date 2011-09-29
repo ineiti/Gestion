@@ -14,5 +14,5 @@ hg commit
 hg push $1
 for a in Gestion QooxView; do
   echo Updating $a
-  ssh root@solar.wifi "cd $BASE/$a; hg up"
+  ssh root@vpn-man "cd $BASE/$a; hg up"
 done

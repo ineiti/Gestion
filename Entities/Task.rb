@@ -29,11 +29,11 @@ class Tasks < Entities
   end
 
   def listp_tasks
-    @data.values.collect{ |d|
+    @data.values.sort{|a,b|
+        data_to_time(a) <=> data_to_time(b)
+        }.reverse.collect{ |d|
       [ d[:task_id], data_to_time(d).strftime("%d.%m.%y") + " - " + d[:person].to_s]
-      }.sort{|a,b|
-        a[1] <=> b[1]
-        }.reverse
+      }
   end
   
   def list_task_month( worker, year, month, client )
