@@ -1,13 +1,18 @@
 BUGS:
+	- B 110826: It's possible to click other tab while first starting up: re-activate the
+	  correct tab when getting "update" or "show"
 	- DropBoxes are not updated:
 		- TaskEdit: "client" and "person" should get new entries automatically
 		- CourseModify: "teacher" and "assistant"
+	- TaskEdit: can't have two tasks the same date
+	- TaskList: sometimes when pressing "list", it takes twice to show everything
 	- 1000 crashes when not operating "properly"
 	
 Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 UserFriendly:
+	- TaskList: give tasks in chronological order 
 	- Default focus and button:
 		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
 		- Make also focus for windows
@@ -43,8 +48,6 @@ NELBE:
 
 VERIFY:
 	- B 110711: Persons::data_create doesn't copy directory to buzz
-	- B 110826: It's possible to click other tab while first starting up: re-activate the
-	  correct tab when getting "update" or "show"
 	- B 110909: When adding too many users in CourseModify::bulk_add, it crashes due to a timeout
 		in the RPC-handler -> add one user at the time, and give feedback between front and back
 
