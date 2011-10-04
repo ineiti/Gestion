@@ -66,6 +66,7 @@ class PersonModify < View
           person.internet_none += [ time ]
         end
       when "del_block"
+        dputs 3, "Deleting block: #{data['internet_none']}"
         if person and del = data['internet_none']
           person.internet_none -= del
         end
@@ -74,7 +75,8 @@ class PersonModify < View
         data.delete("internet_none")
         rep = reply( 'update', @data_class.save_data( data ) )
       end
-      rep += reply( 'update', get_form_data( person ) )
+      rep += reply( 'empty', [:internet_none]) +
+      reply( 'update', get_form_data( person ) )
     end
     rep + rpc_update( sid )
   end
@@ -84,7 +86,7 @@ class PersonModify < View
     if not rep
       rep = { "#{field}" => data }
     end
-    reply( 'empty', [ :internet_none ] ) +
+    update_layout +
     reply( 'update', rep ) + rpc_update( sid )
   end
   

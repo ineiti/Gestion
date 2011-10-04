@@ -16,6 +16,7 @@
 class CourseModify < View
   def layout
     set_data_class :Courses
+    @update = true
     
     gui_hbox do
       gui_vbox :nogroup do

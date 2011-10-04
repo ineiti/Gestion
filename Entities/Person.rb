@@ -24,7 +24,7 @@ class Persons < Entities
 
     value_block :internet
     value_list :groups, "%w( freeadsl sudo print )"
-    value_list_array_LDAP :internet_none, "[]", :ldap_name => "man-internet-none"
+    value_list_single_LDAP :internet_none, "[]", :ldap_name => "man-internet-none"
 
     value_block :read_only
     value_str_ro_LDAP :login_name, :ldap_name => "uid"

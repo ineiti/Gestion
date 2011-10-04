@@ -8,3 +8,4 @@ Test/data2/*
 *tgz
 \.external.*
 .hg*
+.settings*

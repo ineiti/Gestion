@@ -1,14 +1,10 @@
 BUGS:
 	- B 110826: It's possible to click other tab while first starting up: re-activate the
 	  correct tab when getting "update" or "show"
-	- DropBoxes are not updated:
-		- TaskEdit: "client" and "person" should get new entries automatically
-		- CourseModify: "teacher" and "assistant"
-	- TaskEdit: can't have two tasks the same date
-	- TaskList: sometimes when pressing "list", it takes twice to show everything
 	- 1000 crashes when not operating "properly"
 	
 Rare bugs:
+	- TaskList: sometimes when pressing "list", it takes twice to show everything
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 UserFriendly:
@@ -51,6 +47,15 @@ VERIFY:
 		in the RPC-handler -> add one user at the time, and give feedback between front and back
 
 FIXED:
+	- B 111101: PersonModify: internet_none can't be deleted
+	- B 111101: PersonModify: permissions are not cleard from one user to another
+	- B 110930: DropBoxes are not updated:
+		- TaskEdit: "client" and "person" should get new entries automatically
+		- CourseModify: "teacher" and "assistant"
+	- B 110930: Lists are not updated:
+		- CourseModify: students_win::students_add
+	- P 110929: VTListPane using new [index,text]-lists
+	- B 110929: TaskEdit: can't have two tasks the same date
 	- UF110929: TaskList: give tasks in chronological order w/o name and w/o "-" at start 
 	- UF110906: Show "wrong password" or "no permission"
 	- UF110906: CourseGrade: 
