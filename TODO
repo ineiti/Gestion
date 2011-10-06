@@ -2,11 +2,9 @@ BUGS:
 	- B 110826: It's possible to click other tab while first starting up: re-activate the
 	  correct tab when getting "update" or "show"
 	- window that pops up on wrong password is not in front
-	- Crash: CourseModify, chose course, PersonModify, CourseModify
-	- Delete CourseModify::add_students
+	- Delete CourseModify::add_students and put courses to add in PersonModify
 	- When a window is shown, hide the rest
-	- Accelerate saving of LogActions
-	- Accelerate adding of students
+	- Accelerate adding of students (is LogAction::add_only enough?)
 	- 1000 crashes when not operating "properly"
 	
 Rare bugs:
@@ -48,9 +46,8 @@ NELBE:
 	- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
 VERIFY:
-	- B 110711: Persons::data_create doesn't copy directory to buzz
-	- B 110909: When adding too many users in CourseModify::bulk_add, it crashes due to a timeout
-		in the RPC-handler -> add one user at the time, and give feedback between front and back
+	- B 111006: Crash: CourseModify, chose course, PersonModify, CourseModify
+	- B 111006: Accelerate saving of LogActions - don't save everything all the time
 
 FIXED:
 	- B 111101: PersonModify: internet_none can't be deleted
@@ -63,6 +60,8 @@ FIXED:
 	- P 110929: VTListPane using new [index,text]-lists
 	- B 110929: TaskEdit: can't have two tasks the same date
 	- UF110929: TaskList: give tasks in chronological order w/o name and w/o "-" at start 
+	- B 110909: When adding too many users in CourseModify::bulk_add, it crashes due to a timeout
+		in the RPC-handler -> add one user at the time, and give feedback between front and back
 	- UF110906: Show "wrong password" or "no permission"
 	- UF110906: CourseGrade: 
 		- when selecting a course, first user is selected
@@ -80,6 +79,7 @@ FIXED:
 		- scripts called when adding student
 		- new service for internal stuff to check for students and other things
 		- call moodle to activate new student
+	- B 110711: Persons::data_create doesn't copy directory to buzz
 	- B 110711: PersonModify::birthday is not deleted
 	- WL110707: Dominique - Coût du cours - Rémunération du prof et de l'assistant 
 				- Nombre d'étudiants qui ont fini
