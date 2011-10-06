@@ -17,7 +17,7 @@ require 'QVInfo'
 Permission.add( 'default', ',Welcome,PersonShow' )
 Permission.add( 'admin', '.*', '.*' )
 Permission.add( 'teacher', 'ControlAccess', 'student' )
-Permission.add( 'secretary', 'CashAdd,CashServices,CourseModify,PersonAdd', 'teacher' )
+Permission.add( 'secretary', 'CashAdd,CashServices,CourseModify,PersonAdd,PersonModify', 'teacher' )
 Permission.add( 'internet', 'Internet,PersonShow', 'default' )
 Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit', 'student' )

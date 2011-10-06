@@ -1,7 +1,7 @@
 class TC_Tasks < Test::Unit::TestCase
   def setup
     Entities.delete_all_data()
-    @pers_admin = Entities.Persons.create( :full_name => "admin", :password => "super123", 
+    @pers_admin = Entities.Persons.create( :first_name => "admin", :password => "super123", 
     :permissions => [ "default" ] )
     @client_one = Entities.Clients.create( :name => "one" )
     @worker_foo = Entities.Workers.create( :person_id => @pers_admin.person_id,

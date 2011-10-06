@@ -1,6 +1,12 @@
 BUGS:
 	- B 110826: It's possible to click other tab while first starting up: re-activate the
 	  correct tab when getting "update" or "show"
+	- window that pops up on wrong password is not in front
+	- Crash: CourseModify, chose course, PersonModify, CourseModify
+	- Delete CourseModify::add_students
+	- When a window is shown, hide the rest
+	- Accelerate saving of LogActions
+	- Accelerate adding of students
 	- 1000 crashes when not operating "properly"
 	
 Rare bugs:

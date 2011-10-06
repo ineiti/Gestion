@@ -46,15 +46,15 @@ class TC_Person < Test::Unit::TestCase
     assert_equal 500, @josue.credit_due.to_i - josue_due
     dputs 0, @surf.log_list.inspect
     dputs 0, @josue.log_list.inspect
-    log_list = [ @surf.log_list[1], @josue.log_list[2]]
+    log_list = [ @surf.log_list[2], @josue.log_list[3]]
     dputs 0, log_list.inspect
     log_list.each{|l| l.delete( :date_stamp )}
     assert_equal( {:data_class_id=>2, :data_field=>:credit, :data_value=>"500",
-      :logaction_id=>4, :undo_function=>:undo_set_entry, :data_class=>Person,
+      :logaction_id=>7, :undo_function=>:undo_set_entry, :data_class=>Person,
       :msg=>"1:500", :data_old=>"null"},
     log_list[0])
     assert_equal( {:data_value=>josue_due + 500, :undo_function=>:undo_set_entry, 
-      :logaction_id=>5, :data_old=>josue_due.to_s, :data_class_id=>1, 
+      :logaction_id=>8, :data_old=>josue_due.to_s, :data_class_id=>1, 
       :data_class=>Person, :msg=>"credit pour -surf:500-", :data_field=>:credit_due},
     log_list[1] )
   end
@@ -65,9 +65,9 @@ class TC_Person < Test::Unit::TestCase
   end
   
   def test_accents
-    @bizarre1 = Entities.Persons.create( {:first_name => "éaënne", :family_name => "Ässer"})
+    @bizarre1 = Entities.Persons.create( {:first_name => "éaënne", :family_name => "ässer"})
     @bizarre2 = Entities.Persons.create( {:first_name => "@hello", :family_name => "wœrld#"})
-    assert_equal "", @bizarre1.login_name
-    assert_equal "", @bizarre2.login_name
+    assert_equal "aeaenne", @bizarre1.login_name
+    assert_equal "w_hello", @bizarre2.login_name
   end
 end

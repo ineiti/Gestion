@@ -4,7 +4,7 @@ Permission.add( 'default', '.*' )
 Permission.add( 'student', '.*' )
 Permission.add( 'teacher', '.*' )
 
-class TC_Person < Test::Unit::TestCase
+class TC_QVInfo < Test::Unit::TestCase
   def setup
     Entities.delete_all_data()
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123", 

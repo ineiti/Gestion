@@ -4,7 +4,7 @@ Permission.add( 'default', '.*' )
 Permission.add( 'student', '.*' )
 Permission.add( 'teacher', '.*' )
 
-class TC_Person < Test::Unit::TestCase
+class TC_Course < Test::Unit::TestCase
   def setup
     Entities.delete_all_data()
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123", 
@@ -48,7 +48,7 @@ class TC_Person < Test::Unit::TestCase
     students = Entities.Courses.find_by_name( 'net_1001' ).students
     assert_equal %w( admin2 ca_b eten mhelene s_eri tone zero ), students.sort
   end
-  
+
   def test_grade
     @grade0 = Entities.Grades.save_data({:person_id => @secretaire.person_id,
     :course_id => @net.course_id, :mean => 11})
@@ -61,7 +61,7 @@ class TC_Person < Test::Unit::TestCase
     assert_equal 13, @grade2[:mean]
     assert_equal @grade1[:grade_id], @grade2[:grade_id]
   end
-  
+
   def test_search
     reply = RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "bulk_students",
     {"name" => "net_1001", "names" => "Dmin A" }]])
@@ -70,7 +70,7 @@ class TC_Person < Test::Unit::TestCase
     assert_equal 2, courses_admin2.length
     assert_equal 1, courses_surf.length
   end
-  
+
   COURSE_STR = "base_gestion\nAdmin The\nLe Secretaire\n72\nCours de base\nWord\nExcel\nLinux\n\n"+
       "1er février 03\n4 mai 03\n4 juin 03\n" +
       "P Admin The\n\nNP Internet Surfer\nhttp://ndjair.net\n" 
@@ -112,5 +112,6 @@ class TC_Person < Test::Unit::TestCase
     assert_equal 10, @grade_admin.mean
     assert_equal %w( 01.02.2003 04.05.2003 04.06.2003 72 admin josue ),
       course.data_get( %w( start end sign duration teacher responsible ) )
+    dputs 0, @course.inspect
   end
 end

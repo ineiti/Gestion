@@ -55,9 +55,11 @@ class Persons < Entities
   # Africa, perhaps a bit bizarre in Western-countries (like "tlinus" instead of
   # "ltorvalds")
   def create_login_name( first, family )
-    if family
+    if family and family.length > 0
       dputs 2, "Family name + First name"
-    login = family[0..0] + first
+    login = family.chars.first + first
+    else
+    login = first
     end
 
     login = login.downcase.gsub( / /, "_" )
@@ -158,7 +160,7 @@ class Persons < Entities
       end
     end
   end
-  
+
   def find_full_name( name )
     dputs 2, "Searching for #{name}"
     @data.each_key{|k|
@@ -203,21 +205,19 @@ class Person < Entity
   end
 
   def get_credit
-    if @compta_due.disabled
-    return
-    end
-    @compta_due ? ( @compta_due.get_credit * 1000.0 + 0.5 ).to_i : self.credit_due
+    ( @compta_due and not @compta_due.disabled ) ? ( @compta_due.get_credit * 1000.0 + 0.5 ).to_i : self.credit_due
   end
 
   def update_credit
     self.credit_due = get_credit
+    self.credit_due = 0 if not self.credit_due
   end
 
   def add_credit( client, credit )
-    dputs 5, "Adding #{credit}CFA to #{client.credit} for #{client.login_name}"
+    dputs 3, "Adding #{credit}CFA to #{client.credit} for #{client.login_name}"
     credit_before = client.credit
     if credit.to_i < 0 and credit.to_i.abs > client.credit.to_i
-    credit = -client.credit.to_i
+      credit = -client.credit.to_i
     end
     client.set_entry( :credit, ( client.credit.to_i + credit.to_i ).to_s,
     "#{self.person_id}:#{credit}" )
@@ -228,11 +228,8 @@ class Person < Entity
   end
 
   def move_cash( credit, msg )
-    if @compta_due.disabled
-    return
-    end
     credit_due = 0
-    if @compta_due
+    if @compta_due and not @compta_due.disabled
       credit_due = @compta_due.add_movement( 0, credit.to_i / 1000.0,
       "Gestion: #{msg}" )
     credit_due = ( credit_due * 1000.0 + 0.5 ).to_i
