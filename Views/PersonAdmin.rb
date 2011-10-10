@@ -4,7 +4,7 @@ class PersonAdmin < View
   def layout
     set_data_class :Persons
     @update = true
-    
+
     gui_vbox do
       gui_group do
         gui_hbox :nogroup do
@@ -24,33 +24,34 @@ class PersonAdmin < View
               show_field :internet_none
               show_fromto :internet_block
               show_button :add_block, :del_block
-            end          
+            end
           end
         end
         show_button :save
       end
-      
+
       gui_hbox :nogroup do
         show_int_ro :credit
         show_int :credit_add
         show_int_ro :your_credit_due
         show_button :add_credit
-        
+
         show_str :new_password
         show_str :password_plain
         show_button :change_password
       end
     end
   end
-  
+
   def rpc_button( sid, name, data )
     dputs 0, "Pressed button #{name} with #{data.inspect}"
     person = @data_class.find_by_person_id( data['person_id'] )
     rep = reply( 'empty' )
     if person
+      rep += reply( 'empty', [:internet_none])
       case name
       when "change_password"
-        person.password = data['new_password'] 
+        person.password = data['new_password']
       when "add_credit"
         @data_class.add_cash( sid, data )
         rep = reply( 'update', {:credit_add => ""})
@@ -67,19 +68,19 @@ class PersonAdmin < View
       when "del_block"
         dputs 3, "Deleting block: #{data['internet_none']}"
         if person and del = data['internet_none']
-          person.internet_none -= del
+        person.internet_none -= del
         end
       when "save"
         # "internet_none" only reflects chosen entries, not the available ones per se!
+        #       rep += reply( 'update', @data_class.save_data( data ) )
         data.delete("internet_none")
-        rep = reply( 'update', @data_class.save_data( data ) )
+        @data_class.save_data( data )
       end
-      rep += reply( 'empty', [:internet_none]) +
-      reply( 'update', get_form_data( person ) )
+      rep += reply( 'update', get_form_data( person ) )
     end
     rep + rpc_update( sid )
   end
-  
+
   def rpc_find( sid, field, data )
     rep = @data_class.find( field, data )
     if not rep
@@ -88,7 +89,7 @@ class PersonAdmin < View
     update_layout +
     reply( 'update', rep ) + rpc_update( sid )
   end
-  
+
   def update( sid )
     {:your_credit_due => @data_class.find_by_session_id( sid ).credit_due }
   end
