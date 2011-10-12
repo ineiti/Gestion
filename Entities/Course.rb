@@ -54,18 +54,6 @@ class Courses < Entities
     return %w( base maint int net site )
   end
 
-  def self.grade_to_mean( g )
-    case g
-    when /P/ then 10
-    when /AB/ then 13
-    when /B/ then 15
-    when /TB/ then 17
-    when /E/ then 19
-    else
-    9
-    end
-  end
-
   def self.from_data_fr( str )
     day, month, year = str.split(' ')
     day = day.gsub( /^0/, '' )
@@ -113,10 +101,10 @@ class Courses < Entities
         course.students.push( student.login_name )
         g = Entities.Grades.find_by_course_person( course.course_id, student.login_name )
         if g then
-        g.mean, g.remark = self.grade_to_mean( grade ), lines.shift
+        g.mean, g.remark = Entities.Grades.grade_to_mean( grade ), lines.shift
         else
           Entities.Grades.create( :course_id => course.course_id, :person_id => student.person_id,
-          :mean => self.grade_to_mean( grade ), :remark => lines.shift )
+          :mean => Entities.Grades.grade_to_mean( grade ), :remark => lines.shift )
         end
       end
       dputs 0, "#{course.inspect}"
@@ -182,17 +170,6 @@ class Course < Entity
     end
   end
 
-  def mean_to_grade( m )
-    case m.to_i
-    when 10..11 then "P"
-    when 12..14 then "AB"
-    when 15..16 then "B"
-    when 17..18 then "TB"
-    when 19..20 then "E"
-    else "NP"
-    end
-  end
-
   def export_diploma
     return if export_check
 
@@ -221,12 +198,11 @@ END
     data_get( :students ).each{|s|
       grade = Entities.Grades.find_by_course_person( data_get( :course_id ), s )
       if grade
-        txt += "#{mean_to_grade( grade.mean )} #{grade.student.full_name}\n" +
+        txt += "#{grade} #{grade.student.full_name}\n" +
         "#{grade.remark}\n"
       end
     }
     dputs 2, "Text is: #{txt.gsub(/\n/, '*')}"
     txt
   end
-
 end

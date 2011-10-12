@@ -16,7 +16,7 @@ class Grades < Entities
       dputs 3, "Found #{course} and #{student}"
       grades = Entities.Grades.search_by_course_id( course.course_id )
       grades.each{|g|
-        dputs 3, "Checking grade #{g}"
+        dputs 4, "Checking grade #{g}"
         if g.person_id.to_i == student.person_id.to_i
           dputs 2, "Found grade #{g}"
           g.set_course_student( course, student )
@@ -39,11 +39,45 @@ class Grades < Entities
     end
     super( d )
   end
+  
+  def self.grade_to_mean( g )
+    case g
+    when /P/ then 10
+    when /AB/ then 13
+    when /B/ then 15
+    when /TB/ then 17
+    when /E/ then 19
+    else
+    9
+    end
+  end
 end
 
 class Grade < Entity
   attr_reader :course, :student
   
+  def to_s
+    case data_get( :mean ).to_i
+    when 10..11 then "P"
+    when 12..14 then "AB"
+    when 15..16 then "B"
+    when 17..18 then "TB"
+    when 19..20 then "E"
+    else "NP"
+    end
+  end
+  
+  def mention
+    case data_get( :mean ).to_i
+    when 10..11 then "Passable"
+    when 12..14 then "Assez bien"
+    when 15..16 then "Bien"
+    when 17..18 then "Très bien"
+    when 19..20 then "Excellent"
+    else "PAS PASSÉ"
+    end
+  end
+
   def set_course_student( c, s )
     @course, @student = c, s
   end
