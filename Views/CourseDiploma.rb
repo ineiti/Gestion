@@ -3,6 +3,10 @@ Shows the existing courses and the courses on the server, so that the
 two can be synchronized.
 =end
 
+require 'rubygems'
+require 'zip/zipfilesystem'; include Zip
+require 'docsplit'
+
 class CourseDiploma < View
   def layout
     set_data_class :Courses
@@ -35,6 +39,17 @@ class CourseDiploma < View
     return ret
   end
 
+  def update_student_diploma( file, student )
+    ZipFile.open(file){ |z|
+      doc = z.read("content.xml")
+      doc.gsub!( /_NOM_/, "#{student.full_name}" )
+      z.file.open("content.xml", "w"){ |f|
+        f.write( doc )
+      }
+    }
+    Docsplit.extract_pdf file
+  end
+
   def rpc_button_do_grades( sid, args )
     course_id = args['courses'][0]
     course = @data_class.find_by_course_id(course_id).to_hash
@@ -49,8 +64,11 @@ class CourseDiploma < View
     end
     dputs 2, students.inspect
     students.each{ |s|
+      student = Entities.Persons.find_by_login_name( s[0] )
+      studentFile = "#{courseDir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
       dputs 2, "Doing #{counter}: #{s[0]}"
-      FileUtils::cp( "#{@diplomaDir}/base_gestion.odt", "#{courseDir}/#{counter.to_s.rjust(digits, '0')}.odt")
+      FileUtils::cp( "#{@diplomaDir}/base_gestion.odt", studentFile )
+      update_student_diploma( studentFile, student )
       counter += 1
     }
     rpc_list_choice( sid, "courses", "courses" => course_id.to_s )

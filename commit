@@ -1,2 +1,2 @@
 hg commit -m "$@"
-git commit -am "$@"
+git commit -a -m "$@"
