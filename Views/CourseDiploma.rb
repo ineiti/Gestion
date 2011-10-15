@@ -26,8 +26,8 @@ $create_pdfs = Thread.new{
     dputs 0, "Getting #{pdfs.inspect} out of #{dir}"
     all = "#{dir}/000-all.pdf"
     psn = "#{dir}/000-4pp.pdf"
-    `pdftk #{pdfs} cat output #{all}`
-    `pdftops #{all} - | psnup -4 -f | ps2pdf - #{psn}` 
+    #`pdftk #{pdfs} cat output #{all}`
+    #`pdftops #{all} - | psnup -4 -f | ps2pdf - #{psn}` 
   }
 }
 
@@ -41,7 +41,7 @@ class CourseDiploma < View
         show_button :do_grades
       end
       gui_vbox :nogroup do
-        show_list_single :grade
+        show_list :grade
         show_button :print
       end
       gui_window :missing_data do
@@ -145,5 +145,11 @@ class CourseDiploma < View
 
   def rpc_button_close( sid, args )
     reply( "window_hide" )
+  end
+  
+  def rpc_button_print( sid, args )
+    if args['grade'].length > 0
+      dputs 0, "Printing #{args['grade'].inspect}"
+    end
   end
 end
