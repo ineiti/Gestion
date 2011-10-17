@@ -5,29 +5,33 @@ two can be synchronized.
 
 require 'rubygems'
 require 'zip/zipfilesystem'; include Zip
-
 require 'docsplit'
 
 $create_pdfs = Thread.new{
   loop{
     Thread.stop
-    dputs 0, "Creating pdfs #{$new_pdfs.inspect}"
+    dputs 2, "Creating pdfs #{$new_pdfs.inspect}"
     `date >> /tmp/cp`
     pdfs = []
     dir = File::dirname( $new_pdfs.first )
     $new_pdfs.each{ |p|
-      dputs 0, "Started thread for file #{p} in directory #{dir}"
+      dputs 3, "Started thread for file #{p} in directory #{dir}"
       Docsplit.extract_pdf p, :output => dir
-      dputs 0, "Finished docsplit"
+      dputs 5, "Finished docsplit"
       FileUtils::rm( p )
-      dputs 0, "Finished rm"
+      dputs 5, "Finished rm"
       pdfs.push p.sub( /\.[^\.]*/, '.pdf' )
     }
-    dputs 0, "Getting #{pdfs.inspect} out of #{dir}"
+    dputs 3, "Getting #{pdfs.inspect} out of #{dir}"
     all = "#{dir}/000-all.pdf"
     psn = "#{dir}/000-4pp.pdf"
-    #`pdftk #{pdfs} cat output #{all}`
-    #`pdftops #{all} - | psnup -4 -f | ps2pdf - #{psn}` 
+    dputs 3, "Putting it all in one file"
+    `pdftk #{pdfs.join( ' ' )} cat output #{all}`
+    dputs 3, "Putting 4 pages of #{all} into #{psn}"
+    dputs 3, "pdftops #{all} - | psnup -4 -f | ps2pdf - #{psn}"
+    `pdftops #{all} - | psnup -4 -f | ps2pdf - #{psn}.tmp`
+    FileUtils::mv( "#{psn}.tmp", psn )
+    dputs 2, "Finished"
   }
 }
 
@@ -49,6 +53,8 @@ class CourseDiploma < View
         show_button :close
       end
     end
+    
+    @defaultPrinter = @defaultPrinter ? "-P #{@defaultPrinter}" : ""
   end
 
   def rpc_list_choice( sid, name, args )
@@ -60,7 +66,7 @@ class CourseDiploma < View
         courseDir = @diplomaDir + "/" + Entities.Courses.find_by_course_id( args['courses'] ).name
         dputs 2, "Looking for directory #{courseDir}"
         if File::directory?( courseDir )
-          ret += reply( 'update', :grade => Dir::entries( courseDir ).select{|s| s[0..0] != "." } )
+          ret += reply( 'update', :grade => Dir::glob( "#{courseDir}/*pdf" ).collect{|f| File::basename( f ) }.sort )
         end
       end
     end
@@ -139,7 +145,8 @@ class CourseDiploma < View
       FileUtils::rm( Dir.glob( courseDir + "/content.xml*" ) )
       $new_pdfs = Dir.glob( courseDir + "/*odt" )
       $create_pdfs.run
-      rpc_list_choice( sid, "courses", "courses" => course_id.to_s )
+      rpc_list_choice( sid, "courses", "courses" => course_id.to_s ) +
+      reply( "auto_update", "5" )
     end
   end
 
@@ -149,7 +156,14 @@ class CourseDiploma < View
   
   def rpc_button_print( sid, args )
     if args['grade'].length > 0
-      dputs 0, "Printing #{args['grade'].inspect}"
+      course_id = args['courses'][0]
+      course = @data_class.find_by_course_id(course_id)
+      dir = "#{@diplomaDir}/#{course.to_hash[:name]}"
+      dputs 2, "Printing #{args['grade'].inspect}"
+      args['grade'].each{|g|
+        dputs 2, "lpr #{@defaultPrinter} #{dir}/#{g}"
+        `lpr #{@defaultPrinter} #{dir}/#{g}`
+      }
     end
   end
 end

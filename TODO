@@ -1,4 +1,11 @@
+/* -*- shiftwidth: 8; softtabstop: 8 -*- */ 
+
 BUGS:
+        - CourseDiploma: 
+          - diplomaDir doesn't have default value
+          - update automatically
+          - do files in alphabetical order
+          - make print work
 	- B 110826: It's possible to click other tab while first starting up: re-activate the
 	  correct tab when getting "update" or "show"
 	- window that pops up on wrong password is not in front
