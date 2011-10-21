@@ -8,13 +8,17 @@ require 'zip/zipfilesystem'; include Zip
 require 'docsplit'
 
 $create_pdfs = Thread.new{
+  $new_pdfs = []
   loop{
-    Thread.stop
+    if $new_pdfs.length == 0
+      Thread.stop
+    end
     dputs 2, "Creating pdfs #{$new_pdfs.inspect}"
     `date >> /tmp/cp`
     pdfs = []
-    dir = File::dirname( $new_pdfs.first )
-    $new_pdfs.each{ |p|
+    n_pdfs = $new_pdfs.shift
+    dir = File::dirname( n_pdfs.first )
+    n_pdfs.each{ |p|
       dputs 3, "Started thread for file #{p} in directory #{dir}"
       Docsplit.extract_pdf p, :output => dir
       dputs 5, "Finished docsplit"
@@ -28,8 +32,7 @@ $create_pdfs = Thread.new{
     dputs 3, "Putting it all in one file"
     `pdftk #{pdfs.join( ' ' )} cat output #{all}`
     dputs 3, "Putting 4 pages of #{all} into #{psn}"
-    dputs 3, "pdftops #{all} - | psnup -4 -f | ps2pdf - #{psn}"
-    `pdftops #{all} - | psnup -4 -f | ps2pdf - #{psn}.tmp`
+    `pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
     FileUtils::mv( "#{psn}.tmp", psn )
     dputs 2, "Finished"
   }
@@ -54,7 +57,7 @@ class CourseDiploma < View
       end
     end
     
-    @defaultPrinter = @defaultPrinter ? "-P #{@defaultPrinter}" : ""
+    @default_printer = @default_printer ? "-P #{@default_printer}" : ""
   end
 
   def rpc_list_choice( sid, name, args )
@@ -63,43 +66,39 @@ class CourseDiploma < View
     case name
     when "courses"
       if args['courses'].length > 0
-        courseDir = @diplomaDir + "/" + Entities.Courses.find_by_course_id( args['courses'] ).name
-        dputs 2, "Looking for directory #{courseDir}"
-        if File::directory?( courseDir )
-          ret += reply( 'update', :grade => Dir::glob( "#{courseDir}/*pdf" ).collect{|f| File::basename( f ) }.sort )
-        end
+        course = Entities.Courses.find_by_course_id( args['courses'] )
+        course and ret += reply( 'update', :grade => course.get_pdfs )
       end
     end
     return ret
   end
 
-  def update_student_diploma( file, student, courseh )
-    grade = Entities.Grades.find_by_course_person( courseh[:course_id], student.login_name )
-    if grade
-      dputs 3, "New diploma for: #{courseh[:course_id]} - #{student.login_name} - #{grade.to_hash.inspect}"
+  def update_student_diploma( file, student, course )
+    grade = Entities.Grades.find_by_course_person( course.course_id, student.login_name )
+    if grade and grade.to_s != "NP"
+      dputs 3, "New diploma for: #{course.course_id} - #{student.login_name} - #{grade.to_hash.inspect}"
       ZipFile.open(file){ |z|
         doc = z.read("content.xml")
         contents = ""
-        dputs 5, "Contents is: #{courseh[:contents].inspect}"
-        courseh[:contents].split("\n").each{|d|
+        dputs 5, "Contents is: #{course.contents.inspect}"
+        course.contents.split("\n").each{|d|
           dputs 5, "One line is: #{d}"
           contents += d + "</text:p></text:list-item><text:list-item><text:p text:style-name='P2'>"
         }
         contents.sub!(/(.*)<\/text:p.*/, '\1')
         dputs 4, "Contents is: #{contents}"
-        doc.gsub!( /_PROF_/, courseh[:teacher][0] )
-        doc.gsub!( /_RESP_/, courseh[:responsible][0] )
+        doc.gsub!( /_PROF_/, Entities.Persons.login_to_full( course.teacher ) )
+        doc.gsub!( /_RESP_/, Entities.Persons.login_to_full( course.responsible ) )
         doc.gsub!( /_NOM_/, student.full_name )
-        doc.gsub!( /_DUREE_/, courseh[:duration] )
-        doc.gsub!( /_COURS_/, courseh[:description] )
-        doc.gsub!( /_DU_/, courseh[:start] )
-        doc.gsub!( /_AU_/, courseh[:end] )
+        doc.gsub!( /_DUREE_/, course.duration )
+        doc.gsub!( /_COURS_/, course.description )
+        show_year = course.start.gsub(/.*\./, '' ) != course.end.gsub(/.*\./, '' )
+        doc.gsub!( /_DU_/, course.date_fr( course.start, show_year ) )
+        doc.gsub!( /_AU_/, course.date_fr( course.end ) )
         doc.gsub!( /_DESC_/, contents )
         doc.gsub!( /_SPECIAL_/, grade.remark || "" )
         doc.gsub!( /_MENTION_/, grade.mention )
-        doc.gsub!( /_DATE_/, courseh[:sign] )
-        doc.gsub!( /_PROF_/, courseh[:teacher][0] )
-        doc.gsub!( /_RESP_/, courseh[:responsible][0] )
+        doc.gsub!( /_DATE_/, course.date_fr( course.sign ) )
         z.file.open("content.xml", "w"){ |f|
           f.write( doc )
         }
@@ -119,35 +118,45 @@ class CourseDiploma < View
         reply("update", :missing => course.export_check.join(":"))
       end
     else
-      courseh = course.to_hash
-      dputs 2, courseh.inspect
-      students = courseh[:students]
+      students = course.students
       digits = Math::log10( students.size + 1 ).ceil
       counter = 1
-      courseDir = @diplomaDir + "/" + courseh[:name]
-      if not File::directory? courseDir
-        FileUtils::mkdir( courseDir )
+      dputs 2, "Diploma_dir is: #{course.diploma_dir}"
+      if not File::directory? course.diploma_dir
+        FileUtils::mkdir( course.diploma_dir )
       else
-        FileUtils::rm( Dir.glob( courseDir + "/*" ) )
+        FileUtils::rm( Dir.glob( course.diploma_dir + "/*" ) )
       end
       dputs 2, students.inspect
       students.each{ |s|
-        student = Entities.Persons.find_by_login_name( s[0] )
+        student = Entities.Persons.find_by_login_name( s )
         if student
           dputs 2, student.login_name
-          studentFile = "#{courseDir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
+          student_file = "#{course.diploma_dir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
           dputs 2, "Doing #{counter}: #{student.login_name}"
-          FileUtils::cp( "#{@diplomaDir}/base_gestion.odt", studentFile )
-          update_student_diploma( studentFile, student, courseh )
+          FileUtils::cp( "#{Entities.Courses.diploma_dir}/base_gestion.odt", student_file )
+          update_student_diploma( student_file, student, course )
         end
         counter += 1
       }
-      FileUtils::rm( Dir.glob( courseDir + "/content.xml*" ) )
-      $new_pdfs = Dir.glob( courseDir + "/*odt" )
-      $create_pdfs.run
-      rpc_list_choice( sid, "courses", "courses" => course_id.to_s ) +
-      reply( "auto_update", "5" )
+      FileUtils::rm( Dir.glob( course.diploma_dir + "/content.xml*" ) )
+      $new_pdfs += [ Dir.glob( course.diploma_dir + "/*odt" ) ]
+      if $new_pdfs.length > 0
+        $create_pdfs.run
+        rpc_list_choice( sid, "courses", "courses" => course_id.to_s ) +
+        reply( "auto_update", "-5" )
+      end
     end
+  end
+  
+  def rpc_update_with_values( sid, args )
+    course_id = args['courses'][0]
+    ret = rpc_list_choice( sid, "courses", "courses" => course_id.to_s )
+    course = Entities.Courses.find_by_course_id( course_id )
+    if course.get_pdfs.index( "000-4pp.pdf" )
+      ret += reply( :auto_update, 0 )
+    end
+    return ret
   end
 
   def rpc_button_close( sid, args )
@@ -158,11 +167,9 @@ class CourseDiploma < View
     if args['grade'].length > 0
       course_id = args['courses'][0]
       course = @data_class.find_by_course_id(course_id)
-      dir = "#{@diplomaDir}/#{course.to_hash[:name]}"
       dputs 2, "Printing #{args['grade'].inspect}"
       args['grade'].each{|g|
-        dputs 2, "lpr #{@defaultPrinter} #{dir}/#{g}"
-        `lpr #{@defaultPrinter} #{dir}/#{g}`
+        `lpr #{@default_printer} #{course.diploma_dir}/#{g}`
       }
     end
   end

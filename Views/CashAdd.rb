@@ -103,7 +103,7 @@ class CashAdd < View
     if not @cache_payments[person.person_id] or force
       @cache_payments[person.person_id] = 
       Entities.LogActions.log_list( {:data_field=>"credit$",:data_class=>"Person"} ).select{|s|
-        s[:msg].split(":")[0].to_i == person.person_id.to_i
+        s[:msg] and s[:msg].split(":")[0].to_i == person.person_id.to_i
       }.collect{|e|
         worker, cash = e[:msg].split(":")
         client = Entities.Persons.find_by_person_id( e[:data_class_id] )

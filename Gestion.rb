@@ -16,8 +16,8 @@ require 'QVInfo'
 # Our default-permission is to only login!
 Permission.add( 'default', ',Welcome,PersonShow' )
 Permission.add( 'admin', '.*', '.*' )
-Permission.add( 'teacher', 'ControlAccess', 'student' )
-Permission.add( 'secretary', 'CashAdd,CashServices,CourseModify,PersonAdd,PersonModify', 'teacher' )
+Permission.add( 'teacher', 'ControlAccess,CourseGrade', 'student' )
+Permission.add( 'secretary', 'CashAdd,CashServices,CourseModify,PersonAdd,PersonModify,CourseDiploma', 'teacher' )
 Permission.add( 'internet', 'Internet,PersonShow', 'default' )
 Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit', 'student' )

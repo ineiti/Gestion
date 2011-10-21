@@ -181,6 +181,11 @@ class Persons < Entities
     find_full_name( name ) or
     person = create( :first_name => first, :family_name => last )
   end
+  
+  def login_to_full( login )
+    p = find_by_login_name( login )
+    p ? p.full_name : ""
+  end
 end
 
 
@@ -282,4 +287,5 @@ class Person < Entity
   def full_name
     "#{self.first_name} #{self.family_name}"
   end
+  
 end

@@ -54,7 +54,7 @@ class Courses < Entities
     return %w( base maint int net site )
   end
 
-  def self.from_data_fr( str )
+  def self.from_date_fr( str )
     day, month, year = str.split(' ')
     day = day.gsub( /^0/, '' )
     if day == "1er"
@@ -91,7 +91,7 @@ class Courses < Entities
       dputs 1, "Course contents: #{course.contents}"
       lines.shift
       course.start, course.end, course.sign =
-      lines.shift( 3 ).collect{|d| self.from_data_fr( d ) }
+      lines.shift( 3 ).collect{|d| self.from_date_fr( d ) }
       lines.shift if lines[0].size == 0
 
       course.students = []
@@ -118,10 +118,14 @@ end
 
 
 class Course < Entity
+  attr_reader :diploma_dir
+  
   def setup_instance
     if not self.students.class == Array
       self.students = []
     end
+    @diploma_dir = @proxy.diploma_dir + "/#{self.name}"
+    dputs 2, "Setting diploma_dir to #{@diploma_dir}"
   end
 
   def list_students
@@ -156,7 +160,7 @@ class Course < Entity
     return missing_data.size == 0 ? nil : missing_data
   end
 
-  def data_fr( d, show_year = true )
+  def date_fr( d, show_year = true )
     day, month, year = d.split('.')
     day = day.gsub( /^0/, '' )
     if day == "1"
@@ -191,9 +195,9 @@ base_gestion
 #{data_get :description}
 #{data_get :contents}
 
-#{data_fr(d_start, same_year)}
-#{data_fr(d_end, same_year)}
-#{data_fr(d_sign)}
+#{date_fr(d_start, same_year)}
+#{date_fr(d_end, same_year)}
+#{date_fr(d_sign)}
 END
     data_get( :students ).each{|s|
       grade = Entities.Grades.find_by_course_person( data_get( :course_id ), s )
@@ -204,5 +208,13 @@ END
     }
     dputs 2, "Text is: #{txt.gsub(/\n/, '*')}"
     txt
+  end
+  
+  def get_pdfs
+    if File::directory?( @diploma_dir )
+      Dir::glob( "#{@diploma_dir}/*pdf" ).collect{|f| File::basename( f ) }.sort
+    else
+      []
+    end
   end
 end

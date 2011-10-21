@@ -3,6 +3,7 @@
 	<name>Gestion</name>
 	<comment></comment>
 	<projects>
+		<project>QooxView</project>
 	</projects>
 	<buildSpec>
 	</buildSpec>
