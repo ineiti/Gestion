@@ -18,7 +18,7 @@ $create_pdfs = Thread.new{
     pdfs = []
     n_pdfs = $new_pdfs.shift
     dir = File::dirname( n_pdfs.first )
-    n_pdfs.each{ |p|
+    n_pdfs.sort.each{ |p|
       dputs 3, "Started thread for file #{p} in directory #{dir}"
       Docsplit.extract_pdf p, :output => dir
       dputs 5, "Finished docsplit"

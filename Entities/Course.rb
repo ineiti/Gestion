@@ -42,6 +42,8 @@ class Courses < Entities
     value_int :salary_assistant
     value_int :students_start
     value_int :students_finish
+    
+    @diploma_dir ||= "Diplomas"
   end
 
   def list_courses

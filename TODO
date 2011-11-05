@@ -1,48 +1,37 @@
-/* -*- shiftwidth: 8; softtabstop: 8 -*- */ 
+/* -*- shiftwidth: 4; softtabstop: 4 -*- */ 
 
 BUGS:
-        - CourseDiploma: 
-          - diplomaDir doesn't have default value
-          - update automatically
-          - do files in alphabetical order
-          - make print work
-	- B 110826: It's possible to click other tab while first starting up: re-activate the
-	  correct tab when getting "update" or "show"
-	- window that pops up on wrong password is not in front
-	- Delete CourseModify::add_students and put courses to add in PersonModify
-	- When a window is shown, hide the rest
-	- Accelerate adding of students (is LogAction::add_only enough?)
+	- Default focus and button:
+		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
+		- Make also focus for windows
+		- window that pops up on wrong password is not in front
+		- When a window is shown, hide the rest
 	- 1000 crashes when not operating "properly"
 	
 Rare bugs:
+	- B 110826: It's possible to click other tab while first starting up: re-activate the
+	  correct tab when getting "update" or "show"
 	- TaskList: sometimes when pressing "list", it takes twice to show everything
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 UserFriendly:
-	- Default focus and button:
-		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
-		- Make also focus for windows
-	- CourseGrade: 
-		- when selecting a course, cursor goes to "mean"
-		- when pressing "save", cursor goes to "mean"
-		- Add a method "focus" to Frontend
+	- Delete CourseModify::add_students and put courses to add in PersonModify
 	- Make a dropbox when using _find
 	- Graying out fields not usable (PersonModify, CashAdd, ...)
 	- Make 2-dimensional field with "Course, Person, Cash, ..." on top and rest on left
+	- Accelerate adding of students (is LogAction::add_only enough?)
 
 FEATURES:
-	- Printing attestations
-		- exporting and importing grades
-	- Person*: Search pops up windows
 	- use language file to replace name of the fields
+	- Person*: Search pops up windows
 	
 Programming:
+	- Add a method "focus" to Frontend
 	- Really slow search or something when starting up
 		- also in CourseModify
 	- having lists and dropbox with additional hidden "index" that is returned for chosen entries
 		- Tasks reference a "person" which can change instead of a "person_id"
 		- Can't change name of courses
-		- Adding or changing names of persons is not reflected in list_drop (see TaskList)
 		- Add a method "select" instead of sending a list-item twice
 	- make class to easy allow for a "add/delete"-list
 	
@@ -53,15 +42,22 @@ NELBE:
 	- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
 VERIFY:
-	- B 111006: Crash: CourseModify, chose course, PersonModify, CourseModify
-	- B 111006: Accelerate saving of LogActions - don't save everything all the time
 
 FIXED:
+    - B 111105: Course
+		- diplomaDir doesn't have default value
+		- do files in alphabetical order
+	- B 111021: CourseDiploma: 
+		- update automatically
+		- make print work
+	- B 111006: Crash: CourseModify, chose course, PersonModify, CourseModify
+	- B 111006: Accelerate saving of LogActions - don't save everything all the time
 	- B 111101: PersonModify: internet_none can't be deleted
 	- B 111101: PersonModify: permissions are not cleard from one user to another
 	- B 110930: DropBoxes are not updated:
 		- TaskEdit: "client" and "person" should get new entries automatically
 		- CourseModify: "teacher" and "assistant"
+		- Adding or changing names of persons is not reflected in list_drop (see TaskList)
 	- B 110930: Lists are not updated:
 		- CourseModify: students_win::students_add
 	- P 110929: VTListPane using new [index,text]-lists
@@ -69,6 +65,9 @@ FIXED:
 	- UF110929: TaskList: give tasks in chronological order w/o name and w/o "-" at start 
 	- B 110909: When adding too many users in CourseModify::bulk_add, it crashes due to a timeout
 		in the RPC-handler -> add one user at the time, and give feedback between front and back
+	- UF110908: CourseGrade: 
+		- when selecting a course, cursor goes to "mean"
+		- when pressing "save", cursor goes to "mean"
 	- UF110906: Show "wrong password" or "no permission"
 	- UF110906: CourseGrade: 
 		- when selecting a course, first user is selected
