@@ -1,14 +1,12 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */ 
 
 BUGS:
-	- Default focus and button:
-		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
-		- Make also focus for windows
-		- window that pops up on wrong password is not in front
-		- When a window is shown, hide the rest
 	- 1000 crashes when not operating "properly"
 	
 Rare bugs:
+	- Default focus and button:
+		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
+			-> where is that a problem?
 	- B 110826: It's possible to click other tab while first starting up: re-activate the
 	  correct tab when getting "update" or "show"
 	- TaskList: sometimes when pressing "list", it takes twice to show everything
@@ -26,6 +24,7 @@ FEATURES:
 	- Person*: Search pops up windows
 	
 Programming:
+	- Further automize: Take first part of View-class as the standard entity
 	- Add a method "focus" to Frontend
 	- Really slow search or something when starting up
 		- also in CourseModify
@@ -44,6 +43,11 @@ NELBE:
 VERIFY:
 
 FIXED:
+	- B 111108: Windows:
+		- Make also focus for windows
+		- window that pops up on wrong password is not in front
+		- When a window is shown, hide the rest
+		- Use first_button from windows
     - B 111105: Course
 		- diplomaDir doesn't have default value
 		- do files in alphabetical order

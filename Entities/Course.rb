@@ -9,6 +9,8 @@ require 'Entity'
 
 
 class Courses < Entities
+  attr_reader :diploma_dir
+  
   def setup_data
     value_block :name
     value_str :name
@@ -106,7 +108,7 @@ class Courses < Entities
         g.mean, g.remark = Entities.Grades.grade_to_mean( grade ), lines.shift
         else
           Entities.Grades.create( :course_id => course.course_id, :person_id => student.person_id,
-          :mean => Entities.Grades.grade_to_mean( grade ), :remark => lines.shift )
+          :mean => Grades.grade_to_mean( grade ), :remark => lines.shift )
         end
       end
       dputs 0, "#{course.inspect}"
