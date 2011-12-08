@@ -9,7 +9,7 @@ class PersonAdd < View
     gui_vbox do
       show_block :address
       show_arg :first_name, :callback => :login
-      show_arg :family_name, :callback => :login
+      show_arg :family_name, :hidden => true
       show_str :login_prop
       show_button :add_user, :clear  
       gui_window :new_user do
@@ -45,10 +45,9 @@ class PersonAdd < View
   
   def rpc_callback_login( sid, data )
     dputs 3, "Got values: #{data.inspect}"
-    first = data['first_name'] || ""
-    family = data['family_name'] || ""
-    if first.length > 0 and family.length > 0
-      reply( "update", {:login_prop => @data_class.create_login_name( first, family )})
+    first_name = data['first_name'] || ""
+    if first_name.length > 0
+      reply( "update", {:login_prop => @data_class.create_login_name( first_name )})
     end
   end
 end

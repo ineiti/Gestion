@@ -4,6 +4,15 @@
 # Configuration:
 # adduser_cmd - is called after ldapadduser returns with the username as argument
 
+class String
+  def capitalize_all
+    self.split(" ").collect{|s| s.capitalize}.join(" ")
+  end
+  def capitalize_all!
+    self.replace self.capitalize_all
+  end
+end
+
 class Persons < Entities
   def setup_data
     add_new_storage :LDAP
@@ -51,11 +60,30 @@ class Persons < Entities
     login + suffix.to_s
   end
 
+  def create_first_family( fullname )
+    # Trying to be intelligent about splitting up of names
+    if fullname.split(" ").length > 1
+      names = fullname.split(' ')
+      s = names.length < 4 ? 0 : 1
+      first = names[0..s].join(" ")
+      family = names[(s+1)..-1].join(" ")
+      dputs 1, "Creating user #{names.inspect} as #{first} - #{family}"
+      [ first, family ]
+    else
+      [ fullname, "" ]
+    end
+  end
+
   # Creates a login-name out of "first" and "family" name - should work nicely in
   # Africa, perhaps a bit bizarre in Western-countries (like "tlinus" instead of
   # "ltorvalds")
-  def create_login_name( first, family )
-    if family and family.length > 0
+  # if "family" is empty, it tries to generate some sensible values for "first" and
+  # "family" by itself
+  def create_login_name( first, family = "" )
+    if family.length == 0
+      first, family = create_first_family( first )
+    end
+    if family.length > 0
       dputs 2, "Family name + First name"
     login = family.chars.first + first
     else
@@ -75,6 +103,14 @@ class Persons < Entities
   end
 
   def create( d )
+    # Sanitize first and family-name
+    if d.has_key? :first_name
+      if not d.has_key? :family_name or d[:family_name].length == 0
+        d[:first_name], d[:family_name] = create_first_family( d[:first_name] )
+      end
+      d[:first_name].capitalize_all!
+      d[:family_name].capitalize_all!
+    end
     if ! d[:login_name]
       d[:login_name] = create_login_name( d[:first_name], d[:family_name] )
     end
@@ -181,7 +217,7 @@ class Persons < Entities
     find_full_name( name ) or
     person = create( :first_name => first, :family_name => last )
   end
-  
+
   def login_to_full( login )
     p = find_by_login_name( login )
     p ? p.full_name : ""
@@ -222,7 +258,7 @@ class Person < Entity
     dputs 3, "Adding #{credit}CFA to #{client.credit} for #{client.login_name}"
     credit_before = client.credit
     if credit.to_i < 0 and credit.to_i.abs > client.credit.to_i
-      credit = -client.credit.to_i
+    credit = -client.credit.to_i
     end
     client.set_entry( :credit, ( client.credit.to_i + credit.to_i ).to_s,
     "#{self.person_id}:#{credit}" )
@@ -287,5 +323,5 @@ class Person < Entity
   def full_name
     "#{self.first_name} #{self.family_name}"
   end
-  
+
 end

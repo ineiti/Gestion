@@ -1,6 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */ 
 
 BUGS:
+	- Adding new students in CourseModify::bulk_add, doesn't add to markas-al-nour.org
+	- All teachers can grade all courses - only appropriate teachers should be able to grade
 	- 1000 crashes when not operating "properly"
 	
 Rare bugs:
@@ -20,9 +22,11 @@ UserFriendly:
 	- Accelerate adding of students (is LogAction::add_only enough?)
 
 FEATURES:
+	- CourseHistory
+		- 
 	- use language file to replace name of the fields
 	- Person*: Search pops up windows
-	
+
 Programming:
 	- Further automize: Take first part of View-class as the standard entity
 	- Add a method "focus" to Frontend
@@ -43,6 +47,9 @@ NELBE:
 VERIFY:
 
 FIXED:
+	- UF111208: Adding a new person only with one field, like CourseModify::bulk_add
+	- UF111208: students-listings include user-name and password
+	- B 111208: CourseModify::del_student - login-names pop up in "students"
 	- B 111108: Windows:
 		- Make also focus for windows
 		- window that pops up on wrong password is not in front

@@ -10,7 +10,6 @@ require 'Entity'
 
 class Courses < Entities
   attr_reader :diploma_dir
-  
   def setup_data
     value_block :name
     value_str :name
@@ -44,12 +43,19 @@ class Courses < Entities
     value_int :salary_assistant
     value_int :students_start
     value_int :students_finish
-    
+
     @diploma_dir ||= "Diplomas"
   end
 
-  def list_courses
-    @data.values.collect{ |d| [ d[:course_id ], d[:name] ] }.sort{|a,b|
+  def list_courses(sid=nil)
+    ret = @data.values
+    if sid != nil
+      user = Entities.Persons.find_by_session_id( sid )
+      if not Permission.can( sid, "CourseGradeAll" )
+        ret = ret.select{|d| d[:teacher][0] == user.login_name }
+      end
+    end
+    ret.collect{ |d| [ d[:course_id ], d[:name] ] }.sort{|a,b|
       a[1].gsub( /^[^_]*_/, '' ) <=> b[1].gsub( /^[^_]*_/, '' )
     }.reverse
   end
@@ -105,7 +111,7 @@ class Courses < Entities
         course.students.push( student.login_name )
         g = Entities.Grades.find_by_course_person( course.course_id, student.login_name )
         if g then
-        g.mean, g.remark = Entities.Grades.grade_to_mean( grade ), lines.shift
+          g.mean, g.remark = Entities.Grades.grade_to_mean( grade ), lines.shift
         else
           Entities.Grades.create( :course_id => course.course_id, :person_id => student.person_id,
           :mean => Grades.grade_to_mean( grade ), :remark => lines.shift )
@@ -123,7 +129,6 @@ end
 
 class Course < Entity
   attr_reader :diploma_dir
-  
   def setup_instance
     if not self.students.class == Array
       self.students = []
@@ -138,7 +143,7 @@ class Course < Entity
     if self.students
       ret = self.students.collect{|s|
         if person = Entities.Persons.find_by_login_name( s )
-          [ s, person.full_name ]
+          [ s, "#{person.full_name} - #{person.login_name}:#{person.password_plain}" ]
         end
       }
     end
@@ -213,12 +218,12 @@ END
     dputs 2, "Text is: #{txt.gsub(/\n/, '*')}"
     txt
   end
-  
+
   def get_pdfs
     if File::directory?( @diploma_dir )
       Dir::glob( "#{@diploma_dir}/*pdf" ).collect{|f| File::basename( f ) }.sort
     else
-      []
+    []
     end
   end
 end

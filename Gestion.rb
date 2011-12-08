@@ -1,4 +1,5 @@
 #!/usr/bin/ruby -I../QooxView -wKU
+# ! /opt/local/bin/ruby1.9 -I../QooxView -I. -wKU
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad. The following modules shall be covered:

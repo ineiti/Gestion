@@ -96,12 +96,17 @@ class CourseModify < View
     end
   end
 
+  def update_students( course )
+    reply( "empty_only", [:students] ) +
+    reply( "update", { :students => course.list_students } )
+  end
+
   def rpc_button_del_student( sid, data )
     course = @data_class.find_by_name( data['name'] )
     data['students'].each{|s|
       course.students.delete( s)
     }
-    reply( "empty_only", [:students] ) + reply( "update", course.data )
+    update_students( course )
   end
 
   def rpc_button_new_student( sid, data )
@@ -116,8 +121,7 @@ class CourseModify < View
         end
       }
       dputs 3, "Students are now: #{course.students.inspect}"
-      reply( "empty_only", [:students] ) +
-      reply( "update", { :students => course.list_students } ) +
+      update_students( course) + 
       reply( "window_hide" )
     end
   end
@@ -132,14 +136,7 @@ class CourseModify < View
     course = @data_class.find_by_name( data['name'] )
     users = []
     if data['names'] and users = data['names'].split("\n")
-      u = users.shift
-      names = u.split(' ')
-      # Trying to be intelligent about splitting up of names
-      s = names.length < 4 ? 0 : 1
-      first = names[0..s].join(" ")
-      family = names[(s+1)..-1].join(" ")
-      dputs 1, "Creating user #{u.inspect} as #{first} - #{family}"
-      person = Entities.Persons.create( {:first_name => first, :family_name => family,
+      person = Entities.Persons.create( {:first_name => users.shift,
         :permissions => %w( student ), :town => @town, :country => @country })
       person.email = "#{person.login_name}@ndjair.net"
       course.students.push( person.login_name )
@@ -151,8 +148,7 @@ class CourseModify < View
       reply( "update", { :names => users.join("\n") } ) +
       reply( "callback_button", "bulk_students" )
     else
-      reply( "empty_only", [:students] ) +
-      reply( "update", { :students => course.list_students } ) +
+      update_students( course ) +
       reply( "window_hide" )
     end
   end

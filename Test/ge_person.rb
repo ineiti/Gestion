@@ -70,4 +70,10 @@ class TC_Person < Test::Unit::TestCase
     assert_equal "aeaenne", @bizarre1.login_name
     assert_equal "w_hello", @bizarre2.login_name
   end
+  
+  def test_creation
+    @name1 = Entities.Persons.create( {:first_name => "one two three"})
+    assert_equal "One", @name1.first_name
+    assert_equal "Two Three", @name1.family_name    
+  end
 end

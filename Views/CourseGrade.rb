@@ -5,11 +5,13 @@
 class CourseGrade < View
   def layout
     set_data_class :Courses
+    
+    @update = true
 
     gui_hbox do
       gui_hbox do
         gui_fields do
-          show_list_single :courses, "Entities.Courses.list_courses", :callback => true
+          show_list_single :courses, :callback => true
         end
         gui_fields do
           show_list_single :students, :callback => true
@@ -23,6 +25,11 @@ class CourseGrade < View
         end
       end
     end
+  end
+  
+  def rpc_update( sid )
+    super( sid ) +
+    reply( "update", { :courses => Entities.Courses.list_courses(sid) } )
   end
 
   def update_grade( d )
