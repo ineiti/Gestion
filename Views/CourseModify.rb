@@ -200,5 +200,10 @@ class CourseModify < View
       reply("empty", [:students])
     end
   end
+  
+  def rpc_update( sid )
+    reply( 'empty', [:students] ) +
+    super( sid )
+  end
 
 end
