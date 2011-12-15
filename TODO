@@ -1,20 +1,13 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */ 
 
 BUGS:
-	- Adding new students in CourseModify::bulk_add, doesn't add to markas-al-nour.org
+	- CourseModify: "students" is not deleted when clicking tab
 	- All teachers can grade all courses - only appropriate teachers should be able to grade
 	- 1000 crashes when not operating "properly"
 	
-Rare bugs:
-	- Default focus and button:
-		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
-			-> where is that a problem?
-	- B 110826: It's possible to click other tab while first starting up: re-activate the
-	  correct tab when getting "update" or "show"
-	- TaskList: sometimes when pressing "list", it takes twice to show everything
-	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
-	
 UserFriendly:
+	- CourseModify: Copy "description" and "contents" when creating new course
+	- Widen "students"-field so that all text fits in CourseGrade
 	- Delete CourseModify::add_students and put courses to add in PersonModify
 	- Make a dropbox when using _find
 	- Graying out fields not usable (PersonModify, CashAdd, ...)
@@ -46,7 +39,19 @@ NELBE:
 
 VERIFY:
 
-FIXED:
+Rare bugs:
+	- Default focus and button:
+		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
+			-> where is that a problem?
+	- B 110826: It's possible to click other tab while first starting up: re-activate the
+	  correct tab when getting "update" or "show"
+	- TaskList: sometimes when pressing "list", it takes twice to show everything
+	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
+	
+** FIXED **:
+	- UF111215: CourseModify: Add a "Edit user"-button
+	- B 111215: when changing name in CourseGrade:: "students" is not updated
+	- B 111209: Adding new students in CourseModify::bulk_add, doesn't add to markas-al-nour.org
 	- UF111208: Adding a new person only with one field, like CourseModify::bulk_add
 	- UF111208: students-listings include user-name and password
 	- B 111208: CourseModify::del_student - login-names pop up in "students"

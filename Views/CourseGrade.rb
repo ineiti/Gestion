@@ -94,8 +94,9 @@ class CourseGrade < View
       data['students'] = course[:students][( saved + 1 ) % course[:students].size]
       dputs 2, "Next student is #{data['students'].inspect}"
 
-      reply( "empty" ) +
+      reply( "empty", [:students] ) +
       update_grade( data ) +
+      reply( 'update', {:students => course[:students]} ) +
       reply( 'update', {:students => [data['students'][0]] } ) +
       reply( 'focus', :mean )
     end

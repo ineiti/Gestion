@@ -59,6 +59,8 @@ class PersonModify < View
   end
 
   def update( sid )
-    {:your_credit_due => @data_class.find_by_session_id( sid ).credit_due }
+    if person = @data_class.find_by_session_id( sid )
+      {:your_credit_due => person.credit_due }
+    end
   end
 end

@@ -43,7 +43,7 @@ class CourseModify < View
       gui_vbox :nogroup do
         show_block :content
         show_list :students
-        show_button :add_students, :bulk_add, :del_student
+        show_button :add_students, :bulk_add, :del_student, :edit_student
       end
       gui_window :students_win do
         show_list :students_add, "Entities.Persons.list_students"
@@ -107,6 +107,13 @@ class CourseModify < View
       course.students.delete( s)
     }
     update_students( course )
+  end
+  
+  def rpc_button_edit_student( sid, data )
+    dputs 0, "data is: #{data.inspect}"
+    reply( "switch_tab", :PersonModify ) +
+    View.PersonModify.rpc_show( sid ) +
+    View.PersonModify.rpc_find( sid, :login_name, data["students"][0] )
   end
 
   def rpc_button_new_student( sid, data )
