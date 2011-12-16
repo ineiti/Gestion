@@ -108,7 +108,7 @@ class CourseModify < View
     }
     update_students( course )
   end
-  
+
   def rpc_button_edit_student( sid, data )
     dputs 0, "data is: #{data.inspect}"
     reply( "switch_tab", :PersonModify ) +
@@ -128,7 +128,7 @@ class CourseModify < View
         end
       }
       dputs 3, "Students are now: #{course.students.inspect}"
-      update_students( course) + 
+      update_students( course) +
       reply( "window_hide" )
     end
   end
@@ -171,7 +171,16 @@ class CourseModify < View
     course = @data_class.find_by_name( name )
     if name =~ /_.+/
       if not course
+        # Search latest course of this type and copy description and contents
+        last_course = Entities.Courses.search_by_name("#{name.gsub( /_.*/, '' )}_.*").sort{|a,b|
+          a.name <=> b.name
+        }.last
         course = @data_class.create( {:name => name })
+        if last_course
+          dputs 2, "Found course #{last_course.name} and copying description and contents"
+        course.description = last_course.description
+        course.contents = last_course.contents
+        end
       end
     end
 
@@ -200,7 +209,7 @@ class CourseModify < View
       reply("empty", [:students])
     end
   end
-  
+
   def rpc_update( sid )
     reply( 'empty', [:students] ) +
     super( sid )

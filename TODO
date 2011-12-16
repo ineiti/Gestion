@@ -5,7 +5,6 @@ BUGS:
 	- 1000 crashes when not operating "properly"
 	
 UserFriendly:
-	- CourseModify: Copy "description" and "contents" when creating new course
 	- Widen "students"-field so that all text fits in CourseGrade
 	- Delete CourseModify::add_students and put courses to add in PersonModify
 	- Make a dropbox when using _find
@@ -48,6 +47,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- UF111216: CourseModify: Copy "description" and "contents" when creating new course
 	- B 111215: CourseModify: "students" is not deleted when clicking tab
 	- UF111215: CourseModify: Add a "Edit user"-button
 	- B 111215: when changing name in CourseGrade:: "students" is not updated
