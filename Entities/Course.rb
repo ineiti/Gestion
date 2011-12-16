@@ -52,7 +52,9 @@ class Courses < Entities
     if sid != nil
       user = Entities.Persons.find_by_session_id( sid )
       if not Permission.can( sid, "CourseGradeAll" )
-        ret = ret.select{|d| d[:teacher][0] == user.login_name }
+        ret = ret.select{|d| 
+          d[:teacher] and d[:teacher][0] == user.login_name 
+        }
       end
     end
     ret.collect{ |d| [ d[:course_id ], d[:name] ] }.sort{|a,b|
