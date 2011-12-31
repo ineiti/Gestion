@@ -7,8 +7,12 @@ ENTITY_BASE:
 	- PersonCourseModify has a person and a course entity chosen
 	- "sid" is replaced with "session", and has members that allow to
 	  access already chosen entities
+	  - Add class Session
+	  - move session-ids from "Permission" to here
 	- cleanup:
 		- arrays with strings coming from Frontend
+		- Cash* views have to be moved, as there is no "Cash"-Entity
+		- @data_class has to be replaced with something else
 
 BUGS:
 	- 1000 crashes when not operating "properly"
