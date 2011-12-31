@@ -1,4 +1,14 @@
-/* -*- shiftwidth: 4; softtabstop: 4 -*- */ 
+/* -*- shiftwidth: 4; softtabstop: 4 -*- */
+
+ENTITY_BASE:
+	- Have one tab with all Entities to chose from
+	- Other tabs with actions on each entity
+	- Recognize entities from View-name
+	- PersonCourseModify has a person and a course entity chosen
+	- "sid" is replaced with "session", and has members that allow to
+	  access already chosen entities
+	- cleanup:
+		- 
 
 BUGS:
 	- 1000 crashes when not operating "properly"
