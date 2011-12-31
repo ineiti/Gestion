@@ -27,9 +27,9 @@ class CourseGrade < View
     end
   end
   
-  def rpc_update( sid )
-    super( sid ) +
-    reply( "update", { :courses => Entities.Courses.list_courses(sid) } )
+  def rpc_update( session )
+    super( session ) +
+    reply( "update", { :courses => Entities.Courses.list_courses(session) } )
   end
 
   def update_grade( d )
@@ -47,7 +47,7 @@ class CourseGrade < View
     ret
   end
 
-  def rpc_list_choice( sid, name, args )
+  def rpc_list_choice( session, name, args )
     dputs 3, "rpc_list_choice with #{name} - #{args.inspect}"
     ret = reply('empty')
     case name
@@ -72,7 +72,7 @@ class CourseGrade < View
     ret
   end
 
-  def rpc_button_save( sid, data )
+  def rpc_button_save( session, data )
     dputs 3, "Data is #{data.inspect}"
     course = @data_class.find_by_course_id( data['courses'][0])
     student = Entities.Persons.find_by_login_name( data['students'][0])

@@ -8,7 +8,7 @@ ENTITY_BASE:
 	- "sid" is replaced with "session", and has members that allow to
 	  access already chosen entities
 	- cleanup:
-		- 
+		- arrays with strings coming from Frontend
 
 BUGS:
 	- 1000 crashes when not operating "properly"

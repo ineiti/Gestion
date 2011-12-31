@@ -31,7 +31,7 @@ class TaskList < View
     from.upto( to ).to_a
   end
   
-  def rpc_button_list( sid, data )
+  def rpc_button_list( session, data )
     dputs 3, data.inspect
     worker = Entities.Workers.find_full_name( data["person"][0] )
     dputs 3, worker.inspect

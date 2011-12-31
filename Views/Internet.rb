@@ -10,7 +10,7 @@ class Internet < View
     @visible = false
   end
 
-  def rpc_show( sid )
-    super( sid ) + [{ :cmd => "update", :data => update( sid )}]
+  def rpc_show( session )
+    super( session ) + [{ :cmd => "update", :data => update( session )}]
   end
 end

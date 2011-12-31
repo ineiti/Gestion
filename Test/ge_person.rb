@@ -34,13 +34,13 @@ class TC_Person < Test::Unit::TestCase
     assert_equal @surf, Entities.Persons.find_by_login_name( "surf" )
     assert_equal @admin, Entities.Persons.find_by_login_name( "admin" )
     View.Welcome.add_session( @surf )
-    sid = View.Welcome.add_session( @josue )
+    session = View.Welcome.add_session( @josue )
 
     surf_credit = @surf.credit.to_i
     josue_due = @josue.credit_due.to_i
     dputs 0, "surf_credit: #{surf_credit} - josue_due: #{josue_due}"
     # Josue puts 500 on "surf"s account
-    View.CashAdd.rpc_button_add_cash( sid, {'person_id' => 2, 'login_name' => 'surf',
+    View.CashAdd.rpc_button_add_cash( session, {'person_id' => 2, 'login_name' => 'surf',
       'credit_add' => 500 } )
     assert_equal 500, @surf.credit.to_i - surf_credit
     assert_equal 500, @josue.credit_due.to_i - josue_due

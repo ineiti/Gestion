@@ -21,13 +21,13 @@ class TaskEdit < View
     end
   end
   
-  def rpc_update( sid )
+  def rpc_update( session )
     vtlp_update_list
   end
   
-  def rpc_button_save( sid, data )
+  def rpc_button_save( session, data )
     if data['date']
-      super( sid, data )
+      super( session, data )
     end
   end
 end

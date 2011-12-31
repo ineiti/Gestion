@@ -61,8 +61,8 @@ class CourseModify < View
     end
   end
 
-  def rpc_button_delete( sid, data )
-    dputs 3, "sid, data: #{[sid, data.inspect].join(':')}"
+  def rpc_button_delete( session, data )
+    dputs 3, "session, data: #{[session, data.inspect].join(':')}"
     course = @data_class.find_by_course_id( data['courses'][0])
     dputs 3, "Got #{course.name} - #{course.inspect}"
     if course
@@ -74,7 +74,7 @@ class CourseModify < View
     reply( "update", { :courses => @data_class.list_courses } )
   end
 
-  def rpc_button_save( sid, data )
+  def rpc_button_save( session, data )
     course = @data_class.find_by_name( data['name'] )
     if course
       # BUG: they're already saved, don't save it again
@@ -83,14 +83,14 @@ class CourseModify < View
     end
   end
 
-  def rpc_button_export( sid, data )
+  def rpc_button_export( session, data )
   end
 
-  def rpc_button_add_students( sid, data )
+  def rpc_button_add_students( session, data )
     reply( "window_show", "students_win" )
   end
 
-  def rpc_button_bulk_add( sid, data )
+  def rpc_button_bulk_add( session, data )
     if data['name']
       reply( "window_show", "students_bulk" )
     end
@@ -101,7 +101,7 @@ class CourseModify < View
     reply( "update", { :students => course.list_students } )
   end
 
-  def rpc_button_del_student( sid, data )
+  def rpc_button_del_student( session, data )
     course = @data_class.find_by_name( data['name'] )
     data['students'].each{|s|
       course.students.delete( s)
@@ -109,14 +109,14 @@ class CourseModify < View
     update_students( course )
   end
 
-  def rpc_button_edit_student( sid, data )
+  def rpc_button_edit_student( session, data )
     dputs 0, "data is: #{data.inspect}"
     reply( "switch_tab", :PersonModify ) +
-    View.PersonModify.rpc_show( sid ) +
-    View.PersonModify.rpc_find( sid, :login_name, data["students"][0] )
+    View.PersonModify.rpc_show( session ) +
+    View.PersonModify.rpc_find( session, :login_name, data["students"][0] )
   end
 
-  def rpc_button_new_student( sid, data )
+  def rpc_button_new_student( session, data )
     course = @data_class.find_by_name( data['name'] )
     if course
       if not course.students.class == Array
@@ -138,7 +138,7 @@ class CourseModify < View
   # As the creation of a student can take quite some time (10s of seconds),
   # only one student is created, then the list updated, and a new request is
   # automatically generated.
-  def rpc_button_bulk_students( sid, data )
+  def rpc_button_bulk_students( session, data )
     dputs 3, data.inspect
     course = @data_class.find_by_name( data['name'] )
     users = []
@@ -160,12 +160,12 @@ class CourseModify < View
     end
   end
 
-  def rpc_button_add_course( sid, data)
+  def rpc_button_add_course( session, data)
     reply( "window_show", "course" )
   end
 
-  def rpc_button_new_course( sid, data )
-    dputs 3, "sid: #{sid} - data: #{data.inspect}"
+  def rpc_button_new_course( session, data )
+    dputs 3, "session: #{session} - data: #{data.inspect}"
 
     name = "#{data['name_base'][0]}_#{data['name_date']}"
     course = @data_class.find_by_name( name )
@@ -191,11 +191,11 @@ class CourseModify < View
     reply( "window_hide" )
   end
 
-  def rpc_button_close( sid, data )
+  def rpc_button_close( session, data )
     reply( "window_hide", "*" )
   end
 
-  def rpc_list_choice( sid, name, *args )
+  def rpc_list_choice( session, name, *args )
     #Calling rpc_list_choice with [["courses", {"courses"=>["base_25"], "name_base"=>["base"]}]]
     dputs 3, "rpc_list_choice with #{name} - #{args.inspect}"
     if name == "courses" and args[0]['courses'].length > 0
@@ -210,9 +210,9 @@ class CourseModify < View
     end
   end
 
-  def rpc_update( sid )
+  def rpc_update( session )
     reply( 'empty', [:students] ) +
-    super( sid )
+    super( session )
   end
 
 end

@@ -60,7 +60,7 @@ class CourseDiploma < View
     @default_printer = @default_printer ? "-P #{@default_printer}" : ""
   end
 
-  def rpc_list_choice( sid, name, args )
+  def rpc_list_choice( session, name, args )
     dputs 3, "rpc_list_choice with #{name} - #{args.inspect}"
     ret = reply('empty', ['grade'])
     case name
@@ -109,7 +109,7 @@ class CourseDiploma < View
     end
   end
 
-  def rpc_button_do_grades( sid, args )
+  def rpc_button_do_grades( session, args )
     course_id = args['courses'][0]
     course = @data_class.find_by_course_id(course_id)
     if not course or course.export_check
@@ -143,15 +143,15 @@ class CourseDiploma < View
       $new_pdfs += [ Dir.glob( course.diploma_dir + "/*odt" ) ]
       if $new_pdfs.length > 0
         $create_pdfs.run
-        rpc_list_choice( sid, "courses", "courses" => course_id.to_s ) +
+        rpc_list_choice( session, "courses", "courses" => course_id.to_s ) +
         reply( "auto_update", "-5" )
       end
     end
   end
   
-  def rpc_update_with_values( sid, args )
+  def rpc_update_with_values( session, args )
     course_id = args['courses'][0]
-    ret = rpc_list_choice( sid, "courses", "courses" => course_id.to_s )
+    ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
     course = Entities.Courses.find_by_course_id( course_id )
     if course.get_pdfs.index( "000-4pp.pdf" )
       ret += reply( :auto_update, 0 )
@@ -159,11 +159,11 @@ class CourseDiploma < View
     return ret
   end
 
-  def rpc_button_close( sid, args )
+  def rpc_button_close( session, args )
     reply( "window_hide" )
   end
   
-  def rpc_button_print( sid, args )
+  def rpc_button_print( session, args )
     if args['grade'].length > 0
       course_id = args['courses'][0]
       course = @data_class.find_by_course_id(course_id)

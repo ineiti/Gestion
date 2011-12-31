@@ -130,18 +130,18 @@ class Persons < Entities
     Entities.Persons.create( [] )
   end
 
-  def update( sid )
-    super( sid ).merge( { :credit_due => find_by_session_id(sid).get_credit } )
+  def update( session )
+    super( session ).merge( { :credit_due => find_by_session_id(session).get_credit } )
   end
 
   # Adds cash to a persons account. The hash "data" should contain the following
   # fields:
   # - credit_add : how much CFA to add
   # - person_id : the id of the person to receive the credit
-  def add_cash( sid, data )
+  def add_cash( session, data )
     dputs 5, "data is #{data.inspect}"
     if data['credit_add'] and data['person_id']
-      actor = find_by_session_id( sid )
+      actor = find_by_session_id( session )
       client = find_by_person_id( data['person_id'].to_s )
       if client
         actor.add_credit( client, data['credit_add'])

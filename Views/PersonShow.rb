@@ -19,9 +19,9 @@ class PersonShow < View
     dputs 5, "#{@layout.inspect}"
   end
   
-  def rpc_button( sid, name, data )
+  def rpc_button( session, name, data )
     dputs 0, "Pressed button #{name} with #{data.inspect}"
-    person = get_entity( sid )
+    person = get_entity( session )
     case name
       when "change_password"
       person.password = data['new_password']
@@ -33,7 +33,7 @@ class PersonShow < View
     return nil
   end
   
-  def rpc_show( sid )
-    super( sid ) + [ { :cmd => "update", :data => update( sid ) } ]
+  def rpc_show( session )
+    super( session ) + [ { :cmd => "update", :data => update( session ) } ]
   end
 end

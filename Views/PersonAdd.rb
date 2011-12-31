@@ -21,7 +21,7 @@ class PersonAdd < View
     end    
   end
   
-  def rpc_button_add_user( sid, data )
+  def rpc_button_add_user( session, data )
     data.to_sym!
     dputs 0, "Pressed button accept with #{data.inspect}"
     if data[:login_prop]
@@ -34,16 +34,16 @@ class PersonAdd < View
     end
   end
   
-  def rpc_button_OK( sid, data )
+  def rpc_button_OK( session, data )
     reply( 'empty') +
     reply( 'window_hide')
   end
   
-  def rpc_update( sid )
+  def rpc_update( session )
     reply( 'empty' )
   end
   
-  def rpc_callback_login( sid, data )
+  def rpc_callback_login( session, data )
     dputs 3, "Got values: #{data.inspect}"
     first_name = data['first_name'] || ""
     if first_name.length > 0

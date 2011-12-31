@@ -20,11 +20,11 @@ class TaskWorker < View
   end
   
   # Standard search-field action to take
-  def rpc_find( sid, field, data )
+  def rpc_find( session, field, data )
     rep = Entities.Persons.find( field, data )
     if not rep
       rep = { "#{field}" => data }
     end
-    reply( 'update', rep ) + rpc_update( sid )
+    reply( 'update', rep ) + rpc_update( session )
   end
 end

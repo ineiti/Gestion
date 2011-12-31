@@ -47,11 +47,11 @@ class Courses < Entities
     @diploma_dir ||= "Diplomas"
   end
 
-  def list_courses(sid=nil)
+  def list_courses(session=nil)
     ret = @data.values
-    if sid != nil
-      user = Entities.Persons.find_by_session_id( sid )
-      if not Permission.can( sid, "CourseGradeAll" )
+    if session != nil
+      user = Entities.Persons.find_by_session_id( session )
+      if not Permission.can( session, "CourseGradeAll" )
         ret = ret.select{|d| 
           d[:teacher] and d[:teacher][0] == user.login_name 
         }

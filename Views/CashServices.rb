@@ -48,22 +48,22 @@ class CashServices < View
   
   # Adds the cash to the destination account, and puts the same amount into
   # the AfriCompta-framework
-  def rpc_button_add_cash( sid, data )
+  def rpc_button_add_cash( session, data )
     dputs 5, "data is #{data.inspect}"
     services_total = calc_total( data )
     dputs 5, "which amounts to #{services_total} CFA"
-    actor = @data_class.find_by_session_id( sid )
+    actor = @data_class.find_by_session_id( session )
     data.delete( "services_total" )
     data.delete( "credit_due" )
     actor.move_cash( services_total, data.inspect )
-    reply( 'empty', nil ) + rpc_update( sid )
+    reply( 'empty', nil ) + rpc_update( session )
   end
   
-  def rpc_update( sid )
-    reply( 'update', { :credit_due => @data_class.find_by_session_id( sid ).credit_due } )
+  def rpc_update( session )
+    reply( 'update', { :credit_due => @data_class.find_by_session_id( session ).credit_due } )
   end
   
-  def rpc_update_with_values( sid, values = nil )
+  def rpc_update_with_values( session, values = nil )
     dputs 3, "Got values: #{values.inspect}"
     reply( 'update', { :services_total => calc_total( values ) } )
   end

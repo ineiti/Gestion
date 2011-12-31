@@ -2,13 +2,13 @@ class Welcome < View
   # Adds a session-id to a person and the appropriate permissions to the Permission-class
   def add_session( person )
     person.session_id = rand
-    dputs 2, "Adding sid #{person.session_id} with #{person.permissions}"
+    dputs 2, "Adding session #{person.session_id} with #{person.permissions}"
     Permission.session_add( person.session_id, person.permissions )
     person.session_id
   end
   
   # Overwrite the standard rpc_show to speed up testing...
-  def rpc_show(sid)
+  def rpc_show(session)
     if $config[:autologin]
       person = Entities.Persons.find_by_login_name( $config[:autologin] )
       dputs 3, "Found login #{person.data.inspect}" if person
@@ -25,7 +25,7 @@ class Welcome < View
   end
 
   # On pressing of the login-button, we search for the user and check the password
-  def rpc_button_login( sid, args )
+  def rpc_button_login( session, args )
     dputs 3, "args is #{args.inspect}"
     login_name, password = args["username"], args["password"]
     person = Entities.Persons.find_by_login_name( login_name )
@@ -44,8 +44,8 @@ class Welcome < View
   end
 
   # On logout
-  def rpc_button_logout( sid )
-    Permission.session_remove( sid )
-    return super.rpc_show( sid )
+  def rpc_button_logout( session )
+    Permission.session_remove( session )
+    return super.rpc_show( session )
   end
 end

@@ -36,28 +36,28 @@ class CashAdd < View
     end
   end
   
-  def rpc_find( sid, field, data )
-    dputs 5, "Got called with #{[sid, field, data].inspect}"
+  def rpc_find( session, field, data )
+    dputs 5, "Got called with #{[session, field, data].inspect}"
     rep = @data_class.find_by( field, data )
     if rep
-      rpc_update( sid, rep )
+      rpc_update( session, rep )
     else
-      rpc_update( sid ) + reply( 'update', { "#{field}" => data } )
+      rpc_update( session ) + reply( 'update', { "#{field}" => data } )
     end
   end
   
   # Adds the cash to the destination account, and puts the same amount into
   # the AfriCompta-framework
-  def rpc_button_add_cash( sid, data )
-    if client = @data_class.add_cash( sid, data ) 
-      list_payments( sid, true )
-      return rpc_update( sid, client )
+  def rpc_button_add_cash( session, data )
+    if client = @data_class.add_cash( session, data ) 
+      list_payments( session, true )
+      return rpc_update( session, client )
     else
-      rpc_update( sid )
+      rpc_update( session )
     end
   end
   
-  def rpc_button_add_service( sid, data )
+  def rpc_button_add_service( session, data )
     ret = []
     
     dputs 3, "#{data.inspect}"
@@ -73,7 +73,7 @@ class CashAdd < View
           :cash => service.price.to_i, :date => Time.now.to_i, :client => client.id } )
           client.set_entry( :credit, ( client.credit.to_i - service.price.to_i ).to_s,
           "Paid for service #{service.name}:#{service.price}" )
-          ret = rpc_update( sid, client )
+          ret = rpc_update( session, client )
         else
           dputs 3, "Nope, not rich enough"
         end
@@ -83,8 +83,8 @@ class CashAdd < View
     ret
   end
   
-  def rpc_update( sid, client = nil )
-    person = @data_class.find_by_session_id( sid )
+  def rpc_update( session, client = nil )
+    person = @data_class.find_by_session_id( session )
     rep = reply( 'empty', %w( payments ) ) +
     reply( 'update', { :credit_due => person.credit_due } )
     if client
@@ -94,12 +94,12 @@ class CashAdd < View
       data.delete(:credit_due )
       rep += reply( 'update', data )
     end
-    rep += reply( 'update', { :payments => list_payments( sid ) } )
+    rep += reply( 'update', { :payments => list_payments( session ) } )
     rep
   end
   
-  def list_payments( sid, force = false )
-    person = @data_class.find_by_session_id( sid )
+  def list_payments( session, force = false )
+    person = @data_class.find_by_session_id( session )
     if not @cache_payments[person.person_id] or force
       @cache_payments[person.person_id] = 
       Entities.LogActions.log_list( {:data_field=>"credit$",:data_class=>"Person"} ).select{|s|
@@ -117,12 +117,12 @@ class CashAdd < View
     @cache_payments[person.person_id]
   end
   
-  def rpc_list_choice( sid, name, *args )
+  def rpc_list_choice( session, name, *args )
     client = nil
     dputs 5, args.inspect
     if args[0]['payments']
       client = Entities.Persons.find_by_login_name( args[0]['payments'][0].sub( /.* /, '') )
     end
-    rpc_update( sid, client )
+    rpc_update( session, client )
   end
 end
