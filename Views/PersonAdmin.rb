@@ -91,6 +91,6 @@ class PersonAdmin < View
   end
 
   def update( session )
-    {:your_credit_due => @data_class.find_by_session_id( session ).credit_due }
+    {:your_credit_due => session.Person.credit_due }
   end
 end

@@ -21,7 +21,7 @@ class PersonShow < View
   
   def rpc_button( session, name, data )
     dputs 0, "Pressed button #{name} with #{data.inspect}"
-    person = get_entity( session )
+    person = session.Person
     case name
       when "change_password"
       person.password = data['new_password']

@@ -50,8 +50,8 @@ class Courses < Entities
   def list_courses(session=nil)
     ret = @data.values
     if session != nil
-      user = Entities.Persons.find_by_session_id( session )
-      if not Permission.can( session, "CourseGradeAll" )
+      user = session.Person
+      if not session.can_view( "CourseGradeAll" )
         ret = ret.select{|d| 
           d[:teacher] and d[:teacher][0] == user.login_name 
         }

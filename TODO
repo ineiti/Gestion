@@ -4,11 +4,8 @@ ENTITY_BASE:
 	- Have one tab with all Entities to chose from
 	- Other tabs with actions on each entity
 	- Recognize entities from View-name
-	- PersonCourseModify has a person and a course entity chosen
-	- "sid" is replaced with "session", and has members that allow to
-	  access already chosen entities
-	  - Add class Session
-	  - move session-ids from "Permission" to here
+		- PersonCourseModify has a person and a course entity chosen, available
+		 through session.chosen.Person and session.chosen.Course
 	- cleanup:
 		- arrays with strings coming from Frontend
 		- Cash* views have to be moved, as there is no "Cash"-Entity
@@ -60,6 +57,12 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- EB120102: "sid" is replaced with "session", and has members that allow to
+	    access already chosen entities
+	    - Add class Session
+	    - move session-ids from "Permission" to here
+	- B 120102: Are all necessary views shown? - yes
+	- B 120102: PersonShow doesn't work anymore - fixed
 	- B 111216: CourseGrade: all teachers can grade all courses - only appropriate teachers should be able to grade
 	- UF111216: CourseModify: Copy "description" and "contents" when creating new course
 	- B 111215: CourseModify: "students" is not deleted when clicking tab

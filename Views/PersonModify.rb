@@ -59,7 +59,7 @@ class PersonModify < View
   end
 
   def update( session )
-    if person = @data_class.find_by_session_id( session )
+    if person = session.Person
       {:your_credit_due => person.credit_due }
     end
   end

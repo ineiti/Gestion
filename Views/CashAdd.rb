@@ -84,7 +84,7 @@ class CashAdd < View
   end
   
   def rpc_update( session, client = nil )
-    person = @data_class.find_by_session_id( session )
+    person = session.Person
     rep = reply( 'empty', %w( payments ) ) +
     reply( 'update', { :credit_due => person.credit_due } )
     if client
@@ -99,7 +99,7 @@ class CashAdd < View
   end
   
   def list_payments( session, force = false )
-    person = @data_class.find_by_session_id( session )
+    person = session.Person
     if not @cache_payments[person.person_id] or force
       @cache_payments[person.person_id] = 
       Entities.LogActions.log_list( {:data_field=>"credit$",:data_class=>"Person"} ).select{|s|
