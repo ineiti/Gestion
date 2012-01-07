@@ -131,7 +131,7 @@ class Persons < Entities
   end
 
   def update( session )
-    super( session ).merge( { :credit_due => session.Person.get_credit } )
+    super( session ).merge( { :credit_due => session.owner.get_credit } )
   end
 
   # Adds cash to a persons account. The hash "data" should contain the following
@@ -141,7 +141,7 @@ class Persons < Entities
   def add_cash( session, data )
     dputs 5, "data is #{data.inspect}"
     if data['credit_add'] and data['person_id']
-      actor = session.Person
+      actor = session.owner
       client = find_by_person_id( data['person_id'].to_s )
       if client
         actor.add_credit( client, data['credit_add'])

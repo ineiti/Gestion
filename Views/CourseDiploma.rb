@@ -111,7 +111,7 @@ class CourseDiploma < View
 
   def rpc_button_do_grades( session, args )
     course_id = args['courses'][0]
-    course = @data_class.find_by_course_id(course_id)
+    course = Courses.find_by_course_id(course_id)
     if not course or course.export_check
       if course
         return reply( "window_show", :missing_data ) +
@@ -166,7 +166,7 @@ class CourseDiploma < View
   def rpc_button_print( session, args )
     if args['grade'].length > 0
       course_id = args['courses'][0]
-      course = @data_class.find_by_course_id(course_id)
+      course = Courses.find_by_course_id(course_id)
       dputs 2, "Printing #{args['grade'].inspect}"
       args['grade'].each{|g|
         `lpr #{@default_printer} #{course.diploma_dir}/#{g}`

@@ -45,7 +45,7 @@ class PersonAdmin < View
 
   def rpc_button( session, name, data )
     dputs 0, "Pressed button #{name} with #{data.inspect}"
-    person = @data_class.find_by_person_id( data['person_id'] )
+    person = Persons.find_by_person_id( data['person_id'] )
     rep = reply( 'empty' )
     if person
       rep += reply( 'empty', [:internet_none])
@@ -53,7 +53,7 @@ class PersonAdmin < View
       when "change_password"
         person.password = data['new_password']
       when "add_credit"
-        @data_class.add_cash( session, data )
+        Persons.add_cash( session, data )
         rep = reply( 'update', {:credit_add => ""})
       when "add_block"
         if not person.internet_none
@@ -72,9 +72,9 @@ class PersonAdmin < View
         end
       when "save"
         # "internet_none" only reflects chosen entries, not the available ones per se!
-        #       rep += reply( 'update', @data_class.save_data( data ) )
+        #       rep += reply( 'update', Persons.save_data( data ) )
         data.delete("internet_none")
-        @data_class.save_data( data )
+        Persons.save_data( data )
       end
       rep += reply( 'update', get_form_data( person ) )
     end
@@ -82,7 +82,7 @@ class PersonAdmin < View
   end
 
   def rpc_find( session, field, data )
-    rep = @data_class.find( field, data )
+    rep = Persons.find( field, data )
     if not rep
       rep = { "#{field}" => data }
     end
@@ -91,6 +91,6 @@ class PersonAdmin < View
   end
 
   def update( session )
-    {:your_credit_due => session.Person.credit_due }
+    {:your_credit_due => session.owner.credit_due }
   end
 end

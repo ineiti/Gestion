@@ -52,7 +52,7 @@ class CashServices < View
     dputs 5, "data is #{data.inspect}"
     services_total = calc_total( data )
     dputs 5, "which amounts to #{services_total} CFA"
-    actor = session.Person
+    actor = session.owner
     data.delete( "services_total" )
     data.delete( "credit_due" )
     actor.move_cash( services_total, data.inspect )
@@ -60,7 +60,7 @@ class CashServices < View
   end
   
   def rpc_update( session )
-    reply( 'update', { :credit_due => session.Person.credit_due } )
+    reply( 'update', { :credit_due => session.owner.credit_due } )
   end
   
   def rpc_update_with_values( session, values = nil )

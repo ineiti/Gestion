@@ -53,7 +53,7 @@ class CourseGrade < View
     case name
     when "courses"
       course_id = args['courses'][0]
-      course = @data_class.find_by_course_id(course_id)
+      course = Courses.find_by_course_id(course_id)
       if course
         dputs 3, "replying"
         ret = reply("empty", [:students]) +
@@ -74,7 +74,7 @@ class CourseGrade < View
 
   def rpc_button_save( session, data )
     dputs 3, "Data is #{data.inspect}"
-    course = @data_class.find_by_course_id( data['courses'][0])
+    course = Courses.find_by_course_id( data['courses'][0])
     student = Entities.Persons.find_by_login_name( data['students'][0])
     if course and student
       Entities.Grades.save_data( {:course_id => course.course_id,

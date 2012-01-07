@@ -37,7 +37,7 @@ class TaskList < View
     dputs 3, worker.inspect
     client = Entities.Clients.find_by_name( data["client"][0] )
     dputs 3, client.inspect
-    list = @data_class.list_task_month( worker, data["year"][0], data["month"][0], client)
+    list = Tasks.list_task_month( worker, data["year"][0], data["month"][0], client)
     dputs 3, list.inspect
     tasks = ""
     hours = 0.0

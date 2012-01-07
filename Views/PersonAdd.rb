@@ -26,7 +26,7 @@ class PersonAdd < View
     dputs 0, "Pressed button accept with #{data.inspect}"
     if data[:login_prop]
       data[:login_name] = data[:login_prop]
-      person = @data_class.create( data )
+      person = Persons.create( data )
       reply( 'update', get_form_data( person ) ) +
       reply( 'window_show', 'new_user') +
       reply( 'update', {:new_login => person.login_name, :new_pass => person.password_plain,
@@ -47,7 +47,7 @@ class PersonAdd < View
     dputs 3, "Got values: #{data.inspect}"
     first_name = data['first_name'] || ""
     if first_name.length > 0
-      reply( "update", {:login_prop => @data_class.create_login_name( first_name )})
+      reply( "update", {:login_prop => Persons.create_login_name( first_name )})
     end
   end
 end

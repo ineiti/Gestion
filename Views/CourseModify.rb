@@ -63,7 +63,7 @@ class CourseModify < View
 
   def rpc_button_delete( session, data )
     dputs 3, "session, data: #{[session, data.inspect].join(':')}"
-    course = @data_class.find_by_course_id( data['courses'][0])
+    course = Courses.find_by_course_id( data['courses'][0])
     dputs 3, "Got #{course.name} - #{course.inspect}"
     if course
       dputs 2, "Deleting entry #{course}"
@@ -71,11 +71,11 @@ class CourseModify < View
     end
 
     reply( "empty", [:courses] ) +
-    reply( "update", { :courses => @data_class.list_courses } )
+    reply( "update", { :courses => Courses.list_courses } )
   end
 
   def rpc_button_save( session, data )
-    course = @data_class.find_by_name( data['name'] )
+    course = Courses.find_by_name( data['name'] )
     if course
       # BUG: they're already saved, don't save it again
       data.delete( 'students' )
@@ -102,7 +102,7 @@ class CourseModify < View
   end
 
   def rpc_button_del_student( session, data )
-    course = @data_class.find_by_name( data['name'] )
+    course = Courses.find_by_name( data['name'] )
     data['students'].each{|s|
       course.students.delete( s)
     }
@@ -117,7 +117,7 @@ class CourseModify < View
   end
 
   def rpc_button_new_student( session, data )
-    course = @data_class.find_by_name( data['name'] )
+    course = Courses.find_by_name( data['name'] )
     if course
       if not course.students.class == Array
         course.students = []
@@ -140,7 +140,7 @@ class CourseModify < View
   # automatically generated.
   def rpc_button_bulk_students( session, data )
     dputs 3, data.inspect
-    course = @data_class.find_by_name( data['name'] )
+    course = Courses.find_by_name( data['name'] )
     users = []
     if data['names'] and users = data['names'].split("\n")
       person = Entities.Persons.create( {:first_name => users.shift,
@@ -168,14 +168,14 @@ class CourseModify < View
     dputs 3, "session: #{session} - data: #{data.inspect}"
 
     name = "#{data['name_base'][0]}_#{data['name_date']}"
-    course = @data_class.find_by_name( name )
+    course = Courses.find_by_name( name )
     if name =~ /_.+/
       if not course
         # Search latest course of this type and copy description and contents
         last_course = Entities.Courses.search_by_name("#{name.gsub( /_.*/, '' )}_.*").sort{|a,b|
           a.name <=> b.name
         }.last
-        course = @data_class.create( {:name => name })
+        course = Courses.create( {:name => name })
         if last_course
           dputs 2, "Found course #{last_course.name} and copying description and contents"
         course.description = last_course.description
@@ -201,7 +201,7 @@ class CourseModify < View
     if name == "courses" and args[0]['courses'].length > 0
       course_id = args[0]['courses'][0]
       dputs 3, "replying for course_id #{course_id}"
-      course = @data_class.find_by_course_id(course_id)
+      course = Courses.find_by_course_id(course_id)
       reply("empty", [:students]) +
       reply("update", course.to_hash ) +
       reply("update", {:courses => [course_id] } )

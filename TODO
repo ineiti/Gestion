@@ -9,12 +9,12 @@ ENTITY_BASE:
 	- cleanup:
 		- arrays with strings coming from Frontend
 		- Cash* views have to be moved, as there is no "Cash"-Entity
-		- @data_class has to be replaced with something else
 
 BUGS:
 	- 1000 crashes when not operating "properly"
 	
 UserFriendly:
+	- Replace text-field in info-boxes with HTML-field 
 	- Widen "students"-field so that all text fits in CourseGrade
 	- Delete CourseModify::add_students and put courses to add in PersonModify
 	- Make a dropbox when using _find
@@ -57,6 +57,10 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- EB120107: @data_class has to be kept for general use and not for classes that
+		   know their Entity
+			- get_entity is used for Person-class only anyway, so let's drop it
+			- Session gets new instance variable "owner" instead of Person
 	- EB120102: "sid" is replaced with "session", and has members that allow to
 	    access already chosen entities
 	    - Add class Session

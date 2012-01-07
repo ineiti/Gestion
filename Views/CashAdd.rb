@@ -38,7 +38,7 @@ class CashAdd < View
   
   def rpc_find( session, field, data )
     dputs 5, "Got called with #{[session, field, data].inspect}"
-    rep = @data_class.find_by( field, data )
+    rep = Persons.find_by( field, data )
     if rep
       rpc_update( session, rep )
     else
@@ -49,7 +49,7 @@ class CashAdd < View
   # Adds the cash to the destination account, and puts the same amount into
   # the AfriCompta-framework
   def rpc_button_add_cash( session, data )
-    if client = @data_class.add_cash( session, data ) 
+    if client = Persons.add_cash( session, data ) 
       list_payments( session, true )
       return rpc_update( session, client )
     else
@@ -61,7 +61,7 @@ class CashAdd < View
     ret = []
     
     dputs 3, "#{data.inspect}"
-    client = @data_class.find_by_person_id( data['person_id'].to_s )
+    client = Persons.find_by_person_id( data['person_id'].to_s )
     service = Entities.Services.find_by_name( data['service'][0].to_s )
     dputs 3, "#{client.inspect} wants to join #{service.inspect}"
     if client and service
@@ -84,7 +84,7 @@ class CashAdd < View
   end
   
   def rpc_update( session, client = nil )
-    person = session.Person
+    person = session.owner
     rep = reply( 'empty', %w( payments ) ) +
     reply( 'update', { :credit_due => person.credit_due } )
     if client
@@ -99,7 +99,7 @@ class CashAdd < View
   end
   
   def list_payments( session, force = false )
-    person = session.Person
+    person = session.owner
     if not @cache_payments[person.person_id] or force
       @cache_payments[person.person_id] = 
       Entities.LogActions.log_list( {:data_field=>"credit$",:data_class=>"Person"} ).select{|s|
