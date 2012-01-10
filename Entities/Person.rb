@@ -143,6 +143,7 @@ class Persons < Entities
     if data['credit_add'] and data['person_id']
       actor = session.owner
       client = find_by_person_id( data['person_id'].to_s )
+      dputs 3, "Adding cash to #{client.full_name} from #{actor.full_name}"
       if client
         actor.add_credit( client, data['credit_add'])
       end
