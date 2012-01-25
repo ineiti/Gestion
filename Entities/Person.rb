@@ -127,6 +127,8 @@ class Persons < Entities
     if defined? @cmd_after_new
       dputs 0, "Going to call #{@cmd_after_new}"
       %x[ #{@cmd_after_new} #{person.login_name} #{person.password_plain} ]
+    else
+      dputs 0, "Not calling cmd_after_new"
     end
 
     return person
