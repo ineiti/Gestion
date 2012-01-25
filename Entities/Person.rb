@@ -125,6 +125,7 @@ class Persons < Entities
     person.password = person.password_plain
     
     if defined? @cmd_after_new
+      dputs 0, "Going to call #{@cmd_after_new}"
       %x[ #{@cmd_after_new} #{person.login_name} #{person.password_plain} ]
     end
 
