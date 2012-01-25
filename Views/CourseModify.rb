@@ -147,9 +147,6 @@ class CourseModify < View
         :permissions => %w( student ), :town => @town, :country => @country })
       person.email = "#{person.login_name}@ndjair.net"
       course.students.push( person.login_name )
-      if defined? @cmd_after_new
-        %x[ #{@cmd_after_new} #{person.login_name} #{person.password_plain} ]
-      end
     end
     if users.length > 0
       reply( "update", { :names => users.join("\n") } ) +
