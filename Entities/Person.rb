@@ -118,8 +118,10 @@ class Persons < Entities
     d[:login_name] = find_empty_login_name( d[:login_name] )
     d[:person_id] = nil
     dputs 1, "Creating #{d.inspect}"
-
+    
+    dputs 0, "before super"
     person = super( d )
+    dputs 0, "after super"
 
     person.password_plain = d.has_key?( :password ) ? d[:password] : rand( 10000 ).to_s.rjust(4,"0")
     person.password = person.password_plain
