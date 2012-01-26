@@ -119,18 +119,14 @@ class Persons < Entities
     d[:person_id] = nil
     dputs 1, "Creating #{d.inspect}"
     
-    dputs 0, "before super"
     person = super( d )
-    dputs 0, "after super"
 
     person.password_plain = d.has_key?( :password ) ? d[:password] : rand( 10000 ).to_s.rjust(4,"0")
     person.password = person.password_plain
     
     if defined? @cmd_after_new
-      dputs 0, "Going to call #{@cmd_after_new}"
+      dputs 2, "Going to call #{@cmd_after_new}"
       %x[ #{@cmd_after_new} #{person.login_name} #{person.password_plain} ]
-    else
-      dputs 0, "Not calling cmd_after_new"
     end
 
     return person
