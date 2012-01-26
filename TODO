@@ -1,5 +1,11 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
+AfriCompta-reports:
+	- Start with MySQL-StorageType
+	- Add Account and Movement
+	- Synchronize with AfriCompta
+	- Define reports
+
 ENTITY_BASE:
 	- Have one tab with all Entities to chose from
 	- Other tabs with actions on each entity
