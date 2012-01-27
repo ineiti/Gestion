@@ -1,0 +1,11 @@
+#!/bin/bash
+
+COMPTA_DB=/Users/ineiti/.camping.db
+
+sqlite3 sql.db 'DROP TABLE "stsql_accounts";'
+sqlite3 $COMPTA_DB ".dump compta_accounts" | sed -e 's/"compta_accounts"/"stsql_accounts"/' | 
+sed -e 's/^\(CREATE TABLE.*\)"id"\(.*\)"account_id"/\1"account_id"\2"parent_id"/' | sqlite3 sql.db
+
+sqlite3 sql.db 'DROP TABLE "stsql_movements";'
+sqlite3 $COMPTA_DB ".dump compta_movements" | sed -e 's/"compta_movements"/"stsql_movements"/' | 
+sed -e 's/^\(CREATE TABLE.*\)"id"/\1"movement_id"/' | sqlite3 sql.db

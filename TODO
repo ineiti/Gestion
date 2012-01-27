@@ -1,7 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 AfriCompta-reports:
-	- Start with MySQL-StorageType
 	- Add Account and Movement
 	- Synchronize with AfriCompta
 	- Define reports
@@ -63,6 +62,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- AC120127: Start with SQLite-StorageType
 	- EB120107: @data_class has to be kept for general use and not for classes that
 		   know their Entity
 			- get_entity is used for Person-class only anyway, so let's drop it
