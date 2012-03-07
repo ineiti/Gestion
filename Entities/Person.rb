@@ -161,9 +161,10 @@ class Persons < Entities
   def get_login_with_permission( perm )
     persons = Entities.Persons.search_by_permissions( perm )
     if persons
+      # The "select" at the end removes empty entries
       persons.collect{|p|
         p.login_name
-      }
+      }.select{|s|s}
     else
     []
     end

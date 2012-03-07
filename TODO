@@ -16,6 +16,7 @@ ENTITY_BASE:
 		- Cash* views have to be moved, as there is no "Cash"-Entity
 
 BUGS:
+	- When using data from solar on local account, fails
 	- 1000 crashes when not operating "properly"
 	
 UserFriendly:
