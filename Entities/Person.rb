@@ -52,6 +52,7 @@ class Persons < Entities
   # Searches for an empty name starting with "login", adding 2, 3, 4, ...
   def find_empty_login_name( login )
     suffix = ""
+    login = accents_replace( login )
     while find_by_login_name( login + suffix.to_s )
       dputs 2, "Found #{login + suffix.to_s} to already exist"
       suffix = suffix.to_i + 1
@@ -74,6 +75,18 @@ class Persons < Entities
     end
   end
 
+  def accents_replace( login )
+    login = login.downcase.gsub( / /, "_" )
+    accents = Hash[ *%w( a àáâä e éèêë i ìíîï o òóôöœ u ùúûü c ç ss ß )]
+    dputs 2, "Login was #{login}"
+    accents.each{|k,v|
+      login.gsub!( /[#{v}]/, k )
+    }
+    login.gsub!( /[^a-z0-9_-]/, '_' )
+    dputs 2, "Login is #{login}"
+    return login
+  end
+
   # Creates a login-name out of "first" and "family" name - should work nicely in
   # Africa, perhaps a bit bizarre in Western-countries (like "tlinus" instead of
   # "ltorvalds")
@@ -90,16 +103,7 @@ class Persons < Entities
     login = first
     end
 
-    login = login.downcase.gsub( / /, "_" )
-    accents = Hash[ *%w( a àáâä e éèêë i ìíîï o òóôöœ u ùúûü c ç ss ß )]
-    dputs 2, "Login was #{login}"
-    accents.each{|k,v|
-      login.gsub!( /[#{v}]/, k )
-    }
-    login.gsub!( /[^a-z0-9_-]/, '_' )
-    dputs 2, "Login is #{login}"
-
-    login
+    accents_replace( login )
   end
 
   def create( d )
