@@ -76,4 +76,8 @@ class TC_Person < Test::Unit::TestCase
     assert_equal "One", @name1.first_name
     assert_equal "Two Three", @name1.family_name    
   end
+  
+  def test_print
+    @admin.print
+  end
 end

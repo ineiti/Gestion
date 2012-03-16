@@ -4,16 +4,24 @@
 # Configuration:
 # adduser_cmd - is called after ldapadduser returns with the username as argument
 
+require '../OpenPrint'
+
+
+
 class String
   def capitalize_all
     self.split(" ").collect{|s| s.capitalize}.join(" ")
   end
+
   def capitalize_all!
     self.replace self.capitalize_all
   end
 end
 
+
+
 class Persons < Entities
+  attr :print_card
   def setup_data
     add_new_storage :LDAP
 
@@ -45,6 +53,8 @@ class Persons < Entities
     value_str_LDAP :password, :ldap_name => "userPassword"
     value_str :password_plain
     value_int_LDAP :person_id, :ldap_name => "uidnumber"
+
+    @print_card = OpenPrint.new( "#{Entities.Courses.diploma_dir}/carte_etudiant.odg" )
 
     LOAD_DATA
   end
@@ -122,12 +132,12 @@ class Persons < Entities
     d[:login_name] = find_empty_login_name( d[:login_name] )
     d[:person_id] = nil
     dputs 1, "Creating #{d.inspect}"
-    
+
     person = super( d )
 
     person.password_plain = d.has_key?( :password ) ? d[:password] : rand( 10000 ).to_s.rjust(4,"0")
     person.password = person.password_plain
-    
+
     if defined? @cmd_after_new
       dputs 2, "Going to call #{@cmd_after_new}"
       %x[ #{@cmd_after_new} #{person.login_name} #{person.password_plain} ]
@@ -336,4 +346,49 @@ class Person < Entity
     "#{self.first_name} #{self.family_name}"
   end
 
+  def replace( orig, field, str )
+    fields.each{|f|
+      orig.gsub!( f[0], f[1].to_s )
+    }
+    orig
+  end
+
+  def print
+    @proxy.print_card.print( [ [ /--NOM--/, first_name ],
+      [ /--NOM2--/, family_name ],
+      [ /--BDAY--/, birthday ],
+      [ /--TDAY--/, `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"` ],
+      [ /--TEL--/, phone ],
+      [ /--UNAME--/, login_name ],
+      [ /--EMAIL--/, email ],
+      [ /--PASS--/, password_plain ] ] )
+  end
+
+  def print_old
+    dputs 3, "New card for #{full_name}"
+    student_file = "/tmp/carte_etudiant_#{login_name}.odg"
+    FileUtils::cp( "#{Entities.Courses.diploma_dir}/carte_etudiant.odg", student_file )
+    ZipFile.open(student_file){ |z|
+      doc = z.read("content.xml")
+      doc = replace( doc,
+        [ [ /--NOM--/, first_name ],
+          [ /--NOM2--/, family_name ],
+          [ /--BDAY--/, birthday ],
+          [ /--TDAY--/, `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"` ],
+          [ /--TEL--/, phone ],
+          [ /--UNAME--/, login_name ],
+          [ /--EMAIL--/, email ],
+          [ /--PASS--/, password_plain ] ] )
+      z.file.open("content.xml", "w"){ |f|
+        f.write( doc )
+      }
+      z.commit
+    }
+
+    Docsplit.extract_pdf student_file, :output => "/tmp"
+    dputs 5, "Finished docsplit"
+    FileUtils::rm( student_file )
+    dputs 0, "`lpr #{Persons.default_printer} #{student_file}.pdf`"
+    `lpr #{Persons.default_printer} #{student_file.sub(/odg$/, 'pdf')}`
+  end
 end

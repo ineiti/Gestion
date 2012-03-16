@@ -3,7 +3,7 @@ Shows the existing courses and the courses on the server, so that the
 two can be synchronized.
 =end
 
-require 'rubygems'
+#require 'rubygems'
 require 'zip/zipfilesystem'; include Zip
 require 'docsplit'
 

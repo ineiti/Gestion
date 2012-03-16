@@ -43,7 +43,7 @@ class CourseModify < View
       gui_vbox :nogroup do
         show_block :content
         show_list :students
-        show_button :add_students, :bulk_add, :del_student, :edit_student
+        show_button :add_students, :bulk_add, :del_student, :edit_student, :print_student
       end
       gui_window :students_win do
         show_list :students_add, "Entities.Persons.list_students"
@@ -115,7 +115,15 @@ class CourseModify < View
     View.PersonModify.rpc_show( session ) +
     View.PersonModify.rpc_find( session, :login_name, data["students"][0] )
   end
-
+  
+  def rpc_button_print_student( session, data )
+    data['students'].each{|s|
+      student = Persons.find_by_login_name( s )
+      dputs 1, "Printing student #{student.full_name}"
+      student.print
+    }
+  end
+  
   def rpc_button_new_student( session, data )
     course = Courses.find_by_name( data['name'] )
     if course

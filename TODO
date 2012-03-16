@@ -16,6 +16,9 @@ ENTITY_BASE:
 		- Cash* views have to be moved, as there is no "Cash"-Entity
 
 BUGS:
+	- OpenOffice doesn't work on MacOSX
+	- SQLite crashes when database is not here yet
+	- when empty configuration and LDAP is not here, fall back to CSV
 	- When using data from solar on local account, fails
 	- 1000 crashes when not operating "properly"
 	
@@ -63,6 +66,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- B 120312: Gestion crashes on MultiJSON with Ubuntu 1004
 	- AC120127: Start with SQLite-StorageType
 	- EB120107: @data_class has to be kept for general use and not for classes that
 		   know their Entity
