@@ -104,7 +104,7 @@ class CourseModify < View
   def rpc_button_del_student( session, data )
     course = Courses.find_by_name( data['name'] )
     data['students'].each{|s|
-      course.students.delete( s)
+      course.students.delete( s )
     }
     update_students( course )
   end

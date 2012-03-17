@@ -4,12 +4,17 @@
 
 require 'rubygems'
 require 'docsplit'
+require 'zip/zipfilesystem'; include Zip
 
 class OpenPrint
   def initialize( file )
     @file = file
     @base = `basename #{file}`
-    @default_printer = "-P #{$config[:default_printer]}"
+    if $config
+      @default_printer = "-P #{$config[:default_printer]}"
+    else
+      @default_printer = ""
+    end
     @counter = 0
   end
 
