@@ -5,11 +5,12 @@
 # - Classroom
 
 require 'Entity'
-
+require 'openprint'
 
 
 class Courses < Entities
-  attr_reader :diploma_dir
+  attr_reader :diploma_dir, :print_presence
+  
   def setup_data
     value_block :name
     value_str :name
@@ -45,6 +46,8 @@ class Courses < Entities
     value_int :students_finish
 
     @diploma_dir ||= "Diplomas"
+
+    @print_presence = OpenPrint.new( "#{@diploma_dir}/fiche_presence.ods" )
   end
 
   def list_courses(session=nil)
@@ -52,8 +55,8 @@ class Courses < Entities
     if session != nil
       user = session.owner
       if not session.can_view( "CourseGradeAll" )
-        ret = ret.select{|d| 
-          d[:teacher] and d[:teacher][0] == user.login_name 
+        ret = ret.select{|d|
+          d[:teacher] and d[:teacher][0] == user.login_name
         }
       end
     end
@@ -227,5 +230,20 @@ END
     else
     []
     end
+  end
+
+  def print_presence
+    dstart = Date.strptime( start, '%d.%m.%Y' )
+    dend = Date.strptime( data_get( :end ), '%d.%m.%Y' )
+    @proxy.print_presence.print( [
+      [ /Teacher/, Entities.Persons.find_by_login_name( teacher ).full_name ],
+      [ /Course_name/, name ],
+      [ /2010-08-20/, dstart.to_s ],
+      [ /20.08.10/, dstart.strftime("%d/%m/%y") ],
+      [ /2010-10-20/, dend.to_s ],
+      [ /20.10.10/, dend.strftime("%d/%m/%y") ],
+      [ /123/, students.count ]
+    ])
+
   end
 end

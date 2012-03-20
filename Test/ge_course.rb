@@ -15,6 +15,9 @@ class TC_Course < Test::Unit::TestCase
     :permissions => [ "default" ], :first_name => "Internet", :family_name => "Surfer" )
     @net = Entities.Courses.create( :name => "net_1001" )
     @base = Entities.Courses.create( :name => "base_1004" )
+    @maint = Entities.Courses.create( :name => "maint_1204", :start => "19.01.2012", :end => "18.02.2012",
+      :teacher => 'josue' )
+    @maint.students = %w( admin surf )
     @base.students = %w( admin2 surf )
   end
   
@@ -113,5 +116,9 @@ class TC_Course < Test::Unit::TestCase
     assert_equal %w( 01.02.2003 04.05.2003 04.06.2003 72 admin josue ),
       course.data_get( %w( start end sign duration teacher responsible ) )
     dputs 0, @course.inspect
+  end
+
+  def test_print_presence
+    @maint.print_presence
   end
 end

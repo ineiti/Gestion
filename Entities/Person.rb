@@ -361,32 +361,4 @@ class Person < Entity
       [ /--EMAIL--/, email ],
       [ /--PASS--/, password_plain ] ] )
   end
-
-  def print_old
-    dputs 3, "New card for #{full_name}"
-    student_file = "/tmp/carte_etudiant_#{login_name}.odg"
-    FileUtils::cp( "#{Entities.Courses.diploma_dir}/carte_etudiant.odg", student_file )
-    ZipFile.open(student_file){ |z|
-      doc = z.read("content.xml")
-      doc = replace( doc,
-        [ [ /--NOM--/, first_name ],
-          [ /--NOM2--/, family_name ],
-          [ /--BDAY--/, birthday ],
-          [ /--TDAY--/, `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"` ],
-          [ /--TEL--/, phone ],
-          [ /--UNAME--/, login_name ],
-          [ /--EMAIL--/, email ],
-          [ /--PASS--/, password_plain ] ] )
-      z.file.open("content.xml", "w"){ |f|
-        f.write( doc )
-      }
-      z.commit
-    }
-
-    Docsplit.extract_pdf student_file, :output => "/tmp"
-    dputs 5, "Finished docsplit"
-    FileUtils::rm( student_file )
-    dputs 0, "`lpr #{Persons.default_printer} #{student_file}.pdf`"
-    `lpr #{Persons.default_printer} #{student_file.sub(/odg$/, 'pdf')}`
-  end
 end
