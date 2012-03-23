@@ -238,13 +238,13 @@ END
     stud_nr = 1
     studs = students.collect{|s|
       stud = Entities.Persons.find_by_login_name( s )
-      stud_str = stud_nr.to_s.rjust(2,'00')
+      stud_str = stud_nr.to_s.rjust( 2, '0' )
       stud_nr += 1
       [ [ /Nom#{stud_str}/, stud.full_name ],
       [ /Login#{stud_str}/, stud.login_name ],
       [ /Passe#{stud_str}/, stud.password_plain ] ]
     }
-    dputs 3, "Students are: #{stud.inspect}"
+    dputs 3, "Students are: #{studs.inspect}"
 
     @proxy.print_presence.print( studs.flatten(1) + [
       [ /Teacher/, Entities.Persons.find_by_login_name( teacher ).full_name ],

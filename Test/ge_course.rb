@@ -66,12 +66,14 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_search
+    courses_admin2 = Entities.Courses.search_by_students( "admin2" )
+    assert_equal 1, courses_admin2.length
     reply = RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "bulk_students",
     {"name" => "net_1001", "names" => "Dmin A" }]])
     courses_admin2 = Entities.Courses.search_by_students( "admin2" )
     courses_surf = Entities.Courses.search_by_students( "surf" )
     assert_equal 2, courses_admin2.length
-    assert_equal 1, courses_surf.length
+    assert_equal 2, courses_surf.length
   end
 
   COURSE_STR = "base_gestion\nAdmin The\nLe Secretaire\n72\nCours de base\nWord\nExcel\nLinux\n\n"+

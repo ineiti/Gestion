@@ -5,39 +5,40 @@ AfriCompta-reports:
 	- Synchronize with AfriCompta
 	- Define reports
 
-ENTITY_BASE:
-	- Have one tab with all Entities to chose from
-	- Other tabs with actions on each entity
-	- Recognize entities from View-name
-		- PersonCourseModify has a person and a course entity chosen, available
-		 through session.chosen.Person and session.chosen.Course
-	- cleanup:
-		- arrays with strings coming from Frontend
-		- Cash* views have to be moved, as there is no "Cash"-Entity
 
 BUGS:
-	- OpenOffice doesn't work on MacOSX
 	- SQLite crashes when database is not here yet
-	- when empty configuration and LDAP is not here, fall back to CSV
 	- When using data from solar on local account, fails
 	- 1000 crashes when not operating "properly"
 	
 UserFriendly:
+	- when empty configuration and LDAP is not here, fall back to CSV
 	- Replace text-field in info-boxes with HTML-field 
 	- Widen "students"-field so that all text fits in CourseGrade
 	- Delete CourseModify::add_students and put courses to add in PersonModify
 	- Make a dropbox when using _find
 	- Graying out fields not usable (PersonModify, CashAdd, ...)
-	- Make 2-dimensional field with "Course, Person, Cash, ..." on top and rest on left
 	- Accelerate adding of students (is LogAction::add_only enough?)
+	
+UI:
+	- Make 2-dimensional field with "Course, Person, Cash, ..." on top and rest on left
+	ENTITY_BASE:
+		- Have one tab with all Entities to chose from
+		- Other tabs with actions on each entity
+		- Recognize entities from View-name
+			- PersonCourseModify has a person and a course entity chosen, available
+			 through session.chosen.Person and session.chosen.Course
+		- cleanup:
+			- arrays with strings coming from Frontend
+			- Cash* views have to be moved, as there is no "Cash"-Entity
 
 FEATURES:
 	- CourseHistory
-		- 
 	- use language file to replace name of the fields
 	- Person*: Search pops up windows
 
 Programming:
+	- Make value_entity a reality!
 	- Further automize: Take first part of View-class as the standard entity
 	- Add a method "focus" to Frontend
 	- Really slow search or something when starting up
@@ -66,6 +67,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- B 120317: OpenOffice doesn't work on MacOSX - fixed, was space in path...
 	- B 120312: Gestion crashes on MultiJSON with Ubuntu 1004
 	- AC120127: Start with SQLite-StorageType
 	- EB120107: @data_class has to be kept for general use and not for classes that
