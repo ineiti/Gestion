@@ -235,15 +235,25 @@ END
   def print_presence
     dstart = Date.strptime( start, '%d.%m.%Y' )
     dend = Date.strptime( data_get( :end ), '%d.%m.%Y' )
-    @proxy.print_presence.print( [
+    stud_nr = 1
+    studs = students.collect{|s|
+      stud = Entities.Persons.find_by_login_name( s )
+      stud_str = stud_nr.to_s.rjust(2,'00')
+      stud_nr += 1
+      [ [ /Nom#{stud_str}/, stud.full_name ],
+      [ /Login#{stud_str}/, stud.login_name ],
+      [ /Passe#{stud_str}/, stud.password_plain ] ]
+    }
+    dputs 3, "Students are: #{stud.inspect}"
+
+    @proxy.print_presence.print( studs.flatten(1) + [
       [ /Teacher/, Entities.Persons.find_by_login_name( teacher ).full_name ],
       [ /Course_name/, name ],
       [ /2010-08-20/, dstart.to_s ],
       [ /20.08.10/, dstart.strftime("%d/%m/%y") ],
       [ /2010-10-20/, dend.to_s ],
       [ /20.10.10/, dend.strftime("%d/%m/%y") ],
-      [ /123/, students.count ]
-    ])
-
+      [ /123/, students.count ],
+    ] )
   end
 end
