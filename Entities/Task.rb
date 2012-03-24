@@ -5,6 +5,7 @@ class Tasks < Entities
     value_block :who
     value_str :client
     value_str :person
+    value_entity_person :worker, :drop, :full_name
     
     value_block :work
     value_date :date

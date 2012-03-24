@@ -1,18 +1,14 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
-AfriCompta-reports:
-	- Add Account and Movement
-	- Synchronize with AfriCompta
-	- Define reports
-
-
 BUGS:
-	- SQLite crashes when database is not here yet
-	- When using data from solar on local account, fails
+	- some operations are very slow
+		- CourseModify waits for all students to populate
+	- Installation
+		- SQLite crashes when database is not here yet
+		- When using data from solar on local account, fails
 	- 1000 crashes when not operating "properly"
-	
+
 UserFriendly:
-	- when empty configuration and LDAP is not here, fall back to CSV
 	- Replace text-field in info-boxes with HTML-field 
 	- Widen "students"-field so that all text fits in CourseGrade
 	- Delete CourseModify::add_students and put courses to add in PersonModify
@@ -21,25 +17,39 @@ UserFriendly:
 	- Accelerate adding of students (is LogAction::add_only enough?)
 	
 UI:
-	- Make 2-dimensional field with "Course, Person, Cash, ..." on top and rest on left
-	ENTITY_BASE:
+	- ENTITY_BASE:
 		- Have one tab with all Entities to chose from
 		- Other tabs with actions on each entity
 		- Recognize entities from View-name
 			- PersonCourseModify has a person and a course entity chosen, available
 			 through session.chosen.Person and session.chosen.Course
 		- cleanup:
-			- arrays with strings coming from Frontend
+			- arrays with strings coming from Frontend ?!?
 			- Cash* views have to be moved, as there is no "Cash"-Entity
+	- Make 2-dimensional field with "Course, Person, Cash, ..." on top and rest on left
 
 FEATURES:
 	- CourseHistory
 	- use language file to replace name of the fields
 	- Person*: Search pops up windows
+	- AfriCompta-reports:
+		- Add Account and Movement
+		- Synchronize with AfriCompta
+		- Define reports
+	- DOMINIQUE:
+		- Statistiques de "Cours::accounting"
+		- Bibliotheque
+	- NELBE:
+		- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
 Programming:
 	- Make value_entity a reality!
-	- Further automize: Take first part of View-class as the standard entity
+		120323 - added first code.
+		120324 - do code in Value.to_a for entity
+		- push entity with "id:name" in Value.to_a
+		- add code to push/pull entities to/from the Frontend by adding a special list-type
+		- also do value_list_entity
+	- when empty configuration and LDAP is not here, fall back to CSV
 	- Add a method "focus" to Frontend
 	- Really slow search or something when starting up
 		- also in CourseModify
@@ -48,12 +58,6 @@ Programming:
 		- Can't change name of courses
 		- Add a method "select" instead of sending a list-item twice
 	- make class to easy allow for a "add/delete"-list
-	
-DOMINIQUE:
-	- Statistiques de "Cours::accounting"
-	
-NELBE:
-	- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
 VERIFY:
 
@@ -67,11 +71,15 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- P 120323: Further automize: Take first part of View-class as the standard entity,
+		only if the specific entity exists
+	- T 120323: All test cases work
+	- F 120317: Added "carte_etudiant" and "fiche_presence" in the CourseModify-view
 	- B 120317: OpenOffice doesn't work on MacOSX - fixed, was space in path...
 	- B 120312: Gestion crashes on MultiJSON with Ubuntu 1004
 	- AC120127: Start with SQLite-StorageType
 	- EB120107: @data_class has to be kept for general use and not for classes that
-		   know their Entity
+		know their Entity
 			- get_entity is used for Person-class only anyway, so let's drop it
 			- Session gets new instance variable "owner" instead of Person
 	- EB120102: "sid" is replaced with "session", and has members that allow to

@@ -32,6 +32,7 @@ class Courses < Entities
     value_list_drop :teacher, "Entities.Persons.list_teachers"
     value_list_drop :assistant, "['none'] + Entities.Persons.list_assistants"
     value_list_drop :responsible, "Entities.Persons.list_teachers"
+#    value_entity_Persons :another, :drop, :full_name, proc {|e| e.permissions.index("admin") }
     # value_entity :professor, :Persons, :drop, :login_name
     # value_entity :assistant, :Persons, :drop, :login_name
 
