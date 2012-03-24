@@ -46,7 +46,7 @@ Programming:
 	- Make value_entity a reality!
 		120323 - added first code.
 		120324 - do code in Value.to_a for entity
-		- push entity with "id:name" in Value.to_a
+		120324 - push entity with "id:name" in Value.to_a
 		- add code to push/pull entities to/from the Frontend by adding a special list-type
 		- also do value_list_entity
 	- when empty configuration and LDAP is not here, fall back to CSV
