@@ -43,12 +43,12 @@ FEATURES:
 		- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
 Programming:
-	- Make value_entity a reality!
-		120323 - added first code.
-		120324 - do code in Value.to_a for entity
-		120324 - push entity with "id:name" in Value.to_a
-		- add code to push/pull entities to/from the Frontend by adding a special list-type
-		- also do value_list_entity
+	- value_entity:
+		- change value_entity_Persons to value_entity_person
+		- also do show_entity
+		- convert views to value_entities
+	- rpc_parse_reply
+		- take out arrays when only one reply anyway
 	- when empty configuration and LDAP is not here, fall back to CSV
 	- Add a method "focus" to Frontend
 	- Really slow search or something when starting up
@@ -58,6 +58,8 @@ Programming:
 		- Can't change name of courses
 		- Add a method "select" instead of sending a list-item twice
 	- make class to easy allow for a "add/delete"-list
+	
+Programming > 1.0:
 
 VERIFY:
 
@@ -71,6 +73,11 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- P 120326 - Make value_entity a reality!
+		120323 - added first code.
+		120324 - do code in Value.to_a for entity
+		120324 - push entity with "id:name" in Value.to_a
+		120326 - View.rpc_parse_reply searches for entities and converts them back
 	- P 120323: Further automize: Take first part of View-class as the standard entity,
 		only if the specific entity exists
 	- T 120323: All test cases work

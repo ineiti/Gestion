@@ -58,7 +58,7 @@ class CourseModify < View
         show_button :bulk_students, :close
       end
       gui_window :missing_data do
-        show_str :missing
+        show_html :missing
         show_button :close
       end
     end
@@ -128,7 +128,10 @@ class CourseModify < View
   end
 
   def rpc_button_print_presence( session, data )
-    Courses.find_by_name( data['name'] ).print_presence
+    if not Courses.find_by_name( data['name'] ).print_presence
+      reply( "window_show", "missing_data" ) +
+      reply( "update", :missing => "No date or no students")
+    end
   end
 
   def rpc_button_new_student( session, data )

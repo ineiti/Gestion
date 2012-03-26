@@ -5,7 +5,7 @@
 # - Classroom
 
 require 'Entity'
-require 'openprint'
+require 'OpenPrint'
 
 
 class Courses < Entities
@@ -32,7 +32,7 @@ class Courses < Entities
     value_list_drop :teacher, "Entities.Persons.list_teachers"
     value_list_drop :assistant, "['none'] + Entities.Persons.list_assistants"
     value_list_drop :responsible, "Entities.Persons.list_teachers"
-#    value_entity_Persons :another, :drop, :full_name, proc {|e| e.permissions.index("admin") }
+    # value_entity_Persons :another, :drop, :full_name, proc {|e| e.permissions.index("admin") }
     # value_entity :professor, :Persons, :drop, :login_name
     # value_entity :assistant, :Persons, :drop, :login_name
 
@@ -234,6 +234,7 @@ END
   end
 
   def print_presence
+    return false if not start or not data_get( :end ) or students.count == 0
     dstart = Date.strptime( start, '%d.%m.%Y' )
     dend = Date.strptime( data_get( :end ), '%d.%m.%Y' )
     stud_nr = 1
