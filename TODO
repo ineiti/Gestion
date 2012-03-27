@@ -17,6 +17,7 @@ UserFriendly:
 	- Accelerate adding of students (is LogAction::add_only enough?)
 	
 UI:
+	- Windows don't get hidden when working (CourseModify::bulkAdd)
 	- ENTITY_BASE:
 		- Have one tab with all Entities to chose from
 		- Other tabs with actions on each entity
@@ -29,6 +30,7 @@ UI:
 	- Make 2-dimensional field with "Course, Person, Cash, ..." on top and rest on left
 
 FEATURES:
+	- Import attestation.markas-al-nour.wifi
 	- CourseHistory
 	- use language file to replace name of the fields
 	- Person*: Search pops up windows
@@ -44,7 +46,6 @@ FEATURES:
 
 Programming:
 	- value_entity:
-		- change value_entity_Persons to value_entity_person
 		- also do show_entity
 		- convert views to value_entities
 	- rpc_parse_reply
@@ -73,6 +74,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- P 120327 - change value_entity_Persons to value_entity_person
 	- P 120326 - Make value_entity a reality!
 		120323 - added first code.
 		120324 - do code in Value.to_a for entity

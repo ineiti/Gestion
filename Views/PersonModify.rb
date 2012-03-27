@@ -12,7 +12,7 @@ class PersonModify < View
           show_find :person_id
           show_block :address
         end
-        show_button :save
+        show_button :save, :print_student
       end
 
       gui_vbox :nogroup do
@@ -29,7 +29,7 @@ class PersonModify < View
   end
 
   def rpc_button( session, name, data )
-    dputs 0, "Pressed button #{name} with #{data.inspect}"
+    dputs 2, "Pressed button #{name} with #{data.inspect}"
     person = Persons.find_by_person_id( data['person_id'] )
     rep = reply( 'empty' )
     if person
@@ -43,6 +43,8 @@ class PersonModify < View
         # "internet_none" only reflects chosen entries, not the available ones per se!
         data.delete("internet_none")
         rep = reply( 'update', Persons.save_data( data ) )
+      when "print_student"
+        person.print
       end
       reply( 'update', get_form_data( person ) )
     end

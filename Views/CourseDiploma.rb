@@ -52,7 +52,7 @@ class CourseDiploma < View
         show_button :print
       end
       gui_window :missing_data do
-        show_str :missing
+        show_html :missing
         show_button :close
       end
     end
@@ -115,7 +115,7 @@ class CourseDiploma < View
     if not course or course.export_check
       if course
         return reply( "window_show", :missing_data ) +
-        reply("update", :missing => course.export_check.join(":"))
+        reply("update", :missing => course.export_check.join("<br>"))
       end
     else
       students = course.students

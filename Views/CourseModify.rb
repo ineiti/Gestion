@@ -21,16 +21,12 @@ class CourseModify < View
       gui_vbox :nogroup do
         gui_vbox :nogroup do
           show_list_single :courses, "Entities.Courses.list_courses", :callback => true
-          show_button :add_course, :delete, :export
+          show_button :add_course, :delete
         end
         gui_window :course do
           show_list_drop :name_base, "Entities.Courses.list_name_base"
           show_str :name_date
           show_button :new_course, :close
-        end
-        gui_window :export do
-          show_text :attestations
-          show_button :close
         end
       end
       gui_vbox :nogroup do
@@ -84,9 +80,6 @@ class CourseModify < View
       data.delete( 'students' )
     course.set_data( data )
     end
-  end
-
-  def rpc_button_export( session, data )
   end
 
   def rpc_button_add_students( session, data )
