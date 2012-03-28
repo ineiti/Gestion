@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- cash n'est plus montré dans CashAdd
 	- some operations are very slow
 		- CourseModify waits for all students to populate
 	- Installation
