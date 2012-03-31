@@ -1,7 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- cash n'est plus montré dans CashAdd
+	- add test for LogActions
+	- When adding cash in PersonModify, it doesn't show in the user
 	- some operations are very slow
 		- CourseModify waits for all students to populate
 	- Installation
@@ -75,6 +76,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- B 120328 - cash doesn't show up in CashAdd - oups, error in LogActions!
 	- P 120327 - change value_entity_Persons to value_entity_person
 	- P 120326 - Make value_entity a reality!
 		120323 - added first code.

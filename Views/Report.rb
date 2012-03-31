@@ -6,9 +6,9 @@ class Report < View
         show_date :start
         show_date :end
       end
-      gui_vbox do
-        
-      end
+#      gui_vbox do
+#        
+#      end
     end
   end
   
@@ -17,8 +17,8 @@ class Report < View
   end
   
   def rpc_list_choice( session, name, args )
-    dputs 0, "args is #{args}"
-    case args[:report_type][0]
+    dputs 0, "args is #{args.inspect}"
+    case args["report_type"][0]
     when 1
     when 2
     end

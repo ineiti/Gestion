@@ -1,13 +1,16 @@
 #!/bin/bash
 
 BASE=/var/www
+HOST=vpn-man
 if [ ! "$1" ]; then
   BASE=$BASE/test
+elif [ "$1" != production ]; then
+  HOST=$1
 fi
 
 for a in Gestion QooxView; do
   echo Committing $a
-  ssh root@solar.wifi "cd $BASE/$a; hg commit -m 'pull-all'"
+  ssh root@$HOST "cd $BASE/$a; hg commit -m 'pull-all'"
 done
 echo Pulling Gestion
 hg pull $1
