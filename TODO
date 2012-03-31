@@ -76,6 +76,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- B 120331 - Wrong order in View::rpc_update_view
 	- B 120328 - cash doesn't show up in CashAdd - oups, error in LogActions!
 	- P 120327 - change value_entity_Persons to value_entity_person
 	- P 120326 - Make value_entity a reality!
