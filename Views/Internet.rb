@@ -1,6 +1,5 @@
 class Internet < View
   def layout
-    @update = true
     set_data_class :Persons
 
     gui_vbox do
@@ -13,16 +12,17 @@ class Internet < View
   end
 
   def rpc_show( session )
-    super( session ) + reply( 'hide', :disconnect )
+    super( session ) + [{ :cmd => "update", :data => update( session )}] +
+      reply( :hide, :disconnect )
   end
 
   def rpc_button_connect( session, data )
-    reply( 'hide', :connect ) +
-    reply( 'unhide', :disconnect )
+    reply( :unhide, :connect ) +
+    reply( :hide, :disconnect )
   end
 
   def rpc_button_disconnect( session, data )
-    reply( 'hide', :disconnect ) +
-    reply( 'unhide', :connect )
+    reply( :unhide, :disconnect ) +
+    reply( :hide, :connect )
   end
 end
