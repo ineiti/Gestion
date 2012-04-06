@@ -17,12 +17,12 @@ class Internet < View
   end
 
   def rpc_button_connect( session, data )
-    reply( :unhide, :connect ) +
-    reply( :hide, :disconnect )
+    reply( :hide, :connect ) +
+    reply( :unhide, :disconnect )
   end
 
   def rpc_button_disconnect( session, data )
-    reply( :unhide, :disconnect ) +
-    reply( :hide, :connect )
+    reply( :hide, :disconnect ) +
+    reply( :unhide, :connect )
   end
 end
