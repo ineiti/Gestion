@@ -1,0 +1,10 @@
+#!/bin/bash
+# With two or three arguments, send credit to a number
+# Wit one argument, add this credit
+# Without argument, just return the credit left
+if [ "$2" ]; then
+  gsm-ussd -m /dev/ttyUSB2 --no-cleartext "*190*1234*235$1*$2#"
+elif [ "$1" ]; then
+  gsm-ussd -m /dev/ttyUSB2 --no-cleartext "*123*$1#" 2>/dev/null
+fi
+CREDIT_LEFT=$( gsm-ussd -m /dev/ttyUSB2 --no-cleartext '*100#' 2>/dev/null | sed -e "s/.*est de \(.*\)\... CFA.*/\1/" )

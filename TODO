@@ -32,11 +32,12 @@ UI:
 	- Make 2-dimensional field with "Course, Person, Cash, ..." on top and rest on left
 
 FEATURES:
+	- use language file to replace name of the fields
 	- Import attestation.markas-al-nour.wifi
 	- CourseHistory
-	- use language file to replace name of the fields
 	- Person*: Search pops up windows
-	- AfriCompta-reports:
+	- AfriCompta-support:
+		- Gestion acts like a server, and clients can merge with it
 		- Add Account and Movement
 		- Synchronize with AfriCompta
 		- Define reports

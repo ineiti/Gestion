@@ -14,6 +14,8 @@ require 'QooxView'
 require 'Captive'
 require 'QVInfo'
 
+QooxView::bindtext( 'gestion', 'po' )
+
 # Our default-permission is to only login!
 Permission.add( 'default', ',Welcome,PersonShow' )
 Permission.add( 'internet', '', 'default' )

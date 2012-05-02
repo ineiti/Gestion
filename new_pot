@@ -1,0 +1,6 @@
+#!/bin/bash
+rm po/gestion.pot
+rgettext -r QooxParser.rb -o po/gestion.pot Entities/* Views/*
+cp po/gestion.pot po/gestion-fr.po
+vi po/gestion-fr.po
+rmsgfmt po/gestion-fr.po -o po/fr/LC_MESSAGES/gestion.mo

@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Don't need to change anything below this lines...
+PWD=$( dirname $0 )
+TIGO=$PWD
+RUN=/var/run/lib-net
+LOG=/var/log/lib-net
+MSGS=$LOG/msgs.log
+PATH=$PATH:/sbin:/usr/sbin
+
+mkdir -p $RUN $LOG
+sudo chown -R www-data.www-data $RUN $LOG
+
+msg() {
+  date "+%F %R - $1: $2" >> $MSGS
+}
+
+tigo_credit_add(){
+  msg tigo "adding credit with number $1"
+  sudo $TIGO/tigo_credit $1
+  tigo_credit_update
+}
+
+tigo_credit_get(){
+  if [ ! -f $RUN/tigo_credit ]; then
+    tigo_credit_update
+  fi
+  cat $RUN/tigo_credit
+}
+
+tigo_credit_update(){
+  . $TIGO/tigo_credit
+  if [ "$CREDIT_LEFT" ]; then
+    echo -n $CREDIT_LEFT > $RUN/tigo_credit
+  fi
+}
+
+tigo_promotion_add(){
+  msg tigo "adding promotion with number $1"
+  sudo $TIGO/tigo_promotion $1
+  tigo_promotion_update
+}
+
+tigo_promotion_get(){
+  if [ ! -f $RUN/tigo_promotion ]; then
+    tigo_promotion_update
+  fi
+  cat $RUN/tigo_promotion
+}
+
+tigo_promotion_update(){
+  BYTES_LEFT=$( $PWD/lib_captive get_promotion )
+  if [ "$BYTES_LEFT" ]; then
+    echo -n $BYTES_LEFT > $RUN/tigo_promotion
+  fi
+}
+
+mail_get_queue(){
+  postqueue -p | grep -v "Connection refused" -
+}
+
+# Let's call an eventual function and print some variables
+if [ "$1" ]; then
+  VAR=""
+  if [ $1 = print ]; then
+    shift
+    VAR=$1
+    shift
+  fi
+  if [ "$1" = func ]; then
+    shift
+    FUNC=$1
+    shift
+    $FUNC $@
+  fi
+  if [ "$VAR" ]; then
+    # There must be a better way to do that...
+    set | grep "^$VAR=" | sed -e "s/.*=//"
+  fi
+fi
