@@ -19,7 +19,6 @@ UserFriendly:
 	- Accelerate adding of students (is LogAction::add_only enough?)
 	
 UI:
-	- Make 2-dimensional field with "Course, Person, Cash, ..." on left and rest inside from top
 	- Windows don't get hidden when working (CourseModify::bulkAdd)
 	- ENTITY_BASE:
 		- Have one tab with all Entities to chose from
@@ -76,6 +75,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- UI120504 - Make 2-dimensional field with "Course, Person, Cash, ..." on left and rest inside from top
 	- F 120503 - use language file to replace name of the fields
 	- B 120331 - Wrong order in View::rpc_update_view
 	- B 120328 - cash doesn't show up in CashAdd - oups, error in LogActions!
