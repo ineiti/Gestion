@@ -19,6 +19,7 @@ UserFriendly:
 	- Accelerate adding of students (is LogAction::add_only enough?)
 	
 UI:
+	- Make 2-dimensional field with "Course, Person, Cash, ..." on left and rest inside from top
 	- Windows don't get hidden when working (CourseModify::bulkAdd)
 	- ENTITY_BASE:
 		- Have one tab with all Entities to chose from
@@ -29,7 +30,6 @@ UI:
 		- cleanup:
 			- arrays with strings coming from Frontend ?!?
 			- Cash* views have to be moved, as there is no "Cash"-Entity
-	- Make 2-dimensional field with "Course, Person, Cash, ..." on top and rest on left
 
 FEATURES:
 	- Import attestation.markas-al-nour.wifi

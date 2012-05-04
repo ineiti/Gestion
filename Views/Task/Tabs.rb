@@ -1,4 +1,4 @@
-class TaskGroup < View
+class TaskTabs < View
   def layout
     gui_vbox :nogroup do
       show_button :new_task
