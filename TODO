@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- *Tabs: when changing sub-tabs, the field-elements of the *Tab should be sent over,
+		especially in Course* 
+	- *Tabs: horizontal scrolling-bar is missing in sub-tabs
 	- add test for LogActions
 	- When adding cash in PersonModify, it doesn't show in the user
 	- some operations are very slow
