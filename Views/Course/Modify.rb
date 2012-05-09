@@ -16,6 +16,7 @@ class CourseModify < View
   def layout
     set_data_class :Courses
     @update = true
+    @order = 10
 
     gui_hbox do
       gui_vbox :nogroup do
@@ -29,7 +30,6 @@ class CourseModify < View
         show_block :name
         show_block :calendar
         show_block :teacher
-        show_block :accounting
         show_button :save
       end
       gui_vbox :nogroup do
@@ -37,14 +37,17 @@ class CourseModify < View
         show_button :print_presence
         gui_vbox :nogroup do
           show_list :students
-          show_button :add_students, :bulk_add, :del_student, :edit_student, :print_student
+#          show_button :add_students, :bulk_add, :del_student, :edit_student, :print_student
+          show_button :bulk_add, :del_student, :edit_student, :print_student
         end
       end
+=begin
       gui_window :students_win do
         show_list :students_add, "Entities.Persons.list_students"
         show_str :search, :gui => %w( update )
         show_button :new_student, :close
       end
+=end
       gui_window :students_bulk do
         show_text :names
         show_button :bulk_students, :close
@@ -78,9 +81,11 @@ class CourseModify < View
     end
   end
 
+=begin
   def rpc_button_add_students( session, data )
     reply( "window_show", "students_win" )
   end
+=end
 
   def rpc_button_bulk_add( session, data )
     if data['name']
@@ -123,6 +128,7 @@ class CourseModify < View
     end
   end
 
+=begin
   def rpc_button_new_student( session, data )
     course = Courses.find_by_name( data['name'] )
     if course
@@ -139,6 +145,7 @@ class CourseModify < View
       reply( "window_hide" )
     end
   end
+=end
 
   # This will add a whole lot of students to the list, creating them and setting
   # the permissions to "student", but without generating a password

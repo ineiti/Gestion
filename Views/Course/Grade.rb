@@ -7,6 +7,7 @@ class CourseGrade < View
     set_data_class :Courses
     
     @update = true
+    @order = 20
 
     gui_hbox do
       gui_hbox do

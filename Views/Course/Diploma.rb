@@ -41,6 +41,7 @@ $create_pdfs = Thread.new{
 class CourseDiploma < View
   def layout
     set_data_class :Courses
+    @order = 30
 
     gui_hbox do
       gui_vbox :nogroup do
