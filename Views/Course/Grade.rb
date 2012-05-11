@@ -27,7 +27,7 @@ class CourseGrade < View
   
   def rpc_update( session )
     super( session ) +
-    reply( "update", { :courses => Entities.Courses.list_courses(session) } )
+    reply( "empty" )
   end
 
   def update_grade( d )
@@ -67,7 +67,7 @@ class CourseGrade < View
     when "students"
       ret += update_grade( args )
     end
-    ret
+    ret + reply( :focus, :mean )
   end
 
   def rpc_button_save( session, data )

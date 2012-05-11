@@ -1,7 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- *Tabs: horizontal scrolling-bar is missing in sub-tabs
 	- *Tabs: error in CoursGrade when selected a course and multiply switch back
 		and forth to it
 	- add translation for tab-names
@@ -79,6 +78,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- B 120511 - *Tabs: horizontal scrolling-bar is missing in sub-tabs
 	- B 120509 - *Tabs: when changing sub-tabs, the field-elements of the *Tab should be sent over,
 		especially in Course*
 	- UI120504 - Make 2-dimensional field with "Course, Person, Cash, ..." on left and rest inside from top
