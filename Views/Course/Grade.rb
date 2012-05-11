@@ -5,7 +5,7 @@
 class CourseGrade < View
   def layout
     set_data_class :Courses
-    
+
     @update = true
     @order = 20
 
@@ -24,7 +24,7 @@ class CourseGrade < View
       end
     end
   end
-  
+
   def rpc_update( session )
     super( session ) +
     reply( "empty" )
