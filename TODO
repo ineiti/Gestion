@@ -2,11 +2,13 @@
 
 BUGS:
 	- CourseModify - editStudent doesn't work
+	- CourseTabs - new_course doesn't work
+	- PersonAdd - should directly open in PersonTabs
+	- Add a method "focus" to Frontend - doesn't work in PersonTabs
 	- add translation for tab-names
 	- add test for LogActions
 	- When adding cash in PersonModify, it doesn't show in the user
 	- some operations are very slow
-		- CourseModify waits for all students to populate
 		- CashAdd takes time to fill up the whole log
 	- Installation
 		- SQLite crashes when database is not here yet
@@ -14,7 +16,6 @@ BUGS:
 	- 1000 crashes when not operating "properly"
 
 UserFriendly:
-	- Replace text-field in info-boxes with HTML-field 
 	- Widen "students"-field so that all text fits in CourseGrade
 	- Delete CourseModify::add_students and put courses to add in PersonModify
 	- Make a dropbox when using _find
@@ -23,28 +24,15 @@ UserFriendly:
 	
 UI:
 	- Windows don't get hidden when working (CourseModify::bulkAdd)
-	- ENTITY_BASE:
-		- Have one tab with all Entities to chose from
-		- Other tabs with actions on each entity
-		- Recognize entities from View-name
-			- PersonCourseModify has a person and a course entity chosen, available
-			 through session.chosen.Person and session.chosen.Course
-		- cleanup:
-			- arrays with strings coming from Frontend ?!?
-			- Cash* views have to be moved, as there is no "Cash"-Entity
 
 FEATURES:
 	- Import attestation.markas-al-nour.wifi
 	- CourseHistory
-	- Person*: Search pops up windows
 	- AfriCompta-support:
 		- Gestion acts like a server, and clients can merge with it
 		- Add Account and Movement
 		- Synchronize with AfriCompta
 		- Define reports
-	- DOMINIQUE:
-		- Statistiques de "Cours::accounting"
-		- Bibliotheque
 	- NELBE:
 		- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
@@ -55,7 +43,6 @@ Programming:
 	- rpc_parse_reply
 		- take out arrays when only one reply anyway
 	- when empty configuration and LDAP is not here, fall back to CSV
-	- Add a method "focus" to Frontend
 	- Really slow search or something when starting up
 		- also in CourseModify
 	- having lists and dropbox with additional hidden "index" that is returned for chosen entries
@@ -65,6 +52,18 @@ Programming:
 	- make class to easy allow for a "add/delete"-list
 	
 Programming > 1.0:
+	- ENTITY_BASE:
+		- Have one tab with all Entities to chose from
+		- Other tabs with actions on each entity
+		- Recognize entities from View-name
+			- PersonCourseModify has a person and a course entity chosen, available
+			 through session.chosen.Person and session.chosen.Course
+		- cleanup:
+			- arrays with strings coming from Frontend ?!?
+			- Cash* views have to be moved, as there is no "Cash"-Entity
+	- DOMINIQUE:
+		- Statistiques de "Cours::accounting"
+		- Bibliotheque
 
 VERIFY:
 
@@ -78,6 +77,9 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- B 120515 - CourseModify waits for all students to populate
+	- UI120515 - Replace text-field in info-boxes with HTML-field 
+	- UI120515 - Moved all tabs into sub-tabs
 	- B 120511 - *Tabs: error in CoursGrade when selected a course and multiply switch back
 		and forth to it
 	- B 120511 - *Tabs: horizontal scrolling-bar is missing in sub-tabs

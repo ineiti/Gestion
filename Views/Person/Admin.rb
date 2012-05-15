@@ -13,11 +13,9 @@ class PersonAdmin < View
             gui_fields do
               show_str_ro :login_name
               show_str_ro :person_id
-#              show_find :login_name
-#              show_find :person_id
-              show_block :address
-            end
-            gui_fields do
+#              show_block :address
+#            end
+#            gui_fields do
               show_block :admin
             end
           end
