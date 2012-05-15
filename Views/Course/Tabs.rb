@@ -1,5 +1,7 @@
 class CourseTabs < View
   def layout
+    @order = 20
+    
     gui_vboxg :nogroup do
       show_list_single :courses, "Entities.Courses.list_courses", :callback => true
       show_button :new_course, :delete

@@ -1,6 +1,7 @@
-class Internet < View
+class SelfInternet < View
   def layout
     set_data_class :Persons
+    @order = 10
 
     gui_vbox do
       show_int_ro :credit

@@ -1,4 +1,4 @@
-class InternetTigo < View
+class AdminTigo < View
   def layout
     @update = true
 
@@ -10,11 +10,11 @@ class InternetTigo < View
       end
       gui_vbox :nogroup do
         show_int :code
-	show_button :recharge
+        show_button :recharge
       end
       gui_vbox :nogroup do
         show_list_drop :size, "%w( 30MB 100MB 1GB 5GB )"
-	show_button :add_promotion
+        show_button :add_promotion
       end
 
       gui_window :error do
@@ -22,7 +22,7 @@ class InternetTigo < View
         show_button :close
       end
     end
-    
+
   end
 
   def lib_net( func, *args )

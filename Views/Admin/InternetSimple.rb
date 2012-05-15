@@ -1,4 +1,4 @@
-class InternetSimple < View
+class AdminInternet < View
   def layout
     set_data_class :Persons
 

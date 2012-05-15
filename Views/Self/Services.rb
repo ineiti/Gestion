@@ -1,20 +1,20 @@
-class CashServices < View
+class SelfServices < View
   def layout
     set_data_class :Persons
     @update = true
-    @auto_update = 1
+    @order = 30
     
     gui_hbox do
       gui_vbox do
         gui_vbox :nogroup do
-          show_int :copies_laser
-          show_int :heures_groupe_petit
-          show_int :heures_groupe_grand
-          show_int :CDs
+          show_int :copies_laser, :callback => :calc
+          show_int :heures_groupe_petit, :callback => :calc
+          show_int :heures_groupe_grand, :callback => :calc
+          show_int :CDs, :callback => :calc
         end
         gui_vbox :nogroup do
-          show_str :autres_text
-          show_int :autres_cfa
+          show_str :autres_text, :callback => :calc
+          show_int :autres_cfa, :callback => :calc
         end
         gui_vbox :nogroup do
           show_int :services_total
@@ -68,4 +68,8 @@ class CashServices < View
     reply( 'update', { :services_total => calc_total( values ) } )
   end
   
+  def rpc_callback( session, name, data )
+    rpc_update_with_values( session, data )
+  end
+
 end

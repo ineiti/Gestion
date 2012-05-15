@@ -4,6 +4,7 @@ class PersonAdd < View
   def layout
     set_data_class :Persons
     @update = true
+    @order = 50
     #@auto_update = 1
 
     gui_vbox do

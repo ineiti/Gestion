@@ -1,8 +1,9 @@
 # Allows to add, modify and delete persons
 
-class PersonShow < View
+class SelfShow < View
   def layout
     set_data_class :Persons
+    @order = 20
     
     gui_hbox do
       show_block :address

@@ -4,12 +4,13 @@ class PersonModify < View
   def layout
     set_data_class :Persons
     @update = true
+    @order = 20
 
     gui_hbox do
       gui_vbox do
         gui_fields do
-          show_find :login_name
-          show_find :person_id
+          show_str_ro :login_name
+          show_str_ro :person_id
           show_block :address
         end
         show_button :save, :print_student
@@ -58,6 +59,15 @@ class PersonModify < View
     end
     update_layout +
     reply( 'update', rep ) + rpc_update( session )
+  end
+  
+  def rpc_list_choice( session, name, data )
+    if name == "persons"
+      dputs 2, "Got data: #{data.inspect}"
+      if p = Persons.find_by_login_name( data['persons'][0])
+        reply( :update, p )
+      end
+    end
   end
 
   def update( session )

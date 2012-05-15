@@ -1,15 +1,16 @@
-class CashAdd < View
+class PersonCash < View
   def layout
     set_data_class :Persons
     @update = true
     @cache_payments = {}
+    @order = 30
     
     gui_vbox do
       gui_hbox :nogroup do
         gui_vbox :nogroup do
           gui_vbox :nogroup do
-            show_find :login_name
-            show_find :person_id
+            show_str_ro :login_name
+            show_str_ro :person_id
           end
           gui_vbox :nogroup do
             show_int_ro :credit
@@ -21,11 +22,6 @@ class CashAdd < View
           gui_vbox :nogroup do
             show_int_ro :credit_due
           end
-#          gui_vbox :nogroup do
-#            show_list_ro :services_active
-#            show_entity :service, :Services, :drop, :name
-#            show_button :add_service
-#          end
         end
       end
       gui_hbox :nogroup do
@@ -117,12 +113,19 @@ class CashAdd < View
     @cache_payments[person.person_id]
   end
   
-  def rpc_list_choice( session, name, *args )
-    client = nil
-    dputs 5, args.inspect
-    if args[0]['payments']
-      client = Entities.Persons.find_by_login_name( args[0]['payments'][0].sub( /.* /, '') )
+  def rpc_list_choice( session, name, data )
+    case name
+    when /persons/
+      if p = Persons.find_by_login_name( data['persons'][0])
+        return reply( :update, p )
+      end
+    when /payments/
+      client = nil
+      dputs 5, data.inspect
+      if data['payments']
+        client = Entities.Persons.find_by_login_name( data['payments'][0].sub( /.* /, '') )
+      end
+      return rpc_update( session, client )
     end
-    rpc_update( session, client )
   end
 end
