@@ -1,12 +1,13 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- PersonAdd - password is not stored
+	- Permissions are mangled with tabs...
 	- CourseModify - editStudent doesn't work
 	- PersonAdd - should directly open in PersonTabs
 	- PersonAdmin - InternetNone keeps values when switching user...
 	- When switching from/to CourseTabs, course is not highlighted anymore
 	- Add a method "focus" to Frontend - doesn't work in PersonTabs
-	- add translation for tab-names
 	- add test for LogActions
 	- When adding cash in PersonModify, it doesn't show in the user
 	- some operations are very slow
@@ -78,6 +79,8 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- UI120517 - Resizing is nicer for login-screen again
+	- B 120516 - add translation for tab-names
 	- B 120516 - CourseTabs - new_course doesn't work
 	- B 120515 - CourseModify waits for all students to populate
 	- UI120515 - Replace text-field in info-boxes with HTML-field 
