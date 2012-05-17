@@ -20,8 +20,10 @@ class PersonAdmin < View
             end
           end
           gui_vbox :nogroup do
-            gui_fields do
+            gui_vbox :nogroup do
               show_field :groups
+            end
+            gui_vbox :nogroup do
               show_field :internet_none
               show_fromto :internet_block
               show_button :add_block, :del_block
@@ -31,6 +33,7 @@ class PersonAdmin < View
         show_button :save
       end
 
+=begin
       gui_hbox :nogroup do
         show_int_ro :credit
         show_int :credit_add
@@ -41,6 +44,7 @@ class PersonAdmin < View
         show_str :password_plain
         show_button :change_password
       end
+=end      
     end
   end
 

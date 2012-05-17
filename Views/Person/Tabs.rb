@@ -18,9 +18,9 @@ class PersonTabs < View
     dputs 2, "Got data: #{data.inspect}"
     
     s = data['search']
-    result = Entities.Persons.search_by_first_name( s ) +
+    result = ( Entities.Persons.search_by_first_name( s ) +
       Entities.Persons.search_by_family_name( s ) +
-      Entities.Persons.search_by_login_name( s )
+      Entities.Persons.search_by_login_name( s ) ).uniq
 
     reply( :empty, [:persons] ) +
     reply( :update, { :persons => result.collect{|p|

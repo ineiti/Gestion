@@ -116,6 +116,9 @@ class Persons < Entities
 
   def create( d )
     # Sanitize first and family-name
+    if d.has_key? :complete_name
+      d[:first_name] = d[:complete_name]
+    end
     if d.has_key? :first_name
       if not d.has_key? :family_name or d[:family_name].length == 0
         d[:first_name], d[:family_name] = create_first_family( d[:first_name] )

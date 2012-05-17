@@ -5,7 +5,7 @@ if [ "$LIB_TIGO" = "loaded" ]; then
 fi
 LIB_TIGO=loaded
 
-. $( dirname )/lib_captive
+. $( dirname $0 )/lib_captive
 CLEFT=$LOGDIR/tigo_credit
 PLEFT=$LOGDIR/tigo_promotion
 DEV=/dev/ttyUSB2

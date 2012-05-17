@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ARGS="--inplace --blocking-io --sockopts=SO_SNDBUF=1000,SO_RCVBUF=1000 --password-file /etc/rsync.pass -Paivz"
+ARGS="--inplace --sockopts=SO_SNDBUF=20000,SO_RCVBUF=20000 --password-file /etc/rsync.pass -Paivz"
 DEST=rsync://profeda@vpn.markas-al-nour.org/postfix
 LOG=/var/log/copy_email.log
 echo "" > $LOG
@@ -15,8 +15,10 @@ while sleep 30; do
       HOLD=/var/spool/postfix/hold/*
       for file in $HOLD; do
         logger -s Transferring $file
+        date
         while ! rsync $ARGS $file $DEST > $LOG; do
           logger -s Trying again $file
+          date
           sleep 5
         done
         logger -s Sending message $file

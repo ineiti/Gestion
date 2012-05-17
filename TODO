@@ -2,8 +2,9 @@
 
 BUGS:
 	- CourseModify - editStudent doesn't work
-	- CourseTabs - new_course doesn't work
 	- PersonAdd - should directly open in PersonTabs
+	- PersonAdmin - InternetNone keeps values when switching user...
+	- When switching from/to CourseTabs, course is not highlighted anymore
 	- Add a method "focus" to Frontend - doesn't work in PersonTabs
 	- add translation for tab-names
 	- add test for LogActions
@@ -77,6 +78,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- B 120516 - CourseTabs - new_course doesn't work
 	- B 120515 - CourseModify waits for all students to populate
 	- UI120515 - Replace text-field in info-boxes with HTML-field 
 	- UI120515 - Moved all tabs into sub-tabs

@@ -8,8 +8,9 @@ class PersonAdd < View
     #@auto_update = 1
 
     gui_vbox do
+      show_str :complete_name, :callback => :login
       show_block :address
-      show_arg :first_name, :callback => :login
+      show_arg :first_name, :hidden => true
       show_arg :family_name, :hidden => true
       show_str :login_prop
       show_button :add_user, :clear
@@ -55,9 +56,9 @@ class PersonAdd < View
 
   def rpc_callback_login( session, data )
     dputs 3, "Got values: #{data.inspect}"
-    first_name = data['first_name'] || ""
-    if first_name.length > 0
-      reply( "update", {:login_prop => Persons.create_login_name( first_name )})
+    complete_name = data['complete_name'] || ""
+    if complete_name.length > 0
+      reply( "update", {:login_prop => Persons.create_login_name( complete_name )})
     end
   end
 end

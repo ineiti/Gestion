@@ -17,5 +17,5 @@ hg commit
 hg push $1
 for a in Gestion QooxView; do
   echo Updating $a on $HOST
-  ssh root@$HOST "cd $BASE/$a; hg up"
+  ssh root@$HOST.wifi "cd $BASE/$a; hg up"
 done

@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd $( dirname $0 )
+cd $( dirname $0 )/..
 pkill -9 -f ruby.*Gestion
 screen -S Gestion -d -m ./Gestion.rb

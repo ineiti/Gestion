@@ -10,7 +10,7 @@ fi
 
 for a in Gestion QooxView; do
   echo Committing $a
-  ssh root@$HOST "cd $BASE/$a; hg commit -m 'pull-all'"
+  ssh root@$HOST.wifi "cd $BASE/$a; hg commit -m 'pull-all'"
 done
 echo Pulling Gestion
 hg pull $1

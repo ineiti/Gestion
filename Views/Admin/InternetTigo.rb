@@ -1,6 +1,7 @@
 class AdminTigo < View
   def layout
     @update = true
+    @order = 20
 
     gui_hbox do
       gui_vbox :nogroup do

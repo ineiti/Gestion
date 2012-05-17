@@ -1,6 +1,7 @@
 class AdminReport < View
   def layout
-    @hidden = true
+    @visible = false
+    @order = 30
     
     gui_hbox do
       gui_vbox do

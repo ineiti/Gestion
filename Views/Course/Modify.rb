@@ -20,13 +20,6 @@ class CourseModify < View
 
     gui_hbox do
       gui_vbox :nogroup do
-        gui_window :course do
-          show_list_drop :name_base, "Entities.Courses.list_name_base"
-          show_str :name_date
-          show_button :new_course, :close
-        end
-      end
-      gui_vbox :nogroup do
         show_block :name
         show_block :calendar
         show_block :teacher
@@ -169,37 +162,6 @@ class CourseModify < View
       update_students( course ) +
       reply( "window_hide" )
     end
-  end
-
-  def rpc_button_add_course( session, data)
-    reply( "window_show", "course" )
-  end
-
-  def rpc_button_new_course( session, data )
-    dputs 3, "session: #{session} - data: #{data.inspect}"
-
-    name = "#{data['name_base'][0]}_#{data['name_date']}"
-    course = Courses.find_by_name( name )
-    if name =~ /_.+/
-      if not course
-        # Search latest course of this type and copy description and contents
-        last_course = Entities.Courses.search_by_name("#{name.gsub( /_.*/, '' )}_.*").sort{|a,b|
-          a.name <=> b.name
-        }.last
-        course = Courses.create( {:name => name })
-        if last_course
-          dputs 2, "Found course #{last_course.name} and copying description and contents"
-        course.description = last_course.description
-        course.contents = last_course.contents
-        end
-      end
-    end
-
-    reply("empty", [:students, :courses]) +
-    reply( "update", {:courses => Entities.Courses.list_courses}) +
-    reply( "update", course.to_hash ) +
-    reply( "update", { :courses => [ course.course_id ] }) +
-    reply( "window_hide" )
   end
 
   def rpc_button_close( session, data )

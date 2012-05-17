@@ -5,6 +5,7 @@ class AdminInternet < View
     @update = true
     @auto_update = 30
     @auto_update_send_values = false
+    @order = 10
 
     gui_hbox do
       gui_vbox :nogroup do

@@ -112,7 +112,8 @@ class CourseDiploma < View
     if not course or course.export_check
       if course
         return reply( "window_show", :missing_data ) +
-        reply("update", :missing => course.export_check.join("<br>"))
+        reply("update", :missing => "The following fields are not filled in:<br>" + 
+          course.export_check.join("<br>"))
       end
     else
       students = course.students

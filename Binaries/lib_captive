@@ -5,16 +5,17 @@ if [ "$LIB_CAPTIVE" = "loaded" ]; then
 fi
 LIB_CAPTIVE=loaded
 
-FUNC="$1"
-shift
-
+PWD=$( dirname $0 )
 LOGDIR=/etc/captive
 ACTIONLOG=$LOGDIR/action.log
 USERS_CONNECTED=$LOGDIR/aon_connected
 DATE=$( date +%y%m%d-%H:%M )
 TTIME=$LOGDIR/time_total
 . /etc/captive.conf
-. $( dirname $0 )/lib_$ISP
+. $PWD/lib_$ISP
+
+FUNC="$1"
+shift
 
 log(){
   logger -- $@
