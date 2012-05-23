@@ -3,7 +3,7 @@ class PersonCash < View
     set_data_class :Persons
     @update = true
     @cache_payments = {}
-    @order = 30
+    @order = 20
     
     gui_vbox do
       gui_hbox :nogroup do

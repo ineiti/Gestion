@@ -364,4 +364,8 @@ class Person < Entity
       [ /--EMAIL--/, email ],
       [ /--PASS--/, password_plain ] ] )
   end
+  
+  def to_list
+    [ login_name, "#{full_name} - #{login_name}:#{password_plain}"]
+  end
 end

@@ -15,11 +15,11 @@ require 'Captive'
 require 'QVInfo'
 
 # Our default-permission is to only login!
-Permission.add( 'default', ',Welcome,PersonShow' )
-Permission.add( 'internet', '', 'default' )
+Permission.add( 'default', ',Welcome,SelfShow' )
+Permission.add( 'internet', 'SelfInternet', 'default' )
 Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit', 'student' )
-Permission.add( 'teacher', 'ControlAccess,CourseGrade', 'student' )
+Permission.add( 'teacher', 'ControlAccess,CourseGrade,PersonModify', 'student' )
 Permission.add( 'secretary', 'CashAdd,CashServices,CourseModify,PersonAdd,PersonModify,CourseDiploma', 'teacher' )
 Permission.add( 'accounting', 'TransferCash', 'secretary' )
 Permission.add( 'admin', '.*', '.*' )

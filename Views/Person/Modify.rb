@@ -4,7 +4,7 @@ class PersonModify < View
   def layout
     set_data_class :Persons
     @update = true
-    @order = 20
+    @order = 10
 
     gui_hbox do
       gui_vbox do

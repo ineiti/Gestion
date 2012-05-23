@@ -46,8 +46,12 @@ class PersonAdd < View
   end
 
   def rpc_button_OK( session, data )
-    reply( 'empty' ) +
-    reply( 'window_hide' )
+    reply( :empty ) +
+    reply( :window_hide ) +
+    #reply( :init_values, [ :PersonTabs, { :search => data['login_prop'], :persons => [] } ] ) +
+    reply( :switch_tab, :PersonModify ) +
+    reply( :parent, View.PersonTabs.rpc_callback_search( session, 
+      "search" => data['login_prop']) )
   end
 
   def rpc_update( session )
