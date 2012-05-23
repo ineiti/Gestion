@@ -3,9 +3,7 @@
 BUGS:
 	- PersonModify - Everything is gone when the password is changed
 	- PersonAdmin - InternetNone keeps values when switching user...
-	- When switching from/to CourseTabs, course is not highlighted anymore
 	- Add a method "focus" to Frontend - doesn't work in PersonTabs
-	- PersonAdd - password is not stored - not repeatable
 	- add test for LogActions
 	- When adding cash in PersonModify, it doesn't show in the user
 	- some operations are very slow
@@ -70,6 +68,7 @@ Programming > 1.0:
 VERIFY:
 
 Rare bugs:
+	- PersonAdd - password is not stored - not repeatable
 	- Default focus and button:
 		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
 			-> where is that a problem?
@@ -85,6 +84,7 @@ Rare bugs:
 		  		  variable to each parent-tab which holds eventual values to be over-
 		  		  written to the available values
 			   - PersonAdd - should directly open in PersonTabs
+			   - When switching from/to CourseTabs, course is not highlighted anymore
 	- B 120522 - CoursTabs - add should be in its own tab, delete protected
 	- B 120522 - Permissions are mangled with tabs...
 	- UI120517 - Resizing is nicer for login-screen again
