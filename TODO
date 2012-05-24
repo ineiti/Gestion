@@ -1,11 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- PersonModify - Everything is gone when the password is changed
-	- PersonAdmin - InternetNone keeps values when switching user...
+	- Adding PersonAdmin::account_due doesn't allow user to use AfriCompta
+	  directly
 	- Add a method "focus" to Frontend - doesn't work in PersonTabs
 	- add test for LogActions
-	- When adding cash in PersonModify, it doesn't show in the user
 	- some operations are very slow
 		- CashAdd takes time to fill up the whole log
 	- Installation
@@ -14,8 +13,8 @@ BUGS:
 	- 1000 crashes when not operating "properly"
 	
 Security:
-	- PersonModify - only allow to change persons which have equal or
-	  lower rights
+	- PersonModify - only allow to change password from persons which have equal or
+	  lower rights - use an own tab which is not active for non-allowed users
 
 UserFriendly:
 	- Widen "students"-field so that all text fits in CourseGrade
@@ -82,6 +81,9 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 	
 ** FIXED **:
+	- B 120524 - PersonModify - Everything is gone when the password is changed
+			   - PersonAdmin - InternetNone keeps values when switching user...
+			   - When adding cash in PersonModify, it doesn't show in the user
 	- B 120523 - CourseModify - editStudent doesn't work
 				- parents( switch_tab, update ) doesn't work as supposed, as the
 		  		  rpc_calls from "switch_tab" get done after "update". Add a local

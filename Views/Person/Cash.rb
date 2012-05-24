@@ -117,7 +117,7 @@ class PersonCash < View
     case name
     when /persons/
       if p = Persons.find_by_login_name( data['persons'][0])
-        return reply( :update, p )
+        return reply( :empty ) + reply( :update, p )
       end
     when /payments/
       client = nil

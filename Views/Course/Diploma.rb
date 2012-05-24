@@ -45,8 +45,8 @@ class CourseDiploma < View
 
     gui_hbox do
       gui_vbox :nogroup do
-        show_list :grade
-        show_button :do_grades, :print
+        show_list :diplomas
+        show_button :do_diplomass, :print
       end
       gui_window :missing_data do
         show_html :missing
@@ -59,12 +59,12 @@ class CourseDiploma < View
 
   def rpc_list_choice( session, name, args )
     dputs 3, "rpc_list_choice with #{name} - #{args.inspect}"
-    ret = reply('empty', ['grade'])
+    ret = reply('empty', ['diplomas'])
     case name
     when "courses"
       if args['courses'].length > 0
         course = Entities.Courses.find_by_course_id( args['courses'] )
-        course and ret += reply( 'update', :grade => course.get_pdfs )
+        course and ret += reply( 'update', :diplomas => course.get_pdfs )
       end
     end
     return ret
@@ -106,7 +106,7 @@ class CourseDiploma < View
     end
   end
 
-  def rpc_button_do_grades( session, args )
+  def rpc_button_do_diplomass( session, args )
     course_id = args['courses'][0]
     course = Courses.find_by_course_id(course_id)
     if not course or course.export_check
@@ -162,11 +162,11 @@ class CourseDiploma < View
   end
   
   def rpc_button_print( session, args )
-    if args['grade'].length > 0
+    if args['diplomas'].length > 0
       course_id = args['courses'][0]
       course = Courses.find_by_course_id(course_id)
-      dputs 2, "Printing #{args['grade'].inspect}"
-      args['grade'].each{|g|
+      dputs 2, "Printing #{args['diplomas'].inspect}"
+      args['diplomas'].each{|g|
         `lpr #{@default_printer} #{course.diploma_dir}/#{g}`
       }
     end

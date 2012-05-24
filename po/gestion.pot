@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-05-16 22:02+0100\n"
-"PO-Revision-Date: 2012-05-16 22:02+0100\n"
+"POT-Creation-Date: 2012-05-24 21:49+0100\n"
+"PO-Revision-Date: 2012-05-24 21:49+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -280,7 +280,7 @@ msgstr ""
 
 #. Comes from file Entities/Person.rb and line is     value_int_ro_LDAP :credit, :ldap_name => "man-internet-cash"
 #. Comes from file Views/Person/Admin.rb and line is         show_int_ro :credit
-#: Entities/Person.rb:46Views/Person/Admin.rb:37
+#: Entities/Person.rb:46Views/Person/Admin.rb:38
 msgid "credit"
 msgstr ""
 
@@ -302,7 +302,7 @@ msgstr ""
 
 #. Comes from file Entities/Person.rb and line is     value_str :password_plain
 #. Comes from file Views/Person/Admin.rb and line is         show_str :password_plain
-#: Entities/Person.rb:52Views/Person/Admin.rb:43
+#: Entities/Person.rb:52Views/Person/Admin.rb:44
 msgid "password_plain"
 msgstr ""
 
@@ -404,6 +404,31 @@ msgstr ""
 msgid "Welcome"
 msgstr ""
 
+#. Comes from file Views/Admin/ControlAccess.rb and line is class AdminAccess < View
+#: Views/Admin/ControlAccess.rb:1
+msgid "AdminAccess"
+msgstr ""
+
+#. Comes from file Views/Admin/ControlAccess.rb and line is       show_html :state
+#: Views/Admin/ControlAccess.rb:6
+msgid "state"
+msgstr ""
+
+#. Comes from file Views/Admin/ControlAccess.rb and line is       show_button :remove_block, :block_info1, :block_info2
+#: Views/Admin/ControlAccess.rb:7
+msgid "remove_block"
+msgstr ""
+
+#. Comes from file Views/Admin/ControlAccess.rb and line is       show_button :remove_block, :block_info1, :block_info2
+#: Views/Admin/ControlAccess.rb:7
+msgid "block_info1"
+msgstr ""
+
+#. Comes from file Views/Admin/ControlAccess.rb and line is       show_button :remove_block, :block_info1, :block_info2
+#: Views/Admin/ControlAccess.rb:7
+msgid "block_info2"
+msgstr ""
+
 #. Comes from file Views/Admin/InternetSimple.rb and line is class AdminInternet < View
 #: Views/Admin/InternetSimple.rb:1
 msgid "AdminInternet"
@@ -494,22 +519,42 @@ msgstr ""
 msgid "AdminTabs"
 msgstr ""
 
+#. Comes from file Views/Course/Add.rb and line is class CourseAdd < View
+#: Views/Course/Add.rb:1
+msgid "CourseAdd"
+msgstr ""
+
+#. Comes from file Views/Course/Add.rb and line is         show_list_drop :name_base, "Entities.Courses.list_name_base"
+#: Views/Course/Add.rb:9
+msgid "name_base"
+msgstr ""
+
+#. Comes from file Views/Course/Add.rb and line is         show_str :name_date
+#: Views/Course/Add.rb:10
+msgid "name_date"
+msgstr ""
+
+#. Comes from file Views/Course/Add.rb and line is         show_button :new_course
+#: Views/Course/Add.rb:11
+msgid "new_course"
+msgstr ""
+
 #. Comes from file Views/Course/Diploma.rb and line is class CourseDiploma < View
 #: Views/Course/Diploma.rb:41
 msgid "CourseDiploma"
 msgstr ""
 
-#. Comes from file Views/Course/Diploma.rb and line is         show_list :grade
+#. Comes from file Views/Course/Diploma.rb and line is         show_list :diplomas
 #: Views/Course/Diploma.rb:48
-msgid "grade"
+msgid "diplomas"
 msgstr ""
 
-#. Comes from file Views/Course/Diploma.rb and line is         show_button :do_grades, :print
+#. Comes from file Views/Course/Diploma.rb and line is         show_button :do_diplomass, :print
 #: Views/Course/Diploma.rb:49
-msgid "do_grades"
+msgid "do_diplomass"
 msgstr ""
 
-#. Comes from file Views/Course/Diploma.rb and line is         show_button :do_grades, :print
+#. Comes from file Views/Course/Diploma.rb and line is         show_button :do_diplomass, :print
 #: Views/Course/Diploma.rb:49
 msgid "print"
 msgstr ""
@@ -594,33 +639,23 @@ msgstr ""
 msgid "CourseTabs"
 msgstr ""
 
-#. Comes from file Views/Course/Tabs.rb and line is       show_list_drop :name_base, "Entities.Courses.list_name_base"
+#. Comes from file Views/Course/Tabs.rb and line is       show_html "<h1>You're not allowed to do that</h1>"
 #: Views/Course/Tabs.rb:7
-msgid "name_base"
+msgid "      show_html \"<h1>You're not allowed to do that</h1>\""
 msgstr ""
 
-#. Comes from file Views/Course/Tabs.rb and line is       show_str :name_date
-#: Views/Course/Tabs.rb:8
-msgid "name_date"
-msgstr ""
-
-#. Comes from file Views/Course/Tabs.rb and line is       show_button :new_course, :close
-#: Views/Course/Tabs.rb:9
-msgid "new_course"
-msgstr ""
-
-#. Comes from file Views/Course/Tabs.rb and line is       show_list_single :courses, "Entities.Courses.list_courses", :callback => true
-#: Views/Course/Tabs.rb:13
+#. Comes from file Views/Course/Tabs.rb and line is       show_list_single :courses, :callback => true
+#: Views/Course/Tabs.rb:12
 msgid "courses"
 msgstr ""
 
 #. Comes from file Views/Course/Tabs.rb and line is       show_button :add_course, :delete
-#: Views/Course/Tabs.rb:14
+#: Views/Course/Tabs.rb:13
 msgid "add_course"
 msgstr ""
 
 #. Comes from file Views/Course/Tabs.rb and line is       show_button :add_course, :delete
-#: Views/Course/Tabs.rb:14
+#: Views/Course/Tabs.rb:13
 msgid "delete"
 msgstr ""
 
@@ -629,8 +664,8 @@ msgstr ""
 msgid "PersonAdd"
 msgstr ""
 
-#. Comes from file Views/Person/Add.rb and line is       show_str :complete_name
-#: Views/Person/Add.rb:12
+#. Comes from file Views/Person/Add.rb and line is       show_str :complete_name, :callback => :login
+#: Views/Person/Add.rb:11
 msgid "complete_name"
 msgstr ""
 
@@ -675,27 +710,27 @@ msgid "del_block"
 msgstr ""
 
 #. Comes from file Views/Person/Admin.rb and line is         show_int :credit_add
-#: Views/Person/Admin.rb:38
+#: Views/Person/Admin.rb:39
 msgid "credit_add"
 msgstr ""
 
 #. Comes from file Views/Person/Admin.rb and line is         show_int_ro :your_credit_due
-#: Views/Person/Admin.rb:39
+#: Views/Person/Admin.rb:40
 msgid "your_credit_due"
 msgstr ""
 
 #. Comes from file Views/Person/Admin.rb and line is         show_button :add_credit
-#: Views/Person/Admin.rb:40
+#: Views/Person/Admin.rb:41
 msgid "add_credit"
 msgstr ""
 
 #. Comes from file Views/Person/Admin.rb and line is         show_str :new_password
-#: Views/Person/Admin.rb:42
+#: Views/Person/Admin.rb:43
 msgid "new_password"
 msgstr ""
 
 #. Comes from file Views/Person/Admin.rb and line is         show_button :change_password
-#: Views/Person/Admin.rb:44
+#: Views/Person/Admin.rb:45
 msgid "change_password"
 msgstr ""
 

@@ -4,7 +4,7 @@ class AdminAccess < View
 
     gui_vbox do
       show_html :state
-      show_button :unblock, :block_info1, :block_info2
+      show_button :remove_block, :block_info1, :block_info2
     end
   end
 
@@ -18,7 +18,7 @@ class AdminAccess < View
     end
   end
 
-  def rpc_button_unblock( session, args )
+  def rpc_button_remove_block( session, args )
     %x[ /var/www/internet/lib block_delete ]
     rpc_update( session )
   end

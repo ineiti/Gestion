@@ -32,14 +32,15 @@ class PersonModify < View
   def rpc_button( session, name, data )
     dputs 2, "Pressed button #{name} with #{data.inspect}"
     person = Persons.find_by_person_id( data['person_id'] )
-    rep = reply( 'empty' )
+    rep = [] #reply( 'empty' )
     if person
       case name
       when "change_password"
         person.password = data['new_password']
       when "add_credit"
         Persons.add_cash( session, data )
-        rep = reply( 'update', {:credit_add => ""})
+        rep = reply( :update, :credit_add => "" ) +
+        reply( :update, :credit => person.credit )
       when "save"
         # "internet_none" only reflects chosen entries, not the available ones per se!
         data.delete("internet_none")
@@ -65,7 +66,7 @@ class PersonModify < View
     if name == "persons"
       dputs 2, "Got data: #{data.inspect}"
       if p = Persons.find_by_login_name( data['persons'][0])
-        reply( :update, p )
+        reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) )
       end
     end
   end
