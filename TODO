@@ -12,6 +12,10 @@ BUGS:
 		- SQLite crashes when database is not here yet
 		- When using data from solar on local account, fails
 	- 1000 crashes when not operating "properly"
+	
+Security:
+	- PersonModify - only allow to change persons which have equal or
+	  lower rights
 
 UserFriendly:
 	- Widen "students"-field so that all text fits in CourseGrade
