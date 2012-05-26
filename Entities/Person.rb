@@ -256,16 +256,28 @@ end
 class Person < Entity
   attr_accessor :compta_due
   def setup_instance
+    update_account_due
+  end
+  
+  def update_account_due
     c = $config[:compta_due]
     if c and data_get( :account_due )
       src = c[:src] + data_get(:account_due)
-      dputs 4, "Creating AfriCompta with source-account: #{src}"
+      dputs 2, "Creating AfriCompta with source-account: #{src}"
       @compta_due = AfriCompta.new( src, c[:dst],
       c[:user], c[:pass], c[:host] )
       update_credit
     else
       @compta_due = AfriCompta.new
+    end    
+  end
+  
+  def data_set(field, value)
+    ret = super( field, value )
+    if field and field.to_s == "account_due"
+      update_account_due
     end
+    return ret
   end
 
   def get_credit

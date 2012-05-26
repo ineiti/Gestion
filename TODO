@@ -1,8 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- Adding PersonAdmin::account_due doesn't allow user to use AfriCompta
-	  directly
 	- Add a method "focus" to Frontend - doesn't work in PersonTabs
 	- add test for LogActions
 	- some operations are very slow
@@ -27,6 +25,8 @@ UI:
 	- Windows don't get hidden when working (CourseModify::bulkAdd)
 
 FEATURES:
+	- Make internet.wifi with Self::Internet only, and a link which allows
+	  to do the infamous internet.wifi/?pass=&user=
 	- Import attestation.markas-al-nour.wifi
 	- CourseHistory
 	- AfriCompta-support:
@@ -79,8 +79,10 @@ Rare bugs:
 	  correct tab when getting "update" or "show"
 	- TaskList: sometimes when pressing "list", it takes twice to show everything
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
-	
+
 ** FIXED **:
+	- B 120526 - Adding PersonAdmin::account_due doesn't allow user to use AfriCompta
+	  			 directly
 	- B 120524 - PersonModify - Everything is gone when the password is changed
 			   - PersonAdmin - InternetNone keeps values when switching user...
 			   - When adding cash in PersonModify, it doesn't show in the user
