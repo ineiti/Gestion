@@ -40,9 +40,6 @@ FEATURES:
 Programming:
 	- kill Layout.js::dispatch::init_values, as it is not needed anymore with
 	  the RPC-queue enabled (even though I'm nut sure the latter really works...)
-	- value_entity:
-		- also do show_entity
-		- convert views to value_entities
 	- rpc_parse_reply
 		- take out arrays when only one reply anyway
 	- when empty configuration and LDAP is not here, fall back to CSV
@@ -64,6 +61,7 @@ Programming > 1.0:
 		- cleanup:
 			- arrays with strings coming from Frontend ?!?
 			- Cash* views have to be moved, as there is no "Cash"-Entity
+		- convert views to value_entities
 	- DOMINIQUE:
 		- Statistiques de "Cours::accounting"
 		- Bibliotheque
@@ -81,6 +79,9 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- B 120528 - VTListPane: when adding new elements, "null" appears
+			   - value_entity: is not saved
+	  P 120528 - value_entity: - also do show_entity
 	- B 120526 - Adding PersonAdmin::account_due doesn't allow user to use AfriCompta
 	  			 directly
 	- B 120524 - PersonModify - Everything is gone when the password is changed

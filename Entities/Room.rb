@@ -2,6 +2,7 @@
 
 class Rooms < Entities
   def setup_data
+    value_block :all
     value_str :name
     value_int :size
     value_int :computers
