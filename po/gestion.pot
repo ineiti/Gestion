@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-05-24 21:49+0100\n"
-"PO-Revision-Date: 2012-05-24 21:49+0100\n"
+"POT-Creation-Date: 2012-05-30 08:51+0100\n"
+"PO-Revision-Date: 2012-05-30 08:51+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -47,6 +47,16 @@ msgstr ""
 msgid "index"
 msgstr ""
 
+#. Comes from file Entities/Classroom.rb and line is     value_int :max_students
+#: Entities/Classroom.rb:8
+msgid "max_students"
+msgstr ""
+
+#. Comes from file Entities/Classroom.rb and line is     value_int :computers
+#: Entities/Classroom.rb:9
+msgid "computers"
+msgstr ""
+
 #. Comes from file Entities/Client.rb and line is     value_str :addr1
 #: Entities/Client.rb:7
 msgid "addr1"
@@ -80,6 +90,46 @@ msgstr ""
 #. Comes from file Entities/Client.rb and line is     value_str :phone
 #: Entities/Client.rb:17
 msgid "phone"
+msgstr ""
+
+#. Comes from file Entities/Computer.rb and line is     value_str :name_service
+#: Entities/Computer.rb:8
+msgid "name_service"
+msgstr ""
+
+#. Comes from file Entities/Computer.rb and line is     value_entity_room :room, :drop, :name
+#: Entities/Computer.rb:9
+msgid "room"
+msgstr ""
+
+#. Comes from file Entities/Computer.rb and line is     value_str :name_place
+#: Entities/Computer.rb:10
+msgid "name_place"
+msgstr ""
+
+#. Comes from file Entities/Computer.rb and line is     value_str :brand
+#: Entities/Computer.rb:13
+msgid "brand"
+msgstr ""
+
+#. Comes from file Entities/Computer.rb and line is     value_int :RAM_MB
+#: Entities/Computer.rb:14
+msgid "RAM_MB"
+msgstr ""
+
+#. Comes from file Entities/Computer.rb and line is     value_int :HD_GB
+#: Entities/Computer.rb:15
+msgid "HD_GB"
+msgstr ""
+
+#. Comes from file Entities/Computer.rb and line is     value_int :CPU_GHz
+#: Entities/Computer.rb:16
+msgid "CPU_GHz"
+msgstr ""
+
+#. Comes from file Entities/Computer.rb and line is     value_text :comment
+#: Entities/Computer.rb:19
+msgid "comment"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_date :start
@@ -308,13 +358,8 @@ msgstr ""
 
 #. Comes from file Entities/Room.rb and line is     value_int :size
 #. Comes from file Views/Admin/InternetTigo.rb and line is         show_list_drop :size, "%w( 30MB 100MB 1GB 5GB )"
-#: Entities/Room.rb:6Views/Admin/InternetTigo.rb:17
+#: Entities/Room.rb:7Views/Admin/InternetTigo.rb:17
 msgid "size"
-msgstr ""
-
-#. Comes from file Entities/Room.rb and line is     value_int :computers
-#: Entities/Room.rb:7
-msgid "computers"
 msgstr ""
 
 #. Comes from file Entities/Service.rb and line is     value_str :group
@@ -659,6 +704,26 @@ msgstr ""
 msgid "delete"
 msgstr ""
 
+#. Comes from file Views/Inventory/Computers.rb and line is class InventoryComputers < View
+#: Views/Inventory/Computers.rb:1
+msgid "InventoryComputers"
+msgstr ""
+
+#. Comes from file Views/Inventory/Computers.rb and line is         show_button :new, :delete
+#: Views/Inventory/Computers.rb:9
+msgid "new"
+msgstr ""
+
+#. Comes from file Views/Inventory/Rooms.rb and line is class InventoryRoom < View
+#: Views/Inventory/Rooms.rb:1
+msgid "InventoryRoom"
+msgstr ""
+
+#. Comes from file Views/Inventory/Tabs.rb and line is class InventoryTabs < View
+#: Views/Inventory/Tabs.rb:1
+msgid "InventoryTabs"
+msgstr ""
+
 #. Comes from file Views/Person/Add.rb and line is class PersonAdd < View
 #: Views/Person/Add.rb:3
 msgid "PersonAdd"
@@ -684,9 +749,9 @@ msgstr ""
 msgid "clear"
 msgstr ""
 
-#. Comes from file Views/Person/Add.rb and line is         show_button :OK, :print_student
+#. Comes from file Views/Person/Add.rb and line is         show_button :modify, :print_student
 #: Views/Person/Add.rb:21
-msgid "OK"
+msgid "modify"
 msgstr ""
 
 #. Comes from file Views/Person/Admin.rb and line is class PersonAdmin < View
@@ -747,6 +812,21 @@ msgstr ""
 #. Comes from file Views/Person/Cash.rb and line is           show_list_single :payments, :callback => true
 #: Views/Person/Cash.rb:29
 msgid "payments"
+msgstr ""
+
+#. Comes from file Views/Person/Course.rb and line is class PersonCourse < View
+#: Views/Person/Course.rb:3
+msgid "PersonCourse"
+msgstr ""
+
+#. Comes from file Views/Person/Course.rb and line is       show_button :add, :delete
+#: Views/Person/Course.rb:13
+msgid "add"
+msgstr ""
+
+#. Comes from file Views/Person/Course.rb and line is         show_list_single :courses_available, 'Entities.Courses.list_courses'
+#: Views/Person/Course.rb:16
+msgid "courses_available"
 msgstr ""
 
 #. Comes from file Views/Person/Modify.rb and line is class PersonModify < View
@@ -827,11 +907,6 @@ msgstr ""
 #. Comes from file Views/Task/Client.rb and line is class TaskClient < View
 #: Views/Task/Client.rb:1
 msgid "TaskClient"
-msgstr ""
-
-#. Comes from file Views/Task/Client.rb and line is         show_button :new, :save
-#: Views/Task/Client.rb:17
-msgid "new"
 msgstr ""
 
 #. Comes from file Views/Task/Edit.rb and line is class TaskEdit < View
