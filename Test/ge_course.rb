@@ -123,4 +123,12 @@ class TC_Course < Test::Unit::TestCase
   def test_print_presence
     @maint.print_presence
   end
+  
+  def test_person_courses
+    courses = Entities.Courses.list_courses_for_person( @admin )
+    assert_equal [[2, "maint_1204"]], courses
+
+    courses = Entities.Courses.list_courses_for_person( @admin.login_name )
+    assert_equal [[2, "maint_1204"]], courses
+  end
 end

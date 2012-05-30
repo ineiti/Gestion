@@ -25,6 +25,7 @@ UI:
 	- Windows don't get hidden when working (CourseModify::bulkAdd)
 
 FEATURES:
+	- Inventory of screens, mice, routers
 	- Make internet.wifi with Self::Internet only, and a link which allows
 	  to do the infamous internet.wifi/?pass=&user=
 	- Import attestation.markas-al-nour.wifi
@@ -79,6 +80,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- B 120530 - Command-line options different for tests and real
 	- B 120528 - VTListPane: when adding new elements, "null" appears
 			   - value_entity: is not saved
 	  P 120528 - value_entity: - also do show_entity

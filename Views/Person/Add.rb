@@ -18,7 +18,7 @@ class PersonAdd < View
         show_html :msg
         #show_str_ro :new_login
         #show_str_ro :new_pass
-        show_button :OK, :print_student
+        show_button :modify, :print_student
       end
     end
   end

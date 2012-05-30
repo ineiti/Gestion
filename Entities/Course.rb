@@ -65,6 +65,19 @@ class Courses < Entities
       a[1].gsub( /^[^_]*_/, '' ) <=> b[1].gsub( /^[^_]*_/, '' )
     }.reverse
   end
+  
+  def list_courses_for_person( person )
+    ln = person.class == String ? person : person.login_name
+    dputs 3, "Searching courses for person #{ln}"
+    ret = @data.values.select{|d|
+      dputs 3, "Searching #{ln} in #{d.inspect} - #{d[:students].index(ln)}"
+      d[:students] and d[:students].index( ln )
+    }
+    dputs 3, "Found courses #{ret.inspect}"
+    ret.collect{ |d| [ d[:course_id ], d[:name] ] }.sort{|a,b|
+      a[1].gsub( /^[^_]*_/, '' ) <=> b[1].gsub( /^[^_]*_/, '' )
+    }.reverse    
+  end
 
   def list_name_base
     return %w( base maint int net site )
