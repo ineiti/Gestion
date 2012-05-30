@@ -1,5 +1,5 @@
 class AdminTabs < View
   def layout
-    @order = 30
+    @order = 40
   end
 end

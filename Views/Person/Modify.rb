@@ -23,7 +23,7 @@ class PersonModify < View
         show_button :add_credit
 
         show_str :new_password
-        show_str :password_plain
+        show_str_ro :password_plain
         show_button :change_password
       end
     end
@@ -66,7 +66,8 @@ class PersonModify < View
     if name == "persons"
       dputs 2, "Got data: #{data.inspect}"
       if p = Persons.find_by_login_name( data['persons'][0])
-        reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) )
+        reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) ) +
+        reply( :focus, :credit_add )
       end
     end
   end
@@ -75,5 +76,10 @@ class PersonModify < View
     if person = session.owner
       {:your_credit_due => person.credit_due }
     end
+  end
+  
+  def rpc_update( session )
+    super( session ) +
+    reply( :parent, reply( :focus, :search ) )
   end
 end

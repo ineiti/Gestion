@@ -2,16 +2,16 @@ class AdminInternet < View
   def layout
     set_data_class :Persons
 
-    @update = true
-    @auto_update = 30
-    @auto_update_send_values = false
+#    @update = true
+#    @auto_update = 30
+#    @auto_update_send_values = false
     @order = 10
 
     gui_hbox do
       gui_vbox :nogroup do
         show_int_ro :credit_left
         show_int_ro :promotion_left
-        show_list_drop :auto_disconnect, "[:No,:Yes]", :callback => true
+        show_list_drop :auto_disconnect, "[:No,:Yes]", :callback => :auto_disconnect
         show_button :connect, :disconnect
       end
       gui_vbox :nogroup do
@@ -33,10 +33,11 @@ class AdminInternet < View
   end
 
   def update( session )
+    emails = %x[ tail -n 1 /var/log/copy_email.log ]
     { :credit_left => lib_net( :tigo_credit_get ),
       :promotion_left => lib_net( :tigo_promotion_get ).to_i / 1000000.0,
       :mails => "<pre>#{ lib_net( :mail_get_queue )}</pre>",
-      :transfer => "<pre>#{ `tail -n 1 /var/log/copy_email.log` }</pre>",
+      :transfer => "<pre>#{ emails } </pre>",
       :auto_disconnect => [auto_disconnect_get] }
   end
 

@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- When adding a person twice to a course, he appears twice in the course
 	- Add a method "focus" to Frontend - doesn't work in PersonTabs
 	- add test for LogActions
 	- some operations are very slow
@@ -80,7 +81,9 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
-	- B 120530 - Command-line options different for tests and real
+	- B 120530 - QooxDoo-error when viewing Admin-tabs (fade on not yet visible elements)
+			   - Command-line options different for tests and real
+			   - QooxDoo-error when no elements in parent-tab
 	- B 120528 - VTListPane: when adding new elements, "null" appears
 			   - value_entity: is not saved
 	  P 120528 - value_entity: - also do show_entity

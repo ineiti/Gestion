@@ -38,6 +38,10 @@ class PersonCourse < View
 
   def rpc_button_add( session, args )
     if args['persons'].flatten.length > 0
+      reply( :empty_only, [ :courses_available ] ) +
+      reply( :update, :courses_available => 
+        ( Entities.Courses.list_courses - 
+          Entities.Courses.list_courses_for_person( args['persons'].flatten[0] ) ) ) +
       reply( :window_show, :new_course )
     end
   end

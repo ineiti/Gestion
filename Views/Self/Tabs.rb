@@ -1,6 +1,5 @@
 class SelfTabs < View
   def layout
-    @order = 40
-    
+    @order = 50
   end
 end

@@ -12,8 +12,9 @@ class SelfInternet < View
 #    @visible = false
   end
 
-  def rpc_show( session )
-    super( session ) + [{ :cmd => "update", :data => update( session )}] +
+  def rpc_shows( session )
+    super( session ) +
+      reply( :update, update( session ) ) +
       reply( :hide, :disconnect )
   end
 

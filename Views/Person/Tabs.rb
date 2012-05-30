@@ -1,13 +1,19 @@
 class PersonTabs < View
   def layout
     @order = 10
+    @update = true
 
     gui_vboxg :nogroup do
       show_list_single :persons, "[]", :callback => true
       show_str :search, :callback => :search
     end
   end
-
+  
+  def rpc_update_view( session, args = nil )
+    super( session, args ) +
+    reply( :focus, :search )
+  end
+  
   def rpc_list_choice( session, name, args )
     dputs 2, "args is #{args.inspect}"
     dputs 2, "New choice #{name} - #{args['persons']}"
@@ -23,9 +29,13 @@ class PersonTabs < View
     dputs 2, "Got data: #{data.inspect}"
 
     s = data['search']
-    result = ( Entities.Persons.search_by_login_name( s ) +
-    Entities.Persons.search_by_family_name( s ) +
-    Entities.Persons.search_by_first_name( s ) ).uniq
+    result = %w( login_name family_name first_name person_id email phone ).collect{|f|
+      ret = Entities.Persons.search_by( f, s )
+      dputs 3, "Result for #{f} is: #{ret.collect{|r| r.login_name}}"
+      ret
+    }.flatten.uniq
+    dputs 3, "Result is: #{result.collect{|r| r.login_name}}"
+    not result and result = []
 
     ret = reply( :empty, [:persons] ) +
     reply( :update, { :persons => result.collect{|p|
