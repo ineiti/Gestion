@@ -9,10 +9,10 @@ class SelfInternet < View
     end
 
 #    @order = 100
-#    @visible = false
+    @visible = false
   end
 
-  def rpc_shows( session )
+  def rpc_show( session )
     super( session ) +
       reply( :update, update( session ) ) +
       reply( :hide, :disconnect )

@@ -8,7 +8,7 @@
 
 CONFIG_FILE="config.yaml"
 
-DEBUG_LVL=3
+DEBUG_LVL=2
 
 require 'QooxView'
 require 'Captive'
@@ -20,7 +20,7 @@ Permission.add( 'internet', 'SelfInternet', 'default' )
 Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit', 'student' )
 Permission.add( 'teacher', 'AdminAccess,CourseGrade,PersonModify', 'student' )
-Permission.add( 'secretary', 'CashAdd,CashServices,CourseModify,PersonAdd,PersonModify,CourseDiploma', 'teacher' )
+Permission.add( 'secretary', 'SelfCash,SelfServices,CourseModify,PersonAdd,PersonModify,CourseDiploma', 'teacher' )
 Permission.add( 'accounting', 'TransferCash', 'secretary' )
 Permission.add( 'admin', '.*', '.*' )
 

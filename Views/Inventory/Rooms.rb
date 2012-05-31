@@ -6,11 +6,12 @@ class InventoryRoom < View
     gui_hbox do
       gui_vbox :nogroup do
         vtlp_list :rooms, 'name'
-        show_button :new, :save, :delete
+        show_button :new, :delete
       end
 
       gui_vbox :nogroup do
         show_block :all
+        show_button :save
       end
     end
   end

@@ -54,7 +54,8 @@ class CourseDiploma < View
       end
     end
     
-    @default_printer = @default_printer ? "-P #{@default_printer}" : ""
+    @default_printer = @default_printer ? "-P #{@default_printer}" : 
+      $config[:default_printer] ? "-P #{$config[:default_printer]}" : ""
   end
 
   def rpc_list_choice( session, name, args )

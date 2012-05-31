@@ -1,11 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- When adding a person twice to a course, he appears twice in the course
-	- Add a method "focus" to Frontend - doesn't work in PersonTabs
 	- add test for LogActions
-	- some operations are very slow
-		- CashAdd takes time to fill up the whole log
 	- Installation
 		- SQLite crashes when database is not here yet
 		- When using data from solar on local account, fails
@@ -84,6 +80,10 @@ Rare bugs:
 	- B 120530 - QooxDoo-error when viewing Admin-tabs (fade on not yet visible elements)
 			   - Command-line options different for tests and real
 			   - QooxDoo-error when no elements in parent-tab
+			   - Add a method "focus" to Frontend - doesn't work in PersonTabs
+			   - some operations are very slow
+			     - CashAdd takes time to fill up the whole log - is not standard anymore
+			   - When adding a person twice to a course, he appears twice in the course
 	- B 120528 - VTListPane: when adding new elements, "null" appears
 			   - value_entity: is not saved
 	  P 120528 - value_entity: - also do show_entity
