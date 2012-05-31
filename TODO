@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- Change lots of ids and stuff to value_entity
 	- add password-changes to logactions
 	- add test for LogActions
 	- Installation
