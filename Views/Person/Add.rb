@@ -8,7 +8,7 @@ class PersonAdd < View
     #@auto_update = 1
 
     gui_vbox do
-      show_str :complete_name, :callback => :login
+      show_str :complete_name, :callback => :login, :width => 150
       show_block :address
       show_arg :first_name, :hidden => true
       show_arg :family_name, :hidden => true

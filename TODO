@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- add password-changes to logactions
 	- add test for LogActions
 	- Installation
 		- SQLite crashes when database is not here yet

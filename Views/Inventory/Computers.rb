@@ -5,13 +5,13 @@ class InventoryComputers < View
 
     gui_hbox do
       gui_vbox :nogroup do
-        vtlp_list :computers, 'name_service'
+        vtlp_list :computer_list, 'name_service', :width => 100
         show_button :new, :delete
       end
 
       gui_hbox :nogroup do
         gui_vbox :nogroup do
-          show_block :identity
+          show_block :identity, :width => 150
           show_block :performance
           show_button :save
         end

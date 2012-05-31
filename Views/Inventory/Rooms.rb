@@ -10,7 +10,7 @@ class InventoryRoom < View
       end
 
       gui_vbox :nogroup do
-        show_block :all
+        show_block :all, :width => 200
         show_button :save
       end
     end

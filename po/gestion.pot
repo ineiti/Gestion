@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-05-30 08:51+0100\n"
-"PO-Revision-Date: 2012-05-30 08:51+0100\n"
+"POT-Creation-Date: 2012-05-31 12:18+0100\n"
+"PO-Revision-Date: 2012-05-31 12:18+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -335,8 +335,8 @@ msgid "credit"
 msgstr ""
 
 #. Comes from file Entities/Person.rb and line is     value_int_ro :credit_due
-#. Comes from file Views/Person/Cash.rb and line is             show_int_ro :credit_due
-#: Entities/Person.rb:47Views/Person/Cash.rb:23
+#. Comes from file Views/Self/Cash.rb and line is       show_int_ro :credit_due
+#: Entities/Person.rb:47Views/Self/Cash.rb:9
 msgid "credit_due"
 msgstr ""
 
@@ -489,7 +489,7 @@ msgstr ""
 msgid "promotion_left"
 msgstr ""
 
-#. Comes from file Views/Admin/InternetSimple.rb and line is         show_list_drop :auto_disconnect, "[:No,:Yes]", :callback => true
+#. Comes from file Views/Admin/InternetSimple.rb and line is         show_list_drop :auto_disconnect, "[:No,:Yes]", :callback => :auto_disconnect
 #: Views/Admin/InternetSimple.rb:14
 msgid "auto_disconnect"
 msgstr ""
@@ -709,6 +709,11 @@ msgstr ""
 msgid "InventoryComputers"
 msgstr ""
 
+#. Comes from file Views/Inventory/Computers.rb and line is         vtlp_list :computer_id, 'name_service'
+#: Views/Inventory/Computers.rb:8
+msgid "computer_id"
+msgstr ""
+
 #. Comes from file Views/Inventory/Computers.rb and line is         show_button :new, :delete
 #: Views/Inventory/Computers.rb:9
 msgid "new"
@@ -717,6 +722,11 @@ msgstr ""
 #. Comes from file Views/Inventory/Rooms.rb and line is class InventoryRoom < View
 #: Views/Inventory/Rooms.rb:1
 msgid "InventoryRoom"
+msgstr ""
+
+#. Comes from file Views/Inventory/Rooms.rb and line is         vtlp_list :rooms, 'name'
+#: Views/Inventory/Rooms.rb:8
+msgid "rooms"
 msgstr ""
 
 #. Comes from file Views/Inventory/Tabs.rb and line is class InventoryTabs < View
@@ -799,21 +809,6 @@ msgstr ""
 msgid "change_password"
 msgstr ""
 
-#. Comes from file Views/Person/Cash.rb and line is class PersonCash < View
-#: Views/Person/Cash.rb:1
-msgid "PersonCash"
-msgstr ""
-
-#. Comes from file Views/Person/Cash.rb and line is           show_button :add_cash
-#: Views/Person/Cash.rb:19
-msgid "add_cash"
-msgstr ""
-
-#. Comes from file Views/Person/Cash.rb and line is           show_list_single :payments, :callback => true
-#: Views/Person/Cash.rb:29
-msgid "payments"
-msgstr ""
-
 #. Comes from file Views/Person/Course.rb and line is class PersonCourse < View
 #: Views/Person/Course.rb:3
 msgid "PersonCourse"
@@ -840,8 +835,18 @@ msgid "PersonTabs"
 msgstr ""
 
 #. Comes from file Views/Person/Tabs.rb and line is       show_list_single :persons, "[]", :callback => true
-#: Views/Person/Tabs.rb:6
+#: Views/Person/Tabs.rb:7
 msgid "persons"
+msgstr ""
+
+#. Comes from file Views/Self/Cash.rb and line is class SelfCash < View
+#: Views/Self/Cash.rb:1
+msgid "SelfCash"
+msgstr ""
+
+#. Comes from file Views/Self/Cash.rb and line is       show_list_single :payments, :width => 400
+#: Views/Self/Cash.rb:10
+msgid "payments"
 msgstr ""
 
 #. Comes from file Views/Self/Internet.rb and line is class SelfInternet < View
@@ -889,6 +894,11 @@ msgstr ""
 msgid "services_total"
 msgstr ""
 
+#. Comes from file Views/Self/Services.rb and line is         show_button :add_cash
+#: Views/Self/Services.rb:22
+msgid "add_cash"
+msgstr ""
+
 #. Comes from file Views/Self/Show.rb and line is class SelfShow < View
 #: Views/Self/Show.rb:3
 msgid "SelfShow"
@@ -909,9 +919,19 @@ msgstr ""
 msgid "TaskClient"
 msgstr ""
 
+#. Comes from file Views/Task/Client.rb and line is         vtlp_list :clients, 'name'
+#: Views/Task/Client.rb:9
+msgid "clients"
+msgstr ""
+
 #. Comes from file Views/Task/Edit.rb and line is class TaskEdit < View
 #: Views/Task/Edit.rb:1
 msgid "TaskEdit"
+msgstr ""
+
+#. Comes from file Views/Task/Edit.rb and line is         vtlp_list :tasks, "tasks"
+#: Views/Task/Edit.rb:10
+msgid "tasks"
 msgstr ""
 
 #. Comes from file Views/Task/List.rb and line is class TaskList < View
@@ -957,4 +977,9 @@ msgstr ""
 #. Comes from file Views/Task/Worker.rb and line is class TaskWorker < View
 #: Views/Task/Worker.rb:1
 msgid "TaskWorker"
+msgstr ""
+
+#. Comes from file Views/Task/Worker.rb and line is         vtlp_list :workers, "login_name"
+#: Views/Task/Worker.rb:9
+msgid "workers"
 msgstr ""

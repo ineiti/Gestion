@@ -5,9 +5,9 @@ class SelfCash < View
     @cache_payments = {}
     @order = 20
     
-    gui_hbox do
+    gui_hboxg do
       show_int_ro :credit_due
-      show_list_single :payments
+      show_list_single :payments, :width => 400
     end
   end
   

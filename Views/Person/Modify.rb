@@ -9,7 +9,7 @@ class PersonModify < View
     gui_hbox do
       gui_vbox do
         gui_fields do
-          show_str_ro :login_name
+          show_str_ro :login_name, :width => 150
           show_str_ro :person_id
           show_block :address
         end

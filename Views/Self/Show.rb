@@ -6,7 +6,7 @@ class SelfShow < View
     @order = 20
     
     gui_hbox do
-      show_block :address
+      show_block :address, :width => 150
       show_button :save
       
       gui_vbox :nogroup do
