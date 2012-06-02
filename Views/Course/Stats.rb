@@ -17,7 +17,7 @@ class CourseStats < View
     if course
       # BUG: they're already saved, don't save it again
       data.delete( 'students' )
-    course.set_data( data )
+    course.data_set_hash( data )
     end
   end
 end

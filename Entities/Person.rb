@@ -6,6 +6,8 @@
 
 require 'OpenPrint'
 
+
+
 class String
   def capitalize_all
     self.split(" ").collect{|s| s.capitalize}.join(" ")
@@ -258,7 +260,7 @@ class Person < Entity
   def setup_instance
     update_account_due
   end
-  
+
   def update_account_due
     c = $config[:compta_due]
     if c and data_get( :account_due )
@@ -269,15 +271,30 @@ class Person < Entity
       update_credit
     else
       @compta_due = AfriCompta.new
-    end    
+    end
   end
-  
-  def data_set(field, value)
+
+  def data_set(field, value, msg = nil, undo = true, logging = true )
+    old_value = data_get(field)
+    if old_value != value
+      dputs 0, "Saving #{field} = #{value}"
+      if logging
+        if undo
+          @proxy.log_action( @id, { field => value }, msg, :undo_set_entry, old_value )
+        else
+          @proxy.log_action( @id, { field => value }, msg )
+        end
+      end
+    end
     ret = super( field, value )
     if field and field.to_s == "account_due"
       update_account_due
     end
     return ret
+  end
+
+  def data_set_log(field, value, msg = nil, undo = true, logging = true )
+    data_set( field, value, msg, undo, logging )
   end
 
   def get_credit
@@ -295,7 +312,7 @@ class Person < Entity
     if credit.to_i < 0 and credit.to_i.abs > client.credit.to_i
     credit = -client.credit.to_i
     end
-    client.set_entry( :credit, ( client.credit.to_i + credit.to_i ).to_s,
+    client.data_set_log( :credit, ( client.credit.to_i + credit.to_i ).to_s,
     "#{self.person_id}:#{credit}" )
     move_cash( credit, "credit pour -#{client.login_name}:#{credit}-")
     log_msg( "AddCash", "#{self.login_name} added #{credit} for #{client.login_name}: " +
@@ -312,7 +329,7 @@ class Person < Entity
     else
     credit_due = self.credit_due.to_i + credit.to_i
     end
-    set_entry( :credit_due, credit_due, msg )
+    data_set_log( :credit_due, credit_due, msg )
   end
 
   def check_pass( pass )
@@ -376,7 +393,7 @@ class Person < Entity
       [ /--EMAIL--/, email ],
       [ /--PASS--/, password_plain ] ] )
   end
-  
+
   def to_list
     [ login_name, "#{full_name} - #{login_name}:#{password_plain}"]
   end

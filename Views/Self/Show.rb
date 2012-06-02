@@ -27,7 +27,7 @@ class SelfShow < View
       when "change_password"
       person.password = data['new_password']
       when "save"
-      person.set_data( data )
+      person.data_set_hash( data )
       when "logout"
       return reply( 'reload' )
     end

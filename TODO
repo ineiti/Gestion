@@ -2,8 +2,6 @@
 
 BUGS:
 	- Change lots of ids and stuff to value_entity
-	- add password-changes to logactions
-	- add test for LogActions
 	- Installation
 		- SQLite crashes when database is not here yet
 		- When using data from solar on local account, fails
@@ -79,6 +77,13 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- B 120602 - Addcredit doesn't work anymore
+			   - add test for LogActions
+			   - add password-changes to logactions
+			   - Add logging to all Person-changes
+			   - Lots of changes in Person and Entity::set_data* - have to check
+	- P 120602 - change Entity::(data_set|set_data|set_entry) to a more meaningful set
+				 - took data_set, data_set_hash and data_set_log
 	- B 120530 - QooxDoo-error when viewing Admin-tabs (fade on not yet visible elements)
 			   - Command-line options different for tests and real
 			   - QooxDoo-error when no elements in parent-tab
