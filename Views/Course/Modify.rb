@@ -49,6 +49,10 @@ class CourseModify < View
         show_html :missing
         show_button :close
       end
+      gui_window :printing do
+        show_html :msg_print
+        show_button :close
+      end
     end
   end
 
@@ -113,10 +117,17 @@ class CourseModify < View
       dputs 1, "Printing student #{student.full_name}"
       student.print
     }
+    if data['students']
+      reply( :window_show, :printing ) +
+      reply( :update, :msg_print => "Impression de<ul><li>#{data['students'].join('</li><li>')}</li></ul>en cours" )
+    end
   end
 
   def rpc_button_print_presence( session, data )
-    if not Courses.find_by_name( data['name'] ).print_presence
+    if Courses.find_by_name( data['name'] ).print_presence
+      reply( :window_show, :printing ) +
+      reply( :update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours" )
+    else
       reply( "window_show", "missing_data" ) +
       reply( "update", :missing => "No date or no students")
     end

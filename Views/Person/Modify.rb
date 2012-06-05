@@ -65,7 +65,7 @@ class PersonModify < View
   def rpc_list_choice( session, name, data )
     if name == "persons"
       dputs 2, "Got data: #{data.inspect}"
-      if p = Persons.find_by_login_name( data['persons'][0])
+      if p = Persons.find_by_login_name( data['persons'][0][0])
         reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) ) +
         reply( :focus, :credit_add )
       end

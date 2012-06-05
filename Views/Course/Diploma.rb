@@ -52,6 +52,10 @@ class CourseDiploma < View
         show_html :missing
         show_button :close
       end
+      gui_window :printing do
+        show_html :msg_print
+        show_button :close
+      end
     end
     
     @default_printer = @default_printer ? "-P #{@default_printer}" : 
@@ -163,6 +167,7 @@ class CourseDiploma < View
   end
   
   def rpc_button_print( session, args )
+    ret = nil
     if args['diplomas'].length > 0
       course_id = args['courses'][0]
       course = Courses.find_by_course_id(course_id)
@@ -170,6 +175,9 @@ class CourseDiploma < View
       args['diplomas'].each{|g|
         `lpr #{@default_printer} #{course.diploma_dir}/#{g}`
       }
+      ret = reply( :window_show, :printing ) +
+        reply( :update, :msg_print => "Impression de<ul><li>#{args['diplomas'].join('</li><li>')}</li></ul>en cours" )
     end
+    ret
   end
 end

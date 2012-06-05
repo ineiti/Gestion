@@ -2,9 +2,9 @@
 
 BUGS:
 	- Change lots of ids and stuff to value_entity
-	- Installation
-		- SQLite crashes when database is not here yet
-		- When using data from solar on local account, fails
+		- Tested adding CourseModify::another, but troubles of having the
+		  right amount of [] everywhere - perhaps putting them out of order
+		  anyway for single-choice lists (like dropbox)
 	- 1000 crashes when not operating "properly"
 	
 Security:
@@ -12,6 +12,7 @@ Security:
 	  lower rights - use an own tab which is not active for non-allowed users
 
 UserFriendly:
+	- Clicking on Self::Cash puts back to PersonModify
 	- Widen "students"-field so that all text fits in CourseGrade
 	- Delete CourseModify::add_students and put courses to add in PersonModify
 	- Make a dropbox when using _find
@@ -36,6 +37,9 @@ FEATURES:
 		- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
 Programming:
+	- Installation
+		- SQLite crashes when database is not here yet
+		- When using data from solar on local account, fails
 	- kill Layout.js::dispatch::init_values, as it is not needed anymore with
 	  the RPC-queue enabled (even though I'm nut sure the latter really works...)
 	- rpc_parse_reply
