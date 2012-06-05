@@ -108,7 +108,8 @@ class CourseModify < View
     login = data["students"][0]
     reply( "parent",
       reply( :init_values, [ :PersonTabs, { :search => login, :persons => [] } ] ) +
-      reply( :switch_tab, :PersonTabs ) )
+      reply( :switch_tab, :PersonTabs ) ) +
+    reply( :switch_tab, :PersonModify )
   end
 
   def rpc_button_print_student( session, data )

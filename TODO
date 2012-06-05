@@ -1,6 +1,17 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- person is not displayed correctly:
+		1. Person::search viviane
+		2. AdminPerson
+		3. Cours
+		4. Check cours
+		5. Modify Student
+		6. AdminPerson still shows viviane
+		7. switching to ModifyPerson doesn't work
+		-> replies should wait for the result even of cached RPC-calls:
+			- parent->switch_tab + switch_tab doesn't work, as the second switch_tab
+			 comes before Frontend sets up the parent->switch_tab :(
 	- 1000 crashes when not operating "properly"
 	
 Security:
@@ -8,9 +19,6 @@ Security:
 	  lower rights - use an own tab which is not active for non-allowed users
 
 UserFriendly:
-	- Clicking on Self::Cash puts back to PersonModify
-	- Widen "students"-field so that all text fits in CourseGrade
-	- Delete CourseModify::add_students and put courses to add in PersonModify
 	- Make a dropbox when using _find
 	- Graying out fields not usable (PersonModify, CashAdd, ...)
 	- Accelerate adding of students (is LogAction::add_only enough?)
@@ -80,6 +88,9 @@ Rare bugs:
 	- B 120605 - Change lots of ids and stuff to value_entity
 				 - Tested adding CourseModify::another, but troubles of having the
 		  		  right amount of [] everywhere
+	- UF  	   - Clicking on Self::Cash puts back to PersonModify
+			   - Widen "students"-field so that all text fits in CourseGrade
+			   - Delete CourseModify::add_students and put courses to add in PersonModify
 	- B 120602 - Addcredit doesn't work anymore
 			   - add test for LogActions
 			   - add password-changes to logactions

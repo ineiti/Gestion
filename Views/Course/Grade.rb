@@ -15,7 +15,7 @@ class CourseGrade < View
           show_list_single :students, :callback => true
         end
         gui_fields do
-          show_int :mean
+          show_int :mean, :width => 150
           show_str :remark
           show_str :first_name
           show_str :family_name

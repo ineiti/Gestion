@@ -10,7 +10,7 @@ class SelfCash < View
         show_int_ro :credit_due, :width => 100
       end
       gui_fields do
-        show_list_single :payments, :width => 400
+        show_list_single :payments, :width => 400, :callback => true
       end
     end
   end
@@ -40,4 +40,19 @@ class SelfCash < View
     end
     @cache_payments[person.person_id]
   end
+
+  def rpc_list_choice( session, name, args )
+    dputs 2, "New choice #{name} - #{args.inspect}"
+    login = args['payments'][0].gsub(/.* /, '')
+    
+    
+    reply( :parent, 
+      reply( :init_values, [ :PersonTabs, { :search => login, :persons => [] } ] ) +
+      reply( :switch_tab, :PersonTabs ) ) +
+    reply( :switch_tab, :PersonModify )
+    #reply( :parent, reply( :update, :search => login) )
+    #reply( :parent, View.PersonTabs.rpc_callback_search( session, 
+    #  "search" => login ) )
+  end
+
 end
