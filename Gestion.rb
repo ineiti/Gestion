@@ -10,9 +10,18 @@ CONFIG_FILE="config.yaml"
 
 DEBUG_LVL=3
 
-require 'QooxView'
-require 'Captive'
-require 'QVInfo'
+begin
+  require 'QooxView'
+  require 'Captive'
+  require 'QVInfo'
+rescue Exception => e  
+  puts "Couldn't start QooxView - perhaps missing libraries?"
+  puts "Trying to run the installer? [Y/n]"
+  if gets.chomp.downcase != "n"
+    %x[ ./Gestion --install ]
+  end
+  exit
+end
 
 # Our default-permission is to only login!
 Permission.add( 'default', ',Welcome,SelfShow' )
