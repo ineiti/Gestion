@@ -2,7 +2,7 @@ class InventoryComputers < View
   include VTListPane
   def layout
     set_data_class :Computers
-
+    
     gui_hbox do
       gui_vbox :nogroup do
         vtlp_list :computer_list, 'name_service', :width => 100

@@ -19,7 +19,7 @@ class SelfCash < View
     person = session.owner
     reply( 'empty', %w( payments ) ) +
     reply( 'update', { :credit_due => person.credit_due } ) +
-    reply( 'update', { :payments => list_payments( session ) } )
+    reply( 'update', { :payments => list_payments( session, true ) } )
   end
 
   def list_payments( session, force = false )

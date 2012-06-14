@@ -8,8 +8,8 @@ class SelfInternet < View
       show_button :connect, :disconnect
     end
 
-#    @order = 100
-    @visible = false
+    @order = 10
+#    @visible = false
   end
 
   def rpc_show( session )

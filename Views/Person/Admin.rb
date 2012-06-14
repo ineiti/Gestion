@@ -98,7 +98,7 @@ class PersonAdmin < View
   def rpc_list_choice( session, name, data )
     if name == "persons"
       dputs 2, "Got data: #{data.inspect}"
-      if p = Persons.find_by_login_name( data['persons'][0])
+      if p = Persons.find_by_login_name( data['persons'].flatten[0])
         reply( :empty, [:internet_none, :permissions] ) +
         reply( :update, :permissions => Permission.list) +
         reply( :update, p )

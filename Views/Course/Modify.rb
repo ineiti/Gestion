@@ -108,8 +108,8 @@ class CourseModify < View
     login = data["students"][0]
     reply( "parent",
       reply( :init_values, [ :PersonTabs, { :search => login, :persons => [] } ] ) +
-      reply( :switch_tab, :PersonTabs ) ) +
-    reply( :switch_tab, :PersonModify )
+      reply( :switch_tab, :PersonTabs ) ) + 
+      reply( :switch_tab, :PersonModify )
   end
 
   def rpc_button_print_student( session, data )
@@ -181,11 +181,11 @@ class CourseModify < View
     reply( "window_hide", "*" )
   end
 
-  def rpc_list_choice( session, name, *args )
+  def rpc_list_choice( session, name, args )
     #Calling rpc_list_choice with [["courses", {"courses"=>["base_25"], "name_base"=>["base"]}]]
     dputs 3, "rpc_list_choice with #{name} - #{args.inspect}"
-    if name == "courses" and args[0]['courses'].length > 0
-      course_id = args[0]['courses'][0]
+    if name == "courses" and args['courses'].length > 0
+      course_id = args['courses'][0]
       dputs 3, "replying for course_id #{course_id}"
       course = Courses.find_by_course_id(course_id)
       reply("empty", [:students]) +

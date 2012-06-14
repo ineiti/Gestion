@@ -1,18 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- New installation under Lubuntu1204 should work
-	- person is not displayed correctly:
-		1. Person::search viviane
-		2. AdminPerson
-		3. Cours
-		4. Check cours
-		5. Modify Student
-		6. AdminPerson still shows viviane
-		7. switching to ModifyPerson doesn't work
-		-> replies should wait for the result even of cached RPC-calls:
-			- parent->switch_tab + switch_tab doesn't work, as the second switch_tab
-			 comes before Frontend sets up the parent->switch_tab :(
 	- 1000 crashes when not operating "properly"
 	
 Security:
@@ -28,6 +16,7 @@ UI:
 	- Windows don't get hidden when working (CourseModify::bulkAdd)
 
 FEATURES:
+	- Add PDF-export if printer=PDF
 	- Inventory of screens, mice, routers
 	- Make internet.wifi with Self::Internet only, and a link which allows
 	  to do the infamous internet.wifi/?pass=&user=
@@ -42,6 +31,10 @@ FEATURES:
 		- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
 Programming:
+	- Change Frontend::Views::Layout::dispatch to handle one request at a
+	  time and to allow new requests to be inserted before handling other
+	  requests -> doing a reply( parent->switch_tab ) + reply( switch_tab )
+	  should switch the tab in the NEW parent-tab!
 	- Installation
 		- SQLite crashes when database is not here yet
 		- When using data from solar on local account, fails
@@ -86,6 +79,19 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- B 120614 - New installation under Lubuntu1204 should work
+				- DropDown don't update on changes:
+					- Inventory::Computers::rooms doesn't update on new rooms
+					- Course::Modify::teachers don't update on new teachers
+				- Self::Cash doesn't update
+				- person is not displayed correctly:
+					1. Person::search viviane
+					2. AdminPerson
+					3. Cours
+					4. Check cours
+					5. Modify Student
+					6. AdminPerson still shows viviane
+					7. switching to ModifyPerson doesn't work
 	- B 120605 - Change lots of ids and stuff to value_entity
 				 - Tested adding CourseModify::another, but troubles of having the
 		  		  right amount of [] everywhere
