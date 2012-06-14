@@ -2,7 +2,7 @@
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"
-DEBUG_LVL=3
+DEBUG_LVL=4
 
 require 'QooxView'
 
@@ -16,7 +16,7 @@ Permission.add( 'secretary', 'PersonModify', 'professor' )
 qooxView = QooxView.init( '../Entities', '../Views' )
 
 require 'ge_person'
-require 'ge_login'
-require 'ge_view'
-require 'ge_tasks'
-require 'ge_course'
+#require 'ge_login'
+#require 'ge_view'
+#require 'ge_tasks'
+#require 'ge_course'

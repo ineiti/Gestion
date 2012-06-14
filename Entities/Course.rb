@@ -46,7 +46,7 @@ class Courses < Entities
     value_int :students_start
     value_int :students_finish
 
-    @diploma_dir ||= "Diplomas"
+    @diploma_dir = $config[:DiplomaDir]
 
     @print_presence = OpenPrint.new( "#{@diploma_dir}/fiche_presence.ods" )
   end
@@ -247,7 +247,8 @@ END
   end
 
   def print_presence
-    return false if not start or not data_get( :end ) or students.count == 0
+    teacher_person = Entities.Persons.find_by_login_name( teacher )
+    return false if not start or not data_get( :end ) or students.count == 0 or not teacher_person
     dstart = Date.strptime( start, '%d.%m.%Y' )
     dend = Date.strptime( data_get( :end ), '%d.%m.%Y' )
     stud_nr = 1
@@ -262,7 +263,7 @@ END
     dputs 3, "Students are: #{studs.inspect}"
 
     @proxy.print_presence.print( studs.flatten(1) + [
-      [ /Teacher/, Entities.Persons.find_by_login_name( teacher ).full_name ],
+      [ /Teacher/, teacher_person.full_name ],
       [ /Course_name/, name ],
       [ /2010-08-20/, dstart.to_s ],
       [ /20.08.10/, dstart.strftime("%d/%m/%y") ],

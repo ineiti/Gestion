@@ -22,3 +22,7 @@ StorageHandler:
 
 AfriCompta:
   disabled: true
+
+entities:
+  Courses:
+    diploma_dir: Diplomas

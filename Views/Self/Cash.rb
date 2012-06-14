@@ -42,17 +42,18 @@ class SelfCash < View
   end
 
   def rpc_list_choice( session, name, args )
-    dputs 2, "New choice #{name} - #{args.inspect}"
-    login = args['payments'][0].gsub(/.* /, '')
+    if args['payments']
+      dputs 2, "New choice #{name} - #{args.inspect}"
+      login = args['payments'][0].gsub(/.* /, '')
     
-    
-    reply( :parent, 
-      reply( :init_values, [ :PersonTabs, { :search => login, :persons => [] } ] ) +
-      reply( :switch_tab, :PersonTabs ) ) +
-    reply( :switch_tab, :PersonModify )
-    #reply( :parent, reply( :update, :search => login) )
-    #reply( :parent, View.PersonTabs.rpc_callback_search( session, 
-    #  "search" => login ) )
+      reply( :parent, 
+        reply( :init_values, [ :PersonTabs, { :search => login, :persons => [] } ] ) +
+        reply( :switch_tab, :PersonTabs ) ) +
+      reply( :switch_tab, :PersonModify )
+      #reply( :parent, reply( :update, :search => login) )
+      #reply( :parent, View.PersonTabs.rpc_callback_search( session, 
+      #  "search" => login ) )
+    end
   end
 
 end

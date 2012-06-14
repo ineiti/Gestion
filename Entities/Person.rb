@@ -54,7 +54,9 @@ class Persons < Entities
     value_str :password_plain
     value_int_LDAP :person_id, :ldap_name => "uidnumber"
 
-    @print_card = OpenPrint.new( "#{Entities.Courses.diploma_dir}/carte_etudiant.odg" )
+    if $config[:DiplomaDir]
+      @print_card = OpenPrint.new( "#{$config[:DiplomaDir]}/carte_etudiant.odg" )
+    end
 
     LOAD_DATA
   end

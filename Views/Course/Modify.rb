@@ -130,7 +130,7 @@ class CourseModify < View
       reply( :update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours" )
     else
       reply( "window_show", "missing_data" ) +
-      reply( "update", :missing => "No date or no students")
+      reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
     end
   end
 

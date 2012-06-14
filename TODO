@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- New installation under Lubuntu1204 should work
 	- person is not displayed correctly:
 		1. Person::search viviane
 		2. AdminPerson

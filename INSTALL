@@ -1,4 +1,10 @@
-Packages to install:
-openoffice.org
-pdftk
-psnup
+Packages to install (from a clean Lubuntu):
+
+apt-get install ruby rubygems libreoffice pdftk psutils sqlite libsqlite3-dev \
+  default-jdk gettext
+
+Then you'll have to run
+
+sudo ./update_sqlite3
+
+in the QooxView-directory
