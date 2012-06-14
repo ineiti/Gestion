@@ -7,6 +7,13 @@
 #          - for students
 
 CONFIG_FILE="config.yaml"
+if not FileTest.exists? CONFIG_FILE
+  puts "Config-file doesn't exist"
+  print "Do you want me to copy a standard one? [Y/n] "
+  if gets.chomp.downcase != "n"
+    %x[ cp config.yaml.default config.yaml ]
+  end
+end
 
 DEBUG_LVL=3
 
@@ -16,9 +23,10 @@ begin
   require 'QVInfo'
 rescue Exception => e  
   puts "Couldn't start QooxView - perhaps missing libraries?"
-  puts "Trying to run the installer? [Y/n]"
+  print "Trying to run the installer? [Y/n] "
   if gets.chomp.downcase != "n"
-    %x[ ./Gestion --install ]
+    puts "Running installer"
+    exec "./Gestion --install -p"
   end
   exit
 end
@@ -41,8 +49,6 @@ if not admin
   dputs 0, "OK, creating admin"
   admin = Entities.Persons.create( :login_name => "admin", :password => "super123", :permissions => [ "admin" ] ,
   :credit => "100" )
-  surfer = Entities.Persons.create( :login_name => "surfer", :password => "surf", :permissions => [ "internet" ] ,
-  :credit => "200"  )
 else
   admin.permissions = ["admin"];
 end

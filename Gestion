@@ -15,7 +15,7 @@ else
   elif echo _$MACHTYPE | grep -q linux; then
     . /etc/lsb-release
     if [ "$DISTRIB_ID" = "Ubuntu" -o "$DISTRIB_ID" = "Debian" ]; then
-      echo -n "Cannot find ruby! Shall I install it with all dependencies? [Y/n] "
+      echo -n "Shall I install it all dependencies? [Y/n] "
       read a
       if [ "$a" != "n" -a "$a" != "N" ]; then
         echo
