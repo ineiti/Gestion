@@ -1,0 +1,31 @@
+#!/bin/bash
+
+echo
+if which rubyh; then
+  ./Gestion.rb
+else
+  if echo _$MACHTYPE | grep -q darwin; then
+    echo Cant automatically install stuff for you - Try to get a hold on
+    echo "  ** ruby - rubygems - libreoffice - pdftk - psutils - sqlite - java - gettext"
+    echo Good luck!
+  elif echo _$MACHTYPE | grep -q linus; then
+    . /etc/lsb-release
+    if [ "$DISTRIB_ID" = "Ubuntu" -o "$DISTRIB_ID" = "Debian" ]; then
+      echo -n "Cannot find ruby! Shall I install it with all dependencies? [Y/n] "
+      read a
+      if [ "$a" != "n" -a "$a" != "N" ]; then
+        echo
+        sudo apt-get install ruby rubygems libreoffice pdftk psutils sqlite libsqlite3-dev \
+          default-jdk gettext
+#        ./Gestion.rb
+      else
+        echo OK, wont run Gestion then
+      fi
+    else
+      echo Sorry, dont know how to install on $DISTRIB_ID
+    fi
+  else
+    echo Unknown system - youre on your own...
+  fi
+fi
+echo
