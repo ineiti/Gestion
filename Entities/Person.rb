@@ -54,6 +54,7 @@ class Persons < Entities
     value_str :password_plain
     value_int_LDAP :person_id, :ldap_name => "uidnumber"
 
+    dputs 0, $config.inspect
     if $config[:DiplomaDir]
       @print_card = OpenPrint.new( "#{$config[:DiplomaDir]}/carte_etudiant.odg" )
     end
@@ -385,7 +386,7 @@ class Person < Entity
     orig
   end
 
-  def print
+  def print( counter = nil )
     @proxy.print_card.print( [ [ /--NOM--/, first_name ],
       [ /--NOM2--/, family_name ],
       [ /--BDAY--/, birthday ],
@@ -393,7 +394,7 @@ class Person < Entity
       [ /--TEL--/, phone ],
       [ /--UNAME--/, login_name ],
       [ /--EMAIL--/, email ],
-      [ /--PASS--/, password_plain ] ] )
+      [ /--PASS--/, password_plain ] ], counter )
   end
 
   def to_list

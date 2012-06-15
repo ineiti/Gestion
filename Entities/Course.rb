@@ -247,7 +247,7 @@ END
   end
 
   def print_presence
-    teacher_person = Entities.Persons.find_by_login_name( teacher )
+    teacher_person = Entities.Persons.find_by_login_name( teacher[0] )
     return false if not start or not data_get( :end ) or students.count == 0 or not teacher_person
     dstart = Date.strptime( start, '%d.%m.%Y' )
     dend = Date.strptime( data_get( :end ), '%d.%m.%Y' )

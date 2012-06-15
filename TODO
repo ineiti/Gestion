@@ -16,7 +16,6 @@ UI:
 	- Windows don't get hidden when working (CourseModify::bulkAdd)
 
 FEATURES:
-	- Add PDF-export if printer=PDF
 	- Inventory of screens, mice, routers
 	- Make internet.wifi with Self::Internet only, and a link which allows
 	  to do the infamous internet.wifi/?pass=&user=
@@ -92,6 +91,7 @@ Rare bugs:
 					5. Modify Student
 					6. AdminPerson still shows viviane
 					7. switching to ModifyPerson doesn't work
+				- Add PDF-export if printer is empty
 	- B 120605 - Change lots of ids and stuff to value_entity
 				 - Tested adding CourseModify::another, but troubles of having the
 		  		  right amount of [] everywhere

@@ -46,7 +46,7 @@ class CourseDiploma < View
     gui_hbox do
       gui_vbox :nogroup do
         show_list :diplomas
-        show_button :do_diplomass, :print
+        show_button :do_diplomas, :print
       end
       gui_window :missing_data do
         show_html :missing
@@ -58,8 +58,7 @@ class CourseDiploma < View
       end
     end
     
-    @default_printer = @default_printer ? "-P #{@default_printer}" : 
-      $config[:default_printer] ? "-P #{$config[:default_printer]}" : ""
+    @default_printer = $config[:default_printer] ? "-P #{$config[:default_printer]}" : nil
   end
 
   def rpc_list_choice( session, name, args )
@@ -68,7 +67,7 @@ class CourseDiploma < View
     case name
     when "courses"
       if args['courses'].length > 0
-        course = Entities.Courses.find_by_course_id( args['courses'] )
+        course = Entities.Courses.find_by_course_id( args['courses'].to_a[0] )
         course and ret += reply( 'update', :diplomas => course.get_pdfs )
       end
     end
@@ -111,7 +110,7 @@ class CourseDiploma < View
     end
   end
 
-  def rpc_button_do_diplomass( session, args )
+  def rpc_button_do_diplomas( session, args )
     course_id = args['courses'][0]
     course = Courses.find_by_course_id(course_id)
     if not course or course.export_check
@@ -172,11 +171,20 @@ class CourseDiploma < View
       course_id = args['courses'][0]
       course = Courses.find_by_course_id(course_id)
       dputs 2, "Printing #{args['diplomas'].inspect}"
-      args['diplomas'].each{|g|
-        `lpr #{@default_printer} #{course.diploma_dir}/#{g}`
-      }
-      ret = reply( :window_show, :printing ) +
-        reply( :update, :msg_print => "Impression de<ul><li>#{args['diplomas'].join('</li><li>')}</li></ul>en cours" )
+      if @default_printer
+        args['diplomas'].each{|g|
+          `lpr #{@default_printer} #{course.diploma_dir}/#{g}`
+        }
+        ret = reply( :window_show, :printing ) +
+          reply( :update, :msg_print => "Impression de<ul><li>#{args['diplomas'].join('</li><li>')}</li></ul>en cours" )
+      else
+        ret = reply( :window_show, :printing ) +
+        reply( :update, :msg_print => "Choisir le pdf:<ul>" +
+        args['diplomas'].collect{|d|
+          %x[ cp #{course.diploma_dir}/#{d} /tmp ] 
+          "<li><a href=\"/tmp/#{d}\">#{d}</a></li>"
+        }.join('') + "</ul>" )
+      end
     end
     ret
   end

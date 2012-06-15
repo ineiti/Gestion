@@ -113,24 +113,36 @@ class CourseModify < View
   end
 
   def rpc_button_print_student( session, data )
+    rep = []
     data['students'].each{|s|
       student = Persons.find_by_login_name( s )
       dputs 1, "Printing student #{student.full_name}"
-      student.print
+      rep.push student.print( rep.length )
     }
     if data['students']
-      reply( :window_show, :printing ) +
-      reply( :update, :msg_print => "Impression de<ul><li>#{data['students'].join('</li><li>')}</li></ul>en cours" )
+      if rep[0].class == String
+        reply( "window_show", "missing_data" ) +
+        reply( "update", :missing => "Click on one of the links:<ul>" +
+          rep.collect{|r| "<li><a href=\"#{r}\">#{r}</a></li>" }.join('') +
+          "</ul>" )
+      else
+        reply( :window_show, :printing ) +
+        reply( :update, :msg_print => "Impression de<ul><li>#{data['students'].join('</li><li>')}</li></ul>en cours" )
+      end
     end
   end
 
   def rpc_button_print_presence( session, data )
-    if Courses.find_by_name( data['name'] ).print_presence
+    case rep = Courses.find_by_name( data['name'] ).print_presence
+    when true
       reply( :window_show, :printing ) +
       reply( :update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours" )
-    else
+    when false
       reply( "window_show", "missing_data" ) +
       reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
+    else
+      reply( "window_show", "missing_data" ) +
+      reply( "update", :missing => "Click on the link: <a href=\"#{rep}\">PDF</a>" )
     end
   end
 
