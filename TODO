@@ -1,6 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- No PDF-export in
+		Person::Modify::Print
+		Person::Add::Print
+	- In Self::Cash, Self::Services don't show up
 	- 1000 crashes when not operating "properly"
 	
 Security:
