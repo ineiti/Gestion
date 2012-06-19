@@ -20,6 +20,10 @@ class PersonAdd < View
         #show_str_ro :new_pass
         show_button :modify, :print_student
       end
+      gui_window :printing do
+        show_html :msg_print
+        show_button :close
+      end
     end
   end
 
@@ -41,8 +45,20 @@ class PersonAdd < View
   def rpc_button_print_student( session, data )
     student = Persons.find_by_login_name( data['login_prop'] )
     dputs 1, "Printing student #{student.full_name}"
-    student.print
-    rpc_button_OK( session, data )
+    file = student.print
+    if file.class == String
+      reply( :window_hide ) +
+      reply( :window_show, :printing ) +
+      reply( :update, :msg_print => "Click to download:<ul>" +
+            "<li><a href=\"#{file}\">#{file}</a></li></ul>" )
+    else
+      rpc_button_OK( session, data )
+    end
+  end
+  
+  def rpc_button_close( session, data )
+    reply( :window_hide ) +
+    rpc_button_modify( session, data )
   end
 
   def rpc_button_modify( session, data )
@@ -50,7 +66,7 @@ class PersonAdd < View
     reply( :window_hide ) +
     #reply( :init_values, [ :PersonTabs, { :search => data['login_prop'], :persons => [] } ] ) +
     reply( :switch_tab, :PersonModify ) +
-    reply( :parent, View.PersonTabs.rpc_callback_search( session, 
+    reply( :parent, View.PersonTabs.rpc_callback_search( session,
       "search" => data['login_prop']) )
   end
 

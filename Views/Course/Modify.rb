@@ -121,8 +121,8 @@ class CourseModify < View
     }
     if data['students']
       if rep[0].class == String
-        reply( "window_show", "missing_data" ) +
-        reply( "update", :missing => "Click on one of the links:<ul>" +
+        reply( :window_show, :printing ) +
+        reply( :update, :msg_print => "Click on one of the links:<ul>" +
           rep.collect{|r| "<li><a href=\"#{r}\">#{r}</a></li>" }.join('') +
           "</ul>" )
       else

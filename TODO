@@ -1,9 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- No PDF-export in
-		Person::Modify::Print
-		Person::Add::Print
+	- when clicking on tab while other tab is loading, it loops endlessly
 	- In Self::Cash, Self::Services don't show up
 	- 1000 crashes when not operating "properly"
 	
@@ -34,6 +32,7 @@ FEATURES:
 		- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
 Programming:
+	- add a print-dialog with window and buttons
 	- Change Frontend::Views::Layout::dispatch to handle one request at a
 	  time and to allow new requests to be inserted before handling other
 	  requests -> doing a reply( parent->switch_tab ) + reply( switch_tab )
@@ -82,6 +81,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- B 120619 - No PDF-export in Person::Modify::Print, Person::Add::Print
 	- B 120614 - New installation under Lubuntu1204 should work
 				- DropDown don't update on changes:
 					- Inventory::Computers::rooms doesn't update on new rooms

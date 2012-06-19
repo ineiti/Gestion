@@ -26,6 +26,12 @@ class PersonModify < View
         show_str_ro :password_plain
         show_button :change_password
       end
+
+      gui_window :printing do
+        show_html :msg_print
+        show_button :close
+      end
+
     end
   end
 
@@ -46,7 +52,14 @@ class PersonModify < View
         data.delete("internet_none")
         rep = reply( 'update', Persons.save_data( data ) )
       when "print_student"
-        person.print
+        file = person.print
+        if file.class == String
+          rep = reply( :window_show, :printing ) +
+          reply( :update, :msg_print => "Click to download:<ul>" +
+            "<li><a href=\"#{file}\">#{file}</a></li></ul>" )
+        end
+      when "close"
+        rep = reply( :window_hide )
       end
       reply( 'update', get_form_data( person ) )
     end
@@ -61,7 +74,7 @@ class PersonModify < View
     update_layout +
     reply( 'update', rep ) + rpc_update( session )
   end
-  
+
   def rpc_list_choice( session, name, data )
     if name == "persons"
       dputs 2, "Got data: #{data.inspect}"
@@ -77,7 +90,7 @@ class PersonModify < View
       {:your_credit_due => person.credit_due }
     end
   end
-  
+
   def rpc_update( session )
     super( session ) +
     reply( :parent, reply( :focus, :search ) )
