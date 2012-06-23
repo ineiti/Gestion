@@ -21,7 +21,9 @@ class Welcome < View
     dputs 3, "args is #{args.inspect}"
     login_name, password = args["username"], args["password"]
     person = Entities.Persons.find_by_login_name( login_name )
-    dputs 5, "Person is #{person.inspect}"
+    if person
+      dputs 3, "Person is #{person.inspect} and #{person.password}"
+    end
     if person and person.check_pass( password ) then
       dputs 3, "Found login #{person.data_get(:person_id)} for #{login_name}"
       dputs 2, "Authenticated person #{person.login_name}"

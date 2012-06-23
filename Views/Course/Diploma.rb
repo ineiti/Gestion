@@ -24,7 +24,7 @@ $create_pdfs = Thread.new{
       dputs 5, "Finished docsplit"
       FileUtils::rm( p )
       dputs 5, "Finished rm"
-      pdfs.push p.sub( /\.[^\.]*/, '.pdf' )
+      pdfs.push p.sub( /\.[^\.]*$/, '.pdf' )
     }
     dputs 3, "Getting #{pdfs.inspect} out of #{dir}"
     all = "#{dir}/000-all.pdf"
@@ -82,9 +82,10 @@ class CourseDiploma < View
         doc = z.read("content.xml")
         contents = ""
         dputs 5, "Contents is: #{course.contents.inspect}"
+        desc_p = /P([0-9]*)">_DESC_/.match( doc )[1]
         course.contents.split("\n").each{|d|
           dputs 5, "One line is: #{d}"
-          contents += d + "</text:p></text:list-item><text:list-item><text:p text:style-name='P2'>"
+          contents += d + "</text:p></text:list-item><text:list-item><text:p text:style-name='P#{desc_p}'>"
         }
         contents.sub!(/(.*)<\/text:p.*/, '\1')
         dputs 4, "Contents is: #{contents}"

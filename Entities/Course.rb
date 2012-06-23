@@ -147,13 +147,14 @@ end
 
 
 class Course < Entity
-  attr_reader :diploma_dir
   def setup_instance
     if not self.students.class == Array
       self.students = []
     end
-    @diploma_dir = @proxy.diploma_dir + "/#{self.name}"
-    dputs 2, "Setting diploma_dir to #{@diploma_dir}"
+  end
+
+  def diploma_dir
+    @proxy.diploma_dir + "/#{self.name}"
   end
 
   def list_students
@@ -239,8 +240,8 @@ END
   end
 
   def get_pdfs
-    if File::directory?( @diploma_dir )
-      Dir::glob( "#{@diploma_dir}/*pdf" ).collect{|f| File::basename( f ) }.sort
+    if File::directory?( diploma_dir )
+      Dir::glob( "#{diploma_dir}/*pdf" ).collect{|f| File::basename( f ) }.sort
     else
     []
     end
