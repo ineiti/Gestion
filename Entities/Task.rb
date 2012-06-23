@@ -49,7 +49,3 @@ class Tasks < Entities
     }
   end
 end
-
-class Task < Entity
-  
-end

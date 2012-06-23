@@ -27,7 +27,3 @@ class Workers < Entities
     Entities.Workers.find_by_person_id( person[:person_id] )
   end
 end
-
-class Worker < Entity
-  
-end

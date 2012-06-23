@@ -19,6 +19,3 @@ class Computers < Entities
     value_text :comment
   end
 end
-
-class Computer < Entity
-end

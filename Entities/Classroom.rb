@@ -9,6 +9,3 @@ class Classrooms < Entities
     value_int :computers
   end
 end
-
-class Classroom < Entity
-end

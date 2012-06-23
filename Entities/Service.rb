@@ -6,6 +6,3 @@ class Services < Entities
     value_int :duration
   end
 end
-
-class Service < Entity
-end

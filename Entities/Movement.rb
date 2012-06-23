@@ -12,6 +12,3 @@ class Movements < Entities
     value_int :index
   end
 end
-
-class Movement < Entity  
-end

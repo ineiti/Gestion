@@ -88,8 +88,8 @@ class CourseDiploma < View
         }
         contents.sub!(/(.*)<\/text:p.*/, '\1')
         dputs 4, "Contents is: #{contents}"
-        doc.gsub!( /_PROF_/, Entities.Persons.login_to_full( course.teacher ) )
-        doc.gsub!( /_RESP_/, Entities.Persons.login_to_full( course.responsible ) )
+        doc.gsub!( /_PROF_/, Entities.Persons.login_to_full( course.teacher.join ) )
+        doc.gsub!( /_RESP_/, Entities.Persons.login_to_full( course.responsible.join ) )
         doc.gsub!( /_NOM_/, student.full_name )
         doc.gsub!( /_DUREE_/, course.duration )
         doc.gsub!( /_COURS_/, course.description )

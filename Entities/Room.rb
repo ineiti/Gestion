@@ -9,6 +9,3 @@ class Rooms < Entities
     value_str :description
   end
 end
-
-class Room < Entity
-end

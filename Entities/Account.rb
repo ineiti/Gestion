@@ -10,6 +10,3 @@ class Accounts < Entities
     value_int :index
   end
 end
-
-class Account < Entity  
-end
