@@ -1,10 +1,10 @@
-Packages to install (from a clean Lubuntu):
+This package depends on QooxView. There should be a directory holding both directories:
 
-apt-get install ruby rubygems libreoffice pdftk psutils sqlite libsqlite3-dev \
+# ls
+QooxView  Gestion
+# Gestion/Gestion
+
+This will try to download all missing packets (down to ruby), which seems to be:
+
+# sudo apt-get install ruby rubygems libreoffice pdftk psutils sqlite libsqlite3-dev \
   default-jdk gettext
-
-Then you'll have to run
-
-sudo ./update_sqlite3
-
-in the QooxView-directory
