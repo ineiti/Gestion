@@ -11,5 +11,6 @@ Test/data2/*
 .hg*
 .settings*
 Diplomas/*/*
-Diplomas_Profeda/*
+Diplomas_Profeda
+Diplomas_Man
 .idea*
