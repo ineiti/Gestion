@@ -4,7 +4,18 @@ This package depends on QooxView. There should be a directory holding both direc
 QooxView  Gestion
 # Gestion/Gestion
 
-This will try to download all missing packets (down to ruby), which seems to be:
+This will try to download all missing packets (down to ruby).
+
+Short, it will do about:
 
 # sudo apt-get install ruby rubygems libreoffice pdftk psutils sqlite libsqlite3-dev \
-  default-jdk gettext
+default-jdk gettext
+
+And then it will compile sqlite3-support, so a gcc-compiler should be present. A standard Lubuntu-installation
+or Debian-Squeezy installation seems to run it well.
+
+Once it's running, you can point your browser to
+
+http://localhost:3302
+
+and log in using admin/super123
