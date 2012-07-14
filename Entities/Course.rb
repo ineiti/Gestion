@@ -13,6 +13,7 @@ class Courses < Entities
   
   def setup_data
     value_block :name
+    value_entity_courseType :ctype, :drop, :name
     value_str :name
 
     value_block :calendar
@@ -62,7 +63,7 @@ class Courses < Entities
       end
     end
     ret.collect{ |d| [ d[:course_id ], d[:name] ] }.sort{|a,b|
-      a[1].gsub( /^[^_]*_/, '' ) <=> b[1].gsub( /^[^_]*_/, '' )
+      a[1].gsub( /^[^0-9]*/, '' ) <=> b[1].gsub( /^[^0-9]*/, '' )
     }.reverse
   end
   
@@ -81,6 +82,12 @@ class Courses < Entities
 
   def list_name_base
     return %w( base maint int net site )
+  end
+  
+  def self.create_ctype( name, ctype )
+    self.create( :name => "#{ctype.name}_#{name}" ).
+      data_set_hash( ctype.to_hash.except(:name), true ).
+      data_set( :ctype, ctype )
   end
 
   def self.from_date_fr( str )

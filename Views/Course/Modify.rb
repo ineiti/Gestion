@@ -30,7 +30,7 @@ class CourseModify < View
         show_button :print_presence
         gui_vbox :nogroup do
           show_list :students
-#          show_button :add_students, :bulk_add, :del_student, :edit_student, :print_student
+          #          show_button :add_students, :bulk_add, :del_student, :edit_student, :print_student
           show_button :bulk_add, :del_student, :edit_student, :print_student
         end
       end
@@ -62,11 +62,11 @@ class CourseModify < View
     dputs 3, "Got #{course.name} - #{course.inspect}"
     if course
       dputs 2, "Deleting entry #{course}"
-    course.delete
+      course.delete
     end
 
     reply( "empty", [:courses] ) +
-    reply( "update", { :courses => Courses.list_courses } )
+      reply( "update", { :courses => Courses.list_courses } )
   end
 
   def rpc_button_save( session, data )
@@ -74,7 +74,7 @@ class CourseModify < View
     if course
       # BUG: they're already saved, don't save it again
       data.delete( 'students' )
-    course.data_set_hash( data )
+      course.data_set_hash( data )
     end
   end
 
@@ -92,7 +92,7 @@ class CourseModify < View
 
   def update_students( course )
     reply( "empty_only", [:students] ) +
-    reply( "update", { :students => course.list_students } )
+      reply( "update", { :students => course.list_students } )
   end
 
   def rpc_button_del_student( session, data )
@@ -108,7 +108,7 @@ class CourseModify < View
     login = data["students"][0]
     reply( "parent",
       reply( :init_values, [ :PersonTabs, { :search => login, :persons => [] } ] ) +
-      reply( :switch_tab, :PersonTabs ) ) + 
+        reply( :switch_tab, :PersonTabs ) ) + 
       reply( :switch_tab, :PersonModify )
   end
 
@@ -122,12 +122,12 @@ class CourseModify < View
     if data['students']
       if rep[0].class == String
         reply( :window_show, :printing ) +
-        reply( :update, :msg_print => "Click on one of the links:<ul>" +
-          rep.collect{|r| "<li><a href=\"#{r}\">#{r}</a></li>" }.join('') +
-          "</ul>" )
+          reply( :update, :msg_print => "Click on one of the links:<ul>" +
+            rep.collect{|r| "<li><a href=\"#{r}\">#{r}</a></li>" }.join('') +
+            "</ul>" )
       else
         reply( :window_show, :printing ) +
-        reply( :update, :msg_print => "Impression de<ul><li>#{data['students'].join('</li><li>')}</li></ul>en cours" )
+          reply( :update, :msg_print => "Impression de<ul><li>#{data['students'].join('</li><li>')}</li></ul>en cours" )
       end
     end
   end
@@ -136,13 +136,13 @@ class CourseModify < View
     case rep = Courses.find_by_name( data['name'] ).print_presence
     when true
       reply( :window_show, :printing ) +
-      reply( :update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours" )
+        reply( :update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours" )
     when false
       reply( "window_show", "missing_data" ) +
-      reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
+        reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
     else
       reply( "window_show", "missing_data" ) +
-      reply( "update", :missing => "Click on the link: <a href=\"#{rep}\">PDF</a>" )
+        reply( "update", :missing => "Click on the link: <a href=\"#{rep}\">PDF</a>" )
     end
   end
 
@@ -176,16 +176,16 @@ class CourseModify < View
     users = []
     if data['names'] and users = data['names'].split("\n")
       person = Entities.Persons.create( {:first_name => users.shift,
-        :permissions => %w( student ), :town => @town, :country => @country })
+          :permissions => %w( student ), :town => @town, :country => @country })
       person.email = "#{person.login_name}@ndjair.net"
-    course.students.push( person.login_name )
+      course.students.push( person.login_name )
     end
     if users.length > 0
       reply( "update", { :names => users.join("\n") } ) +
-      reply( "callback_button", "bulk_students" )
+        reply( "callback_button", "bulk_students" )
     else
       update_students( course ) +
-      reply( "window_hide" )
+        reply( "window_hide" )
     end
   end
 
@@ -201,8 +201,8 @@ class CourseModify < View
       dputs 3, "replying for course_id #{course_id}"
       course = Courses.find_by_course_id(course_id)
       reply("empty", [:students]) +
-      reply("update", course.to_hash ) +
-      reply("update", {:courses => [course_id] } )
+        reply("update", course.to_hash ) +
+        reply("update", {:courses => [course_id] } )
     else
       reply("empty", [:students])
     end
@@ -210,7 +210,7 @@ class CourseModify < View
 
   def rpc_update( session )
     reply( 'empty', [:students] ) +
-    super( session )
+      super( session )
   end
 
 end

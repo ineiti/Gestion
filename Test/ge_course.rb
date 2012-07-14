@@ -19,6 +19,8 @@ class TC_Course < Test::Unit::TestCase
       :teacher => 'josue' )
     @maint.students = %w( admin surf )
     @base.students = %w( admin2 surf )
+    @maint_t = Entities.CourseTypes.create( :name => "maint", :duration => 72,
+    :desciption => "maintenance", :contents => "lots of work" )
   end
   
   def teardown
@@ -134,5 +136,12 @@ class TC_Course < Test::Unit::TestCase
 
     courses = Entities.Courses.list_courses_for_person( @admin.login_name )
     assert_equal [[2, "maint_1204"]], courses
+  end
+  
+  def test_new_course
+    nmaint = Courses.create_ctype("1201", @maint_t)
+    assert_equal( {:duration=>72, :course_id=>3, :contents=>"lots of work", 
+        :students=>[], :name=>"maint_1201", :ctype => [0] },
+      nmaint.to_hash )
   end
 end

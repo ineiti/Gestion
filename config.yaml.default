@@ -1,0 +1,20 @@
+# Uncomment to automatically login admin
+#autologin: admin
+
+title: "Gestion avec Profeda"
+
+log: events.log
+
+StorageHandler:
+  Replace:
+    LDAP: CSV
+
+views:
+  AdminTabs:
+    visible: false
+
+DiplomaDir: Diplomas
+
+AfriCompta:
+  disabled: true
+
