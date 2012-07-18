@@ -29,7 +29,7 @@ $create_pdfs = Thread.new{
     dputs 3, "Getting #{pdfs.inspect} out of #{dir}"
     all = "#{dir}/000-all.pdf"
     psn = "#{dir}/000-4pp.pdf"
-    dputs 3, "Putting it all in one file"
+    dputs 3, "Putting it all in one file: pdftk #{pdfs.join( ' ' )} cat output #{all}"
     `pdftk #{pdfs.join( ' ' )} cat output #{all}`
     dputs 3, "Putting 4 pages of #{all} into #{psn}"
     `pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
@@ -137,7 +137,8 @@ class CourseDiploma < View
           dputs 2, student.login_name
           student_file = "#{course.diploma_dir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
           dputs 2, "Doing #{counter}: #{student.login_name}"
-          FileUtils::cp( "#{Entities.Courses.diploma_dir}/base_gestion.odt", student_file )
+          FileUtils::cp( "#{Entities.Courses.diploma_dir}/#{course.ctype.filename.join}", 
+            student_file )
           update_student_diploma( student_file, student, course )
         end
         counter += 1

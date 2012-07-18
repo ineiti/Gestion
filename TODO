@@ -81,6 +81,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+        - F 120718 - Have multiple course-types with own templates
 	- B 120623 - Sometimes Diplomas/* gets deleted! BAD - Course.diploma_dir didn't get udpated
 				- different small bugs in diploma-handling
 	- F 120623 - Added blocking of computers (at least front-end, still need to do iptables)

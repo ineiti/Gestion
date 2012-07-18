@@ -21,6 +21,8 @@ class CourseModify < View
     gui_hbox do
       gui_vbox :nogroup do
         show_block :name
+        show_arg :name, :ro => true
+#        show_arg :ctype, :ro => true
         show_block :calendar
         show_block :teacher
         show_button :save
