@@ -18,16 +18,16 @@ UI:
 	- Windows don't get hidden when working (CourseModify::bulkAdd)
 
 FEATURES:
-	- Inventory of screens, mice, routers
-	- Make internet.wifi with Self::Internet only, and a link which allows
-	  to do the infamous internet.wifi/?pass=&user=
-	- Import attestation.markas-al-nour.wifi
-	- CourseHistory
 	- AfriCompta-support:
 		- Gestion acts like a server, and clients can merge with it
 		- Add Account and Movement
 		- Synchronize with AfriCompta
 		- Define reports
+	- Inventory of screens, mice, routers
+	- Make internet.wifi with Self::Internet only, and a link which allows
+	  to do the infamous internet.wifi/?pass=&user=
+	- Import attestation.markas-al-nour.wifi
+	- CourseHistory
 	- NELBE:
 		- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
@@ -81,7 +81,7 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
-        - F 120718 - Have multiple course-types with own templates
+	- F 120718 - Have multiple course-types with own templates
 	- B 120623 - Sometimes Diplomas/* gets deleted! BAD - Course.diploma_dir didn't get udpated
 				- different small bugs in diploma-handling
 	- F 120623 - Added blocking of computers (at least front-end, still need to do iptables)
