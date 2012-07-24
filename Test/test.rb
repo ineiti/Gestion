@@ -2,9 +2,10 @@
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"
-DEBUG_LVL=4
+DEBUG_LVL=3
 
 require 'QooxView'
+require '../AfriCompta'
 
 Permission.add( 'default', 'View,Welcome' )
 Permission.add( 'admin', '.*', '.*' )
@@ -19,4 +20,5 @@ qooxView = QooxView.init( '../Entities', '../Views' )
 #require 'ge_login'
 #require 'ge_view'
 #require 'ge_tasks'
-require 'ge_course'
+#require 'ge_course'
+require 'ge_africompta'

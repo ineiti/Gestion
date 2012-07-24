@@ -1,6 +1,8 @@
 class Movements < Entities
   def setup_data
-    @default_type = :SQLite
+		dputs 0, "init_movements"
+    @default_type = :SQLiteAC
+		@data_field_id = :id
 
     value_str :src
     value_str :dst

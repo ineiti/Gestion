@@ -1,6 +1,7 @@
 class Accounts < Entities
   def setup_data
-    @default_type = :SQLite
+    @default_type = :SQLiteAC
+		@data_field_id = :id
     
     value_str :name
     value_str :desc

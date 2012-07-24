@@ -45,6 +45,7 @@ Programming:
 	- rpc_parse_reply
 		- take out arrays when only one reply anyway
 	- when empty configuration and LDAP is not here, fall back to CSV
+	- Add real type-checking between value_* and Storages
 	- Really slow search or something when starting up
 		- also in CourseModify
 	- having lists and dropbox with additional hidden "index" that is returned for chosen entries

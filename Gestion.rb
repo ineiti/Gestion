@@ -19,6 +19,7 @@ DEBUG_LVL=3
 
 begin
   require 'QooxView'
+	require 'AfriCompta'
   require 'Captive'
   require 'QVInfo'
 rescue Exception => e  

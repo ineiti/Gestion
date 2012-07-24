@@ -2,7 +2,7 @@
 config.yaml
 data*/*
 ldap*
-*.log
+*\.log
 Test/data/*
 Test/data2/*
 .DS_Store
