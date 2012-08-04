@@ -1,13 +1,13 @@
 #!/bin/bash
 if echo $( hg branches ) | grep -q -v $1; then
   echo Branch $1 doesnt exist, creating
-  hg branch $1
   git branch $1
   cd ../QooxView
-  hg branch $1
   git branch $1
   cd ../Gestion
 fi
+hg branch $1
 git checkout $1
 cd ../QooxView
+hg branch $1
 git checkout $1

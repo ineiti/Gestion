@@ -22,6 +22,7 @@ begin
 	require 'AfriCompta'
   require 'Captive'
   require 'QVInfo'
+	require 'ACaccess'
 rescue Exception => e  
   puts "Couldn't start QooxView - perhaps missing libraries?"
   print "Trying to run the installer? [Y/n] "

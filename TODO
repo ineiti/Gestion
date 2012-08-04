@@ -19,8 +19,8 @@ UI:
 
 FEATURES:
 	- AfriCompta-support:
+		- 120724 - Add Account and Movement
 		- Gestion acts like a server, and clients can merge with it
-		- Add Account and Movement
 		- Synchronize with AfriCompta
 		- Define reports
 	- Inventory of screens, mice, routers

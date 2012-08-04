@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo This is not used for the moment - just kept for
+echo future reference in case the column-names need
+echo to change...
+
+exit 1
+
+cp db.testGestion.orig db.testGestion
+
+cat - > sqlite.cmd <<EOF
+PRAGMA writable_schema = 1;
+UPDATE SQLITE_MASTER SET SQL = 'CREATE TABLE "compta_accounts" ("account_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "parent_id" integer, "name" varchar(255), "desc" text, "global_id" varchar(255), "total" varchar(255), "multiplier" float, "index" integer)' WHERE NAME = 'compta_accounts';
+UPDATE SQLITE_MASTER SET SQL = 'CREATE TABLE "compta_movements" ("movement_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "account_src_id" integer NOT NULL, "account_dst_id" integer NOT NULL, "value" real, "desc" varchar(255), "date" date, "revision" integer, "global_id" varchar(255), "index" integer)' WHERE NAME = 'compta_movements';
+UPDATE SQLITE_MASTER SET SQL = 'CREATE TABLE "compta_users" ("user_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar(255), "full" varchar(255), "pass" varchar(255), "account_index" integer, "movement_index" integer)' WHERE NAME = 'compta_users';
+PRAGMA writable_schema = 0;
+.quit
+EOF
+echo .quit | sqlite3 -init sqlite.cmd $1
+
+echo .dump | sqlite3 $1
