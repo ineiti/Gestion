@@ -2,7 +2,9 @@
 
 BUGS:
 	- when clicking on tab while other tab is loading, it loops endlessly
+	- when no student passes, it crashes
 	- In Self::Cash, Self::Services don't show up
+	- Diplomas/base_gestion.odt is missing in MaN-version 332:30802485413c
 	- 1000 crashes when not operating "properly"
 	
 Security:
@@ -16,6 +18,7 @@ UserFriendly:
 	
 UI:
 	- Windows don't get hidden when working (CourseModify::bulkAdd)
+	- Cours::Noter should have a bigger and longer student-list
 
 FEATURES:
 	- AfriCompta-support:

@@ -13,20 +13,19 @@ class Accounts < Entities
   end
     
 	def self.create( name, desc, parent, global_id )
-		parent = parent.to_i
-		a = Account.new( :name => name, :desc => desc, :account_id => parent,
+		a = super( :name => name, :desc => desc, :account_id => parent.id,
 			:global_id => global_id.to_s )
 		a.total = "0"
 		# TODO: u_l.save?
-		if parent > 0
-			a.multiplier = Account.find_by_id( parent ).multiplier
+		if parent
+			a.multiplier = parent.multiplier
 		else
 			a.multiplier = 1
 		end
 		a.new_index
 		a.save
+		dputs 2, "Created account #{a.name}"
 		a
-		debug 2, "Created account #{a.name}"
 	end
 
 	# Gets an account from a string, if it doesn't exist yet, creates it.
@@ -34,35 +33,35 @@ class Accounts < Entities
 	def self.from_s( str )
 		desc, str = str.split("\r")
 		if not str
-			debug 0, "Invalid account found: #{desc}"
+			dputs 0, "Invalid account found: #{desc}"
 			return [ -1, nil ]
 		end
 		global_id, total, name, multiplier, par = str.split("\t")
 		total, multiplier = total.to_f, multiplier.to_f
-		debug 3, "Here comes the account: " + global_id.to_s
-		debug 5, "par: #{par}"
+		dputs 3, "Here comes the account: " + global_id.to_s
+		dputs 5, "par: #{par}"
 		if par
-			parent = Account.find_by_global_id( par )
-			debug 5, "parent: #{parent.global_id}"
+			parent = Accounts.find_by_global_id( par )
+			ddputs 5, "parent: #{parent.global_id}"
 		end
-		debug 3, "global_id: #{global_id}"
+		dputs 3, "global_id: #{global_id}"
 		# Does the account already exist?
 		our_a = nil
-		if not ( our_a = Account.find_by_global_id(global_id) )
+		pid = par ? parent.id : 0
+		if not ( our_a = Accounts.find_by_global_id(global_id) )
 			# Create it
-			our_a = Account.new
+			our_a = Accounts.create( name, desc, Accounts.find_by_id( par ), global_id )
 		end
 		# And update it
-		pid = par ? parent.id : 0
 		our_a.set_nochildmult( name, desc, pid, multiplier )
 		our_a.global_id = global_id
 		our_a.save
-		debug 2, "Saved account #{name} with index #{our_a.index} and global_id #{our_a.global_id}"
+		dputs 2, "Saved account #{name} with index #{our_a.index} and global_id #{our_a.global_id}"
 		return our_a
 	end
 end
 
-class Acount < Entity
+class Account < Entity
 
 	# This gets the tree under that account, breadth-first
 	def get_tree
@@ -81,33 +80,31 @@ class Acount < Entity
 	end
     
 	def new_index()
-		u_l = User.find_by_name('local')
+		u_l = Users.find_by_name('local')
 		self.index = u_l.account_index
 		u_l.account_index += 1
 		u_l.save
-		debug 3, "Index for account #{name} is #{index}"
+		dputs 3, "Index for account #{name} is #{index}"
 	end
     
 	# Sets different new parameters.
 	def set_nochildmult( name, desc, parent, multiplier = 1, users = [] )
 		if self.new_record?
-			debug 4, "New record in nochildmult"
+			dputs 4, "New record in nochildmult"
 			self.total = 0
 			# We need to save so that we have an id...
 			save
 			self.global_id = User.find_by_name('local').full + "-" + self.id.to_s
 		end
-		self.name, self.desc, self.account_id = name, desc, parent.to_i;
-		self.users.clear
-		users.each { |u|
-			self.users << User.find_by_name( u )
-		}
+		self.name, self.desc, self.account_id = name, desc, parent;
+		# TODO: implement link between user-table and account-table
+		# self.users = users ? users.join(":") : ""
 		self.multiplier = multiplier
 		# And recalculate everything.
-		# TODO - why start with -10?
-		total = -10
+		total = 0
 		movements.each{|m|
-			total += m.getValue( self )
+			v = m.get_value( self )
+			total += v
 		}
 		new_index
 		save
@@ -122,14 +119,14 @@ class Acount < Entity
 	# Sort first regarding inverse date (newest first), then description, 
 	# and finally the value
 	def movements( from = nil, to = nil )
-		debug 5, "Account::movements"
+		dputs 5, "Account::movements"
 		timer_start
 		movs = ( movements_src + movements_dst )
 		if ( from != nil and to != nil )
 			movs.delete_if{ |m|
 				( m.date < from or m.date > to )
 			}
-			debug 3, "Rejected some elements"
+			dputs 3, "Rejected some elements"
 		end
 		timer_read("rejected elements")
 		sorted = movs.sort{ |a,b|
@@ -158,7 +155,7 @@ class Acount < Entity
 			"Account-desc: #{name.to_s}, #{global_id}"
 			"#{desc}\r#{global_id}\t" + 
         "#{total.to_s}\t#{name.to_s}\t#{multiplier.to_s}\t" +
-				( (account_id and account_id > 0 ) ? account.global_id.to_s : "" ) +
+				( account_id ? account.global_id.to_s : "" ) +
 				( add_path ? "\t#{path}" : "" )
 		else
 			"nope"
@@ -167,26 +164,37 @@ class Acount < Entity
     
 	def is_empty
 		size = self.movements.select{|m| m.value.to_f != 0.0 }.size
-		debug 2, "Account #{self.name} has #{size} non-zero elements"
+		dputs 2, "Account #{self.name} has #{size} non-zero elements"
 		if size == 0 and self.accounts.size == 0
 			return true
 		end
 		return false
 	end
     
-	def delete
-		self.destroy if self.is_empty
-	end
-    
-    
 	# Be sure that all descendants have the same multiplier
 	def set_child_multipliers( m )
-		debug 3, "Setting multiplier from #{name} to #{m}"
+		dputs 3, "Setting multiplier from #{name} to #{m}"
 		self.multiplier = m
 		save
 		return if not accounts
 		accounts.each{ |acc|
 			acc.set_child_multipliers( m )
 		}
+	end
+	
+	def accounts
+		Accounts.search_by_account_id( self.id )
+	end
+	
+	def account
+		account_id
+	end
+	
+	def movements_src
+		Movements.search_by_account_src_id( self.id )
+	end
+	
+	def movements_dst
+		Movements.search_by_account_dst_id( self.id )
 	end
 end
