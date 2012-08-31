@@ -33,24 +33,24 @@ class ACaccess
 			return "User " + user + " not known with pass " +
         pass
 		end
-		case path
-        
+
+		case path        
+		when /accounts_get(.*)/
 			# Gets all accounts available (to that user) that have been changed
 			# since the last update, again, do it from the root(s), else we have
 			# a problem for children without parents
-		when /accounts_get(.*)/
 			ret = ""
 			dputs 2, "user index is: #{u.account_index}"
 			# Returns only one account
 			if $1 == "_one"
-				return Accounts.find_by_global_id( arg )
+				return Accounts.find_by_global_id( arg ).to_s
 			end
 			get_all = $1 == "_all"
-			Accounts.find_all_by_account_id(0).to_a.each{|a|
+			Accounts.search_by_account_id(0).to_a.each{|a|
 				if a.global_id
 					a.get_tree{|acc|
 						if acc.index > u.account_index or get_all
-							dputs 2, "Found account #{acc.name} with index #{acc.index}"
+							dputs 4, "Found account #{acc.name} with index #{acc.index}"
 							ret += "#{acc.to_s( get_all )}\n"
 						end
 					}
@@ -65,7 +65,7 @@ class ACaccess
 			start, stop = u.movement_index + 1, u_local.movement_index - 1
 			# Returns only one account
 			if $1 == "_one"
-				return Movements.find_by_global_id( arg )
+				return Movements.find_by_global_id( arg ).to_s
 			end
 			if $1 == "_all"
 				start, stop = arg.split(/,/)
@@ -111,25 +111,25 @@ class ACaccess
 
 		when "movements_put"
 			dputs 3, "Going to put some movements"
-			movs = ActiveSupport::JSON.decode( input.movements )
+			movs = ActiveSupport::JSON.decode( input['movements'] )
 			if movs.size > 0
 				movs.each{ |m|
-					mov = Movement.from_json( m )
+					mov = Movements.from_json( m )
 					dputs 2, "Saved movement #{mov.global_id}"
 					u.update_movement_index
 				}
 			end
 		when "movement_delete"
 			dputs 3, "Going to delete movement"
-			Movements.find_by_global_id( input.global_id ).delete
+			Movements.find_by_global_id( input['global_id'] ).delete
 		when "account_put"
 			dputs 3, "Going to put account"
-			acc = Accounts.from_s( input.account )
+			acc = Accounts.from_s( input['account'] )
 			u.update_account_index
 			dputs 2, "Saved account #{acc.global_id}"
 		when "account_delete"
 			dputs 3, "Going to delete account"
-			Accounts.find_by_global_id( input.global_id ).delete
+			Accounts.find_by_global_id( input['global_id'] ).delete
 		end
 	end
 end

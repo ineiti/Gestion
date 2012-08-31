@@ -6,6 +6,7 @@ DEBUG_LVL=3
 
 require 'QooxView'
 require '../AfriCompta'
+require '../ACaccess'
 
 Permission.add( 'default', 'View,Welcome' )
 Permission.add( 'admin', '.*', '.*' )

@@ -42,7 +42,7 @@ class Accounts < Entities
 		dputs 5, "par: #{par}"
 		if par
 			parent = Accounts.find_by_global_id( par )
-			ddputs 5, "parent: #{parent.global_id}"
+			dputs 5, "parent: #{parent.global_id}"
 		end
 		dputs 3, "global_id: #{global_id}"
 		# Does the account already exist?

@@ -326,8 +326,61 @@ class TC_AfriCompta < Test::Unit::TestCase
 		assert_equal 20, rem2.movement_index
 	end
 	
-	def test_merge
+	def test_merge_get
+		rep = ACaccess.get( "version/foo,ba" )
+		assert_equal "User foo not known with pass ba", rep
+
+		rep = ACaccess.get( "version/foo,bar" )
+		assert_equal "4096", rep
 		
+		rep = ACaccess.get( "index/foo,bar")
+		assert_equal "6,5", rep
+
+		rep = ACaccess.get( "accounts_get_one/5544436cf81115c6faf577a7e2307e92-2" + 
+				"/foo,bar")
+		assert_equal "Full description\r5544436cf81115c6faf577a7e2307e92-2\t" +
+			"1040.0\tCash\t-1.0\t5544436cf81115c6faf577a7e2307e92-1", rep
+
+		rep = ACaccess.get( "accounts_get/foo,bar")
+		assert_equal "Full description\r5544436cf81115c6faf577a7e2307e92-1\t0\tRoot" +
+			"\t1.0\t\nFull description\r5544436cf81115c6faf577a7e2307e92-2\t1040.0\t" +
+			"Cash\t-1.0\t5544436cf81115c6faf577a7e2307e92-1\nFull description\r" +
+			"5544436cf81115c6faf577a7e2307e92-3\t1100.0\tIncome\t1.0\t" +
+			"5544436cf81115c6faf577a7e2307e92-1\nFull description\r" +
+			"5544436cf81115c6faf577a7e2307e92-4\t-60.0\tOutcome\t1.0\t" +
+			"5544436cf81115c6faf577a7e2307e92-1\n", rep
+
+		rep = ACaccess.get( "accounts_get/foo,bar")
+		assert_equal "", rep
+
+		rep = ACaccess.get( "accounts_get_all/foo,bar")
+		assert_equal "Full description\r5544436cf81115c6faf577a7e2307e92-1\t0\t" +
+			"Root\t1.0\t\tRoot::\nFull description\r5544436cf81115c6faf577a7e2307e92-2" +
+			"\t1040.0\tCash\t-1.0\t5544436cf81115c6faf577a7e2307e92-1\tRoot::Cash\n" +
+			"Full description\r5544436cf81115c6faf577a7e2307e92-3\t1100.0\tIncome\t" +
+			"1.0\t5544436cf81115c6faf577a7e2307e92-1\tRoot::Income\nFull description" +
+			"\r5544436cf81115c6faf577a7e2307e92-4\t-60.0\tOutcome\t1.0\t" +
+			"5544436cf81115c6faf577a7e2307e92-1\tRoot::Outcome\n", rep
+		
+		rep = ACaccess.get( "movements_get_one/5544436cf81115c6faf577a7e2307e92-4/foo,bar")
+		assert_equal "Restaurant\r5544436cf81115c6faf577a7e2307e92-4\t20.0\t" +
+			"2012-07-11\t5544436cf81115c6faf577a7e2307e92-4\t" +
+			"5544436cf81115c6faf577a7e2307e92-2", rep
+
+		rep = ACaccess.get( "movements_get_all/0,100/foo,bar")
+		assert_equal "Salary\r5544436cf81115c6faf577a7e2307e92-1\t1000.0\t" +
+			"2012-07-01\t5544436cf81115c6faf577a7e2307e92-2\t" +
+			"5544436cf81115c6faf577a7e2307e92-3\nGift\r" +
+			"5544436cf81115c6faf577a7e2307e92-2\t100.0\t2012-07-10\t" +
+			"5544436cf81115c6faf577a7e2307e92-2\t5544436cf81115c6faf577a7e2307e92-3\n" +
+			"Train\r5544436cf81115c6faf577a7e2307e92-3\t40.0\t2012-07-02\t" +
+			"5544436cf81115c6faf577a7e2307e92-4\t5544436cf81115c6faf577a7e2307e92-2\n" +
+			"Restaurant\r5544436cf81115c6faf577a7e2307e92-4\t20.0\t2012-07-11\t" +
+			"5544436cf81115c6faf577a7e2307e92-4\t5544436cf81115c6faf577a7e2307e92-2\n", 
+			rep
+
+		rep = ACaccess.get( "movements_get/foo,bar")
+		assert_equal "", rep
 	end
 
 end
