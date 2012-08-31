@@ -27,7 +27,7 @@ class TC_AfriCompta < Test::Unit::TestCase
 		accs = Entities.Accounts.search_all
 		assert_equal 4, accs.length
 		users = Entities.Users.search_all
-		assert_equal 1, users.length
+		assert_equal 2, users.length
 		
 		assert_equal [{:id=>1,
 				:value=>1000.0,
@@ -104,7 +104,13 @@ class TC_AfriCompta < Test::Unit::TestCase
 				:account_index=>6,
 				:movement_index=>5,
 				:name=>"local",
-				:id=>1}],
+				:id=>1},
+			{:pass=>"bar",
+				:full=>"foo bar",
+				:account_index=>0,
+				:movement_index=>0,
+				:name=>"foo",
+				:id=>2}],
 			users.collect{|u| u.to_hash}
   end
 	
@@ -116,15 +122,15 @@ class TC_AfriCompta < Test::Unit::TestCase
 		assert_equal "Train\r5544436cf81115c6faf577a7e2307e92-3\t40.0\t2012-07-02\t" + 
 			"5544436cf81115c6faf577a7e2307e92-4\t5544436cf81115c6faf577a7e2307e92-2", 
 			mov.to_s
-		assert_equal "\"Train\\r5544436cf81115c6faf577a7e2307e92-3\\t40.0\\t" +
+		assert_equal "{\"str\":\"Train\\r5544436cf81115c6faf577a7e2307e92-3\\t40.0\\t" +
 			"2012-07-02\\t5544436cf81115c6faf577a7e2307e92-4\\t" + 
-			"5544436cf81115c6faf577a7e2307e92-2\"", 
+			"5544436cf81115c6faf577a7e2307e92-2\"}", 
 			mov.to_json
 		assert_equal( {:global_id=>"5544436cf81115c6faf577a7e2307e92-2",
 				:desc=>"Full description",
 				:total=>"1040.0",
 				:multiplier=>-1.0,
-				:account_id=>1,
+				:account_id=>[1],
 				:name=>"Cash",
 				:id=>2,
 				:index=>5}, 
@@ -289,10 +295,39 @@ class TC_AfriCompta < Test::Unit::TestCase
 	end
 	
 	def test_users
-		Users.create( "foo", "foo bar", "foobar" )
-		foo = Users.find_by_name( "foo" )
-		assert_equal "foo bar", foo.full
-		assert_equal "foobar", foo.pass
+		Users.create( "foo2", "foo foo", "foo2bar" )
+		foo = Users.find_by_name( "foo2" )
+		assert_equal "foo foo", foo.full
+		assert_equal "foo2bar", foo.pass
+		assert_equal 0, foo.movement_index
+		assert_equal 0, foo.account_index
+		
+		foo.update_movement_index
+		assert_equal 4, foo.movement_index
+		foo.update_account_index
+		assert_equal 5, foo.account_index
+	end
+	
+	def test_remote
+		rem = Remotes.create( :url => "http://localhost:3302/acaccount",
+			:name => "foo", :pass => "bar" )
+		assert_equal 0, rem.account_index
+		assert_equal 0, rem.movement_index
+		
+		rem.update_movement_index
+		assert_equal 4, rem.movement_index
+		rem.update_account_index
+		assert_equal 5, rem.account_index
+
+		rem2 = Remotes.create( :url => "http://localhost:3302/acaccount",
+			:name => "foo", :pass => "bar", :account_index => 10,
+			:movement_index => 20 )
+		assert_equal 10, rem2.account_index
+		assert_equal 20, rem2.movement_index
+	end
+	
+	def test_merge
+		
 	end
 
 end
