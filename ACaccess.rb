@@ -112,6 +112,7 @@ class ACaccess
 		when "movements_put"
 			dputs 3, "Going to put some movements"
 			movs = ActiveSupport::JSON.decode( input['movements'] )
+			dputs 3, "movs is now #{movs.inspect}"
 			if movs.size > 0
 				movs.each{ |m|
 					mov = Movements.from_json( m )
@@ -131,6 +132,7 @@ class ACaccess
 			dputs 3, "Going to delete account"
 			Accounts.find_by_global_id( input['global_id'] ).delete
 		end
+		return "ok"
 	end
 end
 

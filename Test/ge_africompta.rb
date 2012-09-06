@@ -382,5 +382,30 @@ class TC_AfriCompta < Test::Unit::TestCase
 		rep = ACaccess.get( "movements_get/foo,bar")
 		assert_equal "", rep
 	end
+	
+	def test_merge_post
+		input = { 'user' => 'foo', 'pass' => 'bar' }
+		
+		rep = ACaccess.post( 'account_get_id', input.merge('account' => 'Root'))
+		assert_equal "1", rep
+		rep = ACaccess.post( 'account_get_id', input.merge('account' => 'Root::Cash'))
+		assert_equal "2", rep
+		
+		mov_pizza = "Pizza\r5544436cf81115c6faf577a7e2307e92-5\t12.0\t" +
+			"2012-07-11\t5544436cf81115c6faf577a7e2307e92-4\t" +
+			"5544436cf81115c6faf577a7e2307e92-2"
+		mov_panini = "Panini\r5544436cf81115c6faf577a7e2307e92-6\t14.0\t" +
+			"2012-07-11\t5544436cf81115c6faf577a7e2307e92-4\t" +
+			"5544436cf81115c6faf577a7e2307e92-2"
+		assert_equal "-60.0", @outcome.total
+		assert_equal "1040.0", @cash.total
+		rep = ACaccess.post( 'movements_put', input.merge( 'movements' => 
+					[{ :str => mov_pizza }.to_json, { :str => mov_panini }.to_json].to_json))
+		assert_equal "ok", rep
+		assert_equal 12.0, Movements.find_by_desc( 'Pizza' ).value
+		assert_equal 14.0, Movements.find_by_desc( 'Panini' ).value
+		assert_equal -86.0, @outcome.total
+		assert_equal 1014.0, @cash.total
+	end
 
 end
