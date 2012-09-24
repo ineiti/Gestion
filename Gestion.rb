@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -I../QooxView -wKU
+#!/usr/bin/ruby -I../QooxView -I../AfriCompta -wKU
 # ! /opt/local/bin/ruby1.9 -I../QooxView -I. -wKU
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
@@ -19,11 +19,14 @@ DEBUG_LVL=3
 
 begin
   require 'QooxView'
-	require 'AfriCompta'
   require 'Captive'
-  require 'QVInfo'
-	require 'ACaccess'
-rescue Exception => e  
+  require 'Info'
+	require 'ACQooxView'
+rescue Exception => e
+	dputs 0, "#{e.inspect}"
+	dputs 0, "#{e.to_s}"
+	puts e.backtrace
+
   puts "Couldn't start QooxView - perhaps missing libraries?"
   print "Trying to run the installer? [Y/n] "
   if gets.chomp.downcase != "n"
@@ -50,7 +53,7 @@ admin = Entities.Persons.find_by_login_name( "admin" )
 if not admin
   dputs 0, "OK, creating admin"
   admin = Entities.Persons.create( :login_name => "admin", :password => "super123", :permissions => [ "admin" ] ,
-  :credit => "100" )
+		:credit => "100" )
 else
   admin.permissions = ["admin"];
 end
@@ -58,13 +61,13 @@ end
 if not Entities.Services.find_by_name( "Free solar" )
   dputs 0, "Creating services"
   Entities.Services.create( :name => "CCC", :group => "ccc", 
-  :price => 1000, :duration => 0 )
+		:price => 1000, :duration => 0 )
   Entities.Services.create( :name => "CCC active", :group => "ccc_active", 
-  :price => 5000, :duration => 30 )
+		:price => 5000, :duration => 30 )
   Entities.Services.create( :name => "Free solar", :group => "free_solar", 
-  :price => 10000, :duration => 30 )
+		:price => 10000, :duration => 30 )
   Entities.Services.create( :name => "Free internet", :group => "free_internet", 
-  :price => 25000, :duration => 30 )
+		:price => 25000, :duration => 30 )
 end
 
 # Autosave every 5 minutes

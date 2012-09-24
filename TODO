@@ -23,8 +23,11 @@ UI:
 FEATURES:
 	- AfriCompta-support:
 		- 120724 - Add Account and Movement
-		- Gestion acts like a server, and clients can merge with it
-		- Synchronize with AfriCompta
+		- 120912 - Gestion acts like a server, and clients can merge with it
+		- 120924 - Synchronize with AfriCompta
+		- Update Person-class to use new AfriCompta
+		- Archive old accounts
+		- Delete accounts
 		- Define reports
 	- Inventory of screens, mice, routers
 	- Make internet.wifi with Self::Internet only, and a link which allows
@@ -35,6 +38,7 @@ FEATURES:
 		- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
 Programming:
+	- Allow subdirectories in Entities-directory
 	- add a print-dialog with window and buttons
 	- Change Frontend::Views::Layout::dispatch to handle one request at a
 	  time and to allow new requests to be inserted before handling other
