@@ -1,6 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- AfriCompta: test creation of accounts on both sides, when using
+	  AfriCompta.new and Persons.add_cash
 	- when clicking on tab while other tab is loading, it loops endlessly
 	- when no student passes, it crashes
 	- In Self::Cash, Self::Services don't show up
@@ -25,7 +27,7 @@ FEATURES:
 		- 120724 - Add Account and Movement
 		- 120912 - Gestion acts like a server, and clients can merge with it
 		- 120924 - Synchronize with AfriCompta
-		- Update Person-class to use new AfriCompta
+		- 120925 - Update Person-class to use new AfriCompta
 		- Archive old accounts
 		- Delete accounts
 		- Define reports
@@ -38,6 +40,8 @@ FEATURES:
 		- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
 
 Programming:
+	- Remove QooxView/Storages/AfriCompta.rb and adjust
+	 Gestion/Entities/Person.rb
 	- Allow subdirectories in Entities-directory
 	- add a print-dialog with window and buttons
 	- Change Frontend::Views::Layout::dispatch to handle one request at a

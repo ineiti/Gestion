@@ -1,12 +1,11 @@
-#!/usr/bin/ruby -I../../QooxView -wKU
+#!/usr/bin/ruby -I../../QooxView -I../../AfriCompta -wKU
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"
 DEBUG_LVL=3
 
 require 'QooxView'
-require '../AfriCompta'
-require '../ACaccess'
+require 'ACQooxView'
 
 Permission.add( 'default', 'View,Welcome' )
 Permission.add( 'admin', '.*', '.*' )
@@ -17,9 +16,8 @@ Permission.add( 'secretary', 'PersonModify', 'professor' )
 
 qooxView = QooxView.init( '../Entities', '../Views' )
 
-#require 'ge_person'
+require 'ge_person'
 #require 'ge_login'
 #require 'ge_view'
 #require 'ge_tasks'
 #require 'ge_course'
-require 'ge_africompta'

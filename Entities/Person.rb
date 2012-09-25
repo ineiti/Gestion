@@ -111,9 +111,9 @@ class Persons < Entities
     end
     if family.length > 0
       dputs 2, "Family name + First name"
-    login = family.chars.first + first
+			login = family.chars.first + first
     else
-    login = first
+			login = first
     end
 
     accents_replace( login )
@@ -173,7 +173,7 @@ class Persons < Entities
       if client
         actor.add_credit( client, data['credit_add'])
       end
-    return client
+			return client
     end
     return nil
   end
@@ -186,7 +186,7 @@ class Persons < Entities
         p.login_name
       }.select{|s|s}
     else
-    []
+			[]
     end
   end
 
@@ -243,7 +243,7 @@ class Persons < Entities
   def find_name_or_create( name )
     first, last = name.split( " ", 2 )
     find_full_name( name ) or
-    person = create( :first_name => first, :family_name => last )
+			person = create( :first_name => first, :family_name => last )
   end
 
   def login_to_full( login )
@@ -265,12 +265,12 @@ class Person < Entity
   end
 
   def update_account_due
-    c = $config[:compta_due]
-    if c and data_get( :account_due )
-      src = c[:src] + data_get(:account_due)
+    c = get_config( "Root::Lending", :compta_due, :src )
+    if data_get( :account_due )
+      src = "#{c}::#{data_get(:account_due)}"
       dputs 2, "Creating AfriCompta with source-account: #{src}"
-      @compta_due = AfriCompta.new( src, c[:dst],
-      c[:user], c[:pass], c[:host] )
+      @compta_due = AfriCompta.new( src, 
+				get_config( "Root::Income", :compta_due, :dst ) )
       update_credit
     else
       @compta_due = AfriCompta.new
@@ -301,7 +301,12 @@ class Person < Entity
   end
 
   def get_credit
-    ( @compta_due and not @compta_due.disabled ) ? ( @compta_due.get_credit * 1000.0 + 0.5 ).to_i : self.credit_due
+    if @compta_due and not @compta_due.disabled
+			dputs 2, "credit is #{@compta_due.get_credit}"
+			( @compta_due.get_credit * 1000.0 + 0.5 ).to_i
+		else
+			self.credit_due
+		end
   end
 
   def update_credit
@@ -313,10 +318,10 @@ class Person < Entity
     dputs 3, "Adding #{credit}CFA to #{client.credit} for #{client.login_name}"
     credit_before = client.credit
     if credit.to_i < 0 and credit.to_i.abs > client.credit.to_i
-    credit = -client.credit.to_i
+			credit = -client.credit.to_i
     end
     client.data_set_log( :credit, ( client.credit.to_i + credit.to_i ).to_s,
-    "#{self.person_id}:#{credit}" )
+			"#{self.person_id}:#{credit}" )
     move_cash( credit, "credit pour -#{client.login_name}:#{credit}-")
     log_msg( "AddCash", "#{self.login_name} added #{credit} for #{client.login_name}: " +
         "#{credit_before} + #{credit} = #{client.credit}" )
@@ -326,11 +331,11 @@ class Person < Entity
   def move_cash( credit, msg )
     credit_due = 0
     if @compta_due and not @compta_due.disabled
-      credit_due = @compta_due.add_movement( 0, credit.to_i / 1000.0,
-      "Gestion: #{msg}" )
-    credit_due = ( credit_due * 1000.0 + 0.5 ).to_i
+      credit_due = @compta_due.add_movement( credit.to_i / 1000.0,
+				"Gestion: #{msg}" )
+			credit_due = ( credit_due * 1000.0 + 0.5 ).to_i
     else
-    credit_due = self.credit_due.to_i + credit.to_i
+			credit_due = self.credit_due.to_i + credit.to_i
     end
     data_set_log( :credit_due, credit_due, msg )
   end
@@ -357,13 +362,13 @@ class Person < Entity
           dputs 3, "Found service #{service}"
           service.duration == 0 or p.date + service.duration * 60 * 60 * 24 >= Time.now.to_i
         else
-        false
+					false
         end
       }.collect{|p|
         p.desc.gsub(/^Service:/, '')
       }
     else
-    []
+			[]
     end
   end
 
@@ -390,13 +395,13 @@ class Person < Entity
 
   def print( counter = nil )
     @proxy.print_card.print( [ [ /--NOM--/, first_name ],
-      [ /--NOM2--/, family_name ],
-      [ /--BDAY--/, birthday ],
-      [ /--TDAY--/, `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"` ],
-      [ /--TEL--/, phone ],
-      [ /--UNAME--/, login_name ],
-      [ /--EMAIL--/, email ],
-      [ /--PASS--/, password_plain ] ], counter )
+				[ /--NOM2--/, family_name ],
+				[ /--BDAY--/, birthday ],
+				[ /--TDAY--/, `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"` ],
+				[ /--TEL--/, phone ],
+				[ /--UNAME--/, login_name ],
+				[ /--EMAIL--/, email ],
+				[ /--PASS--/, password_plain ] ], counter )
   end
 
   def to_list
