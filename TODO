@@ -1,8 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- AfriCompta: test creation of accounts on both sides, when using
-	  AfriCompta.new and Persons.add_cash
+	- QooxView/Tests are not running through
 	- when clicking on tab while other tab is loading, it loops endlessly
 	- when no student passes, it crashes
 	- In Self::Cash, Self::Services don't show up
@@ -93,6 +92,8 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- B 120925 - AfriCompta: test creation of accounts on both sides, when using
+	  AfriCompta.new and Persons.add_cash
 	- F 120718 - Have multiple course-types with own templates
 	- B 120623 - Sometimes Diplomas/* gets deleted! BAD - Course.diploma_dir didn't get udpated
 				- different small bugs in diploma-handling
