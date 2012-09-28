@@ -7,11 +7,41 @@ two can be synchronized.
 require 'zip/zipfilesystem'; include Zip
 require 'docsplit'
 
+$create_pdfs = Thread.new{
+  $new_pdfs = []
+  loop{
+    if $new_pdfs.length == 0
+      Thread.stop
+    end
+    dputs 2, "Creating pdfs #{$new_pdfs.inspect}"
+    `date >> /tmp/cp`
+    pdfs = []
+    n_pdfs = $new_pdfs.shift
+    dir = File::dirname( n_pdfs.first )
+    n_pdfs.sort.each{ |p|
+      dputs 3, "Started thread for file #{p} in directory #{dir}"
+      Docsplit.extract_pdf p, :output => dir
+      dputs 5, "Finished docsplit"
+      FileUtils::rm( p )
+      dputs 5, "Finished rm"
+      pdfs.push p.sub( /\.[^\.]*$/, '.pdf' )
+    }
+    dputs 3, "Getting #{pdfs.inspect} out of #{dir}"
+    all = "#{dir}/000-all.pdf"
+    psn = "#{dir}/000-4pp.pdf"
+    dputs 3, "Putting it all in one file: pdftk #{pdfs.join( ' ' )} cat output #{all}"
+    `pdftk #{pdfs.join( ' ' )} cat output #{all}`
+    dputs 3, "Putting 4 pages of #{all} into #{psn}"
+    `pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
+    FileUtils::mv( "#{psn}.tmp", psn )
+    dputs 2, "Finished"
+  }
+}
+
 class CourseDiploma < View
   def layout
     set_data_class :Courses
     @order = 30
-    @thread = nil
 
     gui_hbox do
       gui_vbox :nogroup do
@@ -50,12 +80,14 @@ class CourseDiploma < View
       dputs 3, "New diploma for: #{course.course_id} - #{student.login_name} - #{grade.to_hash.inspect}"
       ZipFile.open(file){ |z|
         doc = z.read("content.xml")
-        ddputs 5, "Contents is: #{course.contents.inspect}"
-        desc_p = /-DESC1-(.*)-DESC2-/.match( doc )[1]
-				ddputs 3, "desc_p is #{desc_p}"
-        doc.gsub!( /-DESC1-.*-DESC2-/,
-					course.contents.split("\n").join( desc_p ))
-=begin				
+        contents = ""
+        dputs 5, "Contents is: #{course.contents.inspect}"
+        desc_p = /text:style-name="([^"]*)">_DESC_/.match( doc )[1]
+        course.contents.split("\n").each{|d|
+          dputs 5, "One line is: #{d}"
+          contents += d + "</text:p></text:list-item><text:list-item><text:p text:style-name='P#{desc_p}'>"
+        }
+        contents.sub!(/(.*)<\/text:p.*/, '\1')
         dputs 4, "Contents is: #{contents}"
         doc.gsub!( /_PROF_/, Entities.Persons.login_to_full( course.teacher.join ) )
         doc.gsub!( /_RESP_/, Entities.Persons.login_to_full( course.responsible.join ) )
@@ -65,10 +97,10 @@ class CourseDiploma < View
         show_year = course.start.gsub(/.*\./, '' ) != course.end.gsub(/.*\./, '' )
         doc.gsub!( /_DU_/, course.date_fr( course.start, show_year ) )
         doc.gsub!( /_AU_/, course.date_fr( course.end ) )
+        doc.gsub!( /_DESC_/, contents )
         doc.gsub!( /_SPECIAL_/, grade.remark || "" )
         doc.gsub!( /_MENTION_/, grade.mention )
         doc.gsub!( /_DATE_/, course.date_fr( course.sign ) )
-=end				
         z.file.open("content.xml", "w"){ |f|
           f.write( doc )
         }
@@ -79,61 +111,14 @@ class CourseDiploma < View
     end
   end
 
-  def make_pdfs( old, list )
-    FileUtils::rm( old )
-    if @thread
-      dputs 2, "Thread is here, killing"
-      begin
-        @thread.kill
-        @thread.join
-      rescue Exception => e  
-        dputs 0, "Error while killing: #{e.message}"
-        dputs 0, "#{e.inspect}"
-        dputs 0, "#{e.to_s}"
-        puts e.backtrace
-      end
-    end
-    dputs 2, "Starting new thread"
-    @thread = Thread.new{
-      begin
-				dputs 2, "Creating pdfs #{list.inspect}"
-				`date >> /tmp/cp`
-				pdfs = []
-				dir = File::dirname( list.first )
-				list.sort.each{ |p|
-					dputs 3, "Started thread for file #{p} in directory #{dir}"
-					Docsplit.extract_pdf p, :output => dir
-					ddputs 5, "Finished docsplit"
-					FileUtils::rm( p )
-					ddputs 5, "Finished rm"
-					pdfs.push p.sub( /\.[^\.]*$/, '.pdf' )
-				}
-				dputs 3, "Getting #{pdfs.inspect} out of #{dir}"
-				all = "#{dir}/000-all.pdf"
-				psn = "#{dir}/000-4pp.pdf"
-				dputs 3, "Putting it all in one file: pdftk #{pdfs.join( ' ' )} cat output #{all}"
-				`pdftk #{pdfs.join( ' ' )} cat output #{all}`
-				dputs 3, "Putting 4 pages of #{all} into #{psn}"
-				`pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
-				FileUtils::mv( "#{psn}.tmp", psn )
-				dputs 2, "Finished"
-			rescue Exception => e  
-				dputs 0, "Error in thread: #{e.message}"
-				dputs 0, "#{e.inspect}"
-				dputs 0, "#{e.to_s}"
-				puts e.backtrace
-			end
-		}
-  end
-
   def rpc_button_do_diplomas( session, args )
     course_id = args['courses'][0]
     course = Courses.find_by_course_id(course_id)
     if not course or course.export_check
       if course
         return reply( "window_show", :missing_data ) +
-					reply("update", :missing => "The following fields are not filled in:<br>" + 
-						course.export_check.join("<br>"))
+        reply("update", :missing => "The following fields are not filled in:<br>" + 
+          course.export_check.join("<br>"))
       end
     else
       students = course.students
@@ -158,11 +143,13 @@ class CourseDiploma < View
         end
         counter += 1
       }
-      make_pdfs( Dir.glob( course.diploma_dir + "/content.xml*" ), Dir.glob( course.diploma_dir + "/*odt" ) )
-
-      rpc_list_choice( session, "courses", "courses" => course_id.to_s ) 
-      #+
-      #reply( "auto_update", "-5" )
+      FileUtils::rm( Dir.glob( course.diploma_dir + "/content.xml*" ) )
+      $new_pdfs += [ Dir.glob( course.diploma_dir + "/*odt" ) ]
+      if $new_pdfs.length > 0
+        $create_pdfs.run
+        rpc_list_choice( session, "courses", "courses" => course_id.to_s ) +
+        reply( "auto_update", "-5" )
+      end
     end
   end
   
@@ -194,11 +181,11 @@ class CourseDiploma < View
           reply( :update, :msg_print => "Impression de<ul><li>#{args['diplomas'].join('</li><li>')}</li></ul>en cours" )
       else
         ret = reply( :window_show, :printing ) +
-					reply( :update, :msg_print => "Choisir le pdf:<ul>" +
-						args['diplomas'].collect{|d|
-						%x[ cp #{course.diploma_dir}/#{d} /tmp ] 
-						"<li><a href=\"/tmp/#{d}\">#{d}</a></li>"
-					}.join('') + "</ul>" )
+        reply( :update, :msg_print => "Choisir le pdf:<ul>" +
+        args['diplomas'].collect{|d|
+          %x[ cp #{course.diploma_dir}/#{d} /tmp ] 
+          "<li><a href=\"/tmp/#{d}\">#{d}</a></li>"
+        }.join('') + "</ul>" )
       end
     end
     ret

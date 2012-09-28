@@ -21,7 +21,7 @@ begin
   require 'QooxView'
   require 'Captive'
   require 'Info'
-	require 'ACQooxView'
+#	require 'ACQooxView'
 rescue Exception => e
 	dputs 0, "#{e.inspect}"
 	dputs 0, "#{e.to_s}"
@@ -58,7 +58,9 @@ else
   admin.permissions = ["admin"];
 end
 
-ACQooxView::check_db
+if Kernel.constants.index :ACQooxView
+  ACQooxView::check_db
+end
 
 if not Entities.Services.find_by_name( "Free solar" )
   dputs 0, "Creating services"
