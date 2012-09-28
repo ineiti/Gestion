@@ -79,7 +79,7 @@ get_credit(){
   STR=$( ussd_decode $( gcom_call get_credit ) )
   log "Got credit $STR"
   if rs "$STR" solde; then
-    echo $STR | sed -e "s/.*est de \(.*\) CFA.*/\1/"
+    echo $STR | sed -e "s/.*est de \([0-9]*\)\..*/\1/"
   fi
 }
 

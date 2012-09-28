@@ -1,10 +1,14 @@
 #!/bin/bash
+. $( dirname $0 )/lib_tigo
 # With two or three arguments, send credit to a number
 # Wit one argument, add this credit
 # Without argument, just return the credit left
 if [ "$2" ]; then
-  gsm-ussd -m /dev/ttyUSB2 --no-cleartext "*190*1234*235$1*$2#"
+  send_credit $2 $1
+  #gsm-ussd -m /dev/ttyUSB2 --no-cleartext "*190*1234*235$1*$2#"
 elif [ "$1" ]; then
+  add_credit $1
   gsm-ussd -m /dev/ttyUSB2 --no-cleartext "*123*$1#" 2>/dev/null
 fi
-CREDIT_LEFT=$( gsm-ussd -m /dev/ttyUSB2 --no-cleartext '*100#' 2>/dev/null | sed -e "s/.*est de \(.*\)\... CFA.*/\1/" )
+#CREDIT_LEFT=$( gsm-ussd -m /dev/ttyUSB2 --no-cleartext '*100#' 2>/dev/null | sed -e "s/.*est de \([0-9]*\)\..*/\1/" )
+CREDIT_LEFT=$( get_credit )

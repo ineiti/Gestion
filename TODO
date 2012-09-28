@@ -1,6 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- Speeding up of Tigo
+	- Account-creation when starting up
 	- QooxView/Tests are not running through
 	- when clicking on tab while other tab is loading, it loops endlessly
 	- when no student passes, it crashes

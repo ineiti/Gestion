@@ -44,6 +44,9 @@ tigo_promotion_add(){
 tigo_promotion_get(){
   if [ ! -f $RUN/tigo_promotion ]; then
     tigo_promotion_update
+    if [ ! -f $RUN/tigo_promotion ]; then
+      echo 0 > $RUN/tigo_promotion
+    fi
   fi
   cat $RUN/tigo_promotion
 }

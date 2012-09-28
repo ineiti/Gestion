@@ -1,5 +1,6 @@
 #!/bin/bash
 
 cd $( dirname $0 )/..
+rm data/LogAction*
 pkill -9 -f ruby.*Gestion
 screen -S Gestion -d -m ./Gestion.rb

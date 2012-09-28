@@ -53,10 +53,12 @@ admin = Entities.Persons.find_by_login_name( "admin" )
 if not admin
   dputs 0, "OK, creating admin"
   admin = Entities.Persons.create( :login_name => "admin", :password => "super123", :permissions => [ "admin" ] ,
-		:credit => "100" )
+		:credit => "100", :account_due => "admin" )
 else
   admin.permissions = ["admin"];
 end
+
+ACQooxView::check_db
 
 if not Entities.Services.find_by_name( "Free solar" )
   dputs 0, "Creating services"
@@ -81,6 +83,12 @@ if $config[:autosave]
   }
 end
 
+trap("SIGINT") { 
+  throw :ctrl_c
+}
+
+catch :ctrl_c do
+begin
 if $config[:profiling]
   require 'rubygems'
   require 'perftools'
@@ -89,6 +97,10 @@ if $config[:profiling]
   end
 else
   QooxView::startWeb
+end
+rescue Exception
+  Entities.save_all
+end
 end
 
 if $config[:autosave]

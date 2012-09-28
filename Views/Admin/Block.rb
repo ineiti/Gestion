@@ -1,6 +1,6 @@
 class AdminBlock < View
   def layout
-    @order = 1
+    @order = 100
     @blocking = Entities.Statics.get( :AdminBlock )
     update_block( @blocking.data_str )
 

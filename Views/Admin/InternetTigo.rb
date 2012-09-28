@@ -7,7 +7,7 @@ class AdminTigo < View
       gui_vbox :nogroup do
         show_int_ro :credit_left
         show_int_ro :promotion_left
-        show_button :update_params
+        show_button :update_params, :connect, :disconnect
       end
       gui_vbox :nogroup do
         show_int :code
@@ -27,7 +27,28 @@ class AdminTigo < View
   end
 
   def lib_net( func, *args )
-    `Binaries/lib_net func #{func.to_s} #{args.join(' ')}`
+    dputs 3, "Calling lib_net #{func}"
+    ret = `Binaries/lib_net func #{func.to_s} #{args.join(' ')}`
+    dputs 3, "returning from lib_net #{func}"
+    ret
+  end
+
+  def rpc_show( session )
+    to_hide = ( `ifconfig` =~ /ppp0/ ) ? :connect : :disconnect
+    super( session ) + [{ :cmd => "update", :data => update( session )}] +
+      reply( :hide, to_hide )
+  end
+
+  def rpc_button_connect( session, data )
+    `pon tigo`
+    reply( :hide, :connect ) +
+    reply( :unhide, :disconnect )
+  end
+
+  def rpc_button_disconnect( session, data )
+    `while poff -a; do sleep 1; done`
+    reply( :hide, :disconnect ) +
+    reply( :unhide, :connect )
   end
 
   def rpc_button_recharge( session, data )
@@ -50,7 +71,9 @@ class AdminTigo < View
     else
       dputs 3, "No link, updating"
       lib_net :tigo_credit_update
+      dputs 3, "Updating promotion"
       lib_net :tigo_promotion_update
+      dputs 3, "Replying for update"
       reply( 'update', update( session ) )
     end
   end
