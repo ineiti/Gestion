@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.5\n"
-"POT-Creation-Date: 2012-09-28 16:32+0100\n"
-"PO-Revision-Date: 2012-09-28 16:37+0100\n"
+"POT-Creation-Date: 2012-09-28 21:43+0100\n"
+"PO-Revision-Date: 2012-09-28 21:43+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: French <fr@profeda.org>\n"
 "Language: \n"
@@ -432,6 +432,31 @@ msgstr "Fonction"
 msgid "Welcome"
 msgstr "Bienvenue"
 
+#. Comes from file Views/Admin/Backup.rb and line is class AdminBackup < View
+#: Views/Admin/Backup.rb:3
+msgid "AdminBackup"
+msgstr "Sauvegardes"
+
+#. Comes from file Views/Admin/Backup.rb and line is 				show_list_single :backups, "View.AdminBackup.list_backups", :width => 400
+#: Views/Admin/Backup.rb:9
+msgid "backups"
+msgstr "Sauvegardes"
+
+#. Comes from file Views/Admin/Backup.rb and line is 				show_button :do_backup, :do_restore
+#: Views/Admin/Backup.rb:10
+msgid "do_backup"
+msgstr "Sauvegarder"
+
+#. Comes from file Views/Admin/Backup.rb and line is 				show_button :do_backup, :do_restore
+#: Views/Admin/Backup.rb:10
+msgid "do_restore"
+msgstr "Restaurer"
+
+#. Comes from file Views/Admin/Backup.rb and line is 				show_html :txt
+#: Views/Admin/Backup.rb:14
+msgid "txt"
+msgstr "Texte"
+
 #. Comes from file Views/Admin/Block.rb and line is class AdminBlock < View
 #: Views/Admin/Block.rb:1
 msgid "AdminBlock"
@@ -566,6 +591,21 @@ msgstr "Erreur"
 #: Views/Admin/InternetTigo.rb:23
 msgid "close"
 msgstr "Fermer"
+
+#. Comes from file Views/Admin/Power.rb and line is class AdminPower < View
+#: Views/Admin/Power.rb:3
+msgid "AdminPower"
+msgstr "Redémarrages"
+
+#. Comes from file Views/Admin/Power.rb and line is 				show_button :reboot_gestion
+#: Views/Admin/Power.rb:9
+msgid "reboot_gestion"
+msgstr "Redémarrer Gestion"
+
+#. Comes from file Views/Admin/Power.rb and line is 				show_button :reboot_dreamplug
+#: Views/Admin/Power.rb:12
+msgid "reboot_dreamplug"
+msgstr "Redémarrer le Dreamplug"
 
 #. Comes from file Views/Admin/Report.rb and line is class AdminReport < View
 #: Views/Admin/Report.rb:1
@@ -992,22 +1032,22 @@ msgstr "Résumé"
 #. Comes from file Views/Task/Tabs.rb and line is class TaskTabs < View
 #: Views/Task/Tabs.rb:1
 msgid "TaskTabs"
-msgstr ""
+msgstr "Tâches"
 
 #. Comes from file Views/Task/Tabs.rb and line is       show_button :new_task
 #: Views/Task/Tabs.rb:6
 msgid "new_task"
-msgstr ""
+msgstr "Nouvelle tâche"
 
 #. Comes from file Views/Task/Worker.rb and line is class TaskWorker < View
 #: Views/Task/Worker.rb:1
 msgid "TaskWorker"
-msgstr ""
+msgstr "Travailleurs"
 
 #. Comes from file Views/Task/Worker.rb and line is         vtlp_list :workers, "login_name"
 #: Views/Task/Worker.rb:9
 msgid "workers"
-msgstr ""
+msgstr "Travailleurs"
 
 #~ msgid "name_base"
 #~ msgstr "Nom du cours"

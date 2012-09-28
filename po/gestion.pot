@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-09-28 16:32+0100\n"
-"PO-Revision-Date: 2012-09-28 16:32+0100\n"
+"POT-Creation-Date: 2012-09-28 21:43+0100\n"
+"PO-Revision-Date: 2012-09-28 21:43+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -431,6 +431,31 @@ msgstr ""
 msgid "Welcome"
 msgstr ""
 
+#. Comes from file Views/Admin/Backup.rb and line is class AdminBackup < View
+#: Views/Admin/Backup.rb:3
+msgid "AdminBackup"
+msgstr ""
+
+#. Comes from file Views/Admin/Backup.rb and line is 				show_list_single :backups, "View.AdminBackup.list_backups", :width => 400
+#: Views/Admin/Backup.rb:9
+msgid "backups"
+msgstr ""
+
+#. Comes from file Views/Admin/Backup.rb and line is 				show_button :do_backup, :do_restore
+#: Views/Admin/Backup.rb:10
+msgid "do_backup"
+msgstr ""
+
+#. Comes from file Views/Admin/Backup.rb and line is 				show_button :do_backup, :do_restore
+#: Views/Admin/Backup.rb:10
+msgid "do_restore"
+msgstr ""
+
+#. Comes from file Views/Admin/Backup.rb and line is 				show_html :txt
+#: Views/Admin/Backup.rb:14
+msgid "txt"
+msgstr ""
+
 #. Comes from file Views/Admin/Block.rb and line is class AdminBlock < View
 #: Views/Admin/Block.rb:1
 msgid "AdminBlock"
@@ -564,6 +589,21 @@ msgstr ""
 #. Comes from file Views/Admin/InternetTigo.rb and line is         show_button :close
 #: Views/Admin/InternetTigo.rb:23
 msgid "close"
+msgstr ""
+
+#. Comes from file Views/Admin/Power.rb and line is class AdminPower < View
+#: Views/Admin/Power.rb:3
+msgid "AdminPower"
+msgstr ""
+
+#. Comes from file Views/Admin/Power.rb and line is 				show_button :reboot_gestion
+#: Views/Admin/Power.rb:9
+msgid "reboot_gestion"
+msgstr ""
+
+#. Comes from file Views/Admin/Power.rb and line is 				show_button :reboot_dreamplug
+#: Views/Admin/Power.rb:12
+msgid "reboot_dreamplug"
 msgstr ""
 
 #. Comes from file Views/Admin/Report.rb and line is class AdminReport < View
