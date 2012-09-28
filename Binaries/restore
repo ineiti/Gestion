@@ -1,0 +1,10 @@
+#!/bin/bash
+
+. $( dirname $0 )/lib_backup
+DATE=$1
+
+sleep 2
+pkill -f -s 9 "ruby.*Gestion"
+echo Going to restore $BACKUP_DIR/$DATE > /tmp/restore
+tar Pxzf $BACKUP_DIR/$DATE -C /
+$DIR/start_gestion

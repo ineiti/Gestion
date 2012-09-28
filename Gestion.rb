@@ -6,6 +6,7 @@
 # - Login: - for payable laptop web-access
 #          - for students
 
+GESTION_DIR=File.dirname(__FILE__)
 CONFIG_FILE="config.yaml"
 if not FileTest.exists? CONFIG_FILE
   puts "Config-file doesn't exist"
@@ -101,7 +102,7 @@ else
   QooxView::startWeb
 end
 rescue Exception
-  Entities.save_all
+#  Entities.save_all
 end
 end
 
@@ -109,5 +110,3 @@ if $config[:autosave]
   $autosave.kill
   #Captive::check_services
 end
-
-Entities.save_all

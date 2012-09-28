@@ -1,0 +1,5 @@
+#!/bin/bash
+. $( dirname $0 )/lib_backup
+DATE=$( date +%Y.%m.%d-%H:%M:%S )
+
+tar czf $BACKUP_DIR/backup-$DATE.tgz /var/www/Gestion/data
