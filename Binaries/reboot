@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sleep 2
+pkill -9 -f ruby.*Gestion
+reboot
