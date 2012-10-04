@@ -1,5 +1,5 @@
 #!/bin/bash
 . $( dirname $0 )/lib_backup
-DATE=$( date +%Y.%m.%d-%H:%M:%S )
+DATE=$( date +%Y-%m-%d_%H.%M.%S )
 
-tar czf $BACKUP_DIR/backup-$DATE.tgz /var/www/Gestion/data
+tar czf $BACKUP_DIR/backup_$DATE.tgz /var/www/Gestion

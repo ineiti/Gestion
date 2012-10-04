@@ -2,6 +2,7 @@
 
 sleep 2
 cd $( dirname $0 )/..
+pkill -f ruby.*Gestion &&
+  sleep 10
 rm data/LogAction*
-pkill -9 -f ruby.*Gestion
 screen -S Gestion -d -m ./Gestion.rb
