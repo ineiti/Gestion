@@ -157,9 +157,8 @@ class CourseDiploma < View
       }
       make_pdfs( Dir.glob( course.diploma_dir + "/content.xml*" ), Dir.glob( course.diploma_dir + "/*odt" ) )
 
-      rpc_list_choice( session, "courses", "courses" => course_id.to_s ) 
-      #+
-      #reply( "auto_update", "-5" )
+      rpc_list_choice( session, "courses", "courses" => course_id.to_s ) +
+				reply( "auto_update", "-5" )
     end
   end
   
