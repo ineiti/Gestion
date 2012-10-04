@@ -55,17 +55,17 @@ class CourseDiploma < View
 				ddputs 3, "desc_p is #{desc_p}"
         doc.gsub!( /-DESC1-.*-DESC2-/,
 					course.contents.split("\n").join( desc_p ))
-        doc.gsub!( /_PROF_/, Entities.Persons.login_to_full( course.teacher.join ) )
-        doc.gsub!( /_RESP_/, Entities.Persons.login_to_full( course.responsible.join ) )
-        doc.gsub!( /_NOM_/, student.full_name )
-        doc.gsub!( /_DUREE_/, course.duration )
-        doc.gsub!( /_COURS_/, course.description )
+        doc.gsub!( /-PROF-/, Entities.Persons.login_to_full( course.teacher.join ) )
+        doc.gsub!( /-RESP-/, Entities.Persons.login_to_full( course.responsible.join ) )
+        doc.gsub!( /-NOM-/, student.full_name )
+        doc.gsub!( /-DUREE-/, course.duration )
+        doc.gsub!( /-COURS-/, course.description )
         show_year = course.start.gsub(/.*\./, '' ) != course.end.gsub(/.*\./, '' )
-        doc.gsub!( /_DU_/, course.date_fr( course.start, show_year ) )
-        doc.gsub!( /_AU_/, course.date_fr( course.end ) )
-        doc.gsub!( /_SPECIAL_/, grade.remark || "" )
-        doc.gsub!( /_MENTION_/, grade.mention )
-        doc.gsub!( /_DATE_/, course.date_fr( course.sign ) )
+        doc.gsub!( /-DU-/, course.date_fr( course.start, show_year ) )
+        doc.gsub!( /-AU-/, course.date_fr( course.end ) )
+        doc.gsub!( /-SPECIAL-/, grade.remark || "" )
+        doc.gsub!( /-MENTION-/, grade.mention )
+        doc.gsub!( /-DATE-/, course.date_fr( course.sign ) )
         z.file.open("content.xml", "w"){ |f|
           f.write( doc )
         }
