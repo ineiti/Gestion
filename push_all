@@ -10,11 +10,11 @@ fi
 
 echo Pushing Gestion
 hg commit
-hg push --new-branch $1
+hg push -f --new-branch $1
 echo Pushing QooxView
 cd ../QooxView
 hg commit
-hg push --new-branch $1
+hg push -f --new-branch $1
 for a in Gestion QooxView; do
   echo Updating $a on $HOST
   ssh root@$HOST.wifi "cd $BASE/$a; hg up"

@@ -11,9 +11,12 @@ class AdminPower < View
 			gui_vbox do
 				show_button :reboot_dreamplug
 			end
-		
+			gui_vbox do
+				show_button :update_files
+			end
 			gui_window :reload do
 				show_html :txt
+				show_button :OK
 			end
 		end
   end
@@ -32,6 +35,13 @@ class AdminPower < View
 			}
 			msg = "<h1>Recharger le navigateur avec ctrl+r ou F5</h1><br>" +
 				"<h2>Attention: il faudra attendre au moins 2 minutes!</h2>"
+		when /update_files/ then
+			Thread.new{
+				`nohup /home/ftp/Files/update_files`
+			}
+			msg = "<h1>Les fichiers vont être mises à jour - patience</h1>"
+		when /OK/ then
+			return reply( :window_hide )
 		end
 		reply( :window_show, :reload ) +
 				reply( :update, :txt => msg )

@@ -2,17 +2,17 @@ class AdminInternet < View
   def layout
     set_data_class :Persons
 
-#    @update = true
-#    @auto_update = 30
-#    @auto_update_send_values = false
-    @order = 10
+    @update = true
+    @auto_update = 30
+    @auto_update_send_values = false
+    @order = 25
 
     gui_hbox do
       gui_vbox :nogroup do
         show_int_ro :credit_left
         show_int_ro :promotion_left
         show_list_drop :auto_disconnect, "[:No,:Yes]", :callback => :auto_disconnect
-        show_button :connect, :disconnect
+        show_button :connect, :disconnect, :delete_emails
       end
       gui_vbox :nogroup do
         show_html :mails
@@ -24,7 +24,10 @@ class AdminInternet < View
   end
 
   def lib_net( func, *args )
-    `Binaries/lib_net func #{func.to_s} #{args.join(' ')}`
+    dputs 3, "Calling lib_net #{func}"
+    ret = `Binaries/lib_net func #{func.to_s} #{args.join(' ')}`
+    dputs 3, "returning from lib_net #{func}"
+    ret
   end
 
   def auto_disconnect_get
@@ -35,7 +38,7 @@ class AdminInternet < View
   def update( session )
     emails = %x[ tail -n 1 /var/log/copy_email.log ]
     { :credit_left => lib_net( :tigo_credit_get ),
-      :promotion_left => lib_net( :tigo_promotion_get ).to_i / 1000000.0,
+      :promotion_left => lib_net( :tigo_promotion_get ),
       :mails => "<pre>#{ lib_net( :mail_get_queue )}</pre>",
       :transfer => "<pre>#{ emails } </pre>",
       :auto_disconnect => [auto_disconnect_get] }
@@ -57,6 +60,12 @@ class AdminInternet < View
     `while poff -a; do sleep 1; done`
     reply( :hide, :disconnect ) +
     reply( :unhide, :connect )
+  end
+
+  def rpc_button_delete_emails( session, data )
+    `Binaries/start_copy_emails`
+    `rm /var/spool/postfix/hold/*`
+    rpc_show( session )
   end
 
   def rpc_list_choice( session, name, *args )

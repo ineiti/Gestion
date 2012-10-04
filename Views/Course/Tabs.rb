@@ -10,7 +10,7 @@ class CourseTabs < View
     
     gui_vboxg :nogroup do
       show_list_single :courses, :callback => true
-      show_button :add_course, :delete
+      show_button :delete
     end
   end
   

@@ -1,7 +1,8 @@
 #!/bin/sh
 
 if [ "$LIB_TIGO" = "loaded" ]; then
-  return
+#  return
+echo
 fi
 LIB_TIGO=loaded
 
@@ -38,7 +39,7 @@ get_ussd_old(){
 }
 
 rs(){
-  echo "$1" | grep -q "$2"
+  echo "$1" | grep -qi "$2"
 }
 
 sms_delete(){
@@ -49,18 +50,37 @@ sms_delete(){
 }
 
 get_promotion(){
-  sms_delete
+  #sms_delete
+  # This should also work..
+  #STR="30.000 MB INTERNET valide avant 04/10/2012."
+  #STR=" 30.000 MB INTERNET valide avant 04/10/2012."
+  #STR="250.00 CFA recharge bonus, 30.000 MB INTERNET valide avant 04/10/2012."
+  #STR="250.00 CFA recharge bonus."
   STR=$( ussd_decode $( gcom_call get_promotion ) )
   log "Got string $STR"
   if rs "$STR" Octet; then
     log Found octets
     echo $STR | sed -e "s/.*MMS, \(.*\) Octet.*/\1/"
+  elif rs "$STR" "INTERNET"; then
+    log Found INTERNET
+    STR=$( echo $STR | sed -e "s/.*recharge bonus, //" )
+    BYTES=$( echo $STR | sed -e "s/[^0-9]*\([0-9]*\.[0-9]* ..\) INTERNET.*/\1/" )
+    logger $BYTES things found on internet
+#    case $( echo $STR | sed -e "s/.* \(..\) INTERNET.*/\1/" ) in
+#    MB)
+#      BYTES=$(( BYTES * 1000000 ))
+#      ;;
+#    GB)
+#      BYTES=$(( BYTES * 1000000000 ))
+#      ;;
+#    esac
+    echo $BYTES
   elif rs "$STR" "a marche"; then
     log Waiting for SMS
     if [ -e $DEV ]; then
       for w in $( seq 10 ); do
         log Waiting till $(( w * 5 )) seconds
-        BYTES=$( gnokii --getsms SM 0 29 2>&1 | grep octet )
+        BYTES=$( gnokii --getsms SM 0 29 -d 2>&1 | grep octet | tail -n 1 )
         if [ "$BYTES" ]; then
           break;
         fi
@@ -71,6 +91,12 @@ get_promotion(){
     echo $BYTES | sed -e "s/.*MMS, \(.*\) octet.*/\1/"
   elif rs "$STR" "Vous n'avez pas"; then
     log "No promotion"
+    echo 0
+  elif rs "$STR" "recharge bonus"; then
+    log "No promotion"
+    echo 0
+  elif rs "$STR" "KATTIR"; then
+    log "Kattir-message"
     echo 0
   fi
 }

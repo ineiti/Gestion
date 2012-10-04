@@ -22,7 +22,7 @@ begin
   require 'QooxView'
   require 'Captive'
   require 'Info'
-	#	require 'ACQooxView'
+#	require 'ACQooxView'
 rescue Exception => e
 	dputs 0, "#{e.inspect}"
 	dputs 0, "#{e.to_s}"
@@ -39,12 +39,14 @@ end
 
 # Our default-permission is to only login!
 Permission.add( 'default', ',Welcome,SelfShow' )
-Permission.add( 'internet', 'SelfInternet', 'default' )
+Permission.add( 'internet', 'SelfInternet,AdminTigo', 'default' )
 Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit', 'student' )
-Permission.add( 'teacher', 'AdminAccess,CourseGrade,PersonModify', 'student' )
+Permission.add( 'teacher', 'CourseGrade,PersonModify', 'student' )
 Permission.add( 'secretary', 'SelfCash,SelfServices,CourseModify,PersonAdd,PersonModify,CourseDiploma,FlagCourseGradeAll', 'teacher' )
+Permission.add( 'director', 'CourseAdd', 'secretary' )
 Permission.add( 'accounting', 'TransferCash', 'secretary' )
+Permission.add( 'maintenance', '', 'teacher' )
 Permission.add( 'admin', '.*', '.*' )
 
 QooxView::init( 'Entities', 'Views' )
@@ -91,19 +93,19 @@ trap("SIGINT") {
 }
 
 catch :ctrl_c do
-	begin
-		if $config[:profiling]
-			require 'rubygems'
-			require 'perftools'
-			PerfTools::CpuProfiler.start("/tmp/#{$config[:profiling]}") do
-				QooxView::startWeb
-			end
-		else
-			QooxView::startWeb
-		end
-	rescue Exception
-		Entities.save_all
-	end
+begin
+  if $config[:profiling]
+    require 'rubygems'
+    require 'perftools'
+    PerfTools::CpuProfiler.start("/tmp/#{$config[:profiling]}") do
+      QooxView::startWeb
+    end
+  else
+    QooxView::startWeb
+  end
+  rescue Exception
+    Entities.save_all
+  end
 end
 
 if $config[:autosave]

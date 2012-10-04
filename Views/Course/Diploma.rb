@@ -55,7 +55,6 @@ class CourseDiploma < View
 				ddputs 3, "desc_p is #{desc_p}"
         doc.gsub!( /-DESC1-.*-DESC2-/,
 					course.contents.split("\n").join( desc_p ))
-        dputs 4, "Contents is: #{contents}"
         doc.gsub!( /_PROF_/, Entities.Persons.login_to_full( course.teacher.join ) )
         doc.gsub!( /_RESP_/, Entities.Persons.login_to_full( course.responsible.join ) )
         doc.gsub!( /_NOM_/, student.full_name )

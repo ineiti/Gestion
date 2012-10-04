@@ -4,6 +4,7 @@
 PWD=$( dirname $0 )
 TIGO=$PWD
 RUN=/var/run/lib-net
+CONNSTAT=$RUN/connection
 LOG=/var/log/lib-net
 MSGS=$LOG/msgs.log
 PATH=$PATH:/sbin:/usr/sbin
@@ -13,6 +14,42 @@ sudo chown -R www-data.www-data $RUN $LOG
 
 msg() {
   date "+%F %R - $1: $2" >> $MSGS
+}
+
+connection_start(){
+  pon tigo
+  echo $( date +%s ) > $CONNSTAT-start
+}
+
+grep_pppd(){
+  grep pppd /var/log/syslog | tail | grep -A 10 started
+}
+
+connection_status(){
+  PPP=$( ip link | grep " ppp" | sed -e "s/.*\(ppp.\).*/\1/" )
+  if [ "$PPP" ]; then
+    echo 1: Connecte a la cle Tigo
+    PAP=$( grep_pppd | grep PAP )
+    if [ "$PAP" ]; then
+      echo 2: Trouve credit
+      PPP_IP=$( grep_pppd grep -A 3 PAP | grep local | sed -e "s/.* //" )
+      if [ "$PPP_IP" ]; then
+        echo 3: Connection Internet
+        TUN=$( ip link | grep " tun" | sed -e "s/.*\(tun.\).*/\1/" )
+        if [ "$TUN" ]; then
+          echo 4: Connection securisee
+        fi
+      fi
+    fi
+  elif grep_pppd | grep -q failed; then
+    echo Connection failed
+  else
+    echo No connection
+  fi
+}
+
+connection_stop(){
+  while poff -a; do sleep 1; done
 }
 
 tigo_credit_add(){
@@ -39,6 +76,7 @@ tigo_promotion_add(){
   msg tigo "adding promotion with number $1"
   sudo $TIGO/tigo_promotion $1
   tigo_promotion_update
+  tigo_credit_update
 }
 
 tigo_promotion_get(){

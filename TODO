@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- if teacher has permission AdminAccess and AdminAccess.visible=false, it fails
 	- Speeding up of Tigo
 	- Account-creation when starting up
 	- QooxView/Tests are not running through

@@ -1,21 +1,35 @@
 class AdminTigo < View
   def layout
     @update = true
+    @auto_update = 10
+    @auto_update_send_values = false
     @order = 20
+    @tigo_number = Entities.Statics.get( :AdminTigo )
 
-    gui_hbox do
-      gui_vbox :nogroup do
-        show_int_ro :credit_left
-        show_int_ro :promotion_left
-        show_button :update_params, :connect, :disconnect
+    gui_vbox do
+      gui_hbox :nogroup do
+        gui_vbox :nogroup do
+          show_int_ro :credit_left
+          show_int_ro :promotion_left
+          show_button :update_params, :connect, :disconnect
+        end
+        gui_vbox :nogroup do
+          show_int :code, :width => 150
+          show_button :recharge
+        end
+        gui_vbox :nogroup do
+          show_list_drop :size, "%w( 30MB 100MB 1GB 5GB )"
+          show_button :add_promotion
+        end
       end
-      gui_vbox :nogroup do
-        show_int :code
-        show_button :recharge
-      end
-      gui_vbox :nogroup do
-        show_list_drop :size, "%w( 30MB 100MB 1GB 5GB )"
-        show_button :add_promotion
+      gui_hbox :nogroup do
+        gui_vbox :nogroup do
+          show_str :tigo_number
+          show_button :update_tigo_number
+        end
+        gui_vbox :nogroup do
+          show_html :status
+        end
       end
 
       gui_window :error do
@@ -35,20 +49,22 @@ class AdminTigo < View
 
   def rpc_show( session )
     to_hide = ( `ifconfig` =~ /ppp0/ ) ? :connect : :disconnect
-    super( session ) + [{ :cmd => "update", :data => update( session )}] +
+    super( session ) + 
+      reply( :update, update( session ) ) +
       reply( :hide, to_hide )
   end
 
   def rpc_button_connect( session, data )
-    `pon tigo`
+    lib_net :connection_start
     reply( :hide, :connect ) +
     reply( :unhide, :disconnect )
   end
 
   def rpc_button_disconnect( session, data )
-    `while poff -a; do sleep 1; done`
+    lib_net :connection_stop
     reply( :hide, :disconnect ) +
-    reply( :unhide, :connect )
+    reply( :unhide, :connect ) +
+    rpc_update( session )
   end
 
   def rpc_button_recharge( session, data )
@@ -82,8 +98,14 @@ class AdminTigo < View
     reply( :window_hide )
   end
 
+  def rpc_button_update_tigo_number( session, data )
+    reply( :update, :tigo_number => @tigo_number.data_str = data['tigo_number'] )
+  end
+
   def update( session )
     { :credit_left => lib_net( :tigo_credit_get ),
-      :promotion_left => lib_net( :tigo_promotion_get ).to_i / 1000000.0 }
+      :promotion_left => lib_net( :tigo_promotion_get ),
+      :tigo_number => @tigo_number.data_str,
+      :status => "<pre>#{ lib_net( :connection_status ) }</pre>" }
   end
 end
