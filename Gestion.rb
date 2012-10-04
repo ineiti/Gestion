@@ -22,7 +22,7 @@ begin
   require 'QooxView'
   require 'Captive'
   require 'Info'
-#	require 'ACQooxView'
+	#	require 'ACQooxView'
 rescue Exception => e
 	dputs 0, "#{e.inspect}"
 	dputs 0, "#{e.to_s}"
@@ -91,19 +91,19 @@ trap("SIGINT") {
 }
 
 catch :ctrl_c do
-begin
-if $config[:profiling]
-  require 'rubygems'
-  require 'perftools'
-  PerfTools::CpuProfiler.start("/tmp/#{$config[:profiling]}") do
-    QooxView::startWeb
-  end
-else
-  QooxView::startWeb
-end
-rescue Exception
-#  Entities.save_all
-end
+	begin
+		if $config[:profiling]
+			require 'rubygems'
+			require 'perftools'
+			PerfTools::CpuProfiler.start("/tmp/#{$config[:profiling]}") do
+				QooxView::startWeb
+			end
+		else
+			QooxView::startWeb
+		end
+	rescue Exception
+		Entities.save_all
+	end
 end
 
 if $config[:autosave]
