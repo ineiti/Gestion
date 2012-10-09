@@ -1,104 +1,84 @@
 #!/bin/bash
 
+# This is a network-library that does
+# - lib_captive: create and administer a captive portal
+# - lib_isp: interact with ISPs - we want to have
+#   - lib_isp_tigo: Tigo USB-key
+#   - lib_isp_prestabist: Prestabist modem
+#   - lib_isp_tawali: Tawali USB-key
+#   - lib_isp_airtel: Airtel USB-key
+# - lib_misc: small hacks like mail-queue and synching
+
 # Don't need to change anything below this lines...
 PWD=$( dirname $0 )
-TIGO=$PWD
 RUN=/var/run/lib-net
 CONNSTAT=$RUN/connection
 LOG=/var/log/lib-net
 MSGS=$LOG/msgs.log
 PATH=$PATH:/sbin:/usr/sbin
+ACTIONLOG=$LOG/action.log
+DATE=$( date +%y%m%d-%H.%M )
+test -f /etc/captive.conf && . /etc/captive.conf
 
 mkdir -p $RUN $LOG
 sudo chown -R www-data.www-data $RUN $LOG
+
+for lib in captive isp misc; do
+  . $PWD/lib_$lib
+done
 
 msg() {
   date "+%F %R - $1: $2" >> $MSGS
 }
 
-connection_start(){
-  pon tigo
-  echo $( date +%s ) > $CONNSTAT-start
+log(){
+  logger -- $@
 }
 
-grep_pppd(){
-  grep pppd /var/log/syslog | tail | grep -A 10 started
+actionlog(){
+  log $@
+  echo $DATE $@ >> $ACTIONLOG
 }
 
-connection_status(){
-  PPP=$( ip link | grep " ppp" | sed -e "s/.*\(ppp.\).*/\1/" )
-  if [ "$PPP" ]; then
-    echo 1: Connecte a la cle Tigo
-    PAP=$( grep_pppd | grep PAP )
-    if [ "$PAP" ]; then
-      echo 2: Trouve credit
-      PPP_IP=$( grep_pppd grep -A 3 PAP | grep local | sed -e "s/.* //" )
-      if [ "$PPP_IP" ]; then
-        echo 3: Connection Internet
-        TUN=$( ip link | grep " tun" | sed -e "s/.*\(tun.\).*/\1/" )
-        if [ "$TUN" ]; then
-          echo 4: Connection securisee
-        fi
-      fi
-    fi
-  elif grep_pppd | grep -q failed; then
-    echo Connection failed
-  else
-    echo No connection
+switch_isp(){
+  case "$1" in
+  tigo|tawali|prestabist)
+    ifdown wan
+    cp /root/network.$1 /etc/config/network
+    echo ISP=$1 > /etc/captive.conf
+    case "$1" in
+      tawali|prestabist)
+      echo CONN_TYPE=always_on >> /etc/captive.conf
+      ;;
+    esac
+    /etc/init.d/network restart
+    /etc/init.d/wwan restart
+    ;;
+  *)
+    echo ISP "$1" not available
+  esac
+}
+
+restart_wwan(){
+  /etc/init.d/firewall restart
+  killall -9 wwan
+  sort /etc/captive/aon_connected | uniq > /tmp/ac
+  mv /tmp/ac /etc/captive/aon_connected
+  /etc/init.d/wwan restart
+}
+
+if [ "$FUNC" ]; then
+  $FUNC $@
+fi
+
+check_double_wwan(){
+  WWANS=$( ps ax | grep /usr/bin/wwan | wc -l )
+  if [ $WWANS -gt 2 ]; then
+    actionlog Restarting wwan because it has $WWANS...
+    ps ax
+    #restart_wwan
   fi
-}
-
-connection_stop(){
-  while poff -a; do sleep 1; done
-}
-
-tigo_credit_add(){
-  msg tigo "adding credit with number $1"
-  sudo $TIGO/tigo_credit $1
-  tigo_credit_update
-}
-
-tigo_credit_get(){
-  if [ ! -f $RUN/tigo_credit ]; then
-    tigo_credit_update
-  fi
-  cat $RUN/tigo_credit
-}
-
-tigo_credit_update(){
-  . $TIGO/tigo_credit
-  if [ "$CREDIT_LEFT" ]; then
-    echo -n $CREDIT_LEFT > $RUN/tigo_credit
-  fi
-}
-
-tigo_promotion_add(){
-  msg tigo "adding promotion with number $1"
-  sudo $TIGO/tigo_promotion $1
-  tigo_promotion_update
-  tigo_credit_update
-}
-
-tigo_promotion_get(){
-  if [ ! -f $RUN/tigo_promotion ]; then
-    tigo_promotion_update
-    if [ ! -f $RUN/tigo_promotion ]; then
-      echo 0 > $RUN/tigo_promotion
-    fi
-  fi
-  cat $RUN/tigo_promotion
-}
-
-tigo_promotion_update(){
-  BYTES_LEFT=$( $PWD/lib_captive get_promotion )
-  if [ "$BYTES_LEFT" ]; then
-    echo -n $BYTES_LEFT > $RUN/tigo_promotion
-  fi
-}
-
-mail_get_queue(){
-  postqueue -p | grep -v "Connection refused" -
-}
+}    
 
 # Let's call an eventual function and print some variables
 if [ "$1" ]; then

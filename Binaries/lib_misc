@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Here come small hacks to do on the internet
+# - mail-sending over rsync
+# - rsyncing a directory for basic dropbox-simulation
+# - updating files
+
+mail_get_queue(){
+  postqueue -p | grep -v "Connection refused" -
+}

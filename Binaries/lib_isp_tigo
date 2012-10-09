@@ -6,52 +6,13 @@ echo
 fi
 LIB_TIGO=loaded
 
-. $( dirname $0 )/lib_captive
+TIGO=$PWD
 CLEFT=$LOGDIR/tigo_credit
 PLEFT=$LOGDIR/tigo_promotion
 DEV=/dev/ttyUSB2
 
-ussd_encode(){
-  perl -e "@a=split(//,unpack('b*',\"*$1#\")); for (\$i=7; \$i < \$#a; \$i+=8) { \$a[\$i]='' } print uc(unpack('H*', pack('b*', join('', @a))))"
-}
-
-ussd_decode(){
-  perl -e "@a=split(//,unpack('b*', pack('H*',\"$1\"))); for (\$i=6; \$i < \$#a; \$i+=7) {\$a[\$i].='0' } print pack('b*', join('', @a))"
-}
-
-gcom_call(){
-  comgt -s -d $DEV /etc/gcom/$1.gcom | sed -e 's/",15//'
-}
-
-get_ussd_old(){
-  USSD=$( ussd_encode "$1" )
-  CMD="AT+CUSD=1,$USSD,15"
-  tty_send atz
-  tty_send "$CMD"
-  
-  if [ -e $DEV ]; then
-    while read rep; do log $rep; if echo $rep | grep -q "^+CUSD"; then break; fi; done < $DEV
-  fi
-  CUSD=$( echo $rep | sed -e "s/.*\"\(.*\)\".*/\1/" )
-  REPLY=$( ussd_decode "$CUSD" )
-  log "Reply is $REPLY"
-  echo $REPLY
-}
-
-rs(){
-  echo "$1" | grep -qi "$2"
-}
-
-sms_delete(){
-  if [ -e $DEV ]; then
-    # Start with an empty SMS
-    gnokii --deletesms SM 0 29 > /dev/null 2>&1
-  fi
-}
-
 get_promotion(){
-  #sms_delete
-  # This should also work..
+  # This should also work.. - simple test-cases
   #STR="30.000 MB INTERNET valide avant 04/10/2012."
   #STR=" 30.000 MB INTERNET valide avant 04/10/2012."
   #STR="250.00 CFA recharge bonus, 30.000 MB INTERNET valide avant 04/10/2012."
@@ -65,15 +26,7 @@ get_promotion(){
     log Found INTERNET
     STR=$( echo $STR | sed -e "s/.*recharge bonus, //" )
     BYTES=$( echo $STR | sed -e "s/[^0-9]*\([0-9]*\.[0-9]* ..\) INTERNET.*/\1/" )
-    logger $BYTES things found on internet
-#    case $( echo $STR | sed -e "s/.* \(..\) INTERNET.*/\1/" ) in
-#    MB)
-#      BYTES=$(( BYTES * 1000000 ))
-#      ;;
-#    GB)
-#      BYTES=$(( BYTES * 1000000000 ))
-#      ;;
-#    esac
+    logger $BYTES left on internet
     echo $BYTES
   elif rs "$STR" "a marche"; then
     log Waiting for SMS
@@ -96,7 +49,7 @@ get_promotion(){
     log "No promotion"
     echo 0
   elif rs "$STR" "KATTIR"; then
-    log "Kattir-message"
+    log "Lonely kattir-message"
     echo 0
   fi
 }
@@ -142,6 +95,82 @@ use_credit(){
 #  killall -9 screen
 #  screen -wipe
 #  screen -dmS credit /usr/bin/tigo_upc
+}
+
+tigo_credit_add(){
+  msg tigo "adding credit with number $1"
+  sudo $TIGO/tigo_credit $1
+  tigo_credit_update
+}
+
+tigo_credit_get(){
+  if [ ! -f $RUN/tigo_credit ]; then
+    tigo_credit_update
+  fi
+  cat $RUN/tigo_credit
+}
+
+tigo_credit_update(){
+  . $TIGO/tigo_credit
+  if [ "$CREDIT_LEFT" ]; then
+    echo -n $CREDIT_LEFT > $RUN/tigo_credit
+  fi
+}
+
+tigo_promotion_add(){
+  msg tigo "adding promotion with number $1"
+  sudo $TIGO/tigo_promotion $1
+  tigo_promotion_update
+  tigo_credit_update
+}
+
+tigo_promotion_get(){
+  if [ ! -f $RUN/tigo_promotion ]; then
+    tigo_promotion_update
+    if [ ! -f $RUN/tigo_promotion ]; then
+      echo 0 > $RUN/tigo_promotion
+    fi
+  fi
+  cat $RUN/tigo_promotion
+}
+
+tigo_promotion_update(){
+  BYTES_LEFT=$( $PWD/lib_captive get_promotion )
+  if [ "$BYTES_LEFT" ]; then
+    echo -n $BYTES_LEFT > $RUN/tigo_promotion
+  fi
+}
+
+connection_start(){
+  pon tigo
+  echo $( date +%s ) > $CONNSTAT-start
+}
+
+connection_status(){
+  PPP=$( ip link | grep " ppp" | sed -e "s/.*\(ppp.\).*/\1/" )
+  if [ "$PPP" ]; then
+    echo 1: Connecte a la cle Tigo
+    PAP=$( grep_pppd | grep PAP )
+    if [ "$PAP" ]; then
+      echo 2: Trouve credit
+      PPP_IP=$( grep_pppd grep -A 3 PAP | grep local | sed -e "s/.* //" )
+      if [ "$PPP_IP" ]; then
+        echo 3: Connection Internet
+        TUN=$( ip link | grep " tun" | sed -e "s/.*\(tun.\).*/\1/" )
+        if [ "$TUN" ]; then
+          echo 4: Connection securisee
+        fi
+      fi
+    fi
+  elif grep_pppd | grep -q failed; then
+    echo Connection failed
+  else
+    echo No connection
+  fi
+}
+
+connection_stop(){
+  while poff -a; do sleep 1; done
 }
 
 update_vars(){

@@ -1,0 +1,80 @@
+#!/bin/bash
+
+USERS=/etc/captive.users
+USERS_CONNECTED=$RUN/aon_connected
+
+users_connected_delete(){
+  egrep -v "^$1 " $USERS_CONNECTED > /tmp/uc
+  mv /tmp/uc $USERS_CONNECTED
+}
+
+users_check(){
+  USER=$( echo $1 | sed -e "s/ //g" | tr A-Z a-z | tr -cd a-z0-9_- )
+  LINE=$( egrep -i "^$USER:" $USERS )                             
+  if [ -z "$LINE" ]; then                                                                                  
+    PASS=""                     
+    LEVEL=0
+  else                                                                               
+    PASS=$( echo $LINE | cut -f 2 -d ":" )
+    LEVEL=$( echo $LINE | cut -f 3 -d ":" )
+  fi                                                 
+  if [ "$2" -a "$2" = "$PASS" ]; then                                
+    USER_OK="true"
+  elif [ "$USER" -a "$2" ]; then                                            
+    if [ "$2" ]; then                                            
+      USER_OK="wrong"
+    else                                           
+      USER_OK="add"                                                                         
+    fi          
+  else
+    USER_OK="nothing"
+  fi
+  if [ "$FORM_signup" ]; then
+    USER_OK="add"
+  fi
+}
+
+users_connected(){
+  cat $USERS_CONNECTED | sed -e "s/.* //"
+}
+
+ips_connected(){
+  cat $USERS_CONNECTED | sed -e "s/ .*//"
+}
+
+users_level(){
+  USER=$1
+  LINE=$( egrep "^$USER:" $USERS )
+  echo $LINE | cut -f 3 -d :
+}
+
+users_high_level(){
+  USERS_HIGH=""
+  for u in $( users_connected ); do
+    if [ $( users_level $u ) -gt 2 ]; then
+      USERS_HIGH="$USERS_HIGH $u"
+    fi
+  done
+  echo -n $USERS_HIGH
+}
+
+users_mac(){
+  USERS_MAC=""
+  for p in $( iptables -L FCAPTIVE -nv | grep MAC | sed -e "s/ *\([0-9]*\).*/\1/" ); do
+    if [ $p -gt 0 ]; then
+      USERS_MAC="mac"
+    fi
+  done
+  echo -n $USERS_MAC
+}
+
+users_low_level(){
+  USERS_LOW=""
+  for u in $( users_connected ); do
+    if [ $( users_level $u ) -lt 3 ]; then
+      USERS_LOW="$USERS_LOW $u"
+    fi
+  done
+  echo -n $USERS_LOW
+}
+
