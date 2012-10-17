@@ -1,0 +1,39 @@
+#!/bin/bash
+
+ARGS="--inplace --sockopts=SO_SNDBUF=20000,SO_RCVBUF=20000 --password-file /etc/rsync.pass -Paivz"
+DEST=rsync://profeda@vpn.markas-al-nour.org/postfix
+LOG=/var/log/copy_email.log
+echo "" > $LOG
+tail -f $LOG &
+while sleep 30; do
+  if ifconfig | grep -q ppp0; then
+    postsuper -h ALL
+    SENT=""
+    while ! postqueue -p | grep -q empty; do
+      SENT=true
+      logger -s Transferring mails
+      HOLD=/var/spool/postfix/hold/*
+      for file in $HOLD; do
+        logger -s Transferring $file
+        date
+        while ! rsync $ARGS $file $DEST > $LOG; do
+          logger -s Trying again $file
+          date
+          sleep 5
+        done
+        logger -s Sending message $file
+        while ! ssh root@vpn.markas-al-nour.org postsuper -H ALL; do 
+          logger -s Trying again to send
+          sleep 5
+        done
+        rm $file $LOG
+        logger -s Finished $file
+      done
+    done
+    if [ "$SENT" ]; then
+      if [ -f /var/run/poff_after_email ]; then
+        while poff -a; do sleep 1; done
+      fi
+    fi
+  fi
+done

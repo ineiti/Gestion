@@ -1,0 +1,181 @@
+#!/bin/sh
+
+if [ "$LIB_TIGO" = "loaded" ]; then
+#  return
+echo
+fi
+LIB_TIGO=loaded
+
+TIGO=$PWD
+CLEFT=$LOGDIR/tigo_credit
+PLEFT=$LOGDIR/tigo_promotion
+DEV=/dev/ttyUSB2
+
+get_promotion(){
+  # This should also work.. - simple test-cases
+  #STR="30.000 MB INTERNET valide avant 04/10/2012."
+  #STR=" 30.000 MB INTERNET valide avant 04/10/2012."
+  #STR="250.00 CFA recharge bonus, 30.000 MB INTERNET valide avant 04/10/2012."
+  #STR="250.00 CFA recharge bonus."
+  STR=$( ussd_decode $( gcom_call get_promotion ) )
+  log "Got string $STR"
+  if rs "$STR" Octet; then
+    log Found octets
+    echo $STR | sed -e "s/.*MMS, \(.*\) Octet.*/\1/"
+  elif rs "$STR" "INTERNET"; then
+    log Found INTERNET
+    STR=$( echo $STR | sed -e "s/.*recharge bonus, //" )
+    BYTES=$( echo $STR | sed -e "s/[^0-9]*\([0-9]*\.[0-9]* ..\) INTERNET.*/\1/" )
+    logger $BYTES left on internet
+    echo $BYTES
+  elif rs "$STR" "a marche"; then
+    log Waiting for SMS
+    if [ -e $DEV ]; then
+      for w in $( seq 10 ); do
+        log Waiting till $(( w * 5 )) seconds
+        BYTES=$( gnokii --getsms SM 0 29 -d 2>&1 | grep octet | tail -n 1 )
+        if [ "$BYTES" ]; then
+          break;
+        fi
+        sleep 5
+      done
+    fi
+    sms_delete
+    echo $BYTES | sed -e "s/.*MMS, \(.*\) octet.*/\1/"
+  elif rs "$STR" "Vous n'avez pas"; then
+    log "No promotion"
+    echo 0
+  elif rs "$STR" "recharge bonus"; then
+    log "No promotion"
+    echo 0
+  elif rs "$STR" "KATTIR"; then
+    log "Lonely kattir-message"
+    echo 0
+  fi
+}
+
+get_credit(){
+  STR=$( ussd_decode $( gcom_call get_credit ) )
+  log "Got credit $STR"
+  if rs "$STR" solde; then
+    echo $STR | sed -e "s/.*est de \([0-9]*\)\..*/\1/"
+  fi
+}
+
+add_credit(){
+  STR=$( get_ussd "123*$1" )
+  log "Added credit $STR"
+  echo $STR
+}
+
+send_credit(){
+  STR=$( get_ussd "190*1234*235$2*$1" )
+  log "Sent credit $2 to $1 -> $STR"
+  echo $STR
+}
+
+update_credit(){
+  if true; then
+  log Getting credit
+  C=$( get_credit )
+  if [ "$C" ]; then
+    echo $C | sed -e "s/\..*//" > $CLEFT
+  fi
+  log Getting promotion
+  P=$( get_promotion ) 
+  if [ "$P" ]; then
+    echo $P > $PLEFT
+  fi
+  update_vars
+  fi
+}
+
+use_credit(){
+  update_vars
+#  killall -9 screen
+#  screen -wipe
+#  screen -dmS credit /usr/bin/tigo_upc
+}
+
+tigo_credit_add(){
+  msg tigo "adding credit with number $1"
+  sudo $TIGO/tigo_credit $1
+  tigo_credit_update
+}
+
+tigo_credit_get(){
+  if [ ! -f $RUN/tigo_credit ]; then
+    tigo_credit_update
+  fi
+  cat $RUN/tigo_credit
+}
+
+tigo_credit_update(){
+  . $TIGO/tigo_credit
+  if [ "$CREDIT_LEFT" ]; then
+    echo -n $CREDIT_LEFT > $RUN/tigo_credit
+  fi
+}
+
+tigo_promotion_add(){
+  msg tigo "adding promotion with number $1"
+  sudo $TIGO/tigo_promotion $1
+  tigo_promotion_update
+  tigo_credit_update
+}
+
+tigo_promotion_get(){
+  if [ ! -f $RUN/tigo_promotion ]; then
+    tigo_promotion_update
+    if [ ! -f $RUN/tigo_promotion ]; then
+      echo 0 > $RUN/tigo_promotion
+    fi
+  fi
+  cat $RUN/tigo_promotion
+}
+
+tigo_promotion_update(){
+  BYTES_LEFT=$( $PWD/lib_captive get_promotion )
+  if [ "$BYTES_LEFT" ]; then
+    echo -n $BYTES_LEFT > $RUN/tigo_promotion
+  fi
+}
+
+connection_start(){
+  pon tigo
+  echo $( date +%s ) > $CONNSTAT-start
+}
+
+connection_status(){
+  PPP=$( ip link | grep " ppp" | sed -e "s/.*\(ppp.\).*/\1/" )
+  if [ "$PPP" ]; then
+    echo 1: Connecte a la cle Tigo
+    PAP=$( grep_pppd | grep PAP )
+    if [ "$PAP" ]; then
+      echo 2: Trouve credit
+      PPP_IP=$( grep_pppd grep -A 3 PAP | grep local | sed -e "s/.* //" )
+      if [ "$PPP_IP" ]; then
+        echo 3: Connection Internet
+        TUN=$( ip link | grep " tun" | sed -e "s/.*\(tun.\).*/\1/" )
+        if [ "$TUN" ]; then
+          echo 4: Connection securisee
+        fi
+      fi
+    fi
+  elif grep_pppd | grep -q failed; then
+    echo Connection failed
+  else
+    echo No connection
+  fi
+}
+
+connection_stop(){
+  while poff -a; do sleep 1; done
+}
+
+update_vars(){
+  CREDIT_LEFT=$( cat $CLEFT )
+  PROMOTION_LEFT=$( cat $PLEFT )
+}
+
+update_vars

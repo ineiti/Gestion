@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Some simple methods to interact with a USB-2G or 3G key
+
+ussd_encode(){
+  perl -e "@a=split(//,unpack('b*',\"*$1#\")); for (\$i=7; \$i < \$#a; \$i+=8) { \$a[\$i]='' } print uc(unpack('H*', pack('b*', join('', @a))))"
+}
+
+ussd_decode(){
+  perl -e "@a=split(//,unpack('b*', pack('H*',\"$1\"))); for (\$i=6; \$i < \$#a; \$i+=7) {\$a[\$i].='0' } print pack('b*', join('', @a))"
+}
+
+gcom_call(){
+  comgt -s -d $DEV /etc/gcom/$1.gcom | sed -e 's/",15//'
+}
+
+rs(){
+  echo "$1" | grep -qi "$2"
+}
+
+sms_delete(){
+  if [ -e $DEV ]; then
+    # Start with an empty SMS
+    gnokii --deletesms SM 0 29 > /dev/null 2>&1
+  fi
+}
+
+grep_pppd_started(){
+  grep pppd /var/log/syslog | tail | grep -A 10 started
+}
+

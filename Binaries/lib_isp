@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Sets up and uses an ISP
+. $PWD/lib_isp_$ISP
+
+
+connection_restart(){
+  if [ "$CONN_TYPE" = "always_on" ]; then
+    ifdown wan
+    ifup wan
+    if [ -f $USERS_CONNECTED ]; then
+      rm -f $USERS_CONNECTED
+    fi
+    captive_clear
+  fi
+}
