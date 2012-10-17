@@ -2,7 +2,7 @@
 aptitude install slapd ldap-utils pwgen
 
 HOST=${1:-profeda}
-PASSWD=$( pwgen -1 )
+PASSWD=${2:-$( pwgen -1 )}
 TLD=wifi
 
 echo "Creating the ldap for host $HOST.$TLD with password '$PASSWD'"
