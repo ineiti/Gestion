@@ -2,9 +2,6 @@
 
 BUGS:
 	- if teacher has permission AdminAccess and AdminAccess.visible=false, it fails
-	- Speeding up of Tigo
-	- Account-creation when starting up
-	- QooxView/Tests are not running through
 	- when clicking on tab while other tab is loading, it loops endlessly
 	- when no student passes, it crashes
 	- In Self::Cash, Self::Services don't show up
@@ -25,11 +22,14 @@ UI:
 	- Cours::Noter should have a bigger and longer student-list
 
 FEATURES:
+	- Add a "role"-field to user, that can be used in the Diplomas
+	- Add "version"-field somewhere
 	- AfriCompta-support:
 		- 120724 - Add Account and Movement
 		- 120912 - Gestion acts like a server, and clients can merge with it
 		- 120924 - Synchronize with AfriCompta
 		- 120925 - Update Person-class to use new AfriCompta
+		- Use accounts for internet-cash
 		- Archive old accounts
 		- Delete accounts
 		- Define reports
@@ -95,6 +95,9 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- B 121005: - Speeding up of Tigo
+	  - Account-creation when starting up
+	  - QooxView/Tests are not running through
 	- B 120925 - AfriCompta: test creation of accounts on both sides, when using
 	  AfriCompta.new and Persons.add_cash
 	- F 120718 - Have multiple course-types with own templates

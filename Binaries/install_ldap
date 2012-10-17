@@ -1,0 +1,76 @@
+#!/bin/bash
+aptitude install slapd ldap-utils pwgen
+
+HOST=${1:-profeda}
+PASSWD=$( pwgen -1 )
+TLD=wifi
+
+echo "Creating the ldap for host $HOST.$TLD with password '$PASSWD'"
+echo "Press <ENTER> to confirm"
+read
+
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/cosine.ldif
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/nis.ldif
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/inetorgperson.ldif
+
+cat > backend.ldif <<EOF
+# Load dynamic backend modules
+dn: cn=module,cn=config
+objectClass: olcModuleList
+cn: module
+olcModulepath: /usr/lib/ldap
+olcModuleload: back_hdb
+
+# Database settings
+dn: olcDatabase=hdb,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcHdbConfig
+olcDatabase: {1}hdb
+olcSuffix: dc=$HOST,dc=$TLD
+olcDbDirectory: /var/lib/ldap
+olcRootDN: cn=admin,dc=$HOST,dc=$TLD
+olcRootPW: $PASSWD
+olcDbConfig: set_cachesize 0 2097152 0
+olcDbConfig: set_lk_max_objects 1500
+olcDbConfig: set_lk_max_locks 1500
+olcDbConfig: set_lk_max_lockers 1500
+olcDbIndex: objectClass eq
+olcLastMod: TRUE
+olcDbCheckpoint: 512 30
+olcAccess: to attrs=userPassword by dn="cn=admin,dc=$HOST,dc=$TLD" write by anonymous auth by self write by * none
+olcAccess: to attrs=shadowLastChange by self write by * read
+olcAccess: to dn.base="" by * read
+olcAccess: to * by dn="cn=admin,dc=$HOST,dc=$TLD" write by * read
+EOF
+
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f backend.ldif
+
+cat > init.ldif <<EOF
+# Create top-level object in domain
+dn: dc=$HOST,dc=$TLD
+objectClass: top
+objectClass: dcObject
+objectclass: organization
+o: Example Organization
+dc: Example
+description: LDAP Example 
+
+# Admin user.
+dn: cn=admin,dc=$HOST,dc=$TLD
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: admin
+description: LDAP administrator
+userPassword: $PASSWD
+
+dn: ou=Users,dc=$HOST,dc=$TLD
+objectClass: organizationalUnit
+ou: Users
+
+dn: ou=Groups,dc=$HOST,dc=$TLD
+objectClass: organizationalUnit
+ou: Groups
+EOF
+
+sudo ldapadd -x -D cn=admin,dc=$HOST,dc=$TLD -w $PASSWD -f init.ldif
+
