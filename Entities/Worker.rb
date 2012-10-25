@@ -21,7 +21,7 @@ class Workers < Entities
     person = @data.values.select{|d|
       p = Entities.Persons.find_by_person_id( d[:person_id] )
       n = String( p.first_name ) + " " + String( p.family_name )
-      dputs 3, "#{d[:person_id].inspect} - #{name} - #{n} - #{name == n} - #{name == n}"
+      dputs( 3 ){ "#{d[:person_id].inspect} - #{name} - #{n} - #{name == n} - #{name == n}" }
       name == n
     }.first
     Entities.Workers.find_by_person_id( person[:person_id] )

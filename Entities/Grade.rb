@@ -13,12 +13,12 @@ class Grades < Entities
     course = Entities.Courses.find_by_course_id( course_id )
     student = Entities.Persons.find_by_login_name( person_login_name )
     if course and student
-      dputs 3, "Found #{course} and #{student}"
+      dputs( 3 ){ "Found #{course} and #{student}" }
       grades = Entities.Grades.search_by_course_id( course.course_id )
       grades.each{|g|
-        dputs 4, "Checking grade #{g}"
+        dputs( 4 ){ "Checking grade #{g}" }
         if g.person_id.to_i == student.person_id.to_i
-          dputs 2, "Found grade #{g}"
+          dputs( 2 ){ "Found grade #{g}" }
           g.set_course_student( course, student )
           return g
         end
@@ -33,7 +33,7 @@ class Grades < Entities
         g.person_id == d[:person_id]
       }
       if id.length > 0
-        dputs 2, "Saving grade with existing id of #{id}"
+        dputs( 2 ){ "Saving grade with existing id of #{id}" }
         d[:grade_id] = id[0].grade_id
       end
     end

@@ -32,7 +32,7 @@ class CourseDiploma < View
   end
 
   def rpc_list_choice( session, name, args )
-    dputs 3, "rpc_list_choice with #{name} - #{args.inspect}"
+    dputs( 3 ){ "rpc_list_choice with #{name} - #{args.inspect}" }
     ret = reply('empty', ['diplomas'])
     case name
     when "courses"
@@ -47,12 +47,12 @@ class CourseDiploma < View
   def update_student_diploma( file, student, course )
     grade = Entities.Grades.find_by_course_person( course.course_id, student.login_name )
     if grade and grade.to_s != "NP"
-      dputs 3, "New diploma for: #{course.course_id} - #{student.login_name} - #{grade.to_hash.inspect}"
+      dputs( 3 ){ "New diploma for: #{course.course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|
         doc = z.read("content.xml")
-        ddputs 5, "Contents is: #{course.contents.inspect}"
+        ddputs( 5 ){ "Contents is: #{course.contents.inspect}" }
         desc_p = /-DESC1-(.*)-DESC2-/.match( doc )[1]
-				ddputs 3, "desc_p is #{desc_p}"
+				ddputs( 3 ){ "desc_p is #{desc_p}" }
         doc.gsub!( /-DESC1-.*-DESC2-/,
 					course.contents.split("\n").join( desc_p ))
         doc.gsub!( /-PROF-/, Entities.Persons.login_to_full( course.teacher.join ) )
@@ -79,45 +79,45 @@ class CourseDiploma < View
   def make_pdfs( old, list )
     FileUtils::rm( old )
     if @thread
-      dputs 2, "Thread is here, killing"
+      dputs( 2 ){ "Thread is here, killing" }
       begin
         @thread.kill
         @thread.join
       rescue Exception => e  
-        dputs 0, "Error while killing: #{e.message}"
-        dputs 0, "#{e.inspect}"
-        dputs 0, "#{e.to_s}"
+        dputs( 0 ){ "Error while killing: #{e.message}" }
+        dputs( 0 ){ "#{e.inspect}" }
+        dputs( 0 ){ "#{e.to_s}" }
         puts e.backtrace
       end
     end
-    dputs 2, "Starting new thread"
+    dputs( 2 ){ "Starting new thread" }
     @thread = Thread.new{
       begin
-				dputs 2, "Creating pdfs #{list.inspect}"
+				dputs( 2 ){ "Creating pdfs #{list.inspect}" }
 				`date >> /tmp/cp`
 				pdfs = []
 				dir = File::dirname( list.first )
 				list.sort.each{ |p|
-					dputs 3, "Started thread for file #{p} in directory #{dir}"
+					dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
 					Docsplit.extract_pdf p, :output => dir
-					ddputs 5, "Finished docsplit"
+					ddputs( 5 ){ "Finished docsplit" }
 					FileUtils::rm( p )
-					ddputs 5, "Finished rm"
+					ddputs( 5 ){ "Finished rm" }
 					pdfs.push p.sub( /\.[^\.]*$/, '.pdf' )
 				}
-				dputs 3, "Getting #{pdfs.inspect} out of #{dir}"
+				dputs( 3 ){ "Getting #{pdfs.inspect} out of #{dir}" }
 				all = "#{dir}/000-all.pdf"
 				psn = "#{dir}/000-4pp.pdf"
-				dputs 3, "Putting it all in one file: pdftk #{pdfs.join( ' ' )} cat output #{all}"
+				dputs( 3 ){ "Putting it all in one file: pdftk #{pdfs.join( ' ' )} cat output #{all}" }
 				`pdftk #{pdfs.join( ' ' )} cat output #{all}`
-				dputs 3, "Putting 4 pages of #{all} into #{psn}"
+				dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
 				`pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
 				FileUtils::mv( "#{psn}.tmp", psn )
-				dputs 2, "Finished"
+				dputs( 2 ){ "Finished" }
 			rescue Exception => e  
-				dputs 0, "Error in thread: #{e.message}"
-				dputs 0, "#{e.inspect}"
-				dputs 0, "#{e.to_s}"
+				dputs( 0 ){ "Error in thread: #{e.message}" }
+				dputs( 0 ){ "#{e.inspect}" }
+				dputs( 0 ){ "#{e.to_s}" }
 				puts e.backtrace
 			end
 		}
@@ -136,19 +136,19 @@ class CourseDiploma < View
       students = course.students
       digits = Math::log10( students.size + 1 ).ceil
       counter = 1
-      dputs 2, "Diploma_dir is: #{course.diploma_dir}"
+      dputs( 2 ){ "Diploma_dir is: #{course.diploma_dir}" }
       if not File::directory? course.diploma_dir
         FileUtils::mkdir( course.diploma_dir )
       else
         FileUtils::rm( Dir.glob( course.diploma_dir + "/*" ) )
       end
-      dputs 2, students.inspect
+      dputs( 2 ){ students.inspect }
       students.each{ |s|
         student = Entities.Persons.find_by_login_name( s )
         if student
-          dputs 2, student.login_name
+          dputs( 2 ){ student.login_name }
           student_file = "#{course.diploma_dir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
-          dputs 2, "Doing #{counter}: #{student.login_name}"
+          dputs( 2 ){ "Doing #{counter}: #{student.login_name}" }
           FileUtils::cp( "#{Entities.Courses.diploma_dir}/#{course.ctype.filename.join}", 
             student_file )
           update_student_diploma( student_file, student, course )
@@ -181,7 +181,7 @@ class CourseDiploma < View
     if args['diplomas'].length > 0
       course_id = args['courses'][0]
       course = Courses.find_by_course_id(course_id)
-      dputs 2, "Printing #{args['diplomas'].inspect}"
+      dputs( 2 ){ "Printing #{args['diplomas'].inspect}" }
       if @default_printer
         args['diplomas'].each{|g|
           `lpr #{@default_printer} #{course.diploma_dir}/#{g}`

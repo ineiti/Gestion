@@ -29,7 +29,7 @@ class PersonAdd < View
 
   def rpc_button_add_user( session, data )
     data.to_sym!
-    dputs 0, "Pressed button accept with #{data.inspect}"
+    dputs( 0 ){ "Pressed button accept with #{data.inspect}" }
     if data[:login_prop]
       data[:login_name] = data[:login_prop]
       person = Persons.create( data )
@@ -44,7 +44,7 @@ class PersonAdd < View
 
   def rpc_button_print_student( session, data )
     student = Persons.find_by_login_name( data['login_prop'] )
-    dputs 1, "Printing student #{student.full_name}"
+    dputs( 1 ){ "Printing student #{student.full_name}" }
     file = student.print
     if file.class == String
       reply( :window_hide ) +
@@ -75,7 +75,7 @@ class PersonAdd < View
   end
 
   def rpc_callback_login( session, data )
-    dputs 3, "Got values: #{data.inspect}"
+    dputs( 3 ){ "Got values: #{data.inspect}" }
     complete_name = data['complete_name'] || ""
     if complete_name.length > 0
       reply( "update", {:login_prop => Persons.create_login_name( complete_name )})

@@ -26,7 +26,7 @@ class AdminBackup < View
 	def rpc_button_do_restore( session, data )
 		file = data["backups"][0]
 		if File::exists? "/var/www/Backups/#{file}"
-			dputs 0, "Going to call backup for #{file}"
+			dputs( 0 ){ "Going to call backup for #{file}" }
 			Thread.new{
 				`nohup #{GESTION_DIR}/Binaries/restore #{file}`
 			}

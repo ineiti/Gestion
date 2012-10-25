@@ -58,16 +58,16 @@ class TC_Person < Test::Unit::TestCase
 
     surf_credit = @surf.credit.to_i
     josue_due = @josue.credit_due.to_i
-    dputs 0, "surf_credit: #{surf_credit} - josue_due: #{josue_due}"
+    dputs( 0 ){ "surf_credit: #{surf_credit} - josue_due: #{josue_due}" }
     # Josue puts 500 on "surf"s account
     View.PersonModify.rpc_button( session, "add_credit",
 			{'person_id' => 2, 'login_name' => 'surf', 'credit_add' => 500 } )
     assert_equal 500, @surf.credit.to_i - surf_credit, "Credit"
     assert_equal 500, @josue.credit_due.to_i - josue_due, "Credit_due"
-    dputs 0, @surf.log_list.inspect
-    dputs 0, @josue.log_list.inspect
+    dputs( 0 ){ @surf.log_list.inspect }
+    dputs( 0 ){ @josue.log_list.inspect }
     log_list = [ @surf.log_list[2], @josue.log_list[3]]
-    dputs 0, log_list.inspect
+    dputs( 0 ){ log_list.inspect }
     log_list.undate
     assert_equal( {:data_class_id=>2, :data_field=>:credit, :data_value=>"500",
 				:logaction_id=>15, :undo_function=>:undo_set_entry, :data_class=>"Person",

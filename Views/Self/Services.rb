@@ -26,10 +26,10 @@ class SelfServices < View
   end
   
   def calc_total( values )
-    dputs 5, "#{values.inspect}"
+    dputs( 5 ){ "#{values.inspect}" }
     services_total = 0
     values.each{|k,v|
-      dputs 5, "Searching for #{k}: #{v}"
+      dputs( 5 ){ "Searching for #{k}: #{v}" }
       case k
         when "copies_laser"
         services_total += v.to_i * 50
@@ -49,9 +49,9 @@ class SelfServices < View
   # Adds the cash to the destination account, and puts the same amount into
   # the AfriCompta-framework
   def rpc_button_add_cash( session, data )
-    dputs 5, "data is #{data.inspect}"
+    dputs( 5 ){ "data is #{data.inspect}" }
     services_total = calc_total( data )
-    dputs 5, "which amounts to #{services_total} CFA"
+    dputs( 5 ){ "which amounts to #{services_total} CFA" }
     actor = session.owner
     data.delete( "services_total" )
     data.delete( "credit_due" )
@@ -64,7 +64,7 @@ class SelfServices < View
   end
   
   def rpc_update_with_values( session, values = nil )
-    dputs 3, "Got values: #{values.inspect}"
+    dputs( 3 ){ "Got values: #{values.inspect}" }
     reply( 'update', { :services_total => calc_total( values ) } )
   end
   

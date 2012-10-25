@@ -41,7 +41,7 @@ class TC_Course < Test::Unit::TestCase
     ["ca_b", "A B", "C D"], %w( admin2 Dmin A ), %w( mhelene Hélène Méyère ) ]
     bulk.each{|b|
       login, first, family = b
-      dputs 0, "Doing #{b.inspect}"
+      dputs( 0 ){ "Doing #{b.inspect}" }
       p = Entities.Persons.find_by_login_name( login )
       assert_not_nil p, login.inspect
       assert_equal login, p.login_name
@@ -123,7 +123,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal 10, @grade_admin.mean
     assert_equal %w( 01.02.2003 04.05.2003 04.06.2003 72 admin josue ),
       course.data_get( %w( start end sign duration teacher responsible ) )
-    dputs 0, @course.inspect
+    dputs( 0 ){ @course.inspect }
   end
 
   def test_print_presence

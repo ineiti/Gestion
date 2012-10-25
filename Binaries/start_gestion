@@ -11,7 +11,7 @@ if pgrep -f ruby.*Gestion; then
   logger "Killing old Gestion with -9"
   pkill -9 -f ruby.*Gestion
 fi
-logger "Deleting old LogAction"
-rm data/LogAction*
+#logger "Deleting old LogAction"
+#rm data/LogAction*
 logger "Starting new Gestion"
 screen -S Gestion -d -m ./Gestion.rb

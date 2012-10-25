@@ -41,11 +41,11 @@ class Persons < Entities
 
     value_block :internet
     value_list :groups, "%w( freeadsl sudo print )"
-    value_list_single_LDAP :internet_none, "[]", :ldap_name => "man-internet-none"
+    value_list_single :internet_none, "[]"
 
     value_block :read_only
     value_str_ro_LDAP :login_name, :ldap_name => "uid"
-    value_int_ro_LDAP :credit, :ldap_name => "man-internet-cash"
+    value_int_ro :credit
     value_int_ro :credit_due
 
     value_block :hidden
@@ -54,7 +54,7 @@ class Persons < Entities
     value_str :password_plain
     value_int_LDAP :person_id, :ldap_name => "uidnumber"
 
-    dputs 0, $config.inspect
+    dputs( 0 ){ $config.inspect }
     if $config[:DiplomaDir]
       @print_card = OpenPrint.new( "#{$config[:DiplomaDir]}/carte_etudiant.odg" )
     end
@@ -67,7 +67,7 @@ class Persons < Entities
     suffix = ""
     login = accents_replace( login )
     while find_by_login_name( login + suffix.to_s )
-      dputs 2, "Found #{login + suffix.to_s} to already exist"
+      dputs( 2 ){ "Found #{login + suffix.to_s} to already exist" }
       suffix = suffix.to_i + 1
       suffix = 2 if suffix == 1
     end
@@ -81,7 +81,7 @@ class Persons < Entities
       s = names.length < 4 ? 0 : 1
       first = names[0..s].join(" ")
       family = names[(s+1)..-1].join(" ")
-      dputs 1, "Creating user #{names.inspect} as #{first} - #{family}"
+      dputs( 1 ){ "Creating user #{names.inspect} as #{first} - #{family}" }
       [ first, family ]
     else
       [ fullname, "" ]
@@ -91,12 +91,12 @@ class Persons < Entities
   def accents_replace( login )
     login = login.downcase.gsub( / /, "_" )
     accents = Hash[ *%w( a àáâä e éèêë i ìíîï o òóôöœ u ùúûü c ç ss ß )]
-    dputs 2, "Login was #{login}"
+    dputs( 2 ){ "Login was #{login}" }
     accents.each{|k,v|
       login.gsub!( /[#{v}]/, k )
     }
     login.gsub!( /[^a-z0-9_-]/, '_' )
-    dputs 2, "Login is #{login}"
+    dputs( 2 ){ "Login is #{login}" }
     return login
   end
 
@@ -110,7 +110,7 @@ class Persons < Entities
       first, family = create_first_family( first )
     end
     if family.length > 0
-      dputs 2, "Family name + First name"
+      dputs( 2 ){ "Family name + First name" }
 			login = family.chars.first + first
     else
 			login = first
@@ -137,7 +137,7 @@ class Persons < Entities
 
     d[:login_name] = find_empty_login_name( d[:login_name] )
     d[:person_id] = nil
-    dputs 1, "Creating #{d.inspect}"
+    dputs( 1 ){ "Creating #{d.inspect}" }
 
     person = super( d )
 
@@ -145,7 +145,7 @@ class Persons < Entities
     person.password = person.password_plain
 
     if defined? @cmd_after_new
-      dputs 2, "Going to call #{@cmd_after_new}"
+      dputs( 2 ){ "Going to call #{@cmd_after_new}" }
       %x[ #{@cmd_after_new} #{person.login_name} #{person.password_plain} ]
     end
 
@@ -165,11 +165,11 @@ class Persons < Entities
   # - credit_add : how much CFA to add
   # - person_id : the id of the person to receive the credit
   def add_cash( session, data )
-    dputs 5, "data is #{data.inspect}"
+    dputs( 5 ){ "data is #{data.inspect}" }
     if data['credit_add'] and data['person_id']
       actor = session.owner
       client = find_by_person_id( data['person_id'].to_s )
-      dputs 3, "Adding cash to #{client.full_name} from #{actor.full_name}"
+      dputs( 3 ){ "Adding cash to #{client.full_name} from #{actor.full_name}" }
       if client
         actor.add_credit( client, data['credit_add'])
       end
@@ -204,7 +204,7 @@ class Persons < Entities
 
   def save_data( d )
     d = d.to_sym
-    dputs 3, "d is #{d.inspect}"
+    dputs( 3 ){ "d is #{d.inspect}" }
 
     if ! d[:first_name] and ! d[:person_id]
       return { :first_name => "user" }
@@ -214,25 +214,25 @@ class Persons < Entities
   end
 
   def data_create( data )
-    dputs 0, "Creating new data #{data.inspect}"
-    dputs 0, @adduser_cmd
+    dputs( 0 ){ "Creating new data #{data.inspect}" }
+    dputs( 0 ){ @adduser_cmd }
     if has_storage? :LDAP
       user = data[:login_name]
       if %x[ ldapadduser #{user} plugdev ] and defined? @adduser_cmd
-        dputs 0, @adduser_cmd
+        dputs( 0 ){ @adduser_cmd }
         %x[ #{@adduser_cmd} #{user} ]
       end
     end
   end
 
   def find_full_name( name )
-    dputs 2, "Searching for #{name}"
+    dputs( 2 ){ "Searching for #{name}" }
     @data.each_key{|k|
       if @data[k]
         fn = "#{data[k][:first_name]} #{data[k][:family_name]}"
-        dputs 2, "Searching in #{fn}"
+        dputs( 2 ){ "Searching in #{fn}" }
         if fn =~ /#{name}/i
-          dputs 2, "Found it"
+          dputs( 2 ){ "Found it" }
           return get_data_instance(k)
         end
       end
@@ -268,11 +268,12 @@ class Person < Entity
     c = get_config( "Root::Lending", :compta_due, :src )
     if data_get( :account_due )
       src = "#{c}::#{data_get(:account_due)}"
-      dputs 2, "Creating AfriCompta with source-account: #{src}"
+      dputs( 2 ){ "Creating AfriCompta for #{full_name} with source-account: #{src}" }
       @compta_due = AfriCompta.new( src, 
 				get_config( "Root::Income", :compta_due, :dst ) )
       update_credit
     else
+      dputs( 2 ){ "Couldn't create AfriCompta for #{full_name}, making empty" }
       @compta_due = AfriCompta.new
     end
   end
@@ -280,7 +281,7 @@ class Person < Entity
   def data_set(field, value, msg = nil, undo = true, logging = true )
     old_value = data_get(field)
     if old_value != value
-      dputs 0, "Saving #{field} = #{value}"
+      dputs( 0 ){ "Saving #{field} = #{value}" }
       if logging
         if undo
           @proxy.log_action( @id, { field => value }, msg, :undo_set_entry, old_value )
@@ -302,7 +303,7 @@ class Person < Entity
 
   def get_credit
     if @compta_due and not @compta_due.disabled
-			dputs 2, "credit is #{@compta_due.get_credit}"
+			dputs( 2 ){ "credit is #{@compta_due.get_credit}" }
 			( @compta_due.get_credit * 1000.0 + 0.5 ).to_i
 		else
 			self.credit_due
@@ -315,7 +316,7 @@ class Person < Entity
   end
 
   def add_credit( client, credit )
-    dputs 3, "Adding #{credit}CFA to #{client.credit} for #{client.login_name}"
+    dputs( 3 ){ "Adding #{credit}CFA to #{client.credit} for #{client.login_name}" }
     credit_before = client.credit
     if credit.to_i < 0 and credit.to_i.abs > client.credit.to_i
 			credit = -client.credit.to_i
@@ -343,23 +344,23 @@ class Person < Entity
   def check_pass( pass )
     if @proxy.has_storage? :LDAP
       # We have to try to bind to the LDAP
-      dputs 0, "Trying LDAP"
+      dputs( 0 ){ "Trying LDAP" }
       return @proxy.storage[:LDAP].check_login( data_get(:login_name), pass )
     else
-      dputs 0, "is #{pass} equal to #{data_get( :password ) }"
+      dputs( 0 ){ "is #{pass} equal to #{data_get( :password ) }" }
       return pass == data_get( :password )
     end
   end
 
   def services_active
-    dputs 4, "Entering"
+    dputs( 4 ){ "Entering" }
     payments = Entities.Payments.search_by_client( self.id )
     if payments
       payments.select{|p|
-        dputs 3, "Found payment for #{self.full_name}: #{p.inspect}"
+        dputs( 3 ){ "Found payment for #{self.full_name}: #{p.inspect}" }
         if p.desc =~ /^Service:/
           service = Entities.Services.find_by_name( p.desc.gsub(/^Service:/, ''))
-          dputs 3, "Found service #{service}"
+          dputs( 3 ){ "Found service #{service}" }
           service.duration == 0 or p.date + service.duration * 60 * 60 * 24 >= Time.now.to_i
         else
 					false
@@ -374,11 +375,11 @@ class Person < Entity
 
   def password=(pass)
     if @proxy.has_storage? :LDAP
-      dputs 1, "Changing password for #{self.login_id}: #{pass}"
+      dputs( 1 ){ "Changing password for #{self.login_id}: #{pass}" }
       pass = %x[ slappasswd -s #{pass} ]
-      dputs 1, "Hashed password for #{self.login_id} is: #{pass}"
+      dputs( 1 ){ "Hashed password for #{self.login_id} is: #{pass}" }
     end
-    dputs 1, "Setting password for #{self.login_id} to #{pass}"
+    dputs( 1 ){ "Setting password for #{self.login_id} to #{pass}" }
     data_set( :password, pass )
   end
 

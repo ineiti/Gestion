@@ -25,6 +25,11 @@ else
         echo
         sudo apt-get install ruby rubygems libreoffice pdftk psutils sqlite libsqlite3-dev \
           default-jdk gettext
+        echo -n "Do you also want ldap?"
+        read a
+        if [ "$a" = "y" -o "$a" = "Y" ]; then
+          Binaries/install_ldap
+        fi
         ./Gestion.rb $@
       else
         echo OK, wont run Gestion then

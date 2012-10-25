@@ -1,6 +1,17 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- Archive gives wrong totals and multiple sub-sums in big_data
+	- Make rounding in Account-total
+	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
+	  use that one. Don't rely on Gestion/ldap.secret!
+	- Why is account.total not updated?
+	- Migration of new data-types: have defaults
+	- check diploma-templates
+	- AfriCompta::check doesn't work anymore
+	- check why ruby-gettext from debian/squeeze messes things up
+	- Mon Compte - Dépenses is not updated, because it relies on LogAction
+	- Personnes - Admin is not always updated
 	- if teacher has permission AdminAccess and AdminAccess.visible=false, it fails
 	- when clicking on tab while other tab is loading, it loops endlessly
 	- when no student passes, it crashes
@@ -95,6 +106,9 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- B 121024: Why is account.movements.each{|m| m.to_json} so slow? account.update_total?
+	    - dputs is evaluated even for not-shown levels, fixed
+	- B 121019: - credit and lock_hours are not in LDAP anymore
 	- B 121005: - Speeding up of Tigo
 	  - Account-creation when starting up
 	  - QooxView/Tests are not running through

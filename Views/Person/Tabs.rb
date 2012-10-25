@@ -15,8 +15,8 @@ class PersonTabs < View
   end
   
   def rpc_list_choice( session, name, args )
-    dputs 2, "args is #{args.inspect}"
-    dputs 2, "New choice #{name} - #{args['persons']}"
+    dputs( 2 ){ "args is #{args.inspect}" }
+    dputs( 2 ){ "New choice #{name} - #{args['persons']}" }
 
     if name == 'persons' and args and args['persons']
       reply( :pass_tabs, [ "list_choice", name, { :persons => [ args['persons'] ] } ] )
@@ -26,15 +26,15 @@ class PersonTabs < View
   end
 
   def rpc_callback_search( session, data, do_list_choice = true )
-    dputs 2, "Got data: #{data.inspect}"
+    dputs( 2 ){ "Got data: #{data.inspect}" }
 
     s = data['search']
     result = %w( login_name family_name first_name person_id email phone ).collect{|f|
       ret = Entities.Persons.search_by( f, s )
-      dputs 3, "Result for #{f} is: #{ret.collect{|r| r.login_name}}"
+      dputs( 3 ){ "Result for #{f} is: #{ret.collect{|r| r.login_name}}" }
       ret
     }.flatten.uniq
-    dputs 3, "Result is: #{result.collect{|r| r.login_name}}"
+    dputs( 3 ){ "Result is: #{result.collect{|r| r.login_name}}" }
     not result and result = []
 
     ret = reply( :empty, [:persons] ) +

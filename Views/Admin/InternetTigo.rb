@@ -41,9 +41,9 @@ class AdminTigo < View
   end
 
   def lib_net( func, *args )
-    dputs 3, "Calling lib_net #{func}"
+    dputs( 3 ){ "Calling lib_net #{func}" }
     ret = `Binaries/lib_net func #{func.to_s} #{args.join(' ')}`
-    dputs 3, "returning from lib_net #{func}"
+    dputs( 3 ){ "returning from lib_net #{func}" }
     ret
   end
 
@@ -69,7 +69,7 @@ class AdminTigo < View
 
   def rpc_button_recharge( session, data )
     code = data['code'].gsub( /[^0-9]/, '' )
-    dputs 0, "Code is #{code}"
+    dputs( 0 ){ "Code is #{code}" }
     lib_net :tigo_credit_add, code
     rpc_update( session )
   end
@@ -81,15 +81,15 @@ class AdminTigo < View
 
   def rpc_button_update_params( session, data )
     if `ifconfig` =~ /ppp0/
-      dputs 3, "ppp0-link is up, can't update"
+      dputs( 3 ){ "ppp0-link is up, can't update" }
       return reply( :update, { :msg => "Can't update while connected to Tigo!"}  ) +
       reply( :window_show, :error )
     else
-      dputs 3, "No link, updating"
+      dputs( 3 ){ "No link, updating" }
       lib_net :tigo_credit_update
-      dputs 3, "Updating promotion"
+      dputs( 3 ){ "Updating promotion" }
       lib_net :tigo_promotion_update
-      dputs 3, "Replying for update"
+      dputs( 3 ){ "Replying for update" }
       reply( 'update', update( session ) )
     end
   end

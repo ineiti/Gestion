@@ -24,7 +24,7 @@ class PersonCourse < View
   end
   
   def rpc_list_choice( session, name, args )
-    dputs 0, "args is #{args.inspect}"
+    dputs( 0 ){ "args is #{args.inspect}" }
     ret = reply( :empty, [:courses] )
     if name == "persons" and args['persons']
       p = Entities.Persons.find_by_login_name( args['persons'].flatten[0] )

@@ -26,7 +26,7 @@ class CourseTabs < View
   end
 
   def rpc_list_choice( session, name, args )
-    dputs 2, "New choice #{name} - #{args.inspect}"
+    dputs( 2 ){ "New choice #{name} - #{args.inspect}" }
 
     reply( 'pass_tabs', [ "list_choice", name, args ] )
   end

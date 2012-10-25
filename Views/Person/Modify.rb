@@ -36,7 +36,7 @@ class PersonModify < View
   end
 
   def rpc_button( session, name, data )
-    dputs 2, "Pressed button #{name} with #{data.inspect}"
+    dputs( 2 ){ "Pressed button #{name} with #{data.inspect}" }
     person = Persons.find_by_person_id( data['person_id'] )
     rep = [] #reply( 'empty' )
     if person
@@ -77,7 +77,7 @@ class PersonModify < View
 
   def rpc_list_choice( session, name, data )
     if name == "persons"
-      dputs 2, "Got data: #{data.inspect}"
+      dputs( 2 ){ "Got data: #{data.inspect}" }
       if data['persons'][0] and p = Persons.find_by_login_name( data['persons'].flatten[0])
         reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) ) +
         reply( :focus, :credit_add )

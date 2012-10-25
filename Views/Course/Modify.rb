@@ -59,11 +59,11 @@ class CourseModify < View
   end
 
   def rpc_button_delete( session, data )
-    dputs 3, "session, data: #{[session, data.inspect].join(':')}"
+    dputs( 3 ){ "session, data: #{[session, data.inspect].join(':')}" }
     course = Courses.find_by_course_id( data['courses'][0])
-    dputs 3, "Got #{course.name} - #{course.inspect}"
+    dputs( 3 ){ "Got #{course.name} - #{course.inspect}" }
     if course
-      dputs 2, "Deleting entry #{course}"
+      dputs( 2 ){ "Deleting entry #{course}" }
       course.delete
     end
 
@@ -106,7 +106,7 @@ class CourseModify < View
   end
 
   def rpc_button_edit_student( session, data )
-    dputs 0, "data is: #{data.inspect}"
+    dputs( 0 ){ "data is: #{data.inspect}" }
     login = data["students"][0]
     reply( "parent",
       reply( :init_values, [ :PersonTabs, { :search => login, :persons => [] } ] ) +
@@ -118,7 +118,7 @@ class CourseModify < View
     rep = []
     data['students'].each{|s|
       student = Persons.find_by_login_name( s )
-      dputs 1, "Printing student #{student.full_name}"
+      dputs( 1 ){ "Printing student #{student.full_name}" }
       rep.push student.print( rep.length )
     }
     if data['students']
@@ -160,7 +160,7 @@ class CourseModify < View
         course.students.push( s )
         end
       }
-      dputs 3, "Students are now: #{course.students.inspect}"
+      dputs( 3 ){ "Students are now: #{course.students.inspect}" }
       update_students( course) +
       reply( "window_hide" )
     end
@@ -173,7 +173,7 @@ class CourseModify < View
   # only one student is created, then the list updated, and a new request is
   # automatically generated.
   def rpc_button_bulk_students( session, data )
-    dputs 3, data.inspect
+    dputs( 3 ){ data.inspect }
     course = Courses.find_by_name( data['name'] )
     users = []
     if data['names'] and users = data['names'].split("\n")
@@ -197,10 +197,10 @@ class CourseModify < View
 
   def rpc_list_choice( session, name, args )
     #Calling rpc_list_choice with [["courses", {"courses"=>["base_25"], "name_base"=>["base"]}]]
-    dputs 3, "rpc_list_choice with #{name} - #{args.inspect}"
+    dputs( 3 ){ "rpc_list_choice with #{name} - #{args.inspect}" }
     if name == "courses" and args['courses'].length > 0
       course_id = args['courses'][0]
-      dputs 3, "replying for course_id #{course_id}"
+      dputs( 3 ){ "replying for course_id #{course_id}" }
       course = Courses.find_by_course_id(course_id)
       reply("empty", [:students]) +
         reply("update", course.to_hash ) +

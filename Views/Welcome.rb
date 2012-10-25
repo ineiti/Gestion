@@ -3,7 +3,7 @@ class Welcome < View
   def rpc_show( session )
     if $config[:autologin]
       person = Entities.Persons.find_by_login_name( $config[:autologin] )
-      dputs 3, "Found login #{person.data.inspect}" if person
+      person and dputs( 3 ){ "Found login #{person.data.inspect}" }
       if person then
         session = Session.new( person )
         return reply( "session_id", person.session_id ) +
@@ -18,15 +18,15 @@ class Welcome < View
 
   # On pressing of the login-button, we search for the user and check the password
   def rpc_button_login( session, args )
-    dputs 3, "args is #{args.inspect}"
+    dputs( 3 ){ "args is #{args.inspect}" }
     login_name, password = args["username"], args["password"]
     person = Entities.Persons.find_by_login_name( login_name )
     if person
-      dputs 3, "Person is #{person.inspect} and #{person.password}"
+      dputs( 3 ){ "Person is #{person.inspect} and #{person.password}" }
     end
     if person and person.check_pass( password ) then
-      dputs 3, "Found login #{person.data_get(:person_id)} for #{login_name}"
-      dputs 2, "Authenticated person #{person.login_name}"
+      dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
+      dputs( 2 ){ "Authenticated person #{person.login_name}" }
       session = Session.new( person )
       person.update_credit
       return reply( "session_id", person.session_id ) +

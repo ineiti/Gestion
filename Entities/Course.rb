@@ -69,12 +69,12 @@ class Courses < Entities
   
   def list_courses_for_person( person )
     ln = person.class == String ? person : person.login_name
-    dputs 3, "Searching courses for person #{ln}"
+    dputs( 3 ){ "Searching courses for person #{ln}" }
     ret = @data.values.select{|d|
-      dputs 3, "Searching #{ln} in #{d.inspect} - #{d[:students].index(ln)}"
+      dputs( 3 ){ "Searching #{ln} in #{d.inspect} - #{d[:students].index(ln)}" }
       d[:students] and d[:students].index( ln )
     }
-    dputs 3, "Found courses #{ret.inspect}"
+    dputs( 3 ){ "Found courses #{ret.inspect}" }
     ret.collect{ |d| [ d[:course_id ], d[:name] ] }.sort{|a,b|
       a[1].gsub( /^[^_]*_/, '' ) <=> b[1].gsub( /^[^_]*_/, '' )
     }.reverse    
@@ -102,14 +102,14 @@ class Courses < Entities
   end
 
   def self.from_diploma( course_name, course_str )
-    dputs 1, "Importing #{course_name}: #{course_str.gsub(/\n/,'*')}"
+    dputs( 1 ){ "Importing #{course_name}: #{course_str.gsub(/\n/,'*')}" }
     course = Entities.Courses.find_by_name( course_name ) or
     Entities.Courses.create( :name => course_name )
 
     lines = course_str.split( "\n" )
     template = lines.shift
-    dputs 1, "Template is: #{template}"
-    dputs 1, "lines are: #{lines.inspect}"
+    dputs( 1 ){ "Template is: #{template}" }
+    dputs( 1 ){ "lines are: #{lines.inspect}" }
     case template
     when /base_gestion/ then
       course.teacher, course.responsible = lines.shift( 2 ).collect{|p|
@@ -124,7 +124,7 @@ class Courses < Entities
       while lines[0].size > 0
         course.contents += lines.shift
       end
-      dputs 1, "Course contents: #{course.contents}"
+      dputs( 1 ){ "Course contents: #{course.contents}" }
       lines.shift
       course.start, course.end, course.sign =
       lines.shift( 3 ).collect{|d| self.from_date_fr( d ) }
@@ -143,7 +143,7 @@ class Courses < Entities
           :mean => Grades.grade_to_mean( grade ), :remark => lines.shift )
         end
       end
-      dputs 0, "#{course.inspect}"
+      dputs( 0 ){ "#{course.inspect}" }
     else
     import_old( lines )
     end
@@ -165,7 +165,7 @@ class Course < Entity
   end
 
   def list_students
-    dputs 3, "Students for #{self.name} are: #{self.students.inspect}"
+    dputs( 3 ){ "Students for #{self.name} are: #{self.students.inspect}" }
     ret = []
     if self.students
       ret = self.students.collect{|s|
@@ -189,7 +189,7 @@ class Course < Entity
     %w( start end sign duration teacher responsible description contents ).each{ |s|
       d = data_get s
       if not d or d.size == 0
-        dputs 1, "Failed checking #{s}: #{d}"
+        dputs( 1 ){ "Failed checking #{s}: #{d}" }
       missing_data.push s
       end
     }
@@ -242,7 +242,7 @@ END
         "#{grade.remark}\n"
       end
     }
-    dputs 2, "Text is: #{txt.gsub(/\n/, '*')}"
+    dputs( 2 ){ "Text is: #{txt.gsub(/\n/, '*')}" }
     txt
   end
 
@@ -269,7 +269,7 @@ END
       [ /Login#{stud_str}/, stud.login_name ],
       [ /Passe#{stud_str}/, stud.password_plain ] ]
     }
-    dputs 3, "Students are: #{studs.inspect}"
+    dputs( 3 ){ "Students are: #{studs.inspect}" }
 
     @proxy.print_presence.print( studs.flatten(1) + [
       [ /Teacher/, teacher_person.full_name ],

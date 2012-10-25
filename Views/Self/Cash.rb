@@ -43,7 +43,7 @@ class SelfCash < View
 
   def rpc_list_choice( session, name, args )
     if args['payments']
-      dputs 2, "New choice #{name} - #{args.inspect}"
+      dputs( 2 ){ "New choice #{name} - #{args.inspect}" }
       login = args['payments'][0].gsub(/.* /, '')
     
       reply( :parent, 

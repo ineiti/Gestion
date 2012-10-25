@@ -46,14 +46,14 @@ class CourseGrade < View
   end
 
   def rpc_list_choice( session, name, args )
-    dputs 3, "rpc_list_choice with #{name} - #{args.inspect}"
+    dputs( 3 ){ "rpc_list_choice with #{name} - #{args.inspect}" }
     ret = reply('empty')
     case name
     when "courses"
       course_id = args['courses'][0]
       course = Courses.find_by_course_id(course_id)
       if course
-        dputs 3, "replying"
+        dputs( 3 ){ "replying" }
         ret = reply("empty", [:students]) +
         reply("update", course.to_hash ) +
         reply("update", {:courses => [course_id]}) +
@@ -71,7 +71,7 @@ class CourseGrade < View
   end
 
   def rpc_button_save( session, data )
-    dputs 3, "Data is #{data.inspect}"
+    dputs( 3 ){ "Data is #{data.inspect}" }
     course = Courses.find_by_course_id( data['courses'][0])
     student = Entities.Persons.find_by_login_name( data['students'][0])
     if course and student
@@ -88,9 +88,9 @@ class CourseGrade < View
       saved = course[:students].index{|i|
         i[0] == data['students'][0]
       }
-      dputs 2, "Found student at #{saved}"
+      dputs( 2 ){ "Found student at #{saved}" }
       data['students'] = course[:students][( saved + 1 ) % course[:students].size]
-      dputs 2, "Next student is #{data['students'].inspect}"
+      dputs( 2 ){ "Next student is #{data['students'].inspect}" }
 
       reply( "empty", [:students] ) +
       update_grade( data ) +

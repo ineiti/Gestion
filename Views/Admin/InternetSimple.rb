@@ -24,14 +24,14 @@ class AdminInternet < View
   end
 
   def lib_net( func, *args )
-    dputs 3, "Calling lib_net #{func}"
+    dputs( 3 ){ "Calling lib_net #{func}" }
     ret = `Binaries/lib_net func #{func.to_s} #{args.join(' ')}`
-    dputs 3, "returning from lib_net #{func}"
+    dputs( 3 ){ "returning from lib_net #{func}" }
     ret
   end
 
   def auto_disconnect_get
-    dputs 0, "Auto disconenct with #{@file_ad} and #{File.exists? @file_ad}"
+    dputs( 0 ){ "Auto disconenct with #{@file_ad} and #{File.exists? @file_ad}" }
     File.exists?( @file_ad ) ? "Yes" : "No"
   end
 
@@ -69,10 +69,10 @@ class AdminInternet < View
   end
 
   def rpc_list_choice( session, name, *args )
-    dputs 0, args.inspect
+    dputs( 0 ){ args.inspect }
     if args[0]['auto_disconnect']
       value = args[0]['auto_disconnect'][0]
-      dputs 3, "Going to set #{value}"
+      dputs( 3 ){ "Going to set #{value}" }
       if value and value == "Yes"
         File.new( @file_ad, "w" ).close
       else

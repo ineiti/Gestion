@@ -23,7 +23,7 @@ class CourseAdd < View
   end
 
   def rpc_button_new_course( session, data )
-    dputs 3, "session: #{session} - data: #{data.inspect}"
+    dputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
 
     ctype = data['ctype']
     name = "#{ctype.name}_#{data['name_date']}"

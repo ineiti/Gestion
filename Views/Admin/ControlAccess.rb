@@ -9,7 +9,7 @@ class AdminAccess < View
   end
 
   def rpc_update( session )
-    dputs 0, "rpc_update"
+    dputs( 0 ){ "rpc_update" }
     blocked = %x[ cat /var/run/captive/block ]
     if blocked.length > 0
       reply( 'update', :state => "Blocked internet, only allowed for:<br><pre>#{ blocked }</pre>" )

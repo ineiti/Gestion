@@ -17,11 +17,11 @@ class SelfShow < View
       end
     end
     
-    dputs 5, "#{@layout.inspect}"
+    dputs( 5 ){ "#{@layout.inspect}" }
   end
   
   def rpc_button( session, name, data )
-    dputs 0, "Pressed button #{name} with #{data.inspect}"
+    dputs( 0 ){ "Pressed button #{name} with #{data.inspect}" }
     person = session.owner
     case name
       when "change_password"

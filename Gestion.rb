@@ -16,7 +16,7 @@ if not FileTest.exists? CONFIG_FILE
   end
 end
 
-DEBUG_LVL=2
+DEBUG_LVL=4
 
 begin
   require 'QooxView'
@@ -26,8 +26,8 @@ begin
 		require 'ACQooxView'
 	end
 rescue Exception => e
-	dputs 0, "#{e.inspect}"
-	dputs 0, "#{e.to_s}"
+	dputs( 0 ){ "#{e.inspect}" }
+	dputs( 0 ){ "#{e.to_s}" }
 	puts e.backtrace
 
   puts "Couldn't start QooxView - perhaps missing libraries?"
@@ -56,19 +56,22 @@ QooxView::init( 'Entities', 'Views' )
 # Look for admin, create if it doesn't exist
 admin = Entities.Persons.find_by_login_name( "admin" )
 if not admin
-  dputs 0, "OK, creating admin"
+  dputs( 0 ){ "OK, creating admin" }
   admin = Entities.Persons.create( :login_name => "admin", :password => "super123", :permissions => [ "admin" ] ,
 		:credit => "100", :account_due => "admin" )
 else
   admin.permissions = ["admin"];
 end
 
-if Kernel.constants.index :ACQooxView
+if not get_config( false, :AfriCompta, :disabled )
+  dputs( 0 ){ "Loading database" }
 	ACQooxView::check_db
+else
+  dputs( 0 ){ "Not loading" }
 end
 
 if not Entities.Services.find_by_name( "Free solar" )
-  dputs 0, "Creating services"
+  dputs( 0 ){ "Creating services" }
   Entities.Services.create( :name => "CCC", :group => "ccc", 
 		:price => 1000, :duration => 0 )
   Entities.Services.create( :name => "CCC active", :group => "ccc_active", 
@@ -106,6 +109,7 @@ catch :ctrl_c do
 			QooxView::startWeb
 		end
   rescue Exception
+    dputs( 0 ){ "Saving all" }
     Entities.save_all
   end
 end

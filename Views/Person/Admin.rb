@@ -49,7 +49,7 @@ class PersonAdmin < View
   end
 
   def rpc_button( session, name, data )
-    dputs 0, "Pressed button #{name} with #{data.inspect}"
+    dputs( 0 ){ "Pressed button #{name} with #{data.inspect}" }
     person = Persons.find_by_person_id( data['person_id'] )
     rep = reply( 'empty' )
     if person
@@ -62,16 +62,16 @@ class PersonAdmin < View
         rep = reply( 'update', {:credit_add => ""})
       when "add_block"
         if not person.internet_none
-          dputs 4, "Adding internet_none"
+          dputs( 4 ){ "Adding internet_none" }
           person.internet_none = []
         end
-        dputs 2, "Internet_none: #{person.internet_none.inspect}"
+        dputs( 2 ){ "Internet_none: #{person.internet_none.inspect}" }
         time = data['internet_block'].join(";")
         if not person.internet_none.index( time )
           person.internet_none += [ time ]
         end
       when "del_block"
-        dputs 3, "Deleting block: #{data['internet_none']}"
+        dputs( 3 ){ "Deleting block: #{data['internet_none']}" }
         if person and del = data['internet_none']
         person.internet_none -= del
         end
@@ -97,7 +97,7 @@ class PersonAdmin < View
   
   def rpc_list_choice( session, name, data )
     if name == "persons"
-      dputs 2, "Got data: #{data.inspect}"
+      dputs( 2 ){ "Got data: #{data.inspect}" }
       if p = Persons.find_by_login_name( data['persons'].flatten[0])
         reply( :empty, [:internet_none, :permissions] ) +
         reply( :update, :permissions => Permission.list) +
