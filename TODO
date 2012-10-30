@@ -1,19 +1,15 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- Make rounding in Account-total
+	- when no student passes, it crashes
 	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
 	  use that one. Don't rely on Gestion/ldap.secret!
-	- Why is account.total not updated?
-	- Migration of new data-types: have defaults
-	- check diploma-templates
 	- AfriCompta::check doesn't work anymore
 	- check why ruby-gettext from debian/squeeze messes things up
 	- Mon Compte - Dépenses is not updated, because it relies on LogAction
 	- Personnes - Admin is not always updated
 	- if teacher has permission AdminAccess and AdminAccess.visible=false, it fails
 	- when clicking on tab while other tab is loading, it loops endlessly
-	- when no student passes, it crashes
 	- In Self::Cash, Self::Services don't show up
 	- Diplomas/base_gestion.odt is missing in MaN-version 332:30802485413c
 	- 1000 crashes when not operating "properly"
@@ -32,6 +28,8 @@ UI:
 	- Cours::Noter should have a bigger and longer student-list
 
 FEATURES:
+	- check diploma-templates
+	- Migration of new data-types: have defaults
 	- Add a "role"-field to user, that can be used in the Diplomas
 	- Add "version"-field somewhere
 	- AfriCompta-support:
@@ -39,8 +37,9 @@ FEATURES:
 		- 120912 - Gestion acts like a server, and clients can merge with it
 		- 120924 - Synchronize with AfriCompta
 		- 120925 - Update Person-class to use new AfriCompta
+		- 121025 - Archive old accounts
 		- Use accounts for internet-cash
-		- Archive old accounts
+		- Don't show archived and deleted accounts, but do stats on them
 		- Delete accounts
 		- Define reports
 	- Inventory of screens, mice, routers
@@ -105,6 +104,8 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- B 121025: Why is account.total not updated? old stuff, put a button
+	- B 121025: Make rounding in Account-total
 	- B 121024: Why is account.movements.each{|m| m.to_json} so slow? account.update_total?
 	    - dputs is evaluated even for not-shown levels, fixed
 	- B 121019: - credit and lock_hours are not in LDAP anymore

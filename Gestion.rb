@@ -16,7 +16,7 @@ if not FileTest.exists? CONFIG_FILE
   end
 end
 
-DEBUG_LVL=4
+DEBUG_LVL=2
 
 begin
   require 'QooxView'
@@ -91,6 +91,19 @@ if $config[:autosave]
       Captive::check_services    
     }
   }
+end
+
+if uri = get_config( false, :LibNet, :URI )
+	dputs(1){ "Making DRB-connection with #{uri}" }
+	require 'drb'
+	$lib_net = DRbObject.new nil, uri
+	begin
+		dputs(1){ "Connection is #{$lib_net.status}" }
+	rescue DRb::DRbConnError
+		dputs(0){ "Connection has been refused!" }
+		dputs(0){	"Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
+		exit
+	end
 end
 
 trap("SIGINT") { 

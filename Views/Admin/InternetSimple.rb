@@ -1,5 +1,10 @@
 class AdminInternet < View
   def layout
+    if not $lib_net
+      @visible = false
+      return
+    end
+
     set_data_class :Persons
 
     @update = true
