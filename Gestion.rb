@@ -41,7 +41,7 @@ end
 
 # Our default-permission is to only login!
 Permission.add( 'default', ',Welcome,SelfShow' )
-Permission.add( 'internet', 'SelfInternet', 'default' )
+Permission.add( 'internet', 'SelfInternet,SelfChat', 'default' )
 Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit,AdminTigo', 'student' )
 Permission.add( 'teacher', 'CourseGrade,PersonModify', 'assistant' )
@@ -117,8 +117,14 @@ end
 
 $internet = Thread.new{
 	loop {
-		sleep 10
-		Internet.take_money
+		begin
+			sleep 10
+			Internet::take_money
+		rescue Exception => e
+			dputs( 0 ){ "#{e.inspect}" }
+			dputs( 0 ){ "#{e.to_s}" }
+			puts e.backtrace
+		end
 	}
 }
 

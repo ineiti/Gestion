@@ -8,6 +8,7 @@ class SelfInternet < View
 
     gui_vbox do
       show_int_ro :credit
+			show_int_ro :users_connected
 			show_html :connection_status
       show_button :connect, :disconnect
     end
@@ -62,7 +63,9 @@ class SelfInternet < View
 	def rpc_update( session )
 		reply( :update, update( session ) ) +
 			update_connection_status( session ) +
-			update_button( session )
+			update_button( session ) +
+			reply( :update, :users_connected => 
+				$lib_net.call(:users_connected).split.count)
 	end
 	
 	def rpc_show( session )

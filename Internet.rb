@@ -4,10 +4,10 @@ Internet - an interface for the internet-part of Markas-al-Nour.
 
 module Internet
 	def self.take_money
-		if $lib_net.call( :isp_connection_status ) >= 3
+		if $lib_net.call( :isp_connection_status ).to_i >= 3
 			$lib_net.call( :users_connected ).split.each{|u|
 				ddputs(3){"User is #{u}"}
-				cost = $lib_net.call( :cost_per_user ).to_i
+				cost = $lib_net.call( :user_cost_now ).to_i
 
 				user = Persons.find_by_login_name( u )
 				if user
