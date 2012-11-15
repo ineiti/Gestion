@@ -20,7 +20,7 @@ DEBUG_LVL=2
 
 begin
   require 'QooxView'
-  require 'Captive'
+  require 'Internet'
   require 'Info'
 	if not get_config( false, :AfriCompta, :disabled )
 		require 'ACQooxView'
@@ -110,7 +110,7 @@ if $config[:autosave]
     loop {
       sleep 60 * 5
       Entities.save_all
-      Captive::check_services    
+      Internet::check_services    
     }
   }
 end

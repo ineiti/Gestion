@@ -13,12 +13,16 @@ class SelfInternet < View
     end
   end
 	
-	def has_money( session )
-		session.owner.credit.to_i >= $lib_net.call( :user_cost_max ).to_i
+	def can_connect( session )
+		if session.owner.groups and session.owner.groups.index( 'freesurf' )
+			return true
+		else
+			return session.owner.credit.to_i >= $lib_net.call( :user_cost_max ).to_i
+		end
 	end
 	
 	def update_connection_status( session )
-		if has_money( session )
+		if can_connect( session )
 			status = $lib_net.call( :isp_connection_status ).to_i
 			status_str = %w( None PPP PAP IP VPN )
 			status_color = %w( ff0000 ff2200 ff5500 ffff88 88ff88 )
@@ -39,7 +43,7 @@ class SelfInternet < View
 	end
 	
 	def update_button( session )
-		if has_money( session )
+		if can_connect( session )
 			connected = $lib_net.call_args( :user_connected, session.owner.login_name )
 			dputs( 3 ){ "User_connected #{session.owner.login_name}: #{connected.inspect}" }
 			if connected == "yes"
