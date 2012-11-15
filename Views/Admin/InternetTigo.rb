@@ -40,9 +40,16 @@ class AdminTigo < View
 
   end
 
-  def lib_net( func, *args )
-    dputs( 3 ){ "Calling lib_net #{func}" }
-    ret = `Binaries/lib_net func #{func.to_s} #{args.join(' ')}`
+  def lib_net( func, r = nil )
+    dputs( 3 ){ "Calling lib_net #{func} - #{r}" }
+    ret = $lib_net.call( func, r )
+    dputs( 3 ){ "returning from lib_net #{func}" }
+    ret
+  end
+
+  def lib_net_args( func, *args )
+    dputs( 3 ){ "Calling lib_net_args #{func}" }
+    ret = $lib_net.call_args( func, args.join(' ') )
     dputs( 3 ){ "returning from lib_net #{func}" }
     ret
   end
@@ -55,13 +62,13 @@ class AdminTigo < View
   end
 
   def rpc_button_connect( session, data )
-    lib_net :connection_start
+    lib_net :isp_connect
     reply( :hide, :connect ) +
     reply( :unhide, :disconnect )
   end
 
   def rpc_button_disconnect( session, data )
-    lib_net :connection_stop
+    lib_net :isp_disconnect
     reply( :hide, :disconnect ) +
     reply( :unhide, :connect ) +
     rpc_update( session )
@@ -70,12 +77,12 @@ class AdminTigo < View
   def rpc_button_recharge( session, data )
     code = data['code'].gsub( /[^0-9]/, '' )
     dputs( 0 ){ "Code is #{code}" }
-    lib_net :tigo_credit_add, code
+    lib_net_args :isp_tigo_credit_add, code
     rpc_update( session )
   end
 
   def rpc_button_add_promotion( session, data )
-    lib_net :tigo_promotion_add, data["size"]
+    lib_net_args :isp_tigo_promotion_add, data["size"]
     rpc_update( session )
   end
 
@@ -86,9 +93,9 @@ class AdminTigo < View
       reply( :window_show, :error )
     else
       dputs( 3 ){ "No link, updating" }
-      lib_net :tigo_credit_update
+      lib_net :isp_tigo_credit_update
       dputs( 3 ){ "Updating promotion" }
-      lib_net :tigo_promotion_update
+      lib_net :isp_tigo_promotion_update
       dputs( 3 ){ "Replying for update" }
       reply( 'update', update( session ) )
     end
@@ -103,9 +110,9 @@ class AdminTigo < View
   end
 
   def update( session )
-    { :credit_left => lib_net( :tigo_credit_get ),
-      :promotion_left => lib_net( :tigo_promotion_get ),
+    { :credit_left => lib_net( nil, :CREDIT_LEFT ),
+      :promotion_left => lib_net( nil, :PROMOTION_LEFT ),
       :tigo_number => @tigo_number.data_str,
-      :status => "<pre>#{ lib_net( :connection_status ) }</pre>" }
+      :status => "<pre>#{ lib_net( :isp_connection_status ) }</pre>" }
   end
 end

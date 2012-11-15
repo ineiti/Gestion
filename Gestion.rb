@@ -41,15 +41,37 @@ end
 
 # Our default-permission is to only login!
 Permission.add( 'default', ',Welcome,SelfShow' )
-Permission.add( 'internet', 'SelfInternet,AdminTigo', 'default' )
+Permission.add( 'internet', 'SelfInternet', 'default' )
 Permission.add( 'student', '', 'internet' )
-Permission.add( 'assistant', 'TaskEdit', 'student' )
-Permission.add( 'teacher', 'CourseGrade,PersonModify', 'student' )
+Permission.add( 'assistant', 'TaskEdit,AdminTigo', 'student' )
+Permission.add( 'teacher', 'CourseGrade,PersonModify', 'assistant' )
 Permission.add( 'secretary', 'SelfCash,SelfServices,CourseModify,PersonAdd,PersonModify,CourseDiploma,FlagCourseGradeAll', 'teacher' )
 Permission.add( 'director', 'CourseAdd', 'secretary' )
 Permission.add( 'accounting', 'TransferCash', 'secretary' )
 Permission.add( 'maintenance', '', 'teacher' )
 Permission.add( 'admin', '.*', '.*' )
+
+if uri = get_config( false, :LibNet, :URI )
+	dputs(1){ "Making DRB-connection with #{uri}" }
+	require 'drb'
+	$lib_net = DRbObject.new nil, uri
+	begin
+		dputs(1){ "Connection is #{$lib_net.status}" }
+	rescue DRb::DRbConnError
+		dputs(0){ "Connection has been refused!" }
+		dputs(0){ "Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
+		exit
+	end
+else
+	begin
+		require "../LibNet/LibNet.rb"
+		$lib_net = LibNet.new
+		dputs(0){ "Loaded Libnet" }
+	rescue LoadError
+		dputs(0){ "Couldn't load LibNet!" }
+    $lib_net = nil
+	end
+end
 
 QooxView::init( 'Entities', 'Views' )
 
@@ -93,18 +115,12 @@ if $config[:autosave]
   }
 end
 
-if uri = get_config( false, :LibNet, :URI )
-	dputs(1){ "Making DRB-connection with #{uri}" }
-	require 'drb'
-	$lib_net = DRbObject.new nil, uri
-	begin
-		dputs(1){ "Connection is #{$lib_net.status}" }
-	rescue DRb::DRbConnError
-		dputs(0){ "Connection has been refused!" }
-		dputs(0){	"Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
-		exit
-	end
-end
+$internet = Thread.new{
+	loop {
+		sleep 60
+		Internet.take_money
+	}
+}
 
 trap("SIGINT") { 
   throw :ctrl_c
@@ -129,5 +145,5 @@ end
 
 if $config[:autosave]
   $autosave.kill
-  #Captive::check_services
 end
+$internet.kill

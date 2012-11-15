@@ -1,7 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- when no student passes, it crashes
+	- Adding of service makes more money in "emprunts" instead of the contrary
 	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
 	  use that one. Don't rely on Gestion/ldap.secret!
 	- AfriCompta::check doesn't work anymore
@@ -11,7 +11,8 @@ BUGS:
 	- if teacher has permission AdminAccess and AdminAccess.visible=false, it fails
 	- when clicking on tab while other tab is loading, it loops endlessly
 	- In Self::Cash, Self::Services don't show up
-	- Diplomas/base_gestion.odt is missing in MaN-version 332:30802485413c
+	- adding an already existing user crashes if he has been added outside
+	  of Gestion
 	- 1000 crashes when not operating "properly"
 	
 Security:
@@ -28,9 +29,9 @@ UI:
 	- Cours::Noter should have a bigger and longer student-list
 
 FEATURES:
+	- Double-users: merge them and avoid them in the first place
 	- check diploma-templates
 	- Migration of new data-types: have defaults
-	- Add a "role"-field to user, that can be used in the Diplomas
 	- Add "version"-field somewhere
 	- AfriCompta-support:
 		- 120724 - Add Account and Movement
@@ -104,6 +105,9 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- F 121106: Add a "role"-field to user, that can be used in the Diplomas
+	- B 121106: doesn't work anymore for signing up new students
+	- B 121030: when no student passes, it crashes
 	- B 121025: Why is account.total not updated? old stuff, put a button
 	- B 121025: Make rounding in Account-total
 	- B 121024: Why is account.movements.each{|m| m.to_json} so slow? account.update_total?

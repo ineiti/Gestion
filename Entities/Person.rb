@@ -37,10 +37,11 @@ class Persons < Entities
 
     value_block :admin
     value_str :account_due
+		value_str :role_diploma
     value_list :permissions, "Permission.list"
 
     value_block :internet
-    value_list :groups, "%w( freeadsl sudo print )"
+    value_list :groups, "%w( freesurf sudo print )"
     value_list_single :internet_none, "[]"
 
     value_block :read_only
@@ -215,11 +216,10 @@ class Persons < Entities
 
   def data_create( data )
     dputs( 0 ){ "Creating new data #{data.inspect}" }
-    dputs( 0 ){ @adduser_cmd }
     if has_storage? :LDAP
       user = data[:login_name]
       if %x[ ldapadduser #{user} plugdev ] and defined? @adduser_cmd
-        dputs( 0 ){ @adduser_cmd }
+        dputs( 0 ){ "Going to call #{@adduser_cmd}" }
         %x[ #{@adduser_cmd} #{user} ]
       end
     end
@@ -375,11 +375,11 @@ class Person < Entity
 
   def password=(pass)
     if @proxy.has_storage? :LDAP
-      dputs( 1 ){ "Changing password for #{self.login_id}: #{pass}" }
+      dputs( 1 ){ "Changing password for #{self.login_name}: #{pass}" }
       pass = %x[ slappasswd -s #{pass} ]
-      dputs( 1 ){ "Hashed password for #{self.login_id} is: #{pass}" }
+      dputs( 1 ){ "Hashed password for #{self.login_name} is: #{pass}" }
     end
-    dputs( 1 ){ "Setting password for #{self.login_id} to #{pass}" }
+    dputs( 1 ){ "Setting password for #{self.login_name} to #{pass}" }
     data_set( :password, pass )
   end
 
@@ -408,4 +408,8 @@ class Person < Entity
   def to_list
     [ login_name, "#{full_name} - #{login_name}:#{password_plain}"]
   end
+	
+	def session
+		Session.find_by_id( self.session_id )
+	end
 end

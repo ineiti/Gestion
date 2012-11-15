@@ -1,5 +1,10 @@
 class AdminBlock < View
   def layout
+    if not $lib_net
+      @visible = false
+      return
+    end
+
     @order = 100
     @blocking = Entities.Statics.get( :AdminBlock )
     update_block( @blocking.data_str )
@@ -13,10 +18,7 @@ class AdminBlock < View
   end
 
   def update_block( ips )
-    `iptables -t nat -F INTERNET`
-    ips.each{|ip|
-      `iptables -t nat -I INTERNET -s #{ip.sub(/ .*/,'')} -j DNAT --to-destination 192.168.4.1`
-    }
+    $lib_net.call_args( :captive_block, ips.collect{|ip| ip.sub(/ .*/,'') } )
   end
 
   def list_dhcp

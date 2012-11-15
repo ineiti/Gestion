@@ -22,7 +22,7 @@ class CourseModify < View
       gui_vbox :nogroup do
         show_block :name
         show_arg :name, :ro => true
-#        show_arg :ctype, :ro => true
+				#        show_arg :ctype, :ro => true
         show_block :calendar
         show_block :teacher
         show_button :save
@@ -147,25 +147,6 @@ class CourseModify < View
         reply( "update", :missing => "Click on the link: <a href=\"#{rep}\">PDF</a>" )
     end
   end
-
-=begin
-  def rpc_button_new_student( session, data )
-    course = Courses.find_by_name( data['name'] )
-    if course
-      if not course.students.class == Array
-        course.students = []
-      end
-      data['students_add'].each{|s|
-        if not course.students.index( s )
-        course.students.push( s )
-        end
-      }
-      dputs( 3 ){ "Students are now: #{course.students.inspect}" }
-      update_students( course) +
-      reply( "window_hide" )
-    end
-  end
-=end
 
   # This will add a whole lot of students to the list, creating them and setting
   # the permissions to "student", but without generating a password

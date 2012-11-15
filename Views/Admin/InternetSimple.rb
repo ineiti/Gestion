@@ -28,13 +28,6 @@ class AdminInternet < View
     @file_ad = "/var/run/poff_after_email"
   end
 
-  def lib_net( func, *args )
-    dputs( 3 ){ "Calling lib_net #{func}" }
-    ret = `Binaries/lib_net func #{func.to_s} #{args.join(' ')}`
-    dputs( 3 ){ "returning from lib_net #{func}" }
-    ret
-  end
-
   def auto_disconnect_get
     dputs( 0 ){ "Auto disconenct with #{@file_ad} and #{File.exists? @file_ad}" }
     File.exists?( @file_ad ) ? "Yes" : "No"
@@ -42,9 +35,9 @@ class AdminInternet < View
 
   def update( session )
     emails = %x[ tail -n 1 /var/log/copy_email.log ]
-    { :credit_left => lib_net( :tigo_credit_get ),
-      :promotion_left => lib_net( :tigo_promotion_get ),
-      :mails => "<pre>#{ lib_net( :mail_get_queue )}</pre>",
+    { :credit_left => $lib_net.call( :tigo_credit_get ),
+      :promotion_left => $lib_net.call( :tigo_promotion_get ),
+      :mails => "<pre>#{ $lib_net.call( :mail_get_queue )}</pre>",
       :transfer => "<pre>#{ emails } </pre>",
       :auto_disconnect => [auto_disconnect_get] }
   end

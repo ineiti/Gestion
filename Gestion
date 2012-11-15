@@ -19,7 +19,7 @@ else
   elif echo _$MACHTYPE | grep -q linux; then
     . /etc/lsb-release
     if [ "$DISTRIB_ID" = "Ubuntu" -o "$DISTRIB_ID" = "Debian" ]; then
-      echo -n "Shall I install it all dependencies? [Y/n] "
+      echo -n "Shall I install all dependencies? [Y/n] "
       read a
       if [ "$a" != "n" -a "$a" != "N" ]; then
         echo
@@ -30,6 +30,7 @@ else
         if [ "$a" = "y" -o "$a" = "Y" ]; then
           Binaries/install_ldap
         fi
+        echo $( cd ../QooxView; ./update_sqlite3 )
         ./Gestion.rb $@
       else
         echo OK, wont run Gestion then
