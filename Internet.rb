@@ -2,7 +2,14 @@
 Internet - an interface for the internet-part of Markas-al-Nour.
 =end
 
-module Captive
+module Internet
+	def self.take_money
+		if $lib_net.call( :isp_connection_status >= 3 )
+			$lib_net.call( :users_connected ).each{|u|
+				ddputs(3){"Taking money from #{u}"}
+			}
+		end
+	end
   def self.check_services
     groups_all = Entities.Services.search_all.collect{|s| s[:group] }
     Entities.Persons.search_all.each{|p|
