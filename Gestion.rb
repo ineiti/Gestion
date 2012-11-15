@@ -117,7 +117,7 @@ end
 
 $internet = Thread.new{
 	loop {
-		sleep 60
+		sleep 10
 		Internet.take_money
 	}
 }
