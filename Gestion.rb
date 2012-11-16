@@ -47,7 +47,7 @@ Permission.add( 'assistant', 'TaskEdit,AdminTigo', 'student' )
 Permission.add( 'teacher', 'CourseGrade,PersonModify', 'assistant' )
 Permission.add( 'secretary', 'SelfCash,SelfServices,CourseModify,PersonAdd,PersonModify,CourseDiploma,FlagCourseGradeAll', 'teacher' )
 Permission.add( 'director', 'CourseAdd', 'secretary' )
-Permission.add( 'accounting', 'TransferCash', 'secretary' )
+Permission.add( 'accounting', 'TransferCash,PersonCredit,SelfCash', 'internet' )
 Permission.add( 'maintenance', '', 'teacher' )
 Permission.add( 'admin', '.*', '.*' )
 
@@ -118,7 +118,7 @@ end
 $internet = Thread.new{
 	loop {
 		begin
-			sleep 10
+			sleep 60
 			Internet::take_money
 		rescue Exception => e
 			dputs( 0 ){ "#{e.inspect}" }

@@ -35,34 +35,41 @@ class AdminInternet < View
 
   def update( session )
     emails = %x[ tail -n 1 /var/log/copy_email.log ]
-    { :credit_left => $lib_net.call( :tigo_credit_get ),
-      :promotion_left => $lib_net.call( :tigo_promotion_get ),
+    { :credit_left => $lib_net.call( nil, :CREDIT_LEFT ),
+      :promotion_left => $lib_net.call( nil, :PROMOTION_LEFT ),
       :mails => "<pre>#{ $lib_net.call( :mail_get_queue )}</pre>",
       :transfer => "<pre>#{ emails } </pre>",
       :auto_disconnect => [auto_disconnect_get] }
   end
-
+	
+	def rpc_update( session )
+		buttons = reply( :unhide, :connect ) +
+			reply( :hide, :disconnect )
+    if $lib_net.call( :isp_connected ) == "yes"
+			buttons = reply( :hide, :connect ) +
+				reply( :unhide, :disconnect )
+		end
+    reply( :update, update( session ) ) +
+      buttons
+	end
+	
   def rpc_show( session )
-    to_hide = ( `ifconfig` =~ /ppp0/ ) ? :connect : :disconnect
-    super( session ) + [{ :cmd => "update", :data => update( session )}] +
-      reply( :hide, to_hide )
+    super( session ) +
+			rpc_update( session )
   end
 
   def rpc_button_connect( session, data )
-    `pon tigo`
-    reply( :hide, :connect ) +
-    reply( :unhide, :disconnect )
+		$lib_net.call( :isp_connect )
+		rpc_update( session )
   end
 
   def rpc_button_disconnect( session, data )
-    `while poff -a; do sleep 1; done`
-    reply( :hide, :disconnect ) +
-    reply( :unhide, :connect )
+		$lib_net.call( :isp_disconnect )
+		rpc_update( session )
   end
 
   def rpc_button_delete_emails( session, data )
-    `Binaries/start_copy_emails`
-    `rm /var/spool/postfix/hold/*`
+		$lib_net.call( :mail_start_copy )
     rpc_show( session )
   end
 

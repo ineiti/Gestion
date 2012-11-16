@@ -13,9 +13,6 @@ class PersonAdmin < View
             gui_fields do
               show_str_ro :login_name
               show_str_ro :person_id
-#              show_block :address
-#            end
-#            gui_fields do
               show_block :admin
             end
           end
@@ -23,28 +20,18 @@ class PersonAdmin < View
             gui_vbox :nogroup do
               show_field :groups
             end
+=begin
             gui_vbox :nogroup do
               show_field :internet_none
               show_fromto :internet_block
               show_button :add_block, :del_block
             end
+=end
           end
         end
         show_button :save
       end
 
-=begin
-      gui_hbox :nogroup do
-        show_int_ro :credit
-        show_int :credit_add
-        show_int_ro :your_credit_due
-        show_button :add_credit
-
-        show_str :new_password
-        show_str :password_plain
-        show_button :change_password
-      end
-=end      
     end
   end
 
@@ -53,13 +40,8 @@ class PersonAdmin < View
     person = Persons.find_by_person_id( data['person_id'] )
     rep = reply( 'empty' )
     if person
-      rep += reply( 'empty', [:internet_none])
+      #rep += reply( 'empty', [:internet_none])
       case name
-      when "change_password"
-        person.password = data['new_password']
-      when "add_credit"
-        Persons.add_cash( session, data )
-        rep = reply( 'update', {:credit_add => ""})
       when "add_block"
         if not person.internet_none
           dputs( 4 ){ "Adding internet_none" }
@@ -78,7 +60,7 @@ class PersonAdmin < View
       when "save"
         # "internet_none" only reflects chosen entries, not the available ones per se!
         #       rep += reply( 'update', Persons.save_data( data ) )
-        data.delete("internet_none")
+        # data.delete("internet_none")
         Persons.save_data( data )
       end
       rep += reply( 'update', get_form_data( person ) )
@@ -99,7 +81,8 @@ class PersonAdmin < View
     if name == "persons"
       dputs( 2 ){ "Got data: #{data.inspect}" }
       if p = Persons.find_by_login_name( data['persons'].flatten[0])
-        reply( :empty, [:internet_none, :permissions] ) +
+        #reply( :empty, [:internet_none] ) +
+        reply( :empty, [:permissions] ) +
         reply( :update, :permissions => Permission.list) +
         reply( :update, p )
       end

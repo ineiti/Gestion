@@ -167,9 +167,9 @@ class Persons < Entities
   # - person_id : the id of the person to receive the credit
   def add_cash( session, data )
     dputs( 5 ){ "data is #{data.inspect}" }
-    if data['credit_add'] and data['person_id']
+		client = match_by_login_name( data['login_name'].to_s )[0]
+    if data['credit_add'] and client
       actor = session.owner
-      client = find_by_person_id( data['person_id'].to_s )
       dputs( 3 ){ "Adding cash to #{client.full_name} from #{actor.full_name}" }
       if client
         actor.add_credit( client, data['credit_add'])

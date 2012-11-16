@@ -54,11 +54,20 @@ class AdminTigo < View
     ret
   end
 
+	def rpc_update( session )
+		buttons = reply( :unhide, :connect ) +
+			reply( :hide, :disconnect )
+    if $lib_net.call( :isp_connected ) == "yes"
+			buttons = reply( :hide, :connect ) +
+				reply( :unhide, :disconnect )
+		end
+    reply( :update, update( session ) ) +
+      buttons
+	end
+	
   def rpc_show( session )
-    to_hide = ( `ifconfig` =~ /ppp0/ ) ? :connect : :disconnect
-    super( session ) + 
-      reply( :update, update( session ) ) +
-      reply( :hide, to_hide )
+    super( session ) +
+			rpc_update( session )
   end
 
   def rpc_button_connect( session, data )

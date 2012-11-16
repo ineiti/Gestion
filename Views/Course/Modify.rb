@@ -22,7 +22,6 @@ class CourseModify < View
       gui_vbox :nogroup do
         show_block :name
         show_arg :name, :ro => true
-				#        show_arg :ctype, :ro => true
         show_block :calendar
         show_block :teacher
         show_button :save
@@ -32,17 +31,9 @@ class CourseModify < View
         show_button :print_presence
         gui_vbox :nogroup do
           show_list :students
-          #          show_button :add_students, :bulk_add, :del_student, :edit_student, :print_student
           show_button :bulk_add, :del_student, :edit_student, :print_student
         end
       end
-=begin
-      gui_window :students_win do
-        show_list :students_add, "Entities.Persons.list_students"
-        show_str :search, :gui => %w( update )
-        show_button :new_student, :close
-      end
-=end
       gui_window :students_bulk do
         show_text :names
         show_button :bulk_students, :close

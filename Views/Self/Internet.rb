@@ -9,6 +9,7 @@ class SelfInternet < View
     gui_vbox do
       show_int_ro :credit
 			show_int_ro :users_connected
+      show_int_ro :bytes_left
 			show_html :connection_status
       show_button :connect, :disconnect
     end
@@ -44,7 +45,7 @@ class SelfInternet < View
 	end
 	
 	def update_button( session )
-		if can_connect( session )
+		if $lib_net.call( nil, :PROMOTION_LEFT ).to_i > 0 and can_connect( session )
 			connected = $lib_net.call_args( :user_connected, session.owner.login_name )
 			dputs( 3 ){ "User_connected #{session.owner.login_name}: #{connected.inspect}" }
 			if connected == "yes"
@@ -65,7 +66,8 @@ class SelfInternet < View
 			update_connection_status( session ) +
 			update_button( session ) +
 			reply( :update, :users_connected => 
-				$lib_net.call(:users_connected).split.count)
+				$lib_net.call(:users_connected).split.count) +
+			reply( :update, :bytes_left => $lib_net.call( nil, :PROMOTION_LEFT ) )
 	end
 	
 	def rpc_show( session )
