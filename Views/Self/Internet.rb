@@ -3,7 +3,7 @@ class SelfInternet < View
     set_data_class :Persons
     @order = 10
 		@update = true
-		@auto_update = 5
+		@auto_update = 10
     @auto_update_send_values = false
 
     gui_vbox do
@@ -44,7 +44,11 @@ class SelfInternet < View
 		end
 	end
 	
-	def update_button( session )
+	def update_button( session, nobutton = false )
+		if nobutton
+			return reply( :hide, :connect ) +
+				reply( :hide, :disconnect )
+		end
 		if $lib_net.call( nil, :PROMOTION_LEFT ).to_i > 0 and can_connect( session )
 			connected = $lib_net.call_args( :user_connected, session.owner.login_name )
 			dputs( 3 ){ "User_connected #{session.owner.login_name}: #{connected.inspect}" }
@@ -61,10 +65,10 @@ class SelfInternet < View
 		end
 	end
 
-	def rpc_update( session )
+	def rpc_update( session, nobutton = false )
 		reply( :update, update( session ) ) +
 			update_connection_status( session ) +
-			update_button( session ) +
+			update_button( session, nobutton ) +
 			reply( :update, :users_connected => 
 				$lib_net.call(:users_connected).split.count) +
 			reply( :update, :bytes_left => $lib_net.call( nil, :PROMOTION_LEFT ) )
@@ -79,8 +83,7 @@ class SelfInternet < View
 		if session.web_req
 			ip = session.web_req.peeraddr[3]
 			$lib_net.call_args( :user_connect, "#{ip} #{session.owner.login_name}" )
-			sleep 1
-			rpc_update( session )
+			rpc_update( session, true )
 		end
 	end
 
@@ -88,8 +91,7 @@ class SelfInternet < View
 		if session.web_req
 			ip = session.web_req.peeraddr[3]
 			$lib_net.call_args( :user_disconnect, "#{ip} #{session.owner.login_name}" )
-			sleep 1
-			rpc_update( session )
+			rpc_update( session, true )
 		end
 	end
 end

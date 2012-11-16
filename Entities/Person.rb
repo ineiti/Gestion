@@ -210,6 +210,10 @@ class Persons < Entities
     if ! d[:first_name] and ! d[:person_id]
       return { :first_name => "user" }
     end
+		
+		[ :first_name, :family_name ].each{|n|
+			d[n] && d[n].capitalize_all!
+		}
 
     super( d )
   end
@@ -395,6 +399,7 @@ class Person < Entity
   end
 
   def print( counter = nil )
+    ctype = "A faire"
     @proxy.print_card.print( [ [ /--NOM--/, first_name ],
 				[ /--NOM2--/, family_name ],
 				[ /--BDAY--/, birthday ],
@@ -402,6 +407,7 @@ class Person < Entity
 				[ /--TEL--/, phone ],
 				[ /--UNAME--/, login_name ],
 				[ /--EMAIL--/, email ],
+				[ /--CTYPE--/, ctype ],
 				[ /--PASS--/, password_plain ] ], counter )
   end
 
@@ -411,5 +417,13 @@ class Person < Entity
 	
 	def session
 		Session.find_by_id( self.session_id )
+	end
+	
+	def first_name=(v)
+		data_set( :first_name, v.capitalize_all )
+	end
+	
+	def family_name=(v)
+		data_set( :family_name, v.capitalize_all )
 	end
 end

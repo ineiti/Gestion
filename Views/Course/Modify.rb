@@ -151,15 +151,17 @@ class CourseModify < View
     if data['names'] and users = data['names'].split("\n")
       person = Entities.Persons.create( {:first_name => users.shift,
           :permissions => %w( student ), :town => @town, :country => @country })
-      person.email = "#{person.login_name}@ndjair.net"
+			#person.email = "#{person.login_name}@ndjair.net"
       course.students.push( person.login_name )
     end
     if users.length > 0
       reply( "update", { :names => users.join("\n") } ) +
+				update_students( course ) +
         reply( "callback_button", "bulk_students" )
     else
       update_students( course ) +
-        reply( "window_hide" )
+				reply( :update, {:names => ""} ) +
+				reply( "window_hide" )
     end
   end
 

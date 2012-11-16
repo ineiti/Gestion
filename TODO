@@ -25,10 +25,16 @@ UserFriendly:
 	- Accelerate adding of students (is LogAction::add_only enough?)
 	
 UI:
+	- Admin::Restore - show progress
+	- Print - Adjust text for PDF and Print
 	- Windows don't get hidden when working (CourseModify::bulkAdd)
 	- Cours::Noter should have a bigger and longer student-list
 
 FEATURES:
+	- Person::print - put into directory
+	- Courses::Days - add other days to the list
+	- Tigo - auto-reconnect on error
+	- Pass cash from one account to another
 	- Double-users: merge them and avoid them in the first place
 	- check diploma-templates
 	- Migration of new data-types: have defaults
@@ -39,7 +45,7 @@ FEATURES:
 		- 120924 - Synchronize with AfriCompta
 		- 120925 - Update Person-class to use new AfriCompta
 		- 121025 - Archive old accounts
-		- Use accounts for internet-cash
+		- 121116 - Use accounts for internet-cash
 		- Don't show archived and deleted accounts, but do stats on them
 		- Delete accounts
 		- Define reports
@@ -105,6 +111,23 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- UI121116: Traduction des nouveautés
+	- B 121116: Vider liste dans "bulk add" quand dernier étudiant
+	- B 121116: Capitalise les prénoms et noms de famille
+	- UI121116: Students::bulk_add doesn't add e-mail
+	- B 121116: Auto-update continues to be called, even when view is changed!
+	- B 121116: Login - permettre espaces avant et après le nom
+	- UI121116: credit-add is in its own tab
+	- UI121116: read-only fields are better marked
+	- UI121116: Tigo - estimate bytes left
+	- B 121116: Tigo - promotion add only works on command-line
+	- B 121116: Admin::Internet - adjust for new lib_net
+	- F 121116: Internet - reduce money
+	- F 121116: Internet - no money -> no connection
+	- F 121116: Internet - show status in Self::Internet
+	- B 121116: block - command not found
+	- UI121116: Internet - show connected / disconnected even when first viewed
+	- F 121116: Chat - added a simple chat-module
 	- F 121106: Add a "role"-field to user, that can be used in the Diplomas
 	- B 121106: doesn't work anymore for signing up new students
 	- B 121030: when no student passes, it crashes
