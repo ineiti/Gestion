@@ -1,8 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- when clicking on tab while other tab is loading, it loops endlessly
 	- Retirer le droit de noter a Secretaire
+        - First tabs shouldn't be clickable (while waiting to be positioned
+         as should)
 	- When no promotion left, show only "disconnect"-button
 	- When sending something from "Frontend", stop the timer, then
 	 restart it when the answer arrives
@@ -23,7 +24,6 @@ Security:
 	  lower rights - use an own tab which is not active for non-allowed users
 
 UserFriendly:
-	- montrer progressions
 	- faire un module impression avec progression asynchrone
 	- Make a dropbox when using _find
 	- Graying out fields not usable (PersonModify, CashAdd, ...)
@@ -31,7 +31,6 @@ UserFriendly:
 UI:
 	- Admin::Restore - show progress
 	- Print - Adjust text for PDF and Print
-	- Windows don't get hidden when working (CourseModify::bulkAdd)
 	- Cours::Noter should have a bigger and longer student-list
 
 FEATURES:
@@ -114,6 +113,9 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+        - B 121122: All kinds of flickering and enabled buttons fixed
+	- B 121121: when clicking on tab while other tab is loading, it loops endlessly
+	- B 121121: Windows don't get hidden when working (CourseModify::bulkAdd)
 	- B 121120: When Cours::Modify modifying a student, it might get the wrong
 	 one if there is another student who starts with the same name
 	- B 121120: Don't search in Person::Tabs when there are less than 3 chars
