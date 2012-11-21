@@ -1,15 +1,18 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- when clicking on tab while other tab is loading, it loops endlessly
+	- Retirer le droit de noter a Secretaire
+	- When no promotion left, show only "disconnect"-button
+	- When sending something from "Frontend", stop the timer, then
+	 restart it when the answer arrives
 	- Adding of service makes more money in "emprunts" instead of the contrary
 	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
 	  use that one. Don't rely on Gestion/ldap.secret!
 	- AfriCompta::check doesn't work anymore
 	- check why ruby-gettext from debian/squeeze messes things up
 	- Mon Compte - Dépenses is not updated, because it relies on LogAction
-	- Personnes - Admin is not always updated
 	- if teacher has permission AdminAccess and AdminAccess.visible=false, it fails
-	- when clicking on tab while other tab is loading, it loops endlessly
 	- In Self::Cash, Self::Services don't show up
 	- adding an already existing user crashes if he has been added outside
 	  of Gestion
@@ -20,9 +23,10 @@ Security:
 	  lower rights - use an own tab which is not active for non-allowed users
 
 UserFriendly:
+	- montrer progressions
+	- faire un module impression avec progression asynchrone
 	- Make a dropbox when using _find
 	- Graying out fields not usable (PersonModify, CashAdd, ...)
-	- Accelerate adding of students (is LogAction::add_only enough?)
 	
 UI:
 	- Admin::Restore - show progress
@@ -31,7 +35,6 @@ UI:
 	- Cours::Noter should have a bigger and longer student-list
 
 FEATURES:
-	- Person::print - put into directory
 	- Courses::Days - add other days to the list
 	- Tigo - auto-reconnect on error
 	- Pass cash from one account to another
@@ -111,6 +114,13 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- B 121120: When Cours::Modify modifying a student, it might get the wrong
+	 one if there is another student who starts with the same name
+	- B 121120: Don't search in Person::Tabs when there are less than 3 chars
+	 and only return 20 results
+	- F 121117: Person::print - put into directory
+	- B 121116: Personnes - Admin is not always updated
+	- UF121116: Kick user when he's idle for 2-4 minutes
 	- UI121116: Traduction des nouveautés
 	- B 121116: Vider liste dans "bulk add" quand dernier étudiant
 	- B 121116: Capitalise les prénoms et noms de famille

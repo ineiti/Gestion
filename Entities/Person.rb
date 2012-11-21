@@ -55,9 +55,13 @@ class Persons < Entities
     value_str :password_plain
     value_int_LDAP :person_id, :ldap_name => "uidnumber"
 
-    dputs( 0 ){ $config.inspect }
-    if $config[:DiplomaDir]
-      @print_card = OpenPrint.new( "#{$config[:DiplomaDir]}/carte_etudiant.odg" )
+    if ddir = get_config( nil, :DiplomaDir )
+			cdir = "#{ddir}/cartes"
+			if ! File.exist? cdir
+				FileUtils::mkdir( cdir )
+			end
+      @print_card = OpenPrint.new( 
+				"#{ddir}/carte_etudiant.odg",	"#{ddir}/cartes" )
     end
 
     LOAD_DATA
@@ -399,7 +403,13 @@ class Person < Entity
   end
 
   def print( counter = nil )
-    ctype = "A faire"
+    ctype = "Visiteur"
+		courses = Courses.list_courses_for_person( self )
+		if courses and courses.length > 0
+			ddputs(3){"Courses is #{courses.inspect}"}
+			ctype = Courses.find_by_course_id( courses[0][0] ).description
+		end
+		fname = "#{person_id.to_s.rjust(6,'0')}-#{full_name.gsub(/ /,'_')}"
     @proxy.print_card.print( [ [ /--NOM--/, first_name ],
 				[ /--NOM2--/, family_name ],
 				[ /--BDAY--/, birthday ],
@@ -408,7 +418,7 @@ class Person < Entity
 				[ /--UNAME--/, login_name ],
 				[ /--EMAIL--/, email ],
 				[ /--CTYPE--/, ctype ],
-				[ /--PASS--/, password_plain ] ], counter )
+				[ /--PASS--/, password_plain ] ], nil, fname )
   end
 
   def to_list

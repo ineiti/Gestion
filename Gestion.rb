@@ -105,10 +105,10 @@ if not Entities.Services.find_by_name( "Free solar" )
 end
 
 # Autosave every 5 minutes
-if $config[:autosave]
+if get_config( true, :autosave )
   $autosave = Thread.new{
     loop {
-      sleep 60 * 5
+      sleep 2 * 60
       Entities.save_all
       Internet::check_services    
     }
@@ -149,7 +149,7 @@ catch :ctrl_c do
   end
 end
 
-if $config[:autosave]
+if get_config( true, :autosave )
   $autosave.kill
 end
 $internet.kill
