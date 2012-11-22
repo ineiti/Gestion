@@ -1,42 +1,35 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - empty tab gives an error: if a user doesn't have the right to
-          any tab, the parent is ds
-        - save in Course::Modify doesn't work anymore!
-	- Retirer le droit de noter a Secretaire
         - First tabs shouldn't be clickable (while waiting to be positioned
          as should)
-	- When no promotion left, show only "disconnect"-button
 	- When sending something from "Frontend", stop the timer, then
 	 restart it when the answer arrives
 	- Adding of service makes more money in "emprunts" instead of the contrary
+	- When no promotion left, show only "disconnect"-button
 	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
 	  use that one. Don't rely on Gestion/ldap.secret!
 	- AfriCompta::check doesn't work anymore
-	- check why ruby-gettext from debian/squeeze messes things up
 	- Mon Compte - Dépenses is not updated, because it relies on LogAction
-	- if teacher has permission AdminAccess and AdminAccess.visible=false, it fails
 	- In Self::Cash, Self::Services don't show up
 	- adding an already existing user crashes if he has been added outside
 	  of Gestion
+	- check why ruby-gettext from debian/squeeze messes things up
 	- 1000 crashes when not operating "properly"
 	
 Security:
 	- PersonModify - only allow to change password from persons which have equal or
 	  lower rights - use an own tab which is not active for non-allowed users
 
-UserFriendly:
-	- faire un module impression avec progression asynchrone
-	- Make a dropbox when using _find
-	- Graying out fields not usable (PersonModify, CashAdd, ...)
-	
 UI:
-	- Admin::Restore - show progress
 	- Print - Adjust text for PDF and Print
 	- Cours::Noter should have a bigger and longer student-list
 
 FEATURES:
+	- make an asynchronous printing-module
+	- Admin::Restore - show progress
+	- Make a dropbox when using _find
+	- Graying out fields not usable (PersonModify, CashAdd, ...)
 	- Courses::Days - add other days to the list
 	- Tigo - auto-reconnect on error
 	- Pass cash from one account to another
@@ -45,12 +38,6 @@ FEATURES:
 	- Migration of new data-types: have defaults
 	- Add "version"-field somewhere
 	- AfriCompta-support:
-		- 120724 - Add Account and Movement
-		- 120912 - Gestion acts like a server, and clients can merge with it
-		- 120924 - Synchronize with AfriCompta
-		- 120925 - Update Person-class to use new AfriCompta
-		- 121025 - Archive old accounts
-		- 121116 - Use accounts for internet-cash
 		- Don't show archived and deleted accounts, but do stats on them
 		- Delete accounts
 		- Define reports
@@ -116,6 +103,18 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+	- B 121122: Retirer le droit de noter a Secretaire
+        - B 121122: empty tab gives an error: if a user doesn't have the right to
+          any tab, the parent is ds
+	- B 121122: if teacher has permission AdminAccess and AdminAccess.visible=false, it fails
+        - F 121116: AfriCompta-support:
+		- 120724 - Add Account and Movement
+		- 120912 - Gestion acts like a server, and clients can merge with it
+		- 120924 - Synchronize with AfriCompta
+		- 120925 - Update Person-class to use new AfriCompta
+		- 121025 - Archive old accounts
+		- 121116 - Use accounts for internet-cash
+        - B 121122: save in Course::Modify doesn't work anymore!
         - B 121122: All kinds of flickering and enabled buttons fixed
 	- B 121121: when clicking on tab while other tab is loading, it loops endlessly
 	- B 121121: Windows don't get hidden when working (CourseModify::bulkAdd)

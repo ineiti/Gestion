@@ -26,24 +26,24 @@ class Info < RPCQooxdooPath
   def self.internet_free(args)
     dputs( 3 ){ "Can #{args} do it?" }
     username = args[:user]
-    user = Entities.Persons.find_by_login_name( args[:user] )
+    user = Entities.Persons.find_by_login_name( username )
     if user
       # We want an exact match, so we put the name between ^ and $
       courses = Entities.Courses.search_by_students( "^#{user.login_name}$" )
       if courses
         dputs( 0 ){ "Courses" }
         courses.each{|c|
-					dputs( 0 ){ [ c.name, c.start, c.end ].inspect }
-					begin
-						c_start = Date.strptime( c.start, "%d.%m.%Y" )
-						c_end = Date.strptime( c.end, "%d.%m.%Y" )
-					rescue
-						c_start = c_end = Date.new
-					end
-					if c_start <= Date.today and Date.today <= c_end
-						return "yes"
-					end
-				}
+          dputs( 0 ){ [ c.name, c.start, c.end ].inspect }
+          begin
+            c_start = Date.strptime( c.start, "%d.%m.%Y" )
+            c_end = Date.strptime( c.end, "%d.%m.%Y" )
+          rescue
+            c_start = c_end = Date.new
+          end
+          if c_start <= Date.today and Date.today <= c_end
+            return "yes"
+          end
+        }
       end
     end
     return "no"

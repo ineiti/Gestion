@@ -6,7 +6,7 @@ class PersonTabs < View
     gui_vboxg :nogroup do
       show_list_single :persons, "[]", :callback => true
       show_str :search, :callback => :search
-      show_button :start_test
+      #show_button :start_test
 			
       gui_window :test do
         show_str :hello
