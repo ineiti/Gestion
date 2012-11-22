@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - empty tab gives an error: if a user doesn't have the right to
+          any tab, the parent is ds
+        - save in Course::Modify doesn't work anymore!
 	- Retirer le droit de noter a Secretaire
         - First tabs shouldn't be clickable (while waiting to be positioned
          as should)
