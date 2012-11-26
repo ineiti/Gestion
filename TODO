@@ -1,8 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- When sending something from "Frontend", stop the timer, then
-	 restart it when the answer arrives
+        - Focus doesn't work anymore
 	- Adding of service makes more money in "emprunts" instead of the contrary
 	- When no promotion left, show only "disconnect"-button
 	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
@@ -101,7 +100,9 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
-        - B 121226: Person::Tabs gets enabled before it gets unfaded
+	- B 121126: When sending something from "Frontend", stop the timer, then
+	 restart it when the answer arrives
+        - B 121126: Person::Tabs gets enabled before it gets unfaded
         - B 121122: First tabs shouldn't be clickable (while waiting to be positioned
          as should)
 	- B 121122: Retirer le droit de noter a Secretaire
