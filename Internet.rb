@@ -11,15 +11,15 @@ module Internet
 
         user = Persons.find_by_login_name( u )
         if user
-          if user.groups and user.groups.index( 'freesurf' )
-            ddputs(3){"User #{u} is on freesurf"}
-          elsif user.credit.to_i >= cost
-            ddputs(3){"Taking #{cost} credits from #{u} who has #{user.credit}"}
-            user.credit = user.credit.to_i - cost
-          else
-            ddputs(2){"Kicking user #{u}"}
-            $lib_net.call_args( :user_disconnect, 
-              "#{user.session.web_req.peeraddr[3]} #{user.login_name}")
+          if not self.free( user )
+            if user.credit.to_i >= cost
+              ddputs(3){"Taking #{cost} credits from #{u} who has #{user.credit}"}
+              user.credit = user.credit.to_i - cost
+            else
+              ddputs(2){"Kicking user #{u}"}
+              $lib_net.call_args( :user_disconnect, 
+                "#{user.session.web_req.peeraddr[3]} #{user.login_name}")
+            end
           end
         else
           ddputs(1){"Couldn't find user #{u}"}
@@ -41,5 +41,42 @@ module Internet
         dputs( 3 ){ "Deleting groups #{groups_del.inspect}" }
       end
     }
+  end
+  
+  def self.free( user )
+    if user
+      # We want an exact match, so we put the name between ^ and $
+      courses = Entities.Courses.search_by_students( "^#{user.login_name}$" )
+      if courses
+        dputs( 0 ){ "Courses : #{courses.inspect}" }
+        courses.each{|c|
+          if c.name and c.start and c.end
+            ddputs(3){"Searching course"}
+          dputs( 0 ){ [ c.name, c.start, c.end ].inspect }
+          begin
+            c_start = Date.strptime( c.start, "%d.%m.%Y" )
+            c_end = Date.strptime( c.end, "%d.%m.%Y" )
+          rescue
+            c_start = c_end = Date.new
+          end
+          if c_start <= Date.today and Date.today <= c_end
+            return true
+          end
+          end
+            ddputs(3){"Searching course"}
+        }
+      end
+            ddputs(3){"Searching groups: #{user.groups.index('freesurf').inspect}"}
+      if user.groups and user.groups.index( 'freesurf' )
+        ddputs(3){"User #{user.login_name} is on freesurf"}
+        return true
+      end
+    end
+            ddputs(3){"Found nothing"}
+    return false
+  end
+
+  def self.connect_user( ip, name )
+    $lib_net.call_args( :user_connect, "#{ip} #{name}" )
   end
 end

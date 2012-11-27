@@ -46,7 +46,7 @@ class PersonTabs < View
 
     s = data['search']
 		
-    if s.length < 3
+    if s and s.length < 3
       return reply( :focus, :search )
     end
 		

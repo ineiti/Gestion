@@ -5,6 +5,7 @@ class SelfInternet < View
     @update = true
     @auto_update = 10
     @auto_update_send_values = false
+    @isp = JSON.parse( $lib_net.call( :isp_params ) )
 
     gui_vbox do
       show_int_ro :credit
@@ -49,29 +50,44 @@ class SelfInternet < View
       return reply( :hide, :connect ) +
         reply( :hide, :disconnect )
     end
-    if $lib_net.call( nil, :PROMOTION_LEFT ).to_i > 0 and can_connect( session )
+    if can_connect( session )
       connected = $lib_net.call_args( :user_connected, session.owner.login_name )
-      dputs( 3 ){ "User_connected #{session.owner.login_name}: #{connected.inspect}" }
+      dputs( 3 ){ "User_connected #{session.owner.login_name}: #{connected.inspect}" +
+        " - #{@isp.inspect}" }
       if connected == "yes"
-        reply( :hide, :connect ) +
+        dputs(4){"Showing disconnect"}
+        return reply( :hide, :connect ) +
           reply( :unhide, :disconnect )
-      else
-        reply( :unhide, :connect ) +
+      elsif $lib_net.call( nil, :PROMOTION_LEFT ).to_i > 0 or 
+          @isp['has_promo'] == 'false'
+        dputs(4){"Showing connect"}
+        return reply( :unhide, :connect ) +
           reply( :hide, :disconnect )
       end
-    else
-      reply( :hide, :connect ) +
-        reply( :hide, :disconnect )
     end
+    return reply( :hide, :connect ) +
+      reply( :hide, :disconnect )
+  end
+  
+  def update_isp( session )
+    @isp = JSON.parse( $lib_net.call( :isp_params ) )
+    dputs(2){"isp-params is: #{@isp.inspect}"}
+    reply( @isp['has_promo'] == 'true' ? :unhide : :hide, :bytes_left ) +
+      reply( @isp['conn_type'] == 'ondemand' ? :unhide : :hide, 
+      :connection_status )
   end
 
   def rpc_update( session, nobutton = false )
-    reply( :update, update( session ) ) +
+    ret = reply( :update, update( session ) ) +
       update_connection_status( session ) +
       update_button( session, nobutton ) +
+      update_isp( session ) +
       reply( :update, :users_connected => 
-        $lib_net.call(:users_connected).split.count) +
-      reply( :update, :bytes_left => $lib_net.call( nil, :PROMOTION_LEFT ) )
+        $lib_net.call(:users_connected).split.count)
+    if @isp['has_promo'] == 'true'
+      ret += reply( :update, :bytes_left => $lib_net.call( nil, :PROMOTION_LEFT ) )
+    end
+    return ret
   end
 	
   def rpc_show( session )

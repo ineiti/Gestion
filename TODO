@@ -1,8 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Adding credit to a person who has nothing results in
+          0 credit -> insert .to_i
+        - Take old credits
 	- Adding of service makes more money in "emprunts" instead of the contrary
-	- When no promotion left, show only "disconnect"-button
 	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
 	  use that one. Don't rely on Gestion/ldap.secret!
 	- AfriCompta::check doesn't work anymore
@@ -99,6 +101,8 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+        - F 121127: Automatically taking into account no-promotion settings
+	- F 121127: When no promotion left, show only "disconnect"-button
 	- B 121126: When sending something from "Frontend", stop the timer, then
 	 restart it when the answer arrives
         - B 121126: Person::Tabs gets enabled before it gets unfaded
