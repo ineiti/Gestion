@@ -54,33 +54,33 @@ class AdminTigo < View
     ret
   end
 
-	def rpc_update( session )
-		buttons = reply( :unhide, :connect ) +
-			reply( :hide, :disconnect )
+  def rpc_update( session )
+    buttons = reply( :unhide, :connect ) +
+      reply( :hide, :disconnect )
     if $lib_net.call( :isp_connected ) == "yes"
-			buttons = reply( :hide, :connect ) +
-				reply( :unhide, :disconnect )
-		end
+      buttons = reply( :hide, :connect ) +
+        reply( :unhide, :disconnect )
+    end
     reply( :update, update( session ) ) +
       buttons
-	end
+  end
 	
   def rpc_show( session )
     super( session ) +
-			rpc_update( session )
+      rpc_update( session )
   end
 
   def rpc_button_connect( session, data )
     lib_net :isp_connect
     reply( :hide, :connect ) +
-    reply( :unhide, :disconnect )
+      reply( :unhide, :disconnect )
   end
 
   def rpc_button_disconnect( session, data )
     lib_net :isp_disconnect
     reply( :hide, :disconnect ) +
-    reply( :unhide, :connect ) +
-    rpc_update( session )
+      reply( :unhide, :connect ) +
+      rpc_update( session )
   end
 
   def rpc_button_recharge( session, data )
@@ -99,7 +99,7 @@ class AdminTigo < View
     if `ifconfig` =~ /ppp0/
       dputs( 3 ){ "ppp0-link is up, can't update" }
       return reply( :update, { :msg => "Can't update while connected to Tigo!"}  ) +
-      reply( :window_show, :error )
+        reply( :window_show, :error )
     else
       dputs( 3 ){ "No link, updating" }
       lib_net :isp_tigo_credit_update

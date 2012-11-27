@@ -42,34 +42,34 @@ class AdminInternet < View
       :auto_disconnect => [auto_disconnect_get] }
   end
 	
-	def rpc_update( session )
-		buttons = reply( :unhide, :connect ) +
-			reply( :hide, :disconnect )
+  def rpc_update( session )
+    buttons = reply( :unhide, :connect ) +
+      reply( :hide, :disconnect )
     if $lib_net.call( :isp_connected ) == "yes"
-			buttons = reply( :hide, :connect ) +
-				reply( :unhide, :disconnect )
-		end
+      buttons = reply( :hide, :connect ) +
+        reply( :unhide, :disconnect )
+    end
     reply( :update, update( session ) ) +
       buttons
-	end
+  end
 	
   def rpc_show( session )
     super( session ) +
-			rpc_update( session )
+      rpc_update( session )
   end
 
   def rpc_button_connect( session, data )
-		$lib_net.call( :isp_connect )
-		rpc_update( session )
+    $lib_net.call( :isp_connect )
+    rpc_update( session )
   end
 
   def rpc_button_disconnect( session, data )
-		$lib_net.call( :isp_disconnect )
-		rpc_update( session )
+    $lib_net.call( :isp_disconnect )
+    rpc_update( session )
   end
 
   def rpc_button_delete_emails( session, data )
-		$lib_net.call( :mail_start_copy )
+    $lib_net.call( :mail_start_copy )
     rpc_show( session )
   end
 

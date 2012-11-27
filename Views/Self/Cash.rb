@@ -18,15 +18,15 @@ class SelfCash < View
   def rpc_update( session, client = nil )
     person = session.owner
     reply( 'empty', %w( payments ) ) +
-    reply( 'update', { :credit_due => person.credit_due } ) +
-    reply( 'update', { :payments => list_payments( session, true ) } )
+      reply( 'update', { :credit_due => person.credit_due } ) +
+      reply( 'update', { :payments => list_payments( session, true ) } )
   end
 
   def list_payments( session, force = false )
     person = session.owner
     if not @cache_payments[person.person_id] or force
       @cache_payments[person.person_id] =
-      Entities.LogActions.log_list( {:data_field=>"credit$",:data_class=>"Person"} ).select{|s|
+        Entities.LogActions.log_list( {:data_field=>"credit$",:data_class=>"Person"} ).select{|s|
         s[:msg] and s[:msg].split(":")[0].to_i == person.person_id.to_i
       }.collect{|e|
         worker, cash = e[:msg].split(":")
@@ -48,8 +48,8 @@ class SelfCash < View
     
       reply( :parent, 
         reply( :init_values, [ :PersonTabs, { :search => login, :persons => [] } ] ) +
-        reply( :switch_tab, :PersonTabs ) ) +
-      reply( :switch_tab, :PersonModify )
+          reply( :switch_tab, :PersonTabs ) ) +
+        reply( :switch_tab, :PersonModify )
       #reply( :parent, reply( :update, :search => login) )
       #reply( :parent, View.PersonTabs.rpc_callback_search( session, 
       #  "search" => login ) )

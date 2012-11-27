@@ -1,7 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Focus doesn't work anymore
 	- Adding of service makes more money in "emprunts" instead of the contrary
 	- When no promotion left, show only "disconnect"-button
 	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,

@@ -31,15 +31,15 @@ class SelfServices < View
     values.each{|k,v|
       dputs( 5 ){ "Searching for #{k}: #{v}" }
       case k
-        when "copies_laser"
+      when "copies_laser"
         services_total += v.to_i * 50
-        when "heures_groupe_petit"
+      when "heures_groupe_petit"
         services_total += v.to_f * 1000
-        when "heures_groupe_grand"
+      when "heures_groupe_grand"
         services_total += v.to_f * 2000
-        when "CDs"
+      when "CDs"
         services_total += v.to_i * 500
-        when "autres_cfa"
+      when "autres_cfa"
         services_total += v.to_i
       end
     }
