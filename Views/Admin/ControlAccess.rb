@@ -4,32 +4,32 @@ class AdminAccess < View
 
     gui_vbox do
       show_html :state
-      show_button :remove_block, :block_info1, :block_info2
+      show_button :remove_restriction, :restrict_info1, :restrict_info2
     end
   end
 
   def rpc_update( session )
     dputs( 0 ){ "rpc_update" }
-    blocked = %x[ cat /var/run/captive/block ]
-    if blocked.length > 0
-      reply( 'update', :state => "Blocked internet, only allowed for:<br><pre>#{ blocked }</pre>" )
+    restricted = $lib_net.call :captive_restriction_get
+    if restricted.length > 0
+      reply( 'update', :state => "Restricted internet, only allowed for:<br><pre>#{ restricted }</pre>" )
     else
-      reply( 'update', :state => "No block in place" )
+      reply( 'update', :state => "No restriction in place" )
     end
   end
 
-  def rpc_button_remove_block( session, args )
-    %x[ /var/www/internet/lib block_delete ]
+  def rpc_button_remove_restriction( session, args )
+    $lib_net.call_args( :captive_restriction_set, "" )
     rpc_update( session )
   end
 
-  def rpc_button_block_info1( session, args )
-    %x[ /var/www/internet/lib block_set info1 ]
+  def rpc_button_restrict_info1( session, args )
+    $lib_net.call_args( :captive_restriction_set, "info1" )
     rpc_update( session )
   end
 
-  def rpc_button_block_info2( session, args )
-    %x[ /var/www/internet/lib block_set info2 ]
+  def rpc_button_restrict_info2( session, args )
+    $lib_net.call_args( :captive_restriction_set, "info2" )
     rpc_update( session )
   end
 end

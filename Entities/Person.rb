@@ -37,11 +37,11 @@ class Persons < Entities
 
     value_block :admin
     value_str :account_due
-		value_str :role_diploma
+    value_str :role_diploma
     value_list :permissions, "Permission.list"
 
     value_block :internet
-    value_list :groups, "%w( freesurf sudo print )"
+    value_list :groups, "%w( freesurf sudo print localonly )"
     value_list_single :internet_none, "[]"
 
     value_block :read_only
@@ -56,12 +56,12 @@ class Persons < Entities
     value_int_LDAP :person_id, :ldap_name => "uidnumber"
 
     if ddir = get_config( nil, :DiplomaDir )
-			cdir = "#{ddir}/cartes"
-			if ! File.exist? cdir
-				FileUtils::mkdir( cdir )
-			end
+      cdir = "#{ddir}/cartes"
+      if ! File.exist? cdir
+        FileUtils::mkdir( cdir )
+      end
       @print_card = OpenPrint.new( 
-				"#{ddir}/carte_etudiant.odg",	"#{ddir}/cartes" )
+        "#{ddir}/carte_etudiant.odg",	"#{ddir}/cartes" )
     end
 
     LOAD_DATA
@@ -116,9 +116,9 @@ class Persons < Entities
     end
     if family.length > 0
       dputs( 2 ){ "Family name + First name" }
-			login = family.chars.first + first
+      login = family.chars.first + first
     else
-			login = first
+      login = first
     end
 
     accents_replace( login )
@@ -171,14 +171,14 @@ class Persons < Entities
   # - person_id : the id of the person to receive the credit
   def add_cash( session, data )
     dputs( 5 ){ "data is #{data.inspect}" }
-		client = match_by_login_name( data['login_name'].to_s )[0]
+    client = match_by_login_name( data['login_name'].to_s )[0]
     if data['credit_add'] and client
       actor = session.owner
       dputs( 3 ){ "Adding cash to #{client.full_name} from #{actor.full_name}" }
       if client
         actor.add_credit( client, data['credit_add'])
       end
-			return client
+      return client
     end
     return nil
   end
@@ -191,7 +191,7 @@ class Persons < Entities
         p.login_name
       }.select{|s|s}
     else
-			[]
+      []
     end
   end
 
@@ -215,9 +215,9 @@ class Persons < Entities
       return { :first_name => "user" }
     end
 		
-		[ :first_name, :family_name ].each{|n|
-			d[n] && d[n].capitalize_all!
-		}
+    [ :first_name, :family_name ].each{|n|
+      d[n] && d[n].capitalize_all!
+    }
 
     super( d )
   end
@@ -251,7 +251,7 @@ class Persons < Entities
   def find_name_or_create( name )
     first, last = name.split( " ", 2 )
     find_full_name( name ) or
-			person = create( :first_name => first, :family_name => last )
+      person = create( :first_name => first, :family_name => last )
   end
 
   def login_to_full( login )
@@ -270,6 +270,7 @@ class Person < Entity
   attr_accessor :compta_due
   def setup_instance
     update_account_due
+    data_set( :credit, data_get( :credit ).to_i )
   end
 
   def update_account_due
@@ -278,7 +279,7 @@ class Person < Entity
       src = "#{c}::#{data_get(:account_due)}"
       dputs( 2 ){ "Creating AfriCompta for #{full_name} with source-account: #{src}" }
       @compta_due = AfriCompta.new( src, 
-				get_config( "Root::Income", :compta_due, :dst ) )
+        get_config( "Root::Income", :compta_due, :dst ) )
       update_credit
     else
       dputs( 2 ){ "Couldn't create AfriCompta for #{full_name}, making empty" }
@@ -311,11 +312,11 @@ class Person < Entity
 
   def get_credit
     if @compta_due and not @compta_due.disabled
-			dputs( 2 ){ "credit is #{@compta_due.get_credit}" }
-			( @compta_due.get_credit * 1000.0 + 0.5 ).to_i
-		else
-			self.credit_due
-		end
+      dputs( 2 ){ "credit is #{@compta_due.get_credit}" }
+      ( @compta_due.get_credit * 1000.0 + 0.5 ).to_i
+    else
+      self.credit_due
+    end
   end
 
   def update_credit
@@ -327,10 +328,10 @@ class Person < Entity
     dputs( 3 ){ "Adding #{credit}CFA to #{client.credit} for #{client.login_name}" }
     credit_before = client.credit
     if credit.to_i < 0 and credit.to_i.abs > client.credit.to_i
-			credit = -client.credit.to_i
+      credit = -client.credit.to_i
     end
     client.data_set_log( :credit, ( client.credit.to_i + credit.to_i ).to_s,
-			"#{self.person_id}:#{credit}" )
+      "#{self.person_id}:#{credit}" )
     move_cash( credit, "credit pour -#{client.login_name}:#{credit}-")
     log_msg( "AddCash", "#{self.login_name} added #{credit} for #{client.login_name}: " +
         "#{credit_before} + #{credit} = #{client.credit}" )
@@ -341,10 +342,10 @@ class Person < Entity
     credit_due = 0
     if @compta_due and not @compta_due.disabled
       credit_due = @compta_due.add_movement( credit.to_i / 1000.0,
-				"Gestion: #{msg}" )
-			credit_due = ( credit_due * 1000.0 + 0.5 ).to_i
+        "Gestion: #{msg}" )
+      credit_due = ( credit_due * 1000.0 + 0.5 ).to_i
     else
-			credit_due = self.credit_due.to_i + credit.to_i
+      credit_due = self.credit_due.to_i + credit.to_i
     end
     data_set_log( :credit_due, credit_due, msg )
   end
@@ -371,13 +372,13 @@ class Person < Entity
           dputs( 3 ){ "Found service #{service}" }
           service.duration == 0 or p.date + service.duration * 60 * 60 * 24 >= Time.now.to_i
         else
-					false
+          false
         end
       }.collect{|p|
         p.desc.gsub(/^Service:/, '')
       }
     else
-			[]
+      []
     end
   end
 
@@ -404,36 +405,36 @@ class Person < Entity
 
   def print( counter = nil )
     ctype = "Visiteur"
-		courses = Courses.list_courses_for_person( self )
-		if courses and courses.length > 0
-			ddputs(3){"Courses is #{courses.inspect}"}
-			ctype = Courses.find_by_course_id( courses[0][0] ).description
-		end
-		fname = "#{person_id.to_s.rjust(6,'0')}-#{full_name.gsub(/ /,'_')}"
+    courses = Courses.list_courses_for_person( self )
+    if courses and courses.length > 0
+      ddputs(3){"Courses is #{courses.inspect}"}
+      ctype = Courses.find_by_course_id( courses[0][0] ).description
+    end
+    fname = "#{person_id.to_s.rjust(6,'0')}-#{full_name.gsub(/ /,'_')}"
     @proxy.print_card.print( [ [ /--NOM--/, first_name ],
-				[ /--NOM2--/, family_name ],
-				[ /--BDAY--/, birthday ],
-				[ /--TDAY--/, `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"` ],
-				[ /--TEL--/, phone ],
-				[ /--UNAME--/, login_name ],
-				[ /--EMAIL--/, email ],
-				[ /--CTYPE--/, ctype ],
-				[ /--PASS--/, password_plain ] ], nil, fname )
+        [ /--NOM2--/, family_name ],
+        [ /--BDAY--/, birthday ],
+        [ /--TDAY--/, `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"` ],
+        [ /--TEL--/, phone ],
+        [ /--UNAME--/, login_name ],
+        [ /--EMAIL--/, email ],
+        [ /--CTYPE--/, ctype ],
+        [ /--PASS--/, password_plain ] ], nil, fname )
   end
 
   def to_list
     [ login_name, "#{full_name} - #{login_name}:#{password_plain}"]
   end
 	
-	def session
-		Session.find_by_id( self.session_id )
-	end
+  def session
+    Session.find_by_id( self.session_id )
+  end
 	
-	def first_name=(v)
-		data_set( :first_name, v.capitalize_all )
-	end
+  def first_name=(v)
+    data_set( :first_name, v.capitalize_all )
+  end
 	
-	def family_name=(v)
-		data_set( :family_name, v.capitalize_all )
-	end
+  def family_name=(v)
+    data_set( :family_name, v.capitalize_all )
+  end
 end

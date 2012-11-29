@@ -1,14 +1,11 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Adding credit to a person who has nothing results in
-          0 credit -> insert .to_i
-        - Take old credits
+	- Mon Compte - Dépenses is not updated, because it relies on LogAction
 	- Adding of service makes more money in "emprunts" instead of the contrary
 	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
 	  use that one. Don't rely on Gestion/ldap.secret!
 	- AfriCompta::check doesn't work anymore
-	- Mon Compte - Dépenses is not updated, because it relies on LogAction
 	- In Self::Cash, Self::Services don't show up
 	- adding an already existing user crashes if he has been added outside
 	  of Gestion
@@ -24,6 +21,8 @@ UI:
 	- Cours::Noter should have a bigger and longer student-list
 
 FEATURES:
+        - keep session-ids over restarts
+        - take Admin::ControlAccess from Rooms-definition
 	- make an asynchronous printing-module
 	- Admin::Restore - show progress
 	- Make a dropbox when using _find
@@ -101,6 +100,14 @@ Rare bugs:
 	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
 
 ** FIXED **:
+        - F 121129: Import old credits -> Admin::Credit
+        - B 121129: Adding credit to a person who has nothing results in
+          0 credit -> insert .to_i
+        - B 121129: when only sub-tabs are visible (like "student"), it doesn't get unfaded
+        - B 121129: why are all accounts checked for AfriCompta when autosaving?
+          -> because of Internet::check_services
+        - B 121129: connection::permanent and can_connect, show correct status
+          in Self::Internet
         - F 121127: Automatically taking into account no-promotion settings
 	- F 121127: When no promotion left, show only "disconnect"-button
 	- B 121126: When sending something from "Frontend", stop the timer, then

@@ -84,6 +84,8 @@ class PersonAdmin < View
         #reply( :empty, [:internet_none] ) +
         reply( :empty, [:permissions] ) +
         reply( :update, :permissions => Permission.list) +
+        reply( :empty, [:groups] ) +
+        reply( :update, :groups => eval( Persons.get_value( :groups ).list ) ) +
         reply( :update, p )
       end
     end
