@@ -312,6 +312,7 @@ class Person < Entity
 
   def get_credit
     if @compta_due and not @compta_due.disabled
+      #@compta_due.src.update_total
       dputs( 2 ){ "credit is #{@compta_due.get_credit}" }
       ( @compta_due.get_credit * 1000.0 + 0.5 ).to_i
     else
@@ -320,8 +321,8 @@ class Person < Entity
   end
 
   def update_credit
-    self.credit_due = get_credit
-    self.credit_due = 0 if not self.credit_due
+    #self.credit_due = get_credit
+    #self.credit_due = 0 if not self.credit_due
   end
 
   def add_credit( client, credit )
@@ -346,8 +347,8 @@ class Person < Entity
       credit_due = ( credit_due * 1000.0 + 0.5 ).to_i
     else
       credit_due = self.credit_due.to_i + credit.to_i
+      data_set_log( :credit_due, credit_due, msg )
     end
-    data_set_log( :credit_due, credit_due, msg )
   end
 
   def check_pass( pass )
@@ -436,5 +437,9 @@ class Person < Entity
 	
   def family_name=(v)
     data_set( :family_name, v.capitalize_all )
+  end
+  
+  def credit_due
+    get_credit
   end
 end

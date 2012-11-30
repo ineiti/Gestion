@@ -1,57 +1,51 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-	- Mon Compte - Dépenses is not updated, because it relies on LogAction
-	- Adding of service makes more money in "emprunts" instead of the contrary
-	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
-	  use that one. Don't rely on Gestion/ldap.secret!
 	- AfriCompta::check doesn't work anymore
-	- In Self::Cash, Self::Services don't show up
-	- adding an already existing user crashes if he has been added outside
-	  of Gestion
-	- check why ruby-gettext from debian/squeeze messes things up
 	- 1000 crashes when not operating "properly"
 	
+[5', 15', 30', 1h, 4h]
 Security:
-	- PersonModify - only allow to change password from persons which have equal or
+	-3 PersonModify - only allow to change password from persons which have equal or
 	  lower rights - use an own tab which is not active for non-allowed users
 
 UI:
-	- Print - Adjust text for PDF and Print
-	- Cours::Noter should have a bigger and longer student-list
+	-2 Print - Adjust text for PDF and Print
+	-2 Cours::Noter should have a bigger and longer student-list
 
 FEATURES:
-        - keep session-ids over restarts
-        - take Admin::ControlAccess from Rooms-definition
-	- make an asynchronous printing-module
-	- Admin::Restore - show progress
+        -3 Print student-cards the Markas-way with the idea of Josue and Viviane
+        -1 Transfer money from one account to another directly in the interface
+	-2 Make internet.wifi with Self::Internet only, and a link which allows
+	  to do the infamous internet.wifi/?pass=&user=
+        -2 keep session-ids over restarts
+        -3 take Admin::ControlAccess from Rooms-definition
+        -3 Add a status-bar on bottom for progresses and information like:
+           printing, progress, messages, connect/disconnect, ...
+	-4 make an asynchronous printing-module
+	-3 Admin::Restore - show progress
+	-4 Courses::Days - add other days to the list
+	-3 Tigo - auto-reconnect on error
+	-4 Double-users: merge them and avoid them in the first place
+	-3 check diploma-templates
+	-2 Add "version"-field somewhere (to status-bar)
+	-3 Inventory of screens, mice, routers
+	-3 Import attestation.markas-al-nour.wifi
 	- Make a dropbox when using _find
 	- Graying out fields not usable (PersonModify, CashAdd, ...)
-	- Courses::Days - add other days to the list
-	- Tigo - auto-reconnect on error
-	- Pass cash from one account to another
-	- Double-users: merge them and avoid them in the first place
-	- check diploma-templates
 	- Migration of new data-types: have defaults
-	- Add "version"-field somewhere
 	- AfriCompta-support:
-		- Don't show archived and deleted accounts, but do stats on them
-		- Delete accounts
-		- Define reports
-	- Inventory of screens, mice, routers
-	- Make internet.wifi with Self::Internet only, and a link which allows
-	  to do the infamous internet.wifi/?pass=&user=
-	- Import attestation.markas-al-nour.wifi
-	- CourseHistory
-	- NELBE:
-		- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
+		-4 Don't show archived and deleted accounts, but do stats on them
+		-3 Delete accounts
+		-4 Define reports
+	- CourseHistory - what should go in there?
 
 Programming:
-	- Remove QooxView/Storages/AfriCompta.rb and adjust
+	-3 Remove QooxView/Storages/AfriCompta.rb and adjust
 	 Gestion/Entities/Person.rb
 	- Allow subdirectories in Entities-directory
 	- add a print-dialog with window and buttons
-	- Change Frontend::Views::Layout::dispatch to handle one request at a
+	- Change Frontend::Views::LTab::dispatch to handle one request at a
 	  time and to allow new requests to be inserted before handling other
 	  requests -> doing a reply( parent->switch_tab ) + reply( switch_tab )
 	  should switch the tab in the NEW parent-tab!
@@ -90,16 +84,24 @@ Programming > 1.0:
 VERIFY:
 
 Rare bugs:
+	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
+	  use that one. Don't rely on Gestion/ldap.secret!
+	- adding an already existing user crashes if he has been added outside
+	  of Gestion: CourseModify::add_students doesn't work sometimes 
+          (when there is a stale uid of a removed user)
+	- check why ruby-gettext from debian/squeeze messes things up
+
+Unconfirmed bugs:
 	- PersonAdd - password is not stored - not repeatable
 	- Default focus and button:
 		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
 			-> where is that a problem?
-	- B 110826: It's possible to click other tab while first starting up: re-activate the
-	  correct tab when getting "update" or "show"
 	- TaskList: sometimes when pressing "list", it takes twice to show everything
-	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
+
 
 ** FIXED **:
+        - F 121130: Use accounts in Self::Cash instead of LogActions
+	- B 121130: Mon Compte - Dépenses is not updated, because it relies on LogAction
         - F 121129: Import old credits -> Admin::Credit
         - B 121129: Adding credit to a person who has nothing results in
           0 credit -> insert .to_i
