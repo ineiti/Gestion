@@ -13,7 +13,7 @@ class AdminCredit < View
   def rpc_button_update_credits( session, data )
     data['user_credit'].split(/\n/).each{|l|
       u, c = l.split
-      if user = Persons.match_by_login_name(u)[0]
+      if user = Persons.match_by_login_name(u)
         dputs(1){"Setting credit of #{u}:#{user.full_name} to #{c}"}
         user.credit = c.to_i
         if not user.permissions 

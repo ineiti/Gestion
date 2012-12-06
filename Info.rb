@@ -31,7 +31,7 @@ class Info < RPCQooxdooPath
   def self.internet_free(args)
     dputs( 3 ){ "Can #{args} do it?" }
     username = args[:user]
-    user = Entities.Persons.match_by_login_name( username )[0]
+    user = Entities.Persons.match_by_login_name( username )
     Internet.free( user ) ? "yes" : "no"
   end
   
@@ -42,7 +42,7 @@ class Info < RPCQooxdooPath
   
   def self.login( args, ip )
     dputs(3){"Logging in with #{args.inspect}"}
-    user = Persons.match_by_login_name( args[:user] )[0]
+    user = Persons.match_by_login_name( args[:user] )
     if self.autoConnect( args ) == "yes"
       dputs(2){"Connecting user #{user.login_name} with ip #{ip}"}
       Internet.connect_user( ip, user.login_name )
@@ -54,7 +54,7 @@ class Info < RPCQooxdooPath
   def self.clientUse( args )
     return "nopay"
     ddputs(3){"Client use with #{args.inspect}"}
-    user = Persons.match_by_login_name( args[:user] )[0]
+    user = Persons.match_by_login_name( args[:user] )
     if user
       ddputs(3){"Found user with groups #{user.groups.inspect} and credit #{user.credit.inspect}"}
       if Internet.free( user )
@@ -74,7 +74,7 @@ class Info < RPCQooxdooPath
   def self.autoConnect( args )
     return "yes"
     dputs(3){"AutoConnecting for #{args.inspect}"}
-    user = Persons.match_by_login_name( args[:user] )[0]
+    user = Persons.match_by_login_name( args[:user] )
     if user 
       cu = self.clientUse( args )
       cost_max = $lib_net.call( :user_cost_max ).to_i
