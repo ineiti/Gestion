@@ -4,8 +4,6 @@
 # - Teacher and Assistant
 # - Classroom
 
-require 'Entity'
-require 'OpenPrint'
 #require 'rubygems'
 require 'zip/zipfilesystem'; include Zip
 require 'docsplit'

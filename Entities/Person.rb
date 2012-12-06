@@ -4,10 +4,6 @@
 # Configuration:
 # adduser_cmd - is called after ldapadduser returns with the username as argument
 
-require 'OpenPrint'
-
-
-
 class String
   def capitalize_all
     self.split(" ").collect{|s| s.capitalize}.join(" ")
