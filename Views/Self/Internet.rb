@@ -22,7 +22,7 @@ class SelfInternet < View
   def can_connect( session )
     if $lib_net.call( :captive_restriction_get ).length > 0
       return 2
-    elsif session.owner.groups and session.owner.groups.index( 'freesurf' )
+    elsif Internet.free( session.owner )
       return 0
     else
       return session.owner.credit.to_i >= $lib_net.call( :user_cost_max ).to_i ? 

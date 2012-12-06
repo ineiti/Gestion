@@ -12,12 +12,12 @@ class CourseGrade < View
     gui_hbox do
       gui_hbox do
         gui_fields do
-          show_list_single :students, :callback => true
+          show_list_single :students, :width => 300, :callback => true
         end
         gui_fields do
-          show_int :mean, :width => 150
+          show_int :mean
           show_str :remark
-          show_str :first_name
+          show_str :first_name, :width => 150
           show_str :family_name
           show_button :save
         end

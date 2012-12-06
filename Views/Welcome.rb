@@ -12,7 +12,11 @@ class Welcome < View
         return nil
       end
     else
-      super
+      if ( version_local = get_config( "", :version_local ) ) != ""
+        version_local = "-#{version_local}"
+      end
+      super +
+        reply( :update, :version => VERSION + version_local )
     end
   end
 

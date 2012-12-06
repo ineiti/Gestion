@@ -10,7 +10,8 @@ class SelfCash < View
         show_int_ro :credit_due, :width => 100
       end
       gui_fields do
-        show_list_single :payments, :width => 500, :callback => true
+        show_list_single :payments, :width => 500, :callback => true,
+          :nopreselect => true
       end
       gui_fields do
         show_button :update
@@ -31,8 +32,12 @@ class SelfCash < View
     pid = person.person_id
     if not @cache_payments[pid] or force
       @cache_payments[pid] = if cd = person.compta_due
+        i = 0
         cd.src.movements.collect{|m| 
-          "#{m.date} :: #{( m.value * 1000 ).floor.to_s.rjust(6,'_')} :: #{m.desc}"
+#          [ i, "#{m.date} :: #{( m.value * 1000 ).floor.to_s.rjust(6,'_')} " + 
+#              ":: #{m.desc}" ]
+          "#{m.date} :: #{( m.value * 1000 ).floor.to_s.rjust(6,'_')} " + 
+              ":: #{m.desc}"
         }
       else
         ""

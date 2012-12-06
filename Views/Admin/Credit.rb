@@ -16,6 +16,11 @@ class AdminCredit < View
       if user = Persons.match_by_login_name(u)[0]
         dputs(1){"Setting credit of #{u}:#{user.full_name} to #{c}"}
         user.credit = c.to_i
+        if not user.permissions 
+          user.permissions = ["internet"]
+        elsif not user.permissions.index( "internet" )
+          user.permissions.push "internet"
+        end
       else
         dputs(1){"Didn't find #{u}"}
       end

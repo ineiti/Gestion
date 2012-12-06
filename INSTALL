@@ -1,4 +1,5 @@
-This package depends on QooxView, AfriCompta and LibNet. There should be a directory holding all directories:
+This package depends on QooxView, AfriCompta and LibNet. There should be a 
+directory holding all directories:
 
 # ls
 QooxView  Gestion  AfriCompta  LibNet
@@ -10,11 +11,12 @@ This will try to download all missing packets (down to ruby).
 
 Short, it will do about:
 
-# sudo apt-get install ruby rubygems libreoffice pdftk psutils sqlite libsqlite3-dev \
-# default-jdk gettext
+# sudo apt-get install ruby rubygems libreoffice pdftk psutils sqlite \
+# libsqlite3-dev default-jdk gettext
 
-And then it will compile sqlite3-support, so a gcc-compiler should be present. A standard Lubuntu-installation
-or Debian-Squeezy installation seems to run it well.
+And then it will compile sqlite3-support, so a gcc-compiler should be present. 
+A standard Lubuntu, LinuxMint or Debian-Squeezy installation seem to run 
+it well.
 
 Once it's running, you can point your browser to
 

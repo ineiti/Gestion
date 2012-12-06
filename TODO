@@ -11,11 +11,11 @@ Security:
 
 UI:
 	-2 Print - Adjust text for PDF and Print
-	-2 Cours::Noter should have a bigger and longer student-list
 
 FEATURES:
+        -2 Effacer et renommer cours
         -3 Print student-cards the Markas-way with the idea of Josue and Viviane
-        -1 Transfer money from one account to another directly in the interface
+        -2 Transfer money from one account to another directly in the interface
 	-2 Make internet.wifi with Self::Internet only, and a link which allows
 	  to do the infamous internet.wifi/?pass=&user=
         -2 keep session-ids over restarts
@@ -43,21 +43,21 @@ FEATURES:
 Programming:
 	-3 Remove QooxView/Storages/AfriCompta.rb and adjust
 	 Gestion/Entities/Person.rb
-	- Allow subdirectories in Entities-directory
-	- add a print-dialog with window and buttons
-	- Change Frontend::Views::LTab::dispatch to handle one request at a
+	-2 Allow subdirectories in Entities-directory
+	-3 add a print-dialog with window and buttons
+	-3 Change Frontend::Views::LTab::dispatch to handle one request at a
 	  time and to allow new requests to be inserted before handling other
 	  requests -> doing a reply( parent->switch_tab ) + reply( switch_tab )
 	  should switch the tab in the NEW parent-tab!
-	- Installation
+	-3 Installation
 		- SQLite crashes when database is not here yet
 		- When using data from solar on local account, fails
-	- kill Layout.js::dispatch::init_values, as it is not needed anymore with
+	-3 kill Layout.js::dispatch::init_values, as it is not needed anymore with
 	  the RPC-queue enabled (even though I'm nut sure the latter really works...)
-	- rpc_parse_reply
+	-4 rpc_parse_reply
 		- take out arrays when only one reply anyway
-	- when empty configuration and LDAP is not here, fall back to CSV
-	- Add real type-checking between value_* and Storages
+	-3 when empty configuration and LDAP is not here, fall back to CSV
+	-3 Add real type-checking between value_* and Storages
 	- Really slow search or something when starting up
 		- also in CourseModify
 	- having lists and dropbox with additional hidden "index" that is returned for chosen entries
@@ -100,6 +100,13 @@ Unconfirmed bugs:
 
 
 ** FIXED **:
+	- UI 121206: Cours::Noter should have a bigger and longer student-list
+        - F 121206:  Add a working "version" to the welcome-screen, including
+          main, sub and local versions (0.9.1-altatawwur)
+        - B 121206: When showing Self::Cash, some entries may be shown double or
+          triple, leading to an error "no multi selections in single mode"
+          -> add an option to "show_txt" to not select upon double-lines
+          (which was a stupid hack in the first time anyway)
         - F 121130: Use accounts in Self::Cash instead of LogActions
 	- B 121130: Mon Compte - Dépenses is not updated, because it relies on LogAction
         - F 121129: Import old credits -> Admin::Credit
