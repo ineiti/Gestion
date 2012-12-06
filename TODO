@@ -14,6 +14,7 @@ UI:
 
 FEATURES:
         -2 Effacer et renommer cours
+        -2 Use Inventory::Rooms in Cours::Modify
         -3 Print student-cards the Markas-way with the idea of Josue and Viviane
         -2 Transfer money from one account to another directly in the interface
 	-2 Make internet.wifi with Self::Internet only, and a link which allows
@@ -33,7 +34,6 @@ FEATURES:
 	-3 Import attestation.markas-al-nour.wifi
 	- Make a dropbox when using _find
 	- Graying out fields not usable (PersonModify, CashAdd, ...)
-	- Migration of new data-types: have defaults
 	- AfriCompta-support:
 		-4 Don't show archived and deleted accounts, but do stats on them
 		-3 Delete accounts
@@ -41,6 +41,7 @@ FEATURES:
 	- CourseHistory - what should go in there?
 
 Programming:
+	-3 Migration of new data-types: have defaults
 	-3 Remove QooxView/Storages/AfriCompta.rb and adjust
 	 Gestion/Entities/Person.rb
 	-2 Allow subdirectories in Entities-directory
