@@ -49,19 +49,6 @@ class CourseModify < View
     end
   end
 
-  def rpc_button_delete( session, data )
-    dputs( 3 ){ "session, data: #{[session, data.inspect].join(':')}" }
-    course = Courses.find_by_course_id( data['courses'][0])
-    dputs( 3 ){ "Got #{course.name} - #{course.inspect}" }
-    if course
-      dputs( 2 ){ "Deleting entry #{course}" }
-      course.delete
-    end
-
-    reply( "empty", [:courses] ) +
-      reply( "update", { :courses => Courses.list_courses } )
-  end
-
   def rpc_button_save( session, data )
     course = Courses.find_by_name( data['name'] )
     if course

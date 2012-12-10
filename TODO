@@ -1,6 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - When only main-tabs, they are always faded - not reproducible
+         on local version
 	- AfriCompta::check doesn't work anymore
 	- 1000 crashes when not operating "properly"
 	
@@ -23,15 +25,14 @@ FEATURES:
         -3 take Admin::ControlAccess from Rooms-definition
         -3 Add a status-bar on bottom for progresses and information like:
            printing, progress, messages, connect/disconnect, ...
-	-4 make an asynchronous printing-module
 	-3 Admin::Restore - show progress
-	-4 Courses::Days - add other days to the list
 	-3 Tigo - auto-reconnect on error
-	-4 Double-users: merge them and avoid them in the first place
 	-3 check diploma-templates
-	-2 Add "version"-field somewhere (to status-bar)
 	-3 Inventory of screens, mice, routers
 	-3 Import attestation.markas-al-nour.wifi
+	-4 make an asynchronous printing-module
+	-4 Courses::Days - add other days to the list
+	-4 Double-users: merge them and avoid them in the first place
 	- Make a dropbox when using _find
 	- Graying out fields not usable (PersonModify, CashAdd, ...)
 	- AfriCompta-support:
@@ -41,10 +42,9 @@ FEATURES:
 	- CourseHistory - what should go in there?
 
 Programming:
-	-3 Migration of new data-types: have defaults
+	-2 Allow subdirectories in Entities-directory
 	-3 Remove QooxView/Storages/AfriCompta.rb and adjust
 	 Gestion/Entities/Person.rb
-	-2 Allow subdirectories in Entities-directory
 	-3 add a print-dialog with window and buttons
 	-3 Change Frontend::Views::LTab::dispatch to handle one request at a
 	  time and to allow new requests to be inserted before handling other
@@ -55,10 +55,10 @@ Programming:
 		- When using data from solar on local account, fails
 	-3 kill Layout.js::dispatch::init_values, as it is not needed anymore with
 	  the RPC-queue enabled (even though I'm nut sure the latter really works...)
-	-4 rpc_parse_reply
-		- take out arrays when only one reply anyway
 	-3 when empty configuration and LDAP is not here, fall back to CSV
 	-3 Add real type-checking between value_* and Storages
+	-4 rpc_parse_reply
+		- take out arrays when only one reply anyway
 	- Really slow search or something when starting up
 		- also in CourseModify
 	- having lists and dropbox with additional hidden "index" that is returned for chosen entries
@@ -101,7 +101,9 @@ Unconfirmed bugs:
 
 
 ** FIXED **:
-	- UI 121206: Cours::Noter should have a bigger and longer student-list
+	- F 121206: Migration of new data-types: have defaults and offer
+         migration-support when changing values
+	- UI121206: Cours::Noter should have a bigger and longer student-list
         - F 121206:  Add a working "version" to the welcome-screen, including
           main, sub and local versions (0.9.1-altatawwur)
         - B 121206: When showing Self::Cash, some entries may be shown double or

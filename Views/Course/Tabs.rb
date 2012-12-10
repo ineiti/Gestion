@@ -15,14 +15,28 @@ class CourseTabs < View
   end
   
   def rpc_update( session )
-    reply( :empty, [ :courses ] ) +
+    rep = reply( :empty, [ :courses ] ) +
     reply( :update, :courses => Entities.Courses.list_courses(session))
+    if not session.can_view( 'CourseAdd' )
+      rep += reply( :hide, :delete )
+    end
+    rep
   end
 
   def rpc_button_delete( session, args )
     if not session.can_view( 'CourseAdd' )
       reply( "window_show", "error")
     end
+    dputs( 3 ){ "session, data: #{[session, data.inspect].join(':')}" }
+    course = Courses.find_by_course_id( args['courses'][0])
+    dputs( 3 ){ "Got #{course.name} - #{course.inspect}" }
+    if course
+      dputs( 2 ){ "Deleting entry #{course}" }
+      course.delete
+    end
+
+    reply( "empty", [:courses] ) +
+      reply( "update", { :courses => Courses.list_courses } )
   end
 
   def rpc_list_choice( session, name, args )

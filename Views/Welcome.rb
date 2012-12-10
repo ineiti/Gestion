@@ -16,7 +16,7 @@ class Welcome < View
         version_local = "-#{version_local}"
       end
       super +
-        reply( :update, :version => VERSION + version_local )
+        reply( :update, :version => VERSION_GESTION + version_local )
     end
   end
 

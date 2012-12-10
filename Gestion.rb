@@ -6,7 +6,7 @@
 # - Login: - for payable laptop web-access
 #          - for students
 
-VERSION="0.9.1"
+VERSION_GESTION="0.9.1"
 
 GESTION_DIR=File.dirname(__FILE__)
 CONFIG_FILE="config.yaml"
