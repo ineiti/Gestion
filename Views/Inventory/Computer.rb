@@ -1,4 +1,4 @@
-class InventoryComputers < View
+class InventoryComputer < View
   include VTListPane
   def layout
     set_data_class :Computers

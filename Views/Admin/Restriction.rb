@@ -1,4 +1,4 @@
-class AdminAccess < View
+class AdminRestriction < View
   def layout
     @update = true
 

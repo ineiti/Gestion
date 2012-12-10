@@ -24,7 +24,7 @@ class Courses < Entities
     value_int :duration
     value_list_drop :dow, "%w( lu-me-ve ma-je-sa lu-ve ma-sa )"
     value_list_drop :hours, "%w( 9-12 16-18 9-11 )"
-    value_list_drop :classroom, "%w( info1 info2 mobile )"
+    value_entity_room :classroom, :drop, :name
     # value_entity :classroom, :Rooms, :drop, :name
 
     value_block :students
@@ -105,7 +105,7 @@ class Courses < Entities
   def self.from_diploma( course_name, course_str )
     dputs( 1 ){ "Importing #{course_name}: #{course_str.gsub(/\n/,'*')}" }
     course = Entities.Courses.find_by_name( course_name ) or
-			Entities.Courses.create( :name => course_name )
+      Entities.Courses.create( :name => course_name )
 
     lines = course_str.split( "\n" )
     template = lines.shift
@@ -128,7 +128,7 @@ class Courses < Entities
       dputs( 1 ){ "Course contents: #{course.contents}" }
       lines.shift
       course.start, course.end, course.sign =
-				lines.shift( 3 ).collect{|d| self.from_date_fr( d ) }
+        lines.shift( 3 ).collect{|d| self.from_date_fr( d ) }
       lines.shift if lines[0].size == 0
 
       course.students = []
@@ -141,14 +141,28 @@ class Courses < Entities
           g.mean, g.remark = Entities.Grades.grade_to_mean( grade ), lines.shift
         else
           Entities.Grades.create( :course_id => course.course_id, :person_id => student.person_id,
-						:mean => Grades.grade_to_mean( grade ), :remark => lines.shift )
+            :mean => Grades.grade_to_mean( grade ), :remark => lines.shift )
         end
       end
       dputs( 0 ){ "#{course.inspect}" }
     else
-			import_old( lines )
+      import_old( lines )
     end
     course
+  end
+  
+  def migration_1(c)
+    name = c.data_get( :classroom, true )
+    if name.class == Array
+      name = name.join
+    end
+    ddputs(4){"Converting for name #{name} with #{Rooms.search_all.inspect}"}
+    r = Rooms.match_by_name( name )
+    if ( not r ) and ( not r = Rooms.find_by_name( "" ) )
+      r = nil
+    end
+    c.data_set( :classroom, r )
+    ddputs(4){"New room is #{c.classroom.inspect}"}
   end
 end
 
@@ -191,7 +205,7 @@ class Course < Entity
       d = data_get s
       if not d or d.size == 0
         dputs( 1 ){ "Failed checking #{s}: #{d}" }
-				missing_data.push s
+        missing_data.push s
       end
     }
     return missing_data.size == 0 ? nil : missing_data
@@ -219,9 +233,9 @@ class Course < Entity
     [ d_start, d_end, d_sign ].each{|d|
       year = d.gsub( /.*\./, '' )
       if same_year == 0
-				same_year = year
+        same_year = year
       elsif same_year != year
-				same_year = false
+        same_year = false
       end
     }
     txt = <<-END
@@ -235,12 +249,12 @@ base_gestion
 #{date_fr(d_start, same_year)}
 #{date_fr(d_end, same_year)}
 #{date_fr(d_sign)}
-		END
+    END
     data_get( :students ).each{|s|
       grade = Entities.Grades.find_by_course_person( data_get( :course_id ), s )
       if grade
         txt += "#{grade} #{grade.student.full_name}\n" +
-					"#{grade.remark}\n"
+          "#{grade.remark}\n"
       end
     }
     dputs( 2 ){ "Text is: #{txt.gsub(/\n/, '*')}" }
@@ -251,7 +265,7 @@ base_gestion
     if File::directory?( diploma_dir )
       Dir::glob( "#{diploma_dir}/*pdf" ).collect{|f| File::basename( f ) }.sort
     else
-			[]
+      []
     end
   end
 
@@ -267,20 +281,20 @@ base_gestion
       stud_str = stud_nr.to_s.rjust( 2, '0' )
       stud_nr += 1
       [ [ /Nom#{stud_str}/, stud.full_name ],
-				[ /Login#{stud_str}/, stud.login_name ],
-				[ /Passe#{stud_str}/, stud.password_plain ] ]
+        [ /Login#{stud_str}/, stud.login_name ],
+        [ /Passe#{stud_str}/, stud.password_plain ] ]
     }
     dputs( 3 ){ "Students are: #{studs.inspect}" }
 
     @proxy.print_presence.print( studs.flatten(1) + [
-				[ /Teacher/, teacher_person.full_name ],
-				[ /Course_name/, name ],
-				[ /2010-08-20/, dstart.to_s ],
-				[ /20.08.10/, dstart.strftime("%d/%m/%y") ],
-				[ /2010-10-20/, dend.to_s ],
-				[ /20.10.10/, dend.strftime("%d/%m/%y") ],
-				[ /123/, students.count ],
-			] )
+        [ /Teacher/, teacher_person.full_name ],
+        [ /Course_name/, name ],
+        [ /2010-08-20/, dstart.to_s ],
+        [ /20.08.10/, dstart.strftime("%d/%m/%y") ],
+        [ /2010-10-20/, dend.to_s ],
+        [ /20.10.10/, dend.strftime("%d/%m/%y") ],
+        [ /123/, students.count ],
+      ] )
   end
 	
 	
@@ -289,19 +303,19 @@ base_gestion
     if grade and grade.to_s != "NP"
       dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|
-				pteacher = Persons.find_by_login_name( teacher.join )
-				presponsible = Persons.find_by_login_name( responsible.join )
+        pteacher = Persons.find_by_login_name( teacher.join )
+        presponsible = Persons.find_by_login_name( responsible.join )
         doc = z.read("content.xml")
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
         desc_p = /-DESC1-(.*)-DESC2-/.match( doc )[1]
-				dputs( 3 ){ "desc_p is #{desc_p}" }
+        dputs( 3 ){ "desc_p is #{desc_p}" }
         doc.gsub!( /-DESC1-.*-DESC2-/,
-					contents.split("\n").join( desc_p ))
+          contents.split("\n").join( desc_p ))
         doc.gsub!( /-PROF-/, pteacher.full_name )
-				role_diploma = "Responsable informatique"
-				if presponsible.role_diploma.to_s.length > 0
-				  role_diploma = presponsible.role_diploma
-				end
+        role_diploma = "Responsable informatique"
+        if presponsible.role_diploma.to_s.length > 0
+          role_diploma = presponsible.role_diploma
+        end
         doc.gsub!( /-RESP-ROLE-/, role_diploma )
         doc.gsub!( /-RESP-/, presponsible.full_name )
         doc.gsub!( /-NOM-/, student.full_name )
@@ -325,9 +339,9 @@ base_gestion
 
   def make_pdfs( old, list )
     FileUtils::rm( old )
-		if list.size == 0
-			return
-		end
+    if list.size == 0
+      return
+    end
 		
     if @thread
       dputs( 2 ){ "Thread is here, killing" }
@@ -344,61 +358,61 @@ base_gestion
     dputs( 2 ){ "Starting new thread" }
     @thread = Thread.new{
       begin
-				dputs( 2 ){ "Creating pdfs #{list.inspect}" }
-				`date >> /tmp/cp`
-				pdfs = []
-				dir = File::dirname( list.first )
-				list.sort.each{ |p|
-					dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
-					Docsplit.extract_pdf p, :output => dir
-					dputs( 5 ){ "Finished docsplit" }
-					FileUtils::rm( p )
-					dputs( 5 ){ "Finished rm" }
-					pdfs.push p.sub( /\.[^\.]*$/, '.pdf' )
-				}
-				dputs( 3 ){ "Getting #{pdfs.inspect} out of #{dir}" }
-				all = "#{dir}/000-all.pdf"
-				psn = "#{dir}/000-4pp.pdf"
-				dputs( 3 ){ "Putting it all in one file: pdftk #{pdfs.join( ' ' )} cat output #{all}" }
-				`pdftk #{pdfs.join( ' ' )} cat output #{all}`
-				dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
-				`pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
-				FileUtils::mv( "#{psn}.tmp", psn )
-				dputs( 2 ){ "Finished" }
-			rescue Exception => e  
-				dputs( 0 ){ "Error in thread: #{e.message}" }
-				dputs( 0 ){ "#{e.inspect}" }
-				dputs( 0 ){ "#{e.to_s}" }
-				puts e.backtrace
-			end
-		}
+        dputs( 2 ){ "Creating pdfs #{list.inspect}" }
+        `date >> /tmp/cp`
+        pdfs = []
+        dir = File::dirname( list.first )
+        list.sort.each{ |p|
+          dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
+          Docsplit.extract_pdf p, :output => dir
+          dputs( 5 ){ "Finished docsplit" }
+          FileUtils::rm( p )
+          dputs( 5 ){ "Finished rm" }
+          pdfs.push p.sub( /\.[^\.]*$/, '.pdf' )
+        }
+        dputs( 3 ){ "Getting #{pdfs.inspect} out of #{dir}" }
+        all = "#{dir}/000-all.pdf"
+        psn = "#{dir}/000-4pp.pdf"
+        dputs( 3 ){ "Putting it all in one file: pdftk #{pdfs.join( ' ' )} cat output #{all}" }
+        `pdftk #{pdfs.join( ' ' )} cat output #{all}`
+        dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
+        `pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
+        FileUtils::mv( "#{psn}.tmp", psn )
+        dputs( 2 ){ "Finished" }
+      rescue Exception => e  
+        dputs( 0 ){ "Error in thread: #{e.message}" }
+        dputs( 0 ){ "#{e.inspect}" }
+        dputs( 0 ){ "#{e.to_s}" }
+        puts e.backtrace
+      end
+    }
   end
 
-	def prepare_diplomas( pdfs = true )
-		digits = students.size.to_s.size
-		counter = 1
-		dputs( 2 ){ "Diploma_dir is: #{diploma_dir}" }
-		if not File::directory? diploma_dir
-			FileUtils::mkdir( diploma_dir )
-		else
-			FileUtils::rm( Dir.glob( diploma_dir + "/*" ) )
-		end
-		dputs( 2 ){ students.inspect }
-		students.each{ |s|
-			student = Persons.find_by_login_name( s )
-			if student
-				dputs( 2 ){ student.login_name }
-				student_file = "#{diploma_dir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
-				dputs( 2 ){ "Doing #{counter}: #{student.login_name}" }
-				FileUtils::cp( "#{Courses.diploma_dir}/#{ctype.filename.join}", 
-					student_file )
-				update_student_diploma( student_file, student )
-			end
-			counter += 1
-		}
-		if pdfs
-			make_pdfs( Dir.glob( diploma_dir + "/content.xml*" ), Dir.glob( diploma_dir + "/*odt" ) )
-		end
-	end
+  def prepare_diplomas( pdfs = true )
+    digits = students.size.to_s.size
+    counter = 1
+    dputs( 2 ){ "Diploma_dir is: #{diploma_dir}" }
+    if not File::directory? diploma_dir
+      FileUtils::mkdir( diploma_dir )
+    else
+      FileUtils::rm( Dir.glob( diploma_dir + "/*" ) )
+    end
+    dputs( 2 ){ students.inspect }
+    students.each{ |s|
+      student = Persons.find_by_login_name( s )
+      if student
+        dputs( 2 ){ student.login_name }
+        student_file = "#{diploma_dir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
+        dputs( 2 ){ "Doing #{counter}: #{student.login_name}" }
+        FileUtils::cp( "#{Courses.diploma_dir}/#{ctype.filename.join}", 
+          student_file )
+        update_student_diploma( student_file, student )
+      end
+      counter += 1
+    }
+    if pdfs
+      make_pdfs( Dir.glob( diploma_dir + "/content.xml*" ), Dir.glob( diploma_dir + "/*odt" ) )
+    end
+  end
 	
 end

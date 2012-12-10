@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Doesn'r work anymore with empty data/-directory
         - When only main-tabs, they are always faded - not reproducible
          on local version
 	- AfriCompta::check doesn't work anymore
@@ -15,8 +16,8 @@ UI:
 	-2 Print - Adjust text for PDF and Print
 
 FEATURES:
-        -2 Effacer et renommer cours
-        -2 Use Inventory::Rooms in Cours::Modify
+        -2 Use Entities in Course::Modify
+        -2 Renommer cours
         -3 Print student-cards the Markas-way with the idea of Josue and Viviane
         -2 Transfer money from one account to another directly in the interface
 	-2 Make internet.wifi with Self::Internet only, and a link which allows
@@ -101,6 +102,8 @@ Unconfirmed bugs:
 
 
 ** FIXED **:
+        - F 121210: Use Inventory::Rooms in Cours::Modify
+        - F 121210: Delete courses
 	- F 121206: Migration of new data-types: have defaults and offer
          migration-support when changing values
 	- UI121206: Cours::Noter should have a bigger and longer student-list

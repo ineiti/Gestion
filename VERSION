@@ -1,5 +1,13 @@
 Important notices for versions:
 
+- 121210: 0.9.2
+  - Renaming of some views:
+    AdminAccess / Admin/ControlAccess -> AdminRestriction / Admin/Restriction
+    AdminInternet / Admin/InternetSimple -> ../ Admin/Internet
+    AdminTigo / Admin/InternetTigo -> .. / Admin/Tigo
+    InventoryComputers / Inventory/Computers -> InventoryComputer / Inventory/Computer
+    InventoryRoom / Inventory/Rooms -> .. / Inventory/Room
+
 - 121101: 0.9.1
   - version at AlTatawwur
 
