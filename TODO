@@ -1,9 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Doesn'r work anymore with empty data/-directory
-        - When only main-tabs, they are always faded - not reproducible
-         on local version
+        - Course::Modify::Print without student selected still shows
+         pop-up window
+        - Why does IE redirect to stuff like http://admin:3302/?afdj ??
+        - Doesn't work anymore with empty data/-directory
 	- AfriCompta::check doesn't work anymore
 	- 1000 crashes when not operating "properly"
 	
@@ -13,11 +14,13 @@ Security:
 	  lower rights - use an own tab which is not active for non-allowed users
 
 UI:
-	-2 Print - Adjust text for PDF and Print
+	-2 PrintButton - Have a SplitButton with PDF and printers from local
+         and remote computer
 
 FEATURES:
+        -2 Reload Gestion if it fails, log everything
         -2 Use Entities in Course::Modify
-        -2 Renommer cours
+        -2 Rename course
         -3 Print student-cards the Markas-way with the idea of Josue and Viviane
         -2 Transfer money from one account to another directly in the interface
 	-2 Make internet.wifi with Self::Internet only, and a link which allows
@@ -100,8 +103,12 @@ Unconfirmed bugs:
 			-> where is that a problem?
 	- TaskList: sometimes when pressing "list", it takes twice to show everything
 
+To check:
+        - Why are the people refused in Info.rb? -> Added FlagInternetFree
+
 
 ** FIXED **:
+        - B 121211: When deleting course, its data is stille displayed
         - F 121210: Use Inventory::Rooms in Cours::Modify
         - F 121210: Delete courses
 	- F 121206: Migration of new data-types: have defaults and offer

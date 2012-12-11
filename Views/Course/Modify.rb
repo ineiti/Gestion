@@ -32,6 +32,7 @@ class CourseModify < View
         gui_vbox :nogroup do
           show_list :students
           show_button :bulk_add, :del_student, :edit_student, :print_student
+          #show_split_button :print_student, %w( PDF HP_LaserJet )
         end
       end
       gui_window :students_bulk do

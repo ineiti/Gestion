@@ -57,7 +57,7 @@ class Persons < Entities
         FileUtils::mkdir( cdir )
       end
       @print_card = OpenPrint.new( 
-        "#{ddir}/carte_etudiant.odg",	"#{ddir}/cartes" )
+        "#{ddir}/carte_etudiant.odg", "#{ddir}/cartes" )
     end
 
     LOAD_DATA

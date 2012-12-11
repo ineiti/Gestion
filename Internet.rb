@@ -75,6 +75,10 @@ module Internet
         ddputs(3){"User #{user.login_name} is on freesurf"}
         return true
       end
+      if Permission.can_view( user.permissions, "FlagInternetFree" )
+        ddputs(3){"User #{user.login_name} has FlagInternetFree" }
+        return true
+      end
     end
     ddputs(3){"Found nothing"}
     return false

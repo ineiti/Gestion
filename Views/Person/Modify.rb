@@ -13,7 +13,10 @@ class PersonModify < View
           show_str_ro :person_id
           show_block :address
         end
-        show_button :save, :print_student
+        gui_hbox :nogroup do
+          show_button :save, :print_student
+          #show_split_button :print_student, %w( PDF HP_LaserJet )
+        end
       end
 
       gui_vbox :nogroup do
@@ -46,13 +49,13 @@ class PersonModify < View
         file = person.print
         if file.class == String
           rep = reply( :window_show, :printing ) +
-						reply( :update, :msg_print => "Click to download:<ul>" +
-							"<li><a href=\"#{file}\">#{file}</a></li></ul>" )
+            reply( :update, :msg_print => "Click to download:<ul>" +
+              "<li><a href=\"#{file}\">#{file}</a></li></ul>" )
         end
       when "close"
         rep = reply( :window_hide )
       end
-#      reply( 'update', get_form_data( person ) )
+      #      reply( 'update', get_form_data( person ) )
     end
     rep + rpc_update( session )
   end
@@ -63,7 +66,7 @@ class PersonModify < View
       rep = { "#{field}" => data }
     end
     update_layout +
-			reply( 'update', rep ) + rpc_update( session )
+      reply( 'update', rep ) + rpc_update( session )
   end
 
   def rpc_list_choice( session, name, data )
@@ -71,7 +74,7 @@ class PersonModify < View
       dputs( 2 ){ "Got data: #{data.inspect}" }
       if data['persons'][0] and p = Persons.find_by_login_name( data['persons'].flatten[0])
         reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) ) +
-					reply( :focus, :credit_add )
+          reply( :focus, :credit_add )
       end
     end
   end
@@ -84,6 +87,6 @@ class PersonModify < View
 
   def rpc_update( session )
     super( session ) +
-			reply( :parent, reply( :focus, :search ) )
+      reply( :parent, reply( :focus, :search ) )
   end
 end

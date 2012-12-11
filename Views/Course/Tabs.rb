@@ -36,7 +36,8 @@ class CourseTabs < View
     end
 
     reply( "empty", [:courses] ) +
-      reply( "update", { :courses => Courses.list_courses } )
+      reply( "update", { :courses => Courses.list_courses } ) +
+      reply( :child, reply(:empty, [:students]) )
   end
 
   def rpc_list_choice( session, name, args )
