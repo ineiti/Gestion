@@ -47,7 +47,7 @@ class PersonModify < View
         rep = reply( 'update', Persons.save_data( data ) )
       when "print_student"
         rep = rpc_print( session, name, data )
-        person.lp_cmd = arg_printer( session, name )
+        person.lp_cmd = cmd_printer( session, name )
         file = person.print
         if file.class == String
           rep += reply( :window_show, :printing ) +
