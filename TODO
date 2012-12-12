@@ -1,8 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Course::Modify::Print without student selected still shows
-         pop-up window
+        - Auto-update = 0 makes reload very fast -> Course:Diplomas:do_diplomas
         - Why does IE redirect to stuff like http://admin:3302/?afdj ??
         - Doesn't work anymore with empty data/-directory
 	- AfriCompta::check doesn't work anymore
@@ -14,8 +13,6 @@ Security:
 	  lower rights - use an own tab which is not active for non-allowed users
 
 UI:
-	-2 PrintButton - Have a SplitButton with PDF and printers from local
-         and remote computer
 
 FEATURES:
         -2 Reload Gestion if it fails, log everything
@@ -105,9 +102,13 @@ Unconfirmed bugs:
 
 To check:
         - Why are the people refused in Info.rb? -> Added FlagInternetFree
+	-2/4 PrintButton - Have a SplitButton with PDF and printers from local
+         and remote computer
 
 
 ** FIXED **:
+        - B 121212: Course::Modify::Print without student selected still shows
+         pop-up window
         - B 121211: When deleting course, its data is stille displayed
         - F 121210: Use Inventory::Rooms in Cours::Modify
         - F 121210: Delete courses

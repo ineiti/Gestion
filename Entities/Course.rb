@@ -269,7 +269,7 @@ base_gestion
     end
   end
 
-  def print_presence
+  def print_presence( lp_cmd )
     return false if not teacher or teacher.count == 0
     teacher_person = Entities.Persons.find_by_login_name( teacher[0] )
     return false if not start or not data_get( :end ) or students.count == 0 or not teacher_person
@@ -286,6 +286,7 @@ base_gestion
     }
     dputs( 3 ){ "Students are: #{studs.inspect}" }
 
+    @proxy.print_presence.lp_cmd = lp_cmd
     @proxy.print_presence.print( studs.flatten(1) + [
         [ /Teacher/, teacher_person.full_name ],
         [ /Course_name/, name ],
