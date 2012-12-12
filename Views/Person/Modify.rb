@@ -1,6 +1,7 @@
 # Allows to add, modify and delete persons
 
 class PersonModify < View
+  include PrintButton
   def layout
     set_data_class :Persons
     @update = true
@@ -14,7 +15,8 @@ class PersonModify < View
           show_block :address
         end
         gui_hbox :nogroup do
-          show_button :save, :print_student
+          show_print :save, :print_student
+          #show_button :save, :print_student
           #show_split_button :print_student, %w( PDF HP_LaserJet )
         end
       end
@@ -46,12 +48,13 @@ class PersonModify < View
         data.delete("internet_none")
         rep = reply( 'update', Persons.save_data( data ) )
       when "print_student"
-        file = person.print
-        if file.class == String
-          rep = reply( :window_show, :printing ) +
-            reply( :update, :msg_print => "Click to download:<ul>" +
-              "<li><a href=\"#{file}\">#{file}</a></li></ul>" )
-        end
+        rep = rpc_print( session, name, data )
+        #file = person.print
+        #if file.class == String
+        #  rep += reply( :window_show, :printing ) +
+        #    reply( :update, :msg_print => "Click to download:<ul>" +
+        #      "<li><a href=\"#{file}\">#{file}</a></li></ul>" )
+        #end
       when "close"
         rep = reply( :window_hide )
       end
@@ -74,7 +77,7 @@ class PersonModify < View
       dputs( 2 ){ "Got data: #{data.inspect}" }
       if data['persons'][0] and p = Persons.find_by_login_name( data['persons'].flatten[0])
         reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) ) +
-          reply( :focus, :credit_add )
+          reply( :focus, :credit_add ) + reply_print( session )
       end
     end
   end
@@ -87,6 +90,7 @@ class PersonModify < View
 
   def rpc_update( session )
     super( session ) +
-      reply( :parent, reply( :focus, :search ) )
+      reply( :parent, reply( :focus, :search ) ) +
+      reply_print( session )
   end
 end

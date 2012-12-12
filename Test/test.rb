@@ -21,8 +21,8 @@ qooxView = QooxView.init( '../Entities', '../Views' )
 
 #require 'ge_person'
 #require 'ge_login'
-#require 'ge_view'
+require 'ge_view'
 #require 'ge_tasks'
 #require 'ge_course'
 #require 'ge_internet'
-require 'ge_info'
+#require 'ge_info'
