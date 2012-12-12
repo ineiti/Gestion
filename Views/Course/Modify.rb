@@ -13,6 +13,8 @@
 # country - the default country
 
 class CourseModify < View
+  include PrintButton
+  
   def layout
     set_data_class :Courses
     @update = true
@@ -28,12 +30,16 @@ class CourseModify < View
       end
       gui_vbox :nogroup do
         show_block :content
-        show_button :print_presence
+        
+        show_print :print_presence
         gui_vbox :nogroup do
           show_list :students
-          show_button :bulk_add, :del_student, :edit_student, :print_student
-          #show_split_button :print_student, %w( PDF HP_LaserJet )
         end
+        gui_vbox :nogroup do
+          show_button :bulk_add, :del_student, :edit_student
+          show_print :print_student
+        end
+        #show_split_button :print_student, %w( PDF HP_LaserJet )
       end
       gui_window :students_bulk do
         show_text :names
@@ -94,36 +100,40 @@ class CourseModify < View
   end
 
   def rpc_button_print_student( session, data )
-    rep = []
+    rep = ret = []
     data['students'].each{|s|
       student = Persons.find_by_login_name( s )
       dputs( 1 ){ "Printing student #{student.full_name}" }
-      rep.push student.print( rep.length )
+      rep.push 1 # student.print( rep.length )
     }
     if data['students']
       if rep[0].class == String
-        reply( :window_show, :printing ) +
+        ret = reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Click on one of the links:<ul>" +
             rep.collect{|r| "<li><a href=\"#{r}\">#{r}</a></li>" }.join('') +
             "</ul>" )
-      else
-        reply( :window_show, :printing ) +
+      elsif rep.length > 0
+        ret = reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Impression de<ul><li>#{data['students'].join('</li><li>')}</li></ul>en cours" )
       end
     end
+    ret + rpc_print( session, :print_student, data )
   end
 
   def rpc_button_print_presence( session, data )
-    case rep = Courses.find_by_name( data['name'] ).print_presence
-    when true
-      reply( :window_show, :printing ) +
-        reply( :update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours" )
-    when false
-      reply( "window_show", "missing_data" ) +
-        reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
-    else
-      reply( "window_show", "missing_data" ) +
-        reply( "update", :missing => "Click on the link: <a href=\"#{rep}\">PDF</a>" )
+    ret = rpc_print( session, :print_presence, data )
+    if data['name'] and data['name'].length > 0
+      case rep = Courses.find_by_name( data['name'] ).print_presence
+      when true
+        ret + reply( :window_show, :printing ) +
+          reply( :update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours" )
+      when false
+        ret + reply( "window_show", "missing_data" ) +
+          reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
+      else
+        ret + reply( "window_show", "missing_data" ) +
+          reply( "update", :missing => "Click on the link: <a href=\"#{rep}\">PDF</a>" )
+      end
     end
   end
 
@@ -139,17 +149,17 @@ class CourseModify < View
     if data['names'] and users = data['names'].split("\n")
       person = Entities.Persons.create( {:first_name => users.shift,
           :permissions => %w( student ), :town => @town, :country => @country })
-			#person.email = "#{person.login_name}@ndjair.net"
+      #person.email = "#{person.login_name}@ndjair.net"
       course.students.push( person.login_name )
     end
     if users.length > 0
       reply( "update", { :names => users.join("\n") } ) +
-				update_students( course ) +
+        update_students( course ) +
         reply( "callback_button", "bulk_students" )
     else
       update_students( course ) +
-				reply( :update, {:names => ""} ) +
-				reply( "window_hide" )
+        reply( :update, {:names => ""} ) +
+        reply( "window_hide" )
     end
   end
 
@@ -174,7 +184,8 @@ class CourseModify < View
 
   def rpc_update( session )
     reply( 'empty', [:students] ) +
-      super( session )
+      super( session ) +
+      reply_print( session )
   end
 
 end
