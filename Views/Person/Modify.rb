@@ -16,8 +16,6 @@ class PersonModify < View
         end
         gui_hbox :nogroup do
           show_print :save, :print_student
-          #show_button :save, :print_student
-          #show_split_button :print_student, %w( PDF HP_LaserJet )
         end
       end
 

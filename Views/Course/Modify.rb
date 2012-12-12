@@ -39,7 +39,6 @@ class CourseModify < View
           show_button :bulk_add, :del_student, :edit_student
           show_print :print_student
         end
-        #show_split_button :print_student, %w( PDF HP_LaserJet )
       end
       gui_window :students_bulk do
         show_text :names
