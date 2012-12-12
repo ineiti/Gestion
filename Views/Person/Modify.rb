@@ -47,12 +47,13 @@ class PersonModify < View
         rep = reply( 'update', Persons.save_data( data ) )
       when "print_student"
         rep = rpc_print( session, name, data )
-        #file = person.print
-        #if file.class == String
-        #  rep += reply( :window_show, :printing ) +
-        #    reply( :update, :msg_print => "Click to download:<ul>" +
-        #      "<li><a href=\"#{file}\">#{file}</a></li></ul>" )
-        #end
+        person.lp_cmd = arg_printer( session, name )
+        file = person.print
+        if file.class == String
+          rep += reply( :window_show, :printing ) +
+            reply( :update, :msg_print => "Click to download:<ul>" +
+              "<li><a href=\"#{file}\">#{file}</a></li></ul>" )
+        end
       when "close"
         rep = reply( :window_hide )
       end

@@ -399,6 +399,10 @@ class Person < Entity
     }
     orig
   end
+  
+  def lp_cmd=(v)
+    @proxy.print_card.lp_cmd = v
+  end
 
   def print( counter = nil )
     ctype = "Visiteur"
