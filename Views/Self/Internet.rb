@@ -8,10 +8,10 @@ class SelfInternet < View
     @isp = JSON.parse( $lib_net.call( :isp_params ) )
 
     gui_vbox do
+      show_html :connection_status
       show_int_ro :credit
       show_int_ro :users_connected
       show_int_ro :bytes_left
-      show_html :connection_status
       show_button :connect, :disconnect
     end
   end

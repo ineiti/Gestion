@@ -1,6 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - when Gestion.rb is restarted, and a connected user wants to use it,
+         it crashes
+        - when user connected and no credit, then credit is added, it doesn't
+         show in the user's interface
         - Auto-update = 0 makes reload very fast -> Course:Diplomas:do_diplomas
         - Why does IE redirect to stuff like http://admin:3302/?afdj ??
         - Doesn't work anymore with empty data/-directory
@@ -13,6 +17,7 @@ Security:
 	  lower rights - use an own tab which is not active for non-allowed users
 
 UI:
+        - keep focus for <enter> in current group
 
 FEATURES:
         -2 Reload Gestion if it fails, log everything
@@ -107,6 +112,9 @@ To check:
 
 
 ** FIXED **:
+        - B 121213: Crashes on Self::Cash
+        - UI121213: "local" printer is in fact "server"
+        - F 121213: Ajouter permissions "internet" to new users
         - B 121212: Course::Modify::Print without student selected still shows
          pop-up window
         - B 121211: When deleting course, its data is stille displayed

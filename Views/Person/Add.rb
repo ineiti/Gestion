@@ -23,6 +23,7 @@ class PersonAdd < View
     if data[:login_prop]
       data[:login_name] = data[:login_prop]
       person = Persons.create( data )
+      person.permissions = ["internet"]
       reply( :empty ) +
         reply( :switch_tab, :PersonModify ) +
         reply( :parent, View.PersonTabs.rpc_callback_search( session,
