@@ -14,60 +14,20 @@ class PersonAdd < View
       show_arg :family_name, :hidden => true
       show_str :login_prop
       show_button :add_user, :clear
-      gui_window :new_user do
-        show_html :msg
-        #show_str_ro :new_login
-        #show_str_ro :new_pass
-        show_button :modify, :print_student
-      end
-      gui_window :printing do
-        show_html :msg_print
-        show_button :close
-      end
     end
   end
 
   def rpc_button_add_user( session, data )
     data.to_sym!
-    dputs( 0 ){ "Pressed button accept with #{data.inspect}" }
+    dputs( 3 ){ "Pressed button accept with #{data.inspect}" }
     if data[:login_prop]
       data[:login_name] = data[:login_prop]
       person = Persons.create( data )
-      reply( 'update', get_form_data( person ) ) +
-      reply( 'window_show', 'new_user') +
-      reply( 'update', { :msg => "<h1>New user</h1>"+
-        "<table border='1'><tr><td>Login</td><td>#{person.login_name}</td></tr>"+
-      "<tr><td>Password</td><td>#{person.password_plain}</td></tr></table>",
-      :login_prop => person.login_name } )
+      reply( :empty ) +
+        reply( :switch_tab, :PersonModify ) +
+        reply( :parent, View.PersonTabs.rpc_callback_search( session,
+          "search" => person.login_name) )
     end
-  end
-
-  def rpc_button_print_student( session, data )
-    student = Persons.find_by_login_name( data['login_prop'] )
-    dputs( 1 ){ "Printing student #{student.full_name}" }
-    file = student.print
-    if file.class == String
-      reply( :window_hide ) +
-      reply( :window_show, :printing ) +
-      reply( :update, :msg_print => "Click to download:<ul>" +
-            "<li><a href=\"#{file}\">#{file}</a></li></ul>" )
-    else
-      rpc_button_OK( session, data )
-    end
-  end
-  
-  def rpc_button_close( session, data )
-    reply( :window_hide ) +
-    rpc_button_modify( session, data )
-  end
-
-  def rpc_button_modify( session, data )
-    reply( :empty ) +
-    reply( :window_hide ) +
-    #reply( :init_values, [ :PersonTabs, { :search => data['login_prop'], :persons => [] } ] ) +
-    reply( :switch_tab, :PersonModify ) +
-    reply( :parent, View.PersonTabs.rpc_callback_search( session,
-      "search" => data['login_prop']) )
   end
 
   def rpc_update( session )
