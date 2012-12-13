@@ -5,7 +5,8 @@ class PersonTabs < View
 
     gui_vboxg :nogroup do
       show_list_single :persons, "[]", :callback => true
-      show_str :search, :callback => :search
+      show_str :search #, :callback => :search
+      show_button :start_search
       #show_button :start_test
 			
       gui_window :test do
@@ -23,6 +24,10 @@ class PersonTabs < View
   def rpc_button_close( session, args )
     sleep 2
     reply( :window_hide )
+  end
+  
+  def rpc_button_start_search( session, args )
+    rpc_callback_search( session, args )
   end
   
   def rpc_update_view( session, args = nil )
@@ -46,7 +51,12 @@ class PersonTabs < View
 
     s = data['search']
 		
-    if ( not s ) or ( s and s.length < 3 )
+    if ( not s )
+      return reply( :focus, :search )
+    end
+    
+    # Slow typer, increase wait
+    if ( s and s.length < 3 )
       return reply( :focus, :search )
     end
 		

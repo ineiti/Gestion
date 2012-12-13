@@ -47,7 +47,7 @@ Permission.add( 'internet', 'SelfInternet,SelfChat', 'default' )
 Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit,AdminTigo,FlagInternetFree', 'student' )
 Permission.add( 'teacher', 'CourseGrade,PersonModify,AdminRestriction', 'assistant' )
-Permission.add( 'secretary', 'SelfCash,SelfServices,CourseModify,PersonAdd,' + 
+Permission.add( 'secretary', 'SelfCash,SelfServices,CourseModify,PersonAdd,PersonCredit,' + 
     'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
 Permission.add( 'director', 'CourseAdd', 'secretary' )
 Permission.add( 'accounting', 'TransferCash,PersonCredit,SelfCash', 'internet' )

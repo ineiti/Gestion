@@ -52,7 +52,7 @@ class Info < RPCQooxdooPath
   end
   
   def self.clientUse( args )
-    return "nopay"
+    #return "nopay"
     ddputs(3){"Client use with #{args.inspect}"}
     user = Persons.match_by_login_name( args[:user] )
     if user
@@ -72,7 +72,7 @@ class Info < RPCQooxdooPath
   end
 
   def self.autoConnect( args )
-    return "yes"
+    #return "yes"
     dputs(3){"AutoConnecting for #{args.inspect}"}
     user = Persons.match_by_login_name( args[:user] )
     if user 
