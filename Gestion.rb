@@ -18,7 +18,7 @@ if not FileTest.exists? CONFIG_FILE
   end
 end
 
-DEBUG_LVL=2
+DEBUG_LVL=4
 
 begin
   require 'QooxView'

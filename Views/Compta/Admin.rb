@@ -6,9 +6,13 @@ class ComptaAdmin < View
     @order = 10
 		
     gui_hbox do
-      show_button :archive
-      show_button :update_totals
+      show_button :archive, :update_totals, :clean_up
+      gui_window :result do
+        show_html :txt
+        show_button :close
+      end
     end
+    
   end
 	
   def rpc_button_archive( session, data )
@@ -19,5 +23,17 @@ class ComptaAdmin < View
     if session.owner.compta_due
       session.owner.compta_due.src.update_total
     end
+  end
+  
+  def rpc_button_clean_up( session, data )
+    count_mov, bad_mov, 
+      count_acc, bad_acc = AccountRoot.clean
+    reply( :window_show, :result ) +
+      reply( :update, :txt => "Movements total / bad: #{count_mov}/#{bad_mov}<br>" +
+        "Accounts total / bad: #{count_acc}/#{bad_acc}")
+  end
+  
+  def rpc_button_close( session, data )
+    reply( :window_hide )
   end
 end
