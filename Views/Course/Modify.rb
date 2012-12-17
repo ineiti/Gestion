@@ -99,8 +99,9 @@ class CourseModify < View
   end
 
   def rpc_button_print_student( session, data )
-    rep = ret = []
-    lp_cmd = cmd_printer( session, name )
+    rep = []
+    ret = rpc_print( session, :print_student, data )
+    lp_cmd = cmd_printer( session, :print_student )
     data['students'].each{|s|
       student = Persons.find_by_login_name( s )
       dputs( 1 ){ "Printing student #{student.full_name}" }
@@ -118,12 +119,12 @@ class CourseModify < View
           reply( :update, :msg_print => "Impression de<ul><li>#{data['students'].join('</li><li>')}</li></ul>en cours" )
       end
     end
-    ret + rpc_print( session, :print_student, data )
+    ret
   end
 
   def rpc_button_print_presence( session, data )
     ret = rpc_print( session, :print_presence, data )
-    lp_cmd = cmd_printer( session, name )
+    lp_cmd = cmd_printer( session, :print_presence )
     if data['name'] and data['name'].length > 0
       case rep = Courses.find_by_name( data['name'] ).print_presence( lp_cmd )
       when true
