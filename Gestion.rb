@@ -6,6 +6,7 @@
 # - Login: - for payable laptop web-access
 #          - for students
 
+DEBUG_LVL=2
 VERSION_GESTION="0.9.2-pre1"
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -17,8 +18,6 @@ if not FileTest.exists? CONFIG_FILE
     %x[ cp config.yaml.default config.yaml ]
   end
 end
-
-DEBUG_LVL=4
 
 begin
   require 'QooxView'
