@@ -6,8 +6,8 @@ class Welcome < View
       person and dputs( 3 ){ "Found login #{person.data.inspect}" }
       if person then
         session = Session.new( person )
-        return reply( "session_id", person.session_id ) +
-        reply( "list", View.list( session ) )
+        return reply( :session_id, person.session_id ) +
+          View.rpc_list( session )
       else
         return nil
       end
@@ -34,10 +34,10 @@ class Welcome < View
       session = Session.new( person )
       person.update_credit
       return reply( "session_id", person.session_id ) +
-      reply( "list", View.list( session ) )
+        reply( "list", View.list( session ) )
     else
       reply( "window_show", "login_failed" ) +
-      reply( "update", {:reason => person ? "Password wrong" : "User doesn't exist" })
+        reply( "update", {:reason => person ? "Password wrong" : "User doesn't exist" })
     end
   end
 

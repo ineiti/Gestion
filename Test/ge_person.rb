@@ -14,10 +14,10 @@ class Hash
   end
 end
 
-Permission.add( 'default', '.*' )
-
 class TC_Person < Test::Unit::TestCase
   def setup
+    Permission.add( 'default', '.*' )
+
     Entities.delete_all_data()
     FileUtils.cp( "db.testGestion", "data/compta.db" )
 
@@ -50,6 +50,8 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_addcash
+    @josue.disable_africompta
+    @surf.disable_africompta
     assert_equal @josue, Entities.Persons.find_by_login_name( "josue" )
     assert_equal @surf, Entities.Persons.find_by_login_name( "surf" )
     assert_equal @admin, Entities.Persons.find_by_login_name( "admin" )
@@ -60,21 +62,21 @@ class TC_Person < Test::Unit::TestCase
     josue_due = @josue.credit_due.to_i
     dputs( 0 ){ "surf_credit: #{surf_credit} - josue_due: #{josue_due}" }
     # Josue puts 500 on "surf"s account
-    View.PersonModify.rpc_button( session, "add_credit",
+    View.PersonCredit.rpc_button( session, "add_credit",
       {'person_id' => 2, 'login_name' => 'surf', 'credit_add' => 500 } )
     assert_equal 500, @surf.credit.to_i - surf_credit, "Credit"
     assert_equal 500, @josue.credit_due.to_i - josue_due, "Credit_due"
-    dputs( 0 ){ @surf.log_list.inspect }
-    dputs( 0 ){ @josue.log_list.inspect }
-    log_list = [ @surf.log_list[2], @josue.log_list[3]]
-    dputs( 0 ){ log_list.inspect }
+    dputs( 0 ){ "surf.log_list is #{@surf.log_list.inspect}" }
+    dputs( 0 ){ "josue.log_list #{@josue.log_list.inspect}" }
+    log_list = [ @surf.log_list.last, @josue.log_list.last]
+    dputs( 0 ){ "log_list #{log_list.inspect}" }
     log_list.undate
     assert_equal( {:data_class_id=>2, :data_field=>:credit, :data_value=>"500",
-        :logaction_id=>15, :undo_function=>:undo_set_entry, :data_class=>"Person",
-        :msg=>"1:500"},
+        :logaction_id=>31, :undo_function=>:undo_set_entry, :data_class=>"Person",
+        :msg=>"1:500", :data_old=>0},
       log_list[0])
     assert_equal( {:data_value=>josue_due + 500, :undo_function=>:undo_set_entry,
-        :logaction_id=>22, :data_old=>josue_due, :data_class_id=>1,
+        :logaction_id=>32, :data_old=>josue_due, :data_class_id=>1,
         :data_class=>"Person", :msg=>"credit pour -surf:500-", :data_field=>:credit_due},
       log_list[1] )
   end
@@ -112,7 +114,8 @@ class TC_Person < Test::Unit::TestCase
         :data_class=>"Person",
         :undo_function=>:undo_set_entry,
         :data_old=>"super123",
-        :logaction_id=>13},
+        :msg=>nil,
+        :logaction_id=>27},
       @admin.log_list[-1].undate )
   end
 
@@ -120,10 +123,12 @@ class TC_Person < Test::Unit::TestCase
     @admin.first_name = "super"
     assert_equal( {:data_class_id=>0,
         :data_field=>:first_name,
-        :data_value=>"super",
+        :data_value=>"Super",
         :data_class=>"Person",
         :undo_function=>:undo_set_entry,
-        :logaction_id=>13},
+        :data_old=>nil,
+        :msg=>nil,
+        :logaction_id=>27},
       @admin.log_list[-1].undate )
   end
 end

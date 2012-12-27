@@ -268,6 +268,14 @@ class Person < Entity
     update_account_due
     data_set( :credit, data_get( :credit ).to_i )
   end
+  
+  # This is only for testing - don't use in real life!
+  def disable_africompta
+    credit = get_credit
+    credit = 0 if not credit
+    data_set( :credit_due, credit )
+    @compta_due = nil
+  end
 
   def update_account_due
     c = get_config( "Root::Lending", :compta_due, :src )
@@ -312,7 +320,7 @@ class Person < Entity
       dputs( 2 ){ "credit is #{@compta_due.get_credit}" }
       ( @compta_due.get_credit * 1000.0 + 0.5 ).to_i
     else
-      self.credit_due
+      data_get( :credit_due )
     end
   end
 
@@ -332,7 +340,7 @@ class Person < Entity
     move_cash( credit, "credit pour -#{client.login_name}:#{credit}-")
     log_msg( "AddCash", "#{self.login_name} added #{credit} for #{client.login_name}: " +
         "#{credit_before} + #{credit} = #{client.credit}" )
-    log_msg( "AddCash", "Total due: #{self.credit_due}")
+    log_msg( "AddCash", "Total due: #{data_get :credit_due}")
   end
 
   def move_cash( credit, msg )
@@ -342,7 +350,7 @@ class Person < Entity
         "Gestion: #{msg}" )
       credit_due = ( credit_due * 1000.0 + 0.5 ).to_i
     else
-      credit_due = self.credit_due.to_i + credit.to_i
+      credit_due = data_get( :credit_due ).to_i + credit.to_i
       data_set_log( :credit_due, credit_due, msg )
     end
   end

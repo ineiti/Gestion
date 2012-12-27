@@ -5,6 +5,7 @@ sleep 2
 cd $( dirname $0 )/..
 if pgrep -f ruby.*Gestion; then
   logger -s "Killing old Gestion"
+  touch /tmp/stop_gestion
   pkill -f ruby.*Gestion
   logger -s "Waiting for 10 seconds"
   sleep 10
@@ -14,4 +15,4 @@ fi
 #logger "Deleting old LogAction"
 #rm data/LogAction*
 logger -s "Starting new Gestion"
-screen -S Gestion -d -m ./Gestion.rb
+screen -S Gestion -d -m Binaries/run_gestion
