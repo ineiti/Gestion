@@ -7,7 +7,6 @@ BUGS:
          show in the user's interface
         - Auto-update = 0 makes reload very fast -> Course:Diplomas:do_diplomas
         - Why does IE redirect to stuff like http://admin:3302/?afdj ??
-        - Doesn't work anymore with empty data/-directory
 	- AfriCompta::check doesn't work anymore
 	- 1000 crashes when not operating "properly"
 	
@@ -22,11 +21,11 @@ UI:
 FEATURES:
         -2 Use Entities in Course::Modify
         -2 Rename course
-        -3 Print student-cards the Markas-way with the idea of Josue and Viviane
         -2 Transfer money from one account to another directly in the interface
 	-2 Make internet.wifi with Self::Internet only, and a link which allows
 	  to do the infamous internet.wifi/?pass=&user=
         -2 keep session-ids over restarts
+        -3 Print student-cards the Markas-way with the idea of Josue and Viviane
         -3 take Admin::ControlAccess from Rooms-definition
         -3 Add a status-bar on bottom for progresses and information like:
            printing, progress, messages, connect/disconnect, ...
