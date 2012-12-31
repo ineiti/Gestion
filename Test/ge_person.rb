@@ -55,8 +55,8 @@ class TC_Person < Test::Unit::TestCase
     assert_equal @josue, Entities.Persons.find_by_login_name( "josue" )
     assert_equal @surf, Entities.Persons.find_by_login_name( "surf" )
     assert_equal @admin, Entities.Persons.find_by_login_name( "admin" )
-    Session.new( @surf )
-    session = Session.new( @josue )
+    Sessions.create( @surf )
+    session = Sessions.create( @josue )
 
     surf_credit = @surf.credit.to_i
     josue_due = @josue.credit_due.to_i

@@ -436,7 +436,7 @@ class Person < Entity
   end
 	
   def session
-    Session.find_by_id( self.session_id )
+    Sessions.find_by_sid( self.session_id )
   end
 	
   def first_name=(v)

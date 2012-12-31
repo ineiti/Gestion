@@ -50,7 +50,7 @@ class TC_Internet < Test::Unit::TestCase
     Entities.delete_all_data()
     $lib_net = LibNet.new
     @test = Persons.create( :login_name => "test", :credit => 50 )
-    Session.new( @test ).web_req = Web_req.new( 10 )
+    Sessions.create( @test ).web_req = Web_req.new( 10 )
     @test2 = Persons.create( :login_name => "test2", :credit => 50 )
     @free = Persons.create( :login_name => "free", :credit => 50, 
       :groups => ['freesurf'] )

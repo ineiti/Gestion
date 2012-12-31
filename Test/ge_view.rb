@@ -17,8 +17,8 @@ class TC_View < Test::Unit::TestCase
   
   def test_openprint
     mm = PersonModify.new
-    sa = Session.new( @admin )
-    sj = Session.new( @josue )
+    sa = Sessions.create( @admin )
+    sj = Sessions.create( @josue )
     PersonModify.class_eval("
       def get_remote_printers(ip)
         return []

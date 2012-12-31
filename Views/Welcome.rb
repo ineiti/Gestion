@@ -5,7 +5,7 @@ class Welcome < View
       person = Entities.Persons.find_by_login_name( $config[:autologin] )
       person and dputs( 3 ){ "Found login #{person.data.inspect}" }
       if person then
-        session = Session.new( person )
+        session = Sessions.create( person )
         return reply( :session_id, person.session_id ) +
           View.rpc_list( session )
       else
@@ -31,7 +31,7 @@ class Welcome < View
     if person and person.check_pass( password ) then
       dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
       dputs( 2 ){ "Authenticated person #{person.login_name}" }
-      session = Session.new( person )
+      session = Sessions.create( person )
       person.update_credit
       return reply( "session_id", person.session_id ) +
         reply( "list", View.list( session ) )

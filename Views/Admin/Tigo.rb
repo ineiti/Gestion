@@ -87,7 +87,7 @@ class AdminTigo < View
     code = data['code'].gsub( /[^0-9]/, '' )
     dputs( 0 ){ "Code is #{code}" }
     lib_net_args :isp_tigo_credit_add, code
-    rpc_update( session )
+    rpc_update( session ) + reply( :empty, [:code])
   end
 
   def rpc_button_add_promotion( session, data )
