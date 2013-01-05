@@ -10,12 +10,16 @@ require 'LibNet'
 
 $lib_net = LibNet.new
 
-Permission.add( 'default', 'View,Welcome' )
-Permission.add( 'admin', '.*', '.*' )
-Permission.add( 'internet', 'Internet,PersonShow', 'default' )
-Permission.add( 'student', '', 'internet' )
-Permission.add( 'professor', '', 'student' )
-Permission.add( 'secretary', 'PersonModify', 'professor' )
+def permissions_init
+  Permission.clear
+  Permission.add( 'default', 'View,Welcome' )
+  Permission.add( 'admin', '.*', '.*' )
+  Permission.add( 'internet', 'Internet,PersonShow', 'default' )
+  Permission.add( 'student', '', 'internet' )
+  Permission.add( 'professor', '', 'student' )
+  Permission.add( 'secretary', 'PersonModify', 'professor' )
+end
+permissions_init
 
 qooxView = QooxView.init( '../Entities', '../Views' )
 
@@ -24,6 +28,5 @@ require 'ge_view'
 require 'ge_tasks'
 require 'ge_internet'
 require 'ge_info'
-# Attention: re-writes permissions, can be dangerous!
 require 'ge_course'
 require 'ge_person'

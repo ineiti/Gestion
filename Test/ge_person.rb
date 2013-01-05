@@ -5,11 +5,19 @@ class Array
     self.each{|l| l.undate}
     self
   end
+  def unlogid
+    self.each{|l| l.unlogid}
+    self
+  end
 end
 
 class Hash
   def undate
     self.delete( :date_stamp )
+    self
+  end
+  def unlogid
+    self.delete( :logaction_id )
     self
   end
 end
@@ -45,6 +53,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def teardown
+    permissions_init
     Entities.Persons.save
     Entities.LogActions.save
   end
@@ -71,14 +80,15 @@ class TC_Person < Test::Unit::TestCase
     log_list = [ @surf.log_list.last, @josue.log_list.last]
     dputs( 0 ){ "log_list #{log_list.inspect}" }
     log_list.undate
+    log_list.unlogid
     assert_equal( {:data_class_id=>2, :data_field=>:credit, :data_value=>"500",
-        :logaction_id=>31, :undo_function=>:undo_set_entry, :data_class=>"Person",
+        :undo_function=>:undo_set_entry, :data_class=>"Person",
         :msg=>"1:500", :data_old=>0},
-      log_list[0])
+      log_list[0].unlogid )
     assert_equal( {:data_value=>josue_due + 500, :undo_function=>:undo_set_entry,
-        :logaction_id=>32, :data_old=>josue_due, :data_class_id=>1,
+        :data_old=>josue_due, :data_class_id=>1,
         :data_class=>"Person", :msg=>"credit pour -surf:500-", :data_field=>:credit_due},
-      log_list[1] )
+      log_list[1].unlogid )
   end
 
   def test_services
@@ -114,9 +124,8 @@ class TC_Person < Test::Unit::TestCase
         :data_class=>"Person",
         :undo_function=>:undo_set_entry,
         :data_old=>"super123",
-        :msg=>nil,
-        :logaction_id=>27},
-      @admin.log_list[-1].undate )
+        :msg=>nil},
+      @admin.log_list[-1].undate.unlogid )
   end
 
   def test_log_change
@@ -127,8 +136,7 @@ class TC_Person < Test::Unit::TestCase
         :data_class=>"Person",
         :undo_function=>:undo_set_entry,
         :data_old=>nil,
-        :msg=>nil,
-        :logaction_id=>27},
-      @admin.log_list[-1].undate )
+        :msg=>nil},
+      @admin.log_list[-1].undate.unlogid )
   end
 end

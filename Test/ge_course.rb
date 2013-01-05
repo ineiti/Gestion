@@ -30,6 +30,7 @@ class TC_Course < Test::Unit::TestCase
   end
   
   def teardown
+    permissions_init
     #Entities.Persons.save
     #Entities.LogActions.save
   end
