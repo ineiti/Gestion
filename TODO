@@ -17,12 +17,11 @@ UI:
         - keep focus for <enter> in current group
 
 FEATURES:
-        -3 Print student-cards the Markas-way with the idea of Josue and Viviane
-        -2 Use Entities in Course::Modify
-        -2 Rename course
         -2 Transfer money from one account to another directly in the interface
-	-3 check diploma-templates
+        -3 Print student-cards the Markas-way with the idea of Josue and Viviane
 	-4 Courses::Days - add other days to the list
+	-3 check diploma-templates
+        -2 Rename course
 	- AfriCompta-support:
 		-4 Don't show archived and deleted accounts, but do stats on them
 		-3 Delete accounts
@@ -112,6 +111,7 @@ To check:
 
 ** FIXED **:
         - B 130108: Auto-update = 0 makes reload very fast -> Course:Diplomas:do_diplomas
+        - F 130108: 2/3.5 Use Entities in Course::Modify
         - B 130105: 2/3 keep session-ids over restarts
         - B 130105: when Gestion.rb is restarted, and a connected user wants to use it,
          it crashes
