@@ -1,12 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - when Gestion.rb is restarted, and a connected user wants to use it,
-         it crashes
+        - Why does it sometimes redirect to stuff like http://admin:3302/?afdj ??
+          -> create a proper proxy-entry in the apache-config-file
         - when user connected and no credit, then credit is added, it doesn't
          show in the user's interface
-        - Auto-update = 0 makes reload very fast -> Course:Diplomas:do_diplomas
-        - Why does IE redirect to stuff like http://admin:3302/?afdj ??
 	- AfriCompta::check doesn't work anymore
 	- 1000 crashes when not operating "properly"
 	
@@ -19,30 +17,38 @@ UI:
         - keep focus for <enter> in current group
 
 FEATURES:
+        -3 Print student-cards the Markas-way with the idea of Josue and Viviane
         -2 Use Entities in Course::Modify
         -2 Rename course
         -2 Transfer money from one account to another directly in the interface
-	-2 Make internet.wifi with Self::Internet only, and a link which allows
-	  to do the infamous internet.wifi/?pass=&user=
-        -2 keep session-ids over restarts
-        -3 Print student-cards the Markas-way with the idea of Josue and Viviane
-        -3 take Admin::ControlAccess from Rooms-definition
-        -3 Add a status-bar on bottom for progresses and information like:
-           printing, progress, messages, connect/disconnect, ...
-	-3 Admin::Restore - show progress
-	-3 Tigo - auto-reconnect on error
 	-3 check diploma-templates
-	-3 Inventory of screens, mice, routers
-	-3 Import attestation.markas-al-nour.wifi
-	-4 make an asynchronous printing-module
 	-4 Courses::Days - add other days to the list
-	-4 Double-users: merge them and avoid them in the first place
-	- Make a dropbox when using _find
-	- Graying out fields not usable (PersonModify, CashAdd, ...)
 	- AfriCompta-support:
 		-4 Don't show archived and deleted accounts, but do stats on them
 		-3 Delete accounts
+
+Programming:
+	-3 Installation
+		- SQLite crashes when database is not here yet
+		- When using data from solar on local account, fails
+
+> 1.0
+Features:
+        -3 Add a status-bar on bottom for progresses and information like:
+           printing, progress, messages, connect/disconnect, ...
+	-3 Admin::Restore - show progress
+	-3 Import attestation.markas-al-nour.wifi
+	-4 make an asynchronous printing-module
+	- Make a dropbox when using _find
+	- Graying out fields not usable (PersonModify, CashAdd, ...)
+        - AfriCompta-support:
 		-4 Define reports
+	-2 Make internet.wifi with Self::Internet only, and a link which allows
+	  to do the infamous internet.wifi/?pass=&user=
+        -3 take Admin::ControlAccess from Rooms-definition
+	-3 Tigo - auto-reconnect on error
+	-3 Inventory of screens, mice, routers
+	-4 Double-users: merge them and avoid them in the first place
 	- CourseHistory - what should go in there?
 
 Programming:
@@ -54,9 +60,6 @@ Programming:
 	  time and to allow new requests to be inserted before handling other
 	  requests -> doing a reply( parent->switch_tab ) + reply( switch_tab )
 	  should switch the tab in the NEW parent-tab!
-	-3 Installation
-		- SQLite crashes when database is not here yet
-		- When using data from solar on local account, fails
 	-3 kill Layout.js::dispatch::init_values, as it is not needed anymore with
 	  the RPC-queue enabled (even though I'm nut sure the latter really works...)
 	-3 when empty configuration and LDAP is not here, fall back to CSV
@@ -70,8 +73,6 @@ Programming:
 		- Can't change name of courses
 		- Add a method "select" instead of sending a list-item twice
 	- make class to easy allow for a "add/delete"-list
-	
-Programming > 1.0:
 	- ENTITY_BASE:
 		- Have one tab with all Entities to chose from
 		- Other tabs with actions on each entity
@@ -110,6 +111,10 @@ To check:
 
 
 ** FIXED **:
+        - B 130108: Auto-update = 0 makes reload very fast -> Course:Diplomas:do_diplomas
+        - B 130105: 2/3 keep session-ids over restarts
+        - B 130105: when Gestion.rb is restarted, and a connected user wants to use it,
+         it crashes
         - B 121219: Reload Gestion if it fails, log everything
         - B 121213: Crashes on Self::Cash
         - UI121213: "local" printer is in fact "server"

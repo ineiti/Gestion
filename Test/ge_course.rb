@@ -184,4 +184,35 @@ class TC_Course < Test::Unit::TestCase
       sleep 1
     end
   end
+  
+  def test_migration_2
+    Entities.delete_all_data()
+    @admin = Entities.Persons.create( :login_name => "admin", :password => "super123", 
+      :permissions => [ "default", "teacher" ], :first_name => "Admin", :family_name => "The" )
+    @linus = Entities.Persons.create( :login_name => "linus", :password => "super123", 
+      :permissions => [ "default", "teacher" ], :first_name => "Linus", :family_name => "Torvalds" )
+    @maint = Entities.Courses.create( :name => "maint_1204", :start => "19.01.2012", :end => "18.02.2012",
+      :teacher => ['admin'], :assistant => ['none'],
+      :responsible => ['linus'] )
+    @maint2 = Entities.Courses.create( :name => "maint_1208", :start => "19.01.2012", :end => "18.02.2012",
+      :teacher => ['admin'], :assistant => ['linus'],
+      :responsible => ['linus'] )
+    
+    dputs(0){"Courses are #{Courses.search_all.inspect}"}
+    
+    RPCQooxdooService.add_new_service( Courses,
+      "Entities.Courses" )
+      
+    dputs(0){"Courses are #{Courses.search_all.inspect}"}
+
+    @maint = Courses.find_by_name("maint_1204")
+    assert_equal @admin, @maint.teacher
+    assert_equal nil, @maint.assistant
+    assert_equal @linus, @maint.responsible
+    
+    @maint2 = Courses.find_by_name("maint_1208")
+    assert_equal @admin, @maint2.teacher
+    assert_equal @linus, @maint2.assistant
+    assert_equal @linus, @maint2.responsible
+  end
 end

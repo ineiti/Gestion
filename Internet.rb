@@ -13,10 +13,10 @@ module Internet
         if user
           if not self.free( user )
             if user.credit.to_i >= cost
-              ddputs(3){"Taking #{cost} credits from #{u} who has #{user.credit}"}
+              dputs(3){"Taking #{cost} credits from #{u} who has #{user.credit}"}
               user.credit = user.credit.to_i - cost
             else
-              ddputs(2){"Kicking user #{u}"}
+              dputs(2){"Kicking user #{u}"}
               $lib_net.call_args( :user_disconnect_name, 
                 "#{user.login_name}")
             end
@@ -52,9 +52,9 @@ module Internet
       # We want an exact match, so we put the name between ^ and $
       courses = Entities.Courses.search_by_students( "^#{user.login_name}$" )
       if courses
-        ddputs( 3 ){ "Courses : #{courses.inspect}" }
+        dputs( 3 ){ "Courses : #{courses.inspect}" }
         courses.each{|c|
-          ddputs(3){"Searching course #{c}"}
+          dputs(3){"Searching course #{c}"}
           if c.name and c.start and c.end
             dputs(3){"Searching course"}
             dputs( 0 ){ [ c.name, c.start, c.end ].inspect }
@@ -70,17 +70,17 @@ module Internet
           end
         }
       end
-      ddputs(3){"Searching groups for user #{user.login_name}: #{user.groups.inspect}"}
+      dputs(3){"Searching groups for user #{user.login_name}: #{user.groups.inspect}"}
       if user.groups and user.groups.index( 'freesurf' )
-        ddputs(3){"User #{user.login_name} is on freesurf"}
+        dputs(3){"User #{user.login_name} is on freesurf"}
         return true
       end
       if Permission.can_view( user.permissions, "FlagInternetFree" )
-        ddputs(3){"User #{user.login_name} has FlagInternetFree" }
+        dputs(3){"User #{user.login_name} has FlagInternetFree" }
         return true
       end
     end
-    ddputs(3){"Found nothing"}
+    dputs(3){"Found nothing"}
     return false
   end
 

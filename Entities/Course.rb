@@ -13,6 +13,7 @@ class Courses < Entities
   attr_reader :diploma_dir, :print_presence
   
   def setup_data
+
     value_block :name
     value_entity_courseType :ctype, :drop, :name
     value_str :name
@@ -31,12 +32,15 @@ class Courses < Entities
     value_list :students
 
     value_block :teacher
-    value_list_drop :teacher, "Entities.Persons.list_teachers"
-    value_list_drop :assistant, "['none'] + Entities.Persons.list_assistants"
-    value_list_drop :responsible, "Entities.Persons.list_teachers"
-    # value_entity_Persons :another, :drop, :full_name, proc {|e| e.permissions.index("teacher") }
-    # value_entity :teacher, :Persons, :drop, :login_name
-    # value_entity :assistant, :Persons, :drop, :login_name
+    #value_list_drop :teacher, "Entities.Persons.list_teachers"
+    value_entity_person :teacher, :drop, :full_name,
+      lambda{|p| p.permissions.index("teacher")}
+    #value_list_drop :assistant, "['none'] + Entities.Persons.list_assistants"
+    value_entity_person_empty :assistant, :drop, :full_name,
+      lambda{|p| p.permissions.index("teacher")}
+    #value_list_drop :responsible, "Entities.Persons.list_teachers"
+    value_entity_person :responsible, :drop, :full_name,
+      lambda{|p| p.permissions.index("teacher")}
 
     value_block :content
     value_str :description
@@ -50,9 +54,10 @@ class Courses < Entities
 
     @diploma_dir = $config[:DiplomaDir]
 
+    @thread = nil
     @print_presence = OpenPrint.new( "#{@diploma_dir}/fiche_presence.ods" )
   end
-
+  
   def list_courses(session=nil)
     ret = @data.values
     if session != nil
@@ -156,14 +161,34 @@ class Courses < Entities
     if name.class == Array
       name = name.join
     end
-    ddputs(4){"Converting for name #{name} with #{Rooms.search_all.inspect}"}
+    dputs(4){"Converting for name #{name} with #{Rooms.search_all.inspect}"}
     r = Rooms.match_by_name( name )
     if ( not r ) and ( not r = Rooms.find_by_name( "" ) )
       r = nil
     end
     c.data_set( :classroom, r )
-    ddputs(4){"New room is #{c.classroom.inspect}"}
+    dputs(4){"New room is #{c.classroom.inspect}"}
   end
+  
+  def migration_2_raw(c)
+    %w( teacher assistant responsible ).each{|p|
+      person = c[p.to_sym]
+      ddputs(4){"#{p} is before #{person.inspect}"}
+      if p == "assistant" and person == ["none"]
+        person = nil
+      else
+        begin
+          person = Persons.find_by_login_name( person.join ).person_id
+        rescue NoMethodError
+          person = Persons.find_by_login_name("admin").person_id
+        end
+      end
+      ddputs(4){"#{p} is after #{person.inspect}"}
+      c[p.to_sym] = person
+    }
+  end
+
+
 end
 
 
@@ -304,7 +329,6 @@ base_gestion
     if grade and grade.to_s != "NP"
       dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|
-        pteacher = Persons.find_by_login_name( teacher.join )
         presponsible = Persons.find_by_login_name( responsible.join )
         doc = z.read("content.xml")
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
@@ -312,7 +336,7 @@ base_gestion
         dputs( 3 ){ "desc_p is #{desc_p}" }
         doc.gsub!( /-DESC1-.*-DESC2-/,
           contents.split("\n").join( desc_p ))
-        doc.gsub!( /-PROF-/, pteacher.full_name )
+        doc.gsub!( /-PROF-/, teacher.full_name )
         role_diploma = "Responsable informatique"
         if presponsible.role_diploma.to_s.length > 0
           role_diploma = presponsible.role_diploma

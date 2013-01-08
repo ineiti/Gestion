@@ -53,18 +53,18 @@ class Info < RPCQooxdooPath
   
   def self.clientUse( args )
     #return "nopay"
-    ddputs(3){"Client use with #{args.inspect}"}
+    dputs(3){"Client use with #{args.inspect}"}
     user = Persons.match_by_login_name( args[:user] )
     if user
-      ddputs(3){"Found user with groups #{user.groups.inspect} and credit #{user.credit.inspect}"}
+      dputs(3){"Found user with groups #{user.groups.inspect} and credit #{user.credit.inspect}"}
       if Internet.free( user )
-        ddputs(3){"Found free"}
+        dputs(3){"Found free"}
         return "nopay"
       elsif user.groups and user.groups.index('localonly')
-        ddputs(3){"Found localonly"}
+        dputs(3){"Found localonly"}
         return "local"
       elsif user.credit
-        ddputs(3){"Credit is #{user.credit.inspect}"}
+        dputs(3){"Credit is #{user.credit.inspect}"}
         return user.credit
       end
     end

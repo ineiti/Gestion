@@ -21,12 +21,11 @@ def permissions_init
 end
 permissions_init
 
-qooxView = QooxView.init( '../Entities', '../Views' )
+QooxView.init( '../Entities', '../Views' )
 
-require 'ge_login'
-require 'ge_view'
-require 'ge_tasks'
-require 'ge_internet'
-require 'ge_info'
-require 'ge_course'
-require 'ge_person'
+
+tests = %w( login view tasks internet info course person )
+tests = %w( course )
+tests.each{|t|
+  require "ge_#{t}"
+}

@@ -7,7 +7,7 @@ class Quizs < Entities
   end
 
   def create( a )
-    ddputs 4, "Creating Quiz with #{a.inspect}"
+    dputs 4, "Creating Quiz with #{a.inspect}"
     q = super( a )
     q.score = q.evaluate
     q

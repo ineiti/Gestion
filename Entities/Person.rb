@@ -416,7 +416,7 @@ class Person < Entity
     ctype = "Visiteur"
     courses = Courses.list_courses_for_person( self )
     if courses and courses.length > 0
-      ddputs(3){"Courses is #{courses.inspect}"}
+      dputs(3){"Courses is #{courses.inspect}"}
       ctype = Courses.find_by_course_id( courses[0][0] ).description
     end
     fname = "#{person_id.to_s.rjust(6,'0')}-#{full_name.gsub(/ /,'_')}"

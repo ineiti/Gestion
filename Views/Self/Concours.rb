@@ -80,10 +80,10 @@ class SelfConcours < View
   def rpc_button_yes( session, data )
     replies = []
     data.sort{|a,b| a[0] <=> b[0] }.each{|d|
-      ddputs 5, "Data is #{d.inspect}"
+      dputs 5, "Data is #{d.inspect}"
       d[0] =~ /^q.._/ and replies.push d[1][0]
     }
-    ddputs 2, "replies is #{replies}"
+    dputs 2, "replies is #{replies}"
     quiz = Quizs.create( :email => data['email'], :full_name => data['full_name'],
       :reply => replies.join(",") )
     greeting = case quiz.score
