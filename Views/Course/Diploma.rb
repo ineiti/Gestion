@@ -16,8 +16,9 @@ class CourseDiploma < View
       gui_vbox :nogroup do
         show_list :diplomas
       end
-      gui_hbox :nogroup do
-        show_print :do_diplomas, :print
+      gui_vbox :nogroup do
+        show_button :do_diplomas
+        show_print :print
       end
       gui_window :missing_data do
         show_html :missing

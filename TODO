@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - ??? Wrong printer-dialog in Cours/Attestations/Print
         - Why does it sometimes redirect to stuff like http://admin:3302/?afdj ??
           -> create a proper proxy-entry in the apache-config-file
         - when user connected and no credit, then credit is added, it doesn't
@@ -15,6 +16,8 @@ Security:
 
 UI:
         - keep focus for <enter> in current group
+        - clean up the interface, mostly the tabs and sub-tabs
+        - write a good documentation...
 
 FEATURES:
         -2 Transfer money from one account to another directly in the interface
@@ -29,7 +32,6 @@ FEATURES:
 Programming:
 	-3 Installation
 		- SQLite crashes when database is not here yet
-		- When using data from solar on local account, fails
 
 > 1.0
 Features:
@@ -38,6 +40,7 @@ Features:
 	-3 Admin::Restore - show progress
 	-3 Import attestation.markas-al-nour.wifi
 	-4 make an asynchronous printing-module
+	- Using data from solar on local account without failing
 	- Make a dropbox when using _find
 	- Graying out fields not usable (PersonModify, CashAdd, ...)
         - AfriCompta-support:
@@ -45,7 +48,14 @@ Features:
 	-2 Make internet.wifi with Self::Internet only, and a link which allows
 	  to do the infamous internet.wifi/?pass=&user=
         -3 take Admin::ControlAccess from Rooms-definition
-	-3 Tigo - auto-reconnect on error
+	-Tigo
+          - 3 auto-reconnect on error
+          - Ajouter
+            AT+CREG? pour l'id de la cellule
+            AT+CSQ pour voir la qualité
+            AT+COPS=? pour voir les fournisseurs
+          - vérifier si la sim est expirée
+          - Montrer le log des derniers communications avec le Modem
 	-3 Inventory of screens, mice, routers
 	-4 Double-users: merge them and avoid them in the first place
 	- CourseHistory - what should go in there?
