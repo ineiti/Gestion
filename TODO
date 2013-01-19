@@ -30,8 +30,8 @@ FEATURES:
 		-3 Delete accounts
 
 Programming:
-	-3 Installation
-		- SQLite crashes when database is not here yet
+	-4 Correctly delete accounts and migrate through AfriCompta
+        -4 Correctly archive accounts and keep total only of selected ones
 
 > 1.0
 Features:
