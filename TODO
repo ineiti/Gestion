@@ -1,15 +1,11 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Course::Modify::assistant doesn't work as expected: null is not
-          stored correctly and returns as [0], whereas the other return as
-          2
         - ??? Wrong printer-dialog in Cours/Attestations/Print
         - Why does it sometimes redirect to stuff like http://admin:3302/?afdj ??
           -> create a proper proxy-entry in the apache-config-file
         - when user connected and no credit, then credit is added, it doesn't
          show in the user's interface
-	- AfriCompta::check doesn't work anymore
 	- 1000 crashes when not operating "properly"
 	
 [5', 15', 30', 1h, 4h]
@@ -123,6 +119,11 @@ To check:
 
 
 ** FIXED **:
+        - B 130123: Course::Modify::assistant doesn't work as expected: null is not
+          stored correctly and returns as [0], whereas the other return as
+          2
+        - F 130123: Added a simple ticket-system
+	- NB130123: AfriCompta::check doesn't work anymore - couldn't reproduce
         - B 130108: Auto-update = 0 makes reload very fast -> Course:Diplomas:do_diplomas
         - F 130108: 2/3.5 Use Entities in Course::Modify
         - B 130105: 2/3 keep session-ids over restarts

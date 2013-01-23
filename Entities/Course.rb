@@ -329,7 +329,7 @@ base_gestion
     if grade and grade.to_s != "NP"
       dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|
-        presponsible = Persons.find_by_login_name( responsible.join )
+        #presponsible = Persons.find_by_login_name( responsible.join )
         doc = z.read("content.xml")
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
         desc_p = /-DESC1-(.*)-DESC2-/.match( doc )[1]
@@ -338,11 +338,11 @@ base_gestion
           contents.split("\n").join( desc_p ))
         doc.gsub!( /-PROF-/, teacher.full_name )
         role_diploma = "Responsable informatique"
-        if presponsible.role_diploma.to_s.length > 0
-          role_diploma = presponsible.role_diploma
+        if responsible.role_diploma.to_s.length > 0
+          role_diploma = responsible.role_diploma
         end
         doc.gsub!( /-RESP-ROLE-/, role_diploma )
-        doc.gsub!( /-RESP-/, presponsible.full_name )
+        doc.gsub!( /-RESP-/, responsible.full_name )
         doc.gsub!( /-NOM-/, student.full_name )
         doc.gsub!( /-DUREE-/, duration.to_s )
         doc.gsub!( /-COURS-/, description )
