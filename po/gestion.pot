@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-12-13 11:10+0100\n"
-"PO-Revision-Date: 2012-12-13 11:10+0100\n"
+"POT-Creation-Date: 2013-01-23 23:24+0100\n"
+"PO-Revision-Date: 2013-01-23 23:24+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -110,95 +110,95 @@ msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_entity_courseType :ctype, :drop, :name
 #. Comes from file Views/Admin/CourseType.rb and line is         vtlp_list :ctype, 'name'
-#: Entities/Course.rb:17Views/Admin/CourseType.rb:12
+#: Entities/Course.rb:18Views/Admin/CourseType.rb:12
 msgid "ctype"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_date :start
 #. Comes from file Views/Admin/Report.rb and line is         show_date :start
-#: Entities/Course.rb:21Views/Admin/Report.rb:9
+#: Entities/Course.rb:22Views/Admin/Report.rb:9
 msgid "start"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_date :end
 #. Comes from file Views/Admin/Report.rb and line is         show_date :end
-#: Entities/Course.rb:22Views/Admin/Report.rb:10
+#: Entities/Course.rb:23Views/Admin/Report.rb:10
 msgid "end"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_date :sign
-#: Entities/Course.rb:23
+#: Entities/Course.rb:24
 msgid "sign"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_int :duration
-#: Entities/Course.rb:24
+#: Entities/Course.rb:25
 msgid "duration"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_list_drop :dow, "%w( lu-me-ve ma-je-sa lu-ve ma-sa )"
-#: Entities/Course.rb:25
+#: Entities/Course.rb:26
 msgid "dow"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_list_drop :hours, "%w( 9-12 16-18 9-11 )"
-#: Entities/Course.rb:26
+#: Entities/Course.rb:27
 msgid "hours"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_entity_room :classroom, :drop, :name
-#: Entities/Course.rb:27
+#: Entities/Course.rb:28
 msgid "classroom"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_list :students
 #. Comes from file Views/Course/Grade.rb and line is           show_list_single :students, :width => 300, :callback => true
-#: Entities/Course.rb:31Views/Course/Grade.rb:15
+#: Entities/Course.rb:32Views/Course/Grade.rb:15
 msgid "students"
 msgstr ""
 
-#. Comes from file Entities/Course.rb and line is     value_list_drop :teacher, "Entities.Persons.list_teachers"
-#: Entities/Course.rb:34
+#. Comes from file Entities/Course.rb and line is     value_entity_person :teacher, :drop, :full_name,
+#: Entities/Course.rb:36
 msgid "teacher"
 msgstr ""
 
-#. Comes from file Entities/Course.rb and line is     value_list_drop :assistant, "['none'] + Entities.Persons.list_assistants"
-#: Entities/Course.rb:35
+#. Comes from file Entities/Course.rb and line is     value_entity_person_empty :assistant, :drop, :full_name,
+#: Entities/Course.rb:39
 msgid "assistant"
 msgstr ""
 
-#. Comes from file Entities/Course.rb and line is     value_list_drop :responsible, "Entities.Persons.list_teachers"
-#: Entities/Course.rb:36
+#. Comes from file Entities/Course.rb and line is     value_entity_person :responsible, :drop, :full_name,
+#: Entities/Course.rb:42
 msgid "responsible"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_str :description
-#: Entities/Course.rb:42
+#: Entities/Course.rb:46
 msgid "description"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_text :contents
-#: Entities/Course.rb:43
+#: Entities/Course.rb:47
 msgid "contents"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_int :salary_teacher
-#: Entities/Course.rb:46
+#: Entities/Course.rb:50
 msgid "salary_teacher"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_int :salary_assistant
-#: Entities/Course.rb:47
+#: Entities/Course.rb:51
 msgid "salary_assistant"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_int :students_start
-#: Entities/Course.rb:48
+#: Entities/Course.rb:52
 msgid "students_start"
 msgstr ""
 
 #. Comes from file Entities/Course.rb and line is     value_int :students_finish
-#: Entities/Course.rb:49
+#: Entities/Course.rb:53
 msgid "students_finish"
 msgstr ""
 
@@ -351,8 +351,8 @@ msgid "score"
 msgstr ""
 
 #. Comes from file Entities/Room.rb and line is     value_int :size
-#. Comes from file Views/Admin/InternetTigo.rb and line is           show_list_drop :size, "%w( 30MB 100MB 1GB 5GB )"
-#: Entities/Room.rb:7Views/Admin/InternetTigo.rb:21
+#. Comes from file Views/Admin/Tigo.rb and line is           show_list_drop :size, "%w( 30MB 100MB 1GB 5GB )"
+#: Entities/Room.rb:7Views/Admin/Tigo.rb:21
 msgid "size"
 msgstr ""
 
@@ -443,6 +443,78 @@ msgstr ""
 msgid "gain_description"
 msgstr ""
 
+#. Comes from file Entities/Ticket.rb and line is     value_date :opened
+#: Entities/Ticket.rb:6
+msgid "opened"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is     value_date :closed
+#: Entities/Ticket.rb:7
+msgid "closed"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is     value_list_drop :severity, "%w( critique grave moyen optionnel )"
+#: Entities/Ticket.rb:8
+msgid "severity"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is     value_str_ro :created_by
+#: Entities/Ticket.rb:9
+msgid "created_by"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is     value_entity_person_empty :assigned, :drop, :full_name,
+#: Entities/Ticket.rb:10
+msgid "assigned"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is     value_entity_computer_empty :computer, :drop, :name_service
+#: Entities/Ticket.rb:12
+msgid "computer"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is     value_str :other
+#: Entities/Ticket.rb:13
+msgid "other"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is     value_text :todo
+#: Entities/Ticket.rb:16
+msgid "todo"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is     value_text :verification
+#: Entities/Ticket.rb:17
+msgid "verification"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is         vtlp_list :ticket_list, method, :width => 150
+#: Entities/Ticket.rb:47
+msgid "ticket_list"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is           show_button :new_ticket, :delete
+#: Entities/Ticket.rb:49
+msgid "new_ticket"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is           show_button :new_ticket, :delete
+#. Comes from file Views/Admin/CourseType.rb and line is         show_button :new, :delete
+#: Entities/Ticket.rb:49Views/Admin/CourseType.rb:13
+msgid "delete"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is           show_button :save_ticket
+#: Entities/Ticket.rb:65
+msgid "save_ticket"
+msgstr ""
+
+#. Comes from file Entities/Ticket.rb and line is           show_button :save
+#. Comes from file Views/Admin/CourseType.rb and line is         show_button :save
+#: Entities/Ticket.rb:67Views/Admin/CourseType.rb:20
+msgid "save"
+msgstr ""
+
 #. Comes from file Entities/Worker.rb and line is     value_list_drop :function, "%w( assistant expert )"
 #: Entities/Worker.rb:8
 msgid "function"
@@ -493,31 +565,6 @@ msgstr ""
 msgid "block"
 msgstr ""
 
-#. Comes from file Views/Admin/ControlAccess.rb and line is class AdminAccess < View
-#: Views/Admin/ControlAccess.rb:1
-msgid "AdminAccess"
-msgstr ""
-
-#. Comes from file Views/Admin/ControlAccess.rb and line is       show_html :state
-#: Views/Admin/ControlAccess.rb:6
-msgid "state"
-msgstr ""
-
-#. Comes from file Views/Admin/ControlAccess.rb and line is       show_button :remove_restriction, :restrict_info1, :restrict_info2
-#: Views/Admin/ControlAccess.rb:7
-msgid "remove_restriction"
-msgstr ""
-
-#. Comes from file Views/Admin/ControlAccess.rb and line is       show_button :remove_restriction, :restrict_info1, :restrict_info2
-#: Views/Admin/ControlAccess.rb:7
-msgid "restrict_info1"
-msgstr ""
-
-#. Comes from file Views/Admin/ControlAccess.rb and line is       show_button :remove_restriction, :restrict_info1, :restrict_info2
-#: Views/Admin/ControlAccess.rb:7
-msgid "restrict_info2"
-msgstr ""
-
 #. Comes from file Views/Admin/CourseType.rb and line is class AdminCourseType < View
 #: Views/Admin/CourseType.rb:4
 msgid "AdminCourseType"
@@ -526,16 +573,6 @@ msgstr ""
 #. Comes from file Views/Admin/CourseType.rb and line is         show_button :new, :delete
 #: Views/Admin/CourseType.rb:13
 msgid "new"
-msgstr ""
-
-#. Comes from file Views/Admin/CourseType.rb and line is         show_button :new, :delete
-#: Views/Admin/CourseType.rb:13
-msgid "delete"
-msgstr ""
-
-#. Comes from file Views/Admin/CourseType.rb and line is         show_button :save
-#: Views/Admin/CourseType.rb:20
-msgid "save"
 msgstr ""
 
 #. Comes from file Views/Admin/Credit.rb and line is class AdminCredit < View
@@ -598,56 +635,6 @@ msgstr ""
 msgid "transfer"
 msgstr ""
 
-#. Comes from file Views/Admin/InternetTigo.rb and line is class AdminTigo < View
-#: Views/Admin/InternetTigo.rb:1
-msgid "AdminTigo"
-msgstr ""
-
-#. Comes from file Views/Admin/InternetTigo.rb and line is           show_button :update_params, :connect, :disconnect
-#: Views/Admin/InternetTigo.rb:14
-msgid "update_params"
-msgstr ""
-
-#. Comes from file Views/Admin/InternetTigo.rb and line is           show_int :code, :width => 150
-#: Views/Admin/InternetTigo.rb:17
-msgid "code"
-msgstr ""
-
-#. Comes from file Views/Admin/InternetTigo.rb and line is           show_button :recharge
-#: Views/Admin/InternetTigo.rb:18
-msgid "recharge"
-msgstr ""
-
-#. Comes from file Views/Admin/InternetTigo.rb and line is           show_button :add_promotion
-#: Views/Admin/InternetTigo.rb:22
-msgid "add_promotion"
-msgstr ""
-
-#. Comes from file Views/Admin/InternetTigo.rb and line is           show_str :tigo_number
-#: Views/Admin/InternetTigo.rb:27
-msgid "tigo_number"
-msgstr ""
-
-#. Comes from file Views/Admin/InternetTigo.rb and line is           show_button :update_tigo_number
-#: Views/Admin/InternetTigo.rb:28
-msgid "update_tigo_number"
-msgstr ""
-
-#. Comes from file Views/Admin/InternetTigo.rb and line is           show_html :status
-#: Views/Admin/InternetTigo.rb:31
-msgid "status"
-msgstr ""
-
-#. Comes from file Views/Admin/InternetTigo.rb and line is         show_html :msg
-#: Views/Admin/InternetTigo.rb:36
-msgid "msg"
-msgstr ""
-
-#. Comes from file Views/Admin/InternetTigo.rb and line is         show_button :close
-#: Views/Admin/InternetTigo.rb:37
-msgid "close"
-msgstr ""
-
 #. Comes from file Views/Admin/Power.rb and line is class AdminPower < View
 #: Views/Admin/Power.rb:3
 msgid "AdminPower"
@@ -688,9 +675,79 @@ msgstr ""
 msgid "AdminRestriction"
 msgstr ""
 
+#. Comes from file Views/Admin/Restriction.rb and line is       show_html :state
+#: Views/Admin/Restriction.rb:6
+msgid "state"
+msgstr ""
+
+#. Comes from file Views/Admin/Restriction.rb and line is       show_button :remove_restriction, :restrict_info1, :restrict_info2
+#: Views/Admin/Restriction.rb:7
+msgid "remove_restriction"
+msgstr ""
+
+#. Comes from file Views/Admin/Restriction.rb and line is       show_button :remove_restriction, :restrict_info1, :restrict_info2
+#: Views/Admin/Restriction.rb:7
+msgid "restrict_info1"
+msgstr ""
+
+#. Comes from file Views/Admin/Restriction.rb and line is       show_button :remove_restriction, :restrict_info1, :restrict_info2
+#: Views/Admin/Restriction.rb:7
+msgid "restrict_info2"
+msgstr ""
+
 #. Comes from file Views/Admin/Tabs.rb and line is class AdminTabs < View
 #: Views/Admin/Tabs.rb:1
 msgid "AdminTabs"
+msgstr ""
+
+#. Comes from file Views/Admin/Tigo.rb and line is class AdminTigo < View
+#: Views/Admin/Tigo.rb:1
+msgid "AdminTigo"
+msgstr ""
+
+#. Comes from file Views/Admin/Tigo.rb and line is           show_button :update_params, :connect, :disconnect
+#: Views/Admin/Tigo.rb:14
+msgid "update_params"
+msgstr ""
+
+#. Comes from file Views/Admin/Tigo.rb and line is           show_int :code, :width => 150
+#: Views/Admin/Tigo.rb:17
+msgid "code"
+msgstr ""
+
+#. Comes from file Views/Admin/Tigo.rb and line is           show_button :recharge
+#: Views/Admin/Tigo.rb:18
+msgid "recharge"
+msgstr ""
+
+#. Comes from file Views/Admin/Tigo.rb and line is           show_button :add_promotion
+#: Views/Admin/Tigo.rb:22
+msgid "add_promotion"
+msgstr ""
+
+#. Comes from file Views/Admin/Tigo.rb and line is           show_str :tigo_number
+#: Views/Admin/Tigo.rb:27
+msgid "tigo_number"
+msgstr ""
+
+#. Comes from file Views/Admin/Tigo.rb and line is           show_button :update_tigo_number
+#: Views/Admin/Tigo.rb:28
+msgid "update_tigo_number"
+msgstr ""
+
+#. Comes from file Views/Admin/Tigo.rb and line is           show_html :status
+#: Views/Admin/Tigo.rb:31
+msgid "status"
+msgstr ""
+
+#. Comes from file Views/Admin/Tigo.rb and line is         show_html :msg
+#: Views/Admin/Tigo.rb:36
+msgid "msg"
+msgstr ""
+
+#. Comes from file Views/Admin/Tigo.rb and line is         show_button :close
+#: Views/Admin/Tigo.rb:37
+msgid "close"
 msgstr ""
 
 #. Comes from file Views/Compta/Admin.rb and line is class ComptaAdmin < View
@@ -698,14 +755,19 @@ msgstr ""
 msgid "ComptaAdmin"
 msgstr ""
 
-#. Comes from file Views/Compta/Admin.rb and line is       show_button :archive
+#. Comes from file Views/Compta/Admin.rb and line is       show_button :archive, :update_totals, :clean_up
 #: Views/Compta/Admin.rb:9
 msgid "archive"
 msgstr ""
 
-#. Comes from file Views/Compta/Admin.rb and line is       show_button :update_totals
-#: Views/Compta/Admin.rb:10
+#. Comes from file Views/Compta/Admin.rb and line is       show_button :archive, :update_totals, :clean_up
+#: Views/Compta/Admin.rb:9
 msgid "update_totals"
+msgstr ""
+
+#. Comes from file Views/Compta/Admin.rb and line is       show_button :archive, :update_totals, :clean_up
+#: Views/Compta/Admin.rb:9
+msgid "clean_up"
 msgstr ""
 
 #. Comes from file Views/Compta/Show.rb and line is class ComptaShow < View
@@ -753,18 +815,23 @@ msgstr ""
 msgid "diplomas"
 msgstr ""
 
-#. Comes from file Views/Course/Diploma.rb and line is         show_print :do_diplomas, :print
+#. Comes from file Views/Course/Diploma.rb and line is         show_button :do_diplomas
 #: Views/Course/Diploma.rb:20
 msgid "do_diplomas"
 msgstr ""
 
+#. Comes from file Views/Course/Diploma.rb and line is         show_print :print
+#: Views/Course/Diploma.rb:21
+msgid "print"
+msgstr ""
+
 #. Comes from file Views/Course/Diploma.rb and line is         show_html :missing
-#: Views/Course/Diploma.rb:23
+#: Views/Course/Diploma.rb:24
 msgid "missing"
 msgstr ""
 
 #. Comes from file Views/Course/Diploma.rb and line is         show_html :msg_print
-#: Views/Course/Diploma.rb:27
+#: Views/Course/Diploma.rb:28
 msgid "msg_print"
 msgstr ""
 
@@ -848,11 +915,6 @@ msgstr ""
 msgid "computer_list"
 msgstr ""
 
-#. Comes from file Views/Inventory/Computers.rb and line is class InventoryComputers < View
-#: Views/Inventory/Computers.rb:1
-msgid "InventoryComputers"
-msgstr ""
-
 #. Comes from file Views/Inventory/Room.rb and line is class InventoryRoom < View
 #: Views/Inventory/Room.rb:1
 msgid "InventoryRoom"
@@ -866,6 +928,16 @@ msgstr ""
 #. Comes from file Views/Inventory/Tabs.rb and line is class InventoryTabs < View
 #: Views/Inventory/Tabs.rb:1
 msgid "InventoryTabs"
+msgstr ""
+
+#. Comes from file Views/Inventory/TicketClosed.rb and line is class InventoryTicketClosed < View
+#: Views/Inventory/TicketClosed.rb:1
+msgid "InventoryTicketClosed"
+msgstr ""
+
+#. Comes from file Views/Inventory/TicketOpen.rb and line is class InventoryTicketOpen < View
+#: Views/Inventory/TicketOpen.rb:1
+msgid "InventoryTicketOpen"
 msgstr ""
 
 #. Comes from file Views/Person/Add.rb and line is class PersonAdd < View
