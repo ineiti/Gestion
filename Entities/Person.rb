@@ -247,12 +247,20 @@ class Persons < Entities
   def find_name_or_create( name )
     first, last = name.split( " ", 2 )
     find_full_name( name ) or
-      person = create( :first_name => first, :family_name => last )
+      create( :first_name => first, :family_name => last )
   end
 
   def login_to_full( login )
     p = find_by_login_name( login )
     p ? p.full_name : ""
+  end
+  
+  def migration_1( p )
+    if p.person_id == 0
+      dputs(0){"Oups, found person with id 0 - trying to change this"}
+      p.person_id = Persons.new_id[:person_id]
+      dputs(0){"Putting person-id to #{p.person_id}"}
+    end
   end
 end
 

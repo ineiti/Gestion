@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Course::Modify::assistant doesn't work as expected: null is not
+          stored correctly and returns as [0], whereas the other return as
+          2
         - ??? Wrong printer-dialog in Cours/Attestations/Print
         - Why does it sometimes redirect to stuff like http://admin:3302/?afdj ??
           -> create a proper proxy-entry in the apache-config-file

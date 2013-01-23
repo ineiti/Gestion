@@ -173,7 +173,7 @@ class Courses < Entities
   def migration_2_raw(c)
     %w( teacher assistant responsible ).each{|p|
       person = c[p.to_sym]
-      ddputs(4){"#{p} is before #{person.inspect}"}
+      dputs(4){"#{p} is before #{person.inspect}"}
       if p == "assistant" and person == ["none"]
         person = nil
       else
@@ -183,7 +183,7 @@ class Courses < Entities
           person = Persons.find_by_login_name("admin").person_id
         end
       end
-      ddputs(4){"#{p} is after #{person.inspect}"}
+      dputs(4){"#{p} is after #{person.inspect}"}
       c[p.to_sym] = person
     }
   end
