@@ -49,7 +49,7 @@ Permission.add( 'teacher', 'CourseGrade,PersonModify,AdminRestriction', 'assista
 Permission.add( 'secretary', 'SelfCash,SelfServices,CourseModify,PersonAdd,PersonCredit,' + 
     'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
 Permission.add( 'director', 'CourseAdd', 'secretary' )
-Permission.add( 'accounting', 'TransferCash,PersonCredit,SelfCash', 'internet' )
+Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash', 'internet' )
 Permission.add( 'maintenance', '', 'teacher' )
 Permission.add( 'admin', '.*', '.*' )
 
@@ -79,6 +79,8 @@ QooxView::init( 'Entities', 'Views' )
 
 # Look for admin, create if it doesn't exist
 admin = Entities.Persons.find_by_login_name( "admin" )
+#dputs(0){ admin.inspect }
+#exit
 if not admin
   dputs( 0 ){ "OK, creating admin" }
   admin = Entities.Persons.create( :login_name => "admin", :password => "super123", :permissions => [ "admin" ] ,

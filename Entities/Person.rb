@@ -33,6 +33,7 @@ class Persons < Entities
 
     value_block :admin
     value_str :account_due
+    value_str :account_name_cash
     value_str :role_diploma
     value_list :permissions, "Permission.list"
 
@@ -42,8 +43,11 @@ class Persons < Entities
 
     value_block :read_only
     value_str_ro_LDAP :login_name, :ldap_name => "uid"
+    # credit -> internet_credit
+    # credit_due -> cash_due
     value_int_ro :credit
     value_int_ro :credit_due
+    value_int_ro :total_cash
 
     value_block :hidden
     value_str :session_id
@@ -202,6 +206,17 @@ class Persons < Entities
   def list_students
     get_login_with_permission( "student" ).sort
   end
+  
+  def listp_compta_due
+    search_all.select{|p|
+      p.credit_due.to_s.length > 0
+    }.collect{|k|
+      dputs( 4 ){ "p is #{p.full_name}" }
+      [p.person_id, "#{p.credit.to_s.rjust(6)} - #{p.full_name}"]
+    }.sort{|a,b|
+      a[1] <=> b[1]
+    }.reverse
+  end
 
   def save_data( d )
     d = d.to_sym
@@ -271,10 +286,18 @@ end
 #
 
 class Person < Entity
-  attr_accessor :compta_due
+  attr_accessor :compta_due, :account_cash
   def setup_instance
     update_account_due
     data_set( :credit, data_get( :credit ).to_i )
+    
+    ddputs(3){"Data is #{@proxy.data[@id].inspect}"}
+    perms = data_get( :permissions )
+    if perms and perms.index "accounting"
+      update_account_cash
+    else
+      @account_cash = nil
+    end
   end
   
   # This is only for testing - don't use in real life!
@@ -298,6 +321,14 @@ class Person < Entity
       @compta_due = AfriCompta.new
     end
   end
+  
+  def update_account_cash
+    cc = get_config( "Root::Cash::#{data_get(:account_name_cash)}", 
+      :account, :cash )
+    @account_cash = ( Accounts.get_by_path( cc ) or 
+        Accounts.create( cc, cc, false, -1, true ) )
+    data_set( :total_cash, @account_cash.total )
+  end
 
   def data_set(field, value, msg = nil, undo = true, logging = true )
     old_value = data_get(field)
@@ -312,8 +343,11 @@ class Person < Entity
       end
     end
     ret = super( field, value )
-    if field and field.to_s == "account_due"
+    case field.to_s
+    when /account_due/
       update_account_due
+    when /permissions/
+      update_account_cash if value.index "accounting"
     end
     return ret
   end
@@ -457,5 +491,19 @@ class Person < Entity
   
   def credit_due
     get_credit
+  end
+  
+  def get_cash( person, amount )
+    if amount < 0
+      dputs(0){"Can't transfer a negative amount here"}
+      return false
+    end
+    if not person.compta_due.src
+      dputs(0){"#{person.login_name}::#{person.full_name} has no account_due"}
+      return false
+    end
+    Movements.create( "Payement au comptable", Date.today,
+      amount / 1000.0, @account_cash, person.compta_due.src )
+    return true
   end
 end

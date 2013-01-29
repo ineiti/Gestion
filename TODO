@@ -1,7 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - ??? Wrong printer-dialog in Cours/Attestations/Print
+        - printing of student-card with accent in name fails (probably due to
+          accent in filename - sanitize using "accents_replace")
+        - admin created repeatedly? Why?
         - Why does it sometimes redirect to stuff like http://admin:3302/?afdj ??
           -> create a proper proxy-entry in the apache-config-file
         - when user connected and no credit, then credit is added, it doesn't
@@ -29,8 +31,15 @@ FEATURES:
 		-3 Delete accounts
 
 Programming:
-	-4 Correctly delete accounts and migrate through AfriCompta
-        -4 Correctly archive accounts and keep total only of selected ones
+        -2 change Person::account_* to Person::account_name_*
+        -2 change Person::compta_due to Person::account_due
+        -2 change Person::credit_due to Person::total_due
+        -2 change Person::credit to Person::internet_credit
+        -2 change config::compta_due to config::account
+        -2 change all cash-methods to credit-methods
+        -2 add a AddCash-permission and change Person.setup_instance
+        -2 verify if Person::data_set and Person::data_set_log are really
+          necessary
 
 > 1.0
 Features:
@@ -106,6 +115,7 @@ Rare bugs:
 	- check why ruby-gettext from debian/squeeze messes things up
 
 Unconfirmed bugs:
+        - ??? Wrong printer-dialog in Cours/Attestations/Print
 	- PersonAdd - password is not stored - not repeatable
 	- Default focus and button:
 		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
@@ -119,6 +129,8 @@ To check:
 
 
 ** FIXED **:
+	- P 130115: 4 Correctly delete accounts and migrate through AfriCompta
+        - P 130115: 4 Correctly archive accounts and keep total only of selected ones
         - B 130123: Course::Modify::assistant doesn't work as expected: null is not
           stored correctly and returns as [0], whereas the other return as
           2

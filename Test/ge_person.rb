@@ -23,15 +23,22 @@ class Hash
 end
 
 class TC_Person < Test::Unit::TestCase
+  def send_to_sqlite_users( m )
+    Entities.Movements.send( m.to_sym )
+    Entities.Accounts.send( m.to_sym )
+    Entities.Users.send( m.to_sym )
+  end
+  
   def setup
     Permission.add( 'default', '.*' )
 
+    dputs(0){"Setting up"}
     Entities.delete_all_data()
-    FileUtils.cp( "db.testGestion", "data/compta.db" )
 
-    Entities.Movements.load
-    Entities.Accounts.load
-    Entities.Users.load
+    dputs(0){"Resetting SQLite"}
+    SQLite.dbs_close_all
+    FileUtils.cp( "db.testGestion", "data/compta.db" )
+    SQLite.dbs_open_load_migrate
 
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123",
       :permissions => [ "default" ], :account_due => "Linus" )
@@ -118,7 +125,7 @@ class TC_Person < Test::Unit::TestCase
 
   def test_log_password
     @admin.password = "admin"
-    assert_equal( {:data_class_id=>0,
+    assert_equal( {:data_class_id=>1,
         :data_field=>:password,
         :data_value=>"admin",
         :data_class=>"Person",
@@ -130,7 +137,7 @@ class TC_Person < Test::Unit::TestCase
 
   def test_log_change
     @admin.first_name = "super"
-    assert_equal( {:data_class_id=>0,
+    assert_equal( {:data_class_id=>1,
         :data_field=>:first_name,
         :data_value=>"Super",
         :data_class=>"Person",
@@ -138,5 +145,27 @@ class TC_Person < Test::Unit::TestCase
         :data_old=>nil,
         :msg=>nil},
       @admin.log_list[-1].undate.unlogid )
+  end
+  
+  def test_account_cash
+    @accountant = Entities.Persons.create( :login_name => "accountant", :password => "super",
+      :permissions => [ "accounting" ] )
+    
+    assert_not_nil @accountant.account_cash
+    assert_equal 1040, @accountant.total_cash.to_f
+    
+    credit = @josue.credit_due
+    @josue.add_credit( @surf, 1000 )
+    assert_equal 1000, @josue.credit_due - credit
+    
+    assert @accountant.get_cash( @josue, 1000 )
+    assert_equal 0, @josue.credit_due - credit
+  end
+  
+  def test_account_cash_update
+    assert_equal nil, @josue.account_cash
+    
+    @josue.permissions = %w( default accounting )
+    assert_not_nil @josue.account_cash
   end
 end

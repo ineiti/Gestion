@@ -4,6 +4,8 @@
 class ComptaShow < View
   include VTListPane
   def layout
+    @visible = false
+    
     if Module.constants.index :ACQooxView
       set_data_class :Accounts
     end
