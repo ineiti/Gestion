@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - creation of accounts is not reliable. Probably fields of
+          Person::account_due and Person::account_cash are not automatically
+          filled in
         - printing of student-card with accent in name fails (probably due to
           accent in filename - sanitize using "accents_replace")
         - admin created repeatedly? Why?
@@ -35,6 +38,7 @@ Programming:
         -2 change Person::compta_due to Person::account_due
         -2 change Person::credit_due to Person::total_due
         -2 change Person::credit to Person::internet_credit
+        -2 change Person::get_credit to Person::get_total_due
         -2 change config::compta_due to config::account
         -2 change all cash-methods to credit-methods
         -2 add a AddCash-permission and change Person.setup_instance

@@ -138,15 +138,15 @@ class TC_Course < Test::Unit::TestCase
   
   def test_person_courses
     courses = Entities.Courses.list_courses_for_person( @admin )
-    assert_equal [[2, "maint_1204"]], courses
+    assert_equal [[3, "maint_1204"]], courses
 
     courses = Entities.Courses.list_courses_for_person( @admin.login_name )
-    assert_equal [[2, "maint_1204"]], courses
+    assert_equal [[3, "maint_1204"]], courses
   end
   
   def test_new_course
     nmaint = Courses.create_ctype("1201", @maint_t)
-    assert_equal( {:duration=>72, :course_id=>4, :contents=>"lots of work", 
+    assert_equal( {:duration=>72, :course_id=>5, :contents=>"lots of work", 
         :students=>[], :name=>"maint_1201", :ctype => [0] },
       nmaint.to_hash )
   end

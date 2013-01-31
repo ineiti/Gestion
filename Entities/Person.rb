@@ -47,7 +47,6 @@ class Persons < Entities
     # credit_due -> cash_due
     value_int_ro :credit
     value_int_ro :credit_due
-    value_int_ro :total_cash
 
     value_block :hidden
     value_str :session_id
@@ -209,10 +208,11 @@ class Persons < Entities
   
   def listp_compta_due
     search_all.select{|p|
-      p.credit_due.to_s.length > 0
-    }.collect{|k|
+      p.compta_due and p.compta_due.src
+    }.collect{|p|
       dputs( 4 ){ "p is #{p.full_name}" }
-      [p.person_id, "#{p.credit.to_s.rjust(6)} - #{p.full_name}"]
+      amount = (p.compta_due.src.total.to_f * 1000).to_i
+      [p.person_id, "#{amount.to_s.rjust(6)} - #{p.full_name}"]
     }.sort{|a,b|
       a[1] <=> b[1]
     }.reverse
@@ -288,15 +288,20 @@ end
 class Person < Entity
   attr_accessor :compta_due, :account_cash
   def setup_instance
-    update_account_due
-    data_set( :credit, data_get( :credit ).to_i )
-    
     ddputs(3){"Data is #{@proxy.data[@id].inspect}"}
+
+    data_set( :credit, data_get( :credit ).to_i )
+    @account_due = @account_cash = nil
+
     perms = data_get( :permissions )
-    if perms and perms.index "accounting"
-      update_account_cash
-    else
-      @account_cash = nil
+    if perms
+      if perms.index "addinternet"
+        update_account_due
+      end
+    
+      if perms.index "accounting"
+        update_account_cash
+      end
     end
   end
   
@@ -309,25 +314,33 @@ class Person < Entity
   end
 
   def update_account_due
-    c = get_config( "Root::Lending", :compta_due, :src )
-    if data_get( :account_due )
-      src = "#{c}::#{data_get(:account_due)}"
-      dputs( 2 ){ "Creating AfriCompta for #{full_name} with source-account: #{src}" }
-      @compta_due = AfriCompta.new( src, 
-        get_config( "Root::Income", :compta_due, :dst ) )
-      update_credit
-    else
-      dputs( 2 ){ "Couldn't create AfriCompta for #{full_name}, making empty" }
-      @compta_due = AfriCompta.new
+    acc = data_get( :account_due )
+    if acc.to_s.length == 0
+      acc = ( first_name || login_name ).capitalize 
+      data_set( :account_due, acc )
     end
+    src = get_config( "Root::Lending::#{acc}", :compta_due, :src )
+    dputs( 2 ){ "Creating AfriCompta for #{full_name} with source-account: #{src}" }
+    @compta_due = AfriCompta.new( src, 
+      get_config( "Root::Income", :compta_due, :dst ) )
+    update_credit
   end
   
   def update_account_cash
-    cc = get_config( "Root::Cash::#{data_get(:account_name_cash)}", 
+    acc = data_get( :account_name_cash )
+    if acc.to_s.length == 0
+      acc = ( first_name || login_name ).capitalize 
+      data_set( :account_name_cash, acc )
+    end
+    ddputs(3){"Getting account #{acc}"}
+    cc = get_config( "Root::Cash::#{acc}", 
       :account, :cash )
     @account_cash = ( Accounts.get_by_path( cc ) or 
-        Accounts.create( cc, cc, false, -1, true ) )
-    data_set( :total_cash, @account_cash.total )
+        Accounts.create_path( cc, cc, false, -1, true ) )
+  end
+  
+  def total_cash
+    ( @account_cash.total.to_f * 1000 ).to_i
   end
 
   def data_set(field, value, msg = nil, undo = true, logging = true )
@@ -346,8 +359,11 @@ class Person < Entity
     case field.to_s
     when /account_due/
       update_account_due
+    when /account_name_cash/
+      update_account_cash
     when /permissions/
       update_account_cash if value.index "accounting"
+      update_account_due if value.index "addinternet"
     end
     return ret
   end
@@ -494,6 +510,8 @@ class Person < Entity
   end
   
   def get_cash( person, amount )
+    ddputs(3){"Amount is #{amount.inspect} and #{person.inspect} will receive it"}
+    amount = amount.to_i
     if amount < 0
       dputs(0){"Can't transfer a negative amount here"}
       return false
@@ -502,6 +520,13 @@ class Person < Entity
       dputs(0){"#{person.login_name}::#{person.full_name} has no account_due"}
       return false
     end
+    if not @account_cash
+      dputs(0){"#{self.inspect} has no account_cash"}
+      return false
+    end
+    ddputs(3){"Transferring #{amount} from #{@account_cash.get_path} to " +
+        "#{person.compta_due.src.get_path}"
+    }
     Movements.create( "Payement au comptable", Date.today,
       amount / 1000.0, @account_cash, person.compta_due.src )
     return true

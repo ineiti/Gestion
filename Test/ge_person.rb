@@ -43,7 +43,7 @@ class TC_Person < Test::Unit::TestCase
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123",
       :permissions => [ "default" ], :account_due => "Linus" )
     @josue = Entities.Persons.create( :login_name => "josue", :password => "super",
-      :permissions => [ "default" ], :account_due => "Josué" )
+      :permissions => %w( default addinternet ), :account_due => "Josué" )
     @surf = Entities.Persons.create( :login_name => "surf", :password => "super",
       :permissions => [ "default" ] )
     Entities.Services.create( :name => "surf", :price => 1000, :duration => 20 )
@@ -88,12 +88,12 @@ class TC_Person < Test::Unit::TestCase
     dputs( 0 ){ "log_list #{log_list.inspect}" }
     log_list.undate
     log_list.unlogid
-    assert_equal( {:data_class_id=>2, :data_field=>:credit, :data_value=>"500",
+    assert_equal( {:data_class_id=>3, :data_field=>:credit, :data_value=>"500",
         :undo_function=>:undo_set_entry, :data_class=>"Person",
-        :msg=>"1:500", :data_old=>0},
+        :msg=>"2:500", :data_old=>0},
       log_list[0].unlogid )
     assert_equal( {:data_value=>josue_due + 500, :undo_function=>:undo_set_entry,
-        :data_old=>josue_due, :data_class_id=>1,
+        :data_old=>josue_due, :data_class_id=>2,
         :data_class=>"Person", :msg=>"credit pour -surf:500-", :data_field=>:credit_due},
       log_list[1].unlogid )
   end
@@ -147,12 +147,21 @@ class TC_Person < Test::Unit::TestCase
       @admin.log_list[-1].undate.unlogid )
   end
   
+  def test_account_due
+    @secretary = Entities.Persons.create( :login_name => "secretary",
+      :permissions => ["addinternet"] )
+  
+    assert_equal "Secretary", @secretary.account_due
+  end
+  
   def test_account_cash
     @accountant = Entities.Persons.create( :login_name => "accountant", :password => "super",
       :permissions => [ "accounting" ] )
     
+    assert_equal "Accountant", @accountant.account_name_cash
+
     assert_not_nil @accountant.account_cash
-    assert_equal 1040, @accountant.total_cash.to_f
+    assert_equal 0, @accountant.total_cash.to_f
     
     credit = @josue.credit_due
     @josue.add_credit( @surf, 1000 )
@@ -167,5 +176,10 @@ class TC_Person < Test::Unit::TestCase
     
     @josue.permissions = %w( default accounting )
     assert_not_nil @josue.account_cash
+  end
+  
+  def test_listp_compta_due
+    list = Persons.listp_compta_due
+    assert list
   end
 end
