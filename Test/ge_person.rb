@@ -30,7 +30,7 @@ class TC_Person < Test::Unit::TestCase
   end
   
   def setup
-    Permission.add( 'default', '.*' )
+    #Permission.add( 'default', '.*' )
 
     dputs(0){"Setting up"}
     Entities.delete_all_data()
@@ -43,7 +43,7 @@ class TC_Person < Test::Unit::TestCase
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123",
       :permissions => [ "default" ], :account_due => "Linus" )
     @josue = Entities.Persons.create( :login_name => "josue", :password => "super",
-      :permissions => %w( default addinternet ), :account_due => "Josué" )
+      :permissions => %w( default addinternet secretary ), :account_due => "Josué" )
     @surf = Entities.Persons.create( :login_name => "surf", :password => "super",
       :permissions => [ "default" ] )
     Entities.Services.create( :name => "surf", :price => 1000, :duration => 20 )
@@ -60,7 +60,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def teardown
-    permissions_init
+    #permissions_init
     Entities.Persons.save
     Entities.LogActions.save
   end
@@ -149,14 +149,14 @@ class TC_Person < Test::Unit::TestCase
   
   def test_account_due
     @secretary = Entities.Persons.create( :login_name => "secretary",
-      :permissions => ["addinternet"] )
+      :permissions => ["secretary"] )
   
     assert_equal "Secretary", @secretary.account_due
   end
   
   def test_account_cash
     @accountant = Entities.Persons.create( :login_name => "accountant", :password => "super",
-      :permissions => [ "accounting" ] )
+      :permissions => [ "accountant" ] )
     
     assert_equal "Accountant", @accountant.account_name_cash
 

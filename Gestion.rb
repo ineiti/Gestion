@@ -50,7 +50,7 @@ Permission.add( 'secretary', 'SelfCash,SelfServices,CourseModify,PersonAdd,Perso
     'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
 Permission.add( 'director', 'CourseAdd', 'secretary' )
 Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash', 'internet' )
-Permission.add( 'maintenance', '', 'teacher' )
+Permission.add( 'maintenance', 'Inventory.*', 'default' )
 Permission.add( 'admin', '.*', '.*' )
 
 if uri = get_config( false, :LibNet, :URI )

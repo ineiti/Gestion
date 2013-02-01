@@ -293,15 +293,12 @@ class Person < Entity
     data_set( :credit, data_get( :credit ).to_i )
     @account_due = @account_cash = nil
 
-    perms = data_get( :permissions )
-    if perms
-      if perms.index "addinternet"
-        update_account_due
-      end
+    if can_view :FlagAddInternet
+      update_account_due
+    end
     
-      if perms.index "accounting"
-        update_account_cash
-      end
+    if can_view :FlagAccounting
+      update_account_cash
     end
   end
   
@@ -530,5 +527,9 @@ class Person < Entity
     Movements.create( "Payement au comptable", Date.today,
       amount / 1000.0, @account_cash, person.compta_due.src )
     return true
+  end
+  
+  def can_view( v )
+    Permission.can_view( data_get(:permissions), v )
   end
 end

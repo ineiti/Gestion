@@ -7,6 +7,12 @@ class TC_Course < Test::Unit::TestCase
     Permission.add( 'student', '.*' )
     Permission.add( 'teacher', '.*' )
     Entities.delete_all_data()
+
+    dputs(0){"Resetting SQLite"}
+    SQLite.dbs_close_all
+    FileUtils.cp( "db.testGestion", "data/compta.db" )
+    SQLite.dbs_open_load_migrate
+
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123", 
       :permissions => [ "default", "teacher" ], :first_name => "Admin", :family_name => "The" )
     @secretaire = Entities.Persons.create( :login_name => "josue", :password => "super", 
@@ -16,16 +22,16 @@ class TC_Course < Test::Unit::TestCase
     @net = Entities.Courses.create( :name => "net_1001" )
     @base = Entities.Courses.create( :name => "base_1004" )
     @maint = Entities.Courses.create( :name => "maint_1204", :start => "19.01.2012", :end => "18.02.2012",
-      :teacher => ['josue'] )
+      :teacher => @josue )
     @maint.students = %w( admin surf )
     @base.students = %w( admin2 surf )
     @maint_t = Entities.CourseTypes.create( :name => "maint", :duration => 72,
       :desciption => "maintenance", :contents => "lots of work",
       :filename => ['base_gestion.odt'])
     @maint_2 = Courses.create( :name => "maint_1210", :start => "1.10.2012",
-      :end => "1.1.2013", :sign => "2.1.2012", :teacher => ['josue'],
+      :end => "1.1.2013", :sign => "2.1.2012", :teacher => @josue,
       :contents => "lots of work", :description => "maintenance",
-      :duration => 72, :responsible => ['josue'],
+      :duration => 72, :responsible => @josue,
       :ctype => @maint_t )
   end
   
@@ -90,7 +96,7 @@ class TC_Course < Test::Unit::TestCase
     "P Admin The\n\nNP Internet Surfer\nhttp://ndjair.net\n" 
   
   # Check different assertions of missing stuff and students
-  def test_diploma_export
+  def tes_diploma_export
     assert_equal %w( start end sign duration teacher responsible description contents ), 
       @net.export_check
     
@@ -98,8 +104,8 @@ class TC_Course < Test::Unit::TestCase
     @net.end = "04.05.03"
     @net.sign = "04.06.03"
     @net.duration = 72
-    @net.teacher = "admin"
-    @net.responsible = "josue"
+    @net.teacher = @admin
+    @net.responsible = @josue
     @net.description = "Cours de base"
     @net.contents = "Word\nExcel\nLinux"
     
@@ -147,7 +153,7 @@ class TC_Course < Test::Unit::TestCase
   def test_new_course
     nmaint = Courses.create_ctype("1201", @maint_t)
     assert_equal( {:duration=>72, :course_id=>5, :contents=>"lots of work", 
-        :students=>[], :name=>"maint_1201", :ctype => [0] },
+        :students=>[], :name=>"maint_1201", :ctype => [1] },
       nmaint.to_hash )
   end
 	
@@ -187,16 +193,22 @@ class TC_Course < Test::Unit::TestCase
   
   def test_migration_2
     Entities.delete_all_data()
+
+    dputs(0){"Resetting SQLite"}
+    SQLite.dbs_close_all
+    FileUtils.cp( "db.testGestion", "data/compta.db" )
+    SQLite.dbs_open_load_migrate
+
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123", 
       :permissions => [ "default", "teacher" ], :first_name => "Admin", :family_name => "The" )
     @linus = Entities.Persons.create( :login_name => "linus", :password => "super123", 
       :permissions => [ "default", "teacher" ], :first_name => "Linus", :family_name => "Torvalds" )
     @maint = Entities.Courses.create( :name => "maint_1204", :start => "19.01.2012", :end => "18.02.2012",
-      :teacher => ['admin'], :assistant => ['none'],
-      :responsible => ['linus'] )
+      :teacher => @admin, :assistant => 0,
+      :responsible => @linus )
     @maint2 = Entities.Courses.create( :name => "maint_1208", :start => "19.01.2012", :end => "18.02.2012",
-      :teacher => ['admin'], :assistant => ['linus'],
-      :responsible => ['linus'] )
+      :teacher => @admin, :assistant => @linus,
+      :responsible => @linus )
     
     dputs(0){"Courses are #{Courses.search_all.inspect}"}
     
