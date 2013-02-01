@@ -7,4 +7,5 @@ sleep 2
 pkill -f -s 9 "ruby.*Gestion"
 echo Going to restore $BACKUP_DIR/$DATE > /tmp/restore
 tar Pxzf $BACKUP_DIR/$DATE -C /
+nohup /usr/local/bin/newstuff &
 $DIR/start_gestion

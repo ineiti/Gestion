@@ -22,17 +22,18 @@ class TC_Course < Test::Unit::TestCase
     @net = Entities.Courses.create( :name => "net_1001" )
     @base = Entities.Courses.create( :name => "base_1004" )
     @maint = Entities.Courses.create( :name => "maint_1204", :start => "19.01.2012", :end => "18.02.2012",
-      :teacher => @josue )
+      :teacher => @secretaire )
     @maint.students = %w( admin surf )
     @base.students = %w( admin2 surf )
     @maint_t = Entities.CourseTypes.create( :name => "maint", :duration => 72,
       :desciption => "maintenance", :contents => "lots of work",
       :filename => ['base_gestion.odt'])
     @maint_2 = Courses.create( :name => "maint_1210", :start => "1.10.2012",
-      :end => "1.1.2013", :sign => "2.1.2012", :teacher => @josue,
+      :end => "1.1.2013", :sign => "2.1.2012", :teacher => @secretaire,
       :contents => "lots of work", :description => "maintenance",
-      :duration => 72, :responsible => @josue,
+      :duration => 72, :responsible => @secretaire,
       :ctype => @maint_t )
+    dputs(0){@maint_2.inspect}
   end
   
   def teardown
@@ -105,7 +106,7 @@ class TC_Course < Test::Unit::TestCase
     @net.sign = "04.06.03"
     @net.duration = 72
     @net.teacher = @admin
-    @net.responsible = @josue
+    @net.responsible = @secretaire
     @net.description = "Cours de base"
     @net.contents = "Word\nExcel\nLinux"
     
@@ -175,6 +176,7 @@ class TC_Course < Test::Unit::TestCase
     @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
         :course_id => @maint_2.course_id, :mean => 11})
     @secretaire.role_diploma = "Director"
+    assert @secretaire, @maint_2.teacher
     @maint_2.prepare_diplomas( false )
     assert_equal 1, Dir.glob( "#{@maint_2.diploma_dir}/*odt" ).count
   end

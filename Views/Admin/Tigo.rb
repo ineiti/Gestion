@@ -11,7 +11,7 @@ class AdminTigo < View
         gui_vbox :nogroup do
           show_int_ro :credit_left
           show_int_ro :promotion_left
-          show_button :update_params, :connect, :disconnect
+          show_button :update_params
         end
         gui_vbox :nogroup do
           show_int :code, :width => 150
@@ -55,14 +55,7 @@ class AdminTigo < View
   end
 
   def rpc_update( session )
-    buttons = reply( :unhide, :connect ) +
-      reply( :hide, :disconnect )
-    if $lib_net.call( :isp_connected ) == "yes"
-      buttons = reply( :hide, :connect ) +
-        reply( :unhide, :disconnect )
-    end
-    reply( :update, update( session ) ) +
-      buttons
+    reply( :update, update( session ) )
   end
 	
   def rpc_show( session )
@@ -118,10 +111,43 @@ class AdminTigo < View
     reply( :update, :tigo_number => @tigo_number.data_str = data['tigo_number'] )
   end
 
+  def read_status
+    str = case lib_net( :isp_connection_status ) 
+    when /0/
+      "0/4 - Not connected"
+    when /1/
+      "1/4 - Opened modem"
+    when /2/
+      "2/4 - Password OK"
+    when /3/
+      "3/4 - Got IP"
+    when /4/
+      "4/4 - Secured connection"
+    end
+    mode, stat, lac, ci = lib_net( :isp_tigo_get_cell ).split(",")
+    rssi, ber = lib_net( :isp_tigo_get_signal ).split(",")
+    if stat == "1"
+      antenna = case ci
+      when /F29/
+        ":Bitkine1"
+      when /F2A/
+        ":Bitkine2"
+      when /F2B/
+        ":Bitkine3"
+      when /AB7/
+        ":Route Bitkine"
+      end
+      str += "\nLocation: #{lac}\nAnteanna: #{ci + antenna}"
+    else
+      str += "\nNot registered"
+    end
+    str += "\nSignal: #{rssi.to_i}/31"
+  end
+
   def update( session )
     { :credit_left => lib_net( nil, :CREDIT_LEFT ),
       :promotion_left => lib_net( nil, :PROMOTION_LEFT ),
       :tigo_number => @tigo_number.data_str,
-      :status => "<pre>#{ lib_net( :isp_connection_status ) }</pre>" }
+      :status => "<pre>#{read_status}</pre>" }
   end
 end
