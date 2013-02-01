@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.5\n"
 "POT-Creation-Date: 2013-01-23 23:24+0100\n"
-"PO-Revision-Date: 2013-01-23 23:28+0100\n"
+"PO-Revision-Date: 2013-02-01 19:08+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: French <fr@profeda.org>\n"
 "Language: \n"
@@ -310,13 +310,13 @@ msgstr "Nom du compte"
 #. Comes from file Views/Person/Credit.rb and line is       show_int_ro :credit
 #: Entities/Person.rb:45Views/Person/Credit.rb:9
 msgid "credit"
-msgstr "Crédit"
+msgstr "Crédit internet"
 
 #. Comes from file Entities/Person.rb and line is     value_int_ro :credit_due
 #. Comes from file Views/Self/Cash.rb and line is         show_int_ro :credit_due, :width => 100
 #: Entities/Person.rb:46Views/Self/Cash.rb:10
 msgid "credit_due"
-msgstr "Argent dû"
+msgstr "Argent encaissé"
 
 #. Comes from file Entities/Person.rb and line is     value_str :session_id
 #: Entities/Person.rb:49
