@@ -4,6 +4,7 @@ BUGS:
         - creation of accounts is not reliable. Probably fields of
           Person::account_due and Person::account_cash are not automatically
           filled in
+        - accounts are mixed - account_due in Admin::Transfer is same for all...
         - printing of student-card with accent in name fails (probably due to
           accent in filename - sanitize using "accents_replace")
         - admin created repeatedly? Why?
