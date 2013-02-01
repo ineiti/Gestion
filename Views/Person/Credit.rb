@@ -2,6 +2,7 @@ class PersonCredit < View
   def layout
     set_data_class :Persons
     @order = 15
+    @update = true
 
     gui_vbox do
       show_int :credit_add

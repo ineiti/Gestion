@@ -157,11 +157,15 @@ class TC_Person < Test::Unit::TestCase
   def test_account_cash
     @accountant = Entities.Persons.create( :login_name => "accountant", :password => "super",
       :permissions => [ "accountant" ] )
+    @accountant2 = Entities.Persons.create( :login_name => "accountant2", :password => "super",
+      :permissions => [ "accountant" ] )
     
     assert_equal "Accountant", @accountant.account_name_cash
 
     assert_not_nil @accountant.account_cash
+    assert_equal "Root::Cash::Accountant", @accountant.account_cash.get_path
     assert_equal 0, @accountant.total_cash.to_f
+    assert_equal 0, @accountant2.total_cash.to_f
     
     credit = @josue.credit_due
     @josue.add_credit( @surf, 1000 )
@@ -169,6 +173,7 @@ class TC_Person < Test::Unit::TestCase
     
     assert @accountant.get_cash( @josue, 1000 )
     assert_equal 0, @josue.credit_due - credit
+    assert_equal 0, @accountant2.total_cash.to_f
   end
   
   def test_account_cash_update

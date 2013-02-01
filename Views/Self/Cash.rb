@@ -28,12 +28,15 @@ class SelfCash < View
   end
 
   def list_payments( session, force = false )
+    dputs(3){"list_payments #{session.inspect}"}
     person = session.owner
     pid = person.person_id
     if not @cache_payments[pid] or force
       @cache_payments[pid] = if cd = person.compta_due
+        dputs(3){"compta_due is here"}
         i = 0
-        cd.src.movements.collect{|m| 
+        cd.src.movements.collect{|m|
+          dputs(4){"Collecting #{m.inspect}"}
 #          [ i, "#{m.date} :: #{( m.value * 1000 ).floor.to_s.rjust(6,'_')} " + 
 #              ":: #{m.desc}" ]
           "#{m.date} :: #{( m.value * 1000 ).floor.to_s.rjust(6,'_')} " + 

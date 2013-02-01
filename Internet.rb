@@ -9,9 +9,10 @@ module Internet
         dputs(3){"User is #{u}"}
         cost = $lib_net.call( :user_cost_now ).to_i
 
+        isp = JSON.parse( $lib_net.call( :isp_params ) )
         user = Persons.find_by_login_name( u )
         if user
-          if not self.free( user )
+          if ( isp.conn_type == "ondemand" ) or ( not self.free( user ) )
             if user.credit.to_i >= cost
               dputs(3){"Taking #{cost} credits from #{u} who has #{user.credit}"}
               user.credit = user.credit.to_i - cost

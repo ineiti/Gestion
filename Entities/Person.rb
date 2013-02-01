@@ -208,11 +208,16 @@ class Persons < Entities
   
   def listp_compta_due
     search_all.select{|p|
-      p.compta_due and p.compta_due.src
+      p.compta_due and p.compta_due.src and p.login_name != "admin"
     }.collect{|p|
-      dputs( 4 ){ "p is #{p.full_name}" }
+      ddputs( 4 ){ "p is #{p.full_name}" }
+      ddputs( 4 ){ "account is #{p.compta_due.src.get_path}" }
       amount = (p.compta_due.src.total.to_f * 1000).to_i
-      [p.person_id, "#{amount.to_s.rjust(6)} - #{p.full_name}"]
+      name = p.full_name
+      if name.length == 0
+        name = p.login_name
+      end
+      [p.person_id, "#{amount.to_s.rjust(6)} - #{name}"]
     }.sort{|a,b|
       a[1] <=> b[1]
     }.reverse
@@ -293,12 +298,13 @@ class Person < Entity
     data_set( :credit, data_get( :credit ).to_i )
     @account_due = @account_cash = nil
 
-    if can_view :FlagAddInternet
-      update_account_due
-    end
-    
-    if can_view :FlagAccounting
-      update_account_cash
+    if login_name != "admin"
+      if can_view :FlagAddInternet
+        update_account_due
+      end
+      if can_view :FlagAccounting
+        update_account_cash
+      end
     end
   end
   
@@ -316,10 +322,10 @@ class Person < Entity
       acc = ( first_name || login_name ).capitalize 
       data_set( :account_due, acc )
     end
-    src = get_config( "Root::Lending::#{acc}", :compta_due, :src )
+    src = get_config( "Root::Lending", :compta_due, :src ) + "::#{acc}"
     dputs( 2 ){ "Creating AfriCompta for #{full_name} with source-account: #{src}" }
     @compta_due = AfriCompta.new( src, 
-      get_config( "Root::Income", :compta_due, :dst ) )
+      get_config( "Root::Income::Internet", :compta_due, :dst ) )
     update_credit
   end
   
