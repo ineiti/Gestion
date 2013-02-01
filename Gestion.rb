@@ -7,7 +7,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="0.9.2-pre1"
+VERSION_GESTION="0.9.3"
 
 GESTION_DIR=File.dirname(__FILE__)
 CONFIG_FILE="config.yaml"
@@ -47,9 +47,9 @@ Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit,AdminTigo,FlagInternetFree', 'student' )
 Permission.add( 'teacher', 'CourseGrade,PersonModify,AdminRestriction', 'assistant' )
 Permission.add( 'secretary', 'SelfCash,SelfServices,CourseModify,PersonAdd,PersonCredit,' + 
-    'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
+    'PersonModify,CourseDiploma,FlagCourseGradeAll,FlagAddInternet', 'assistant' )
 Permission.add( 'director', 'CourseAdd', 'secretary' )
-Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash', 'internet' )
+Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
 Permission.add( 'maintenance', 'Inventory.*', 'default' )
 Permission.add( 'admin', '.*', '.*' )
 

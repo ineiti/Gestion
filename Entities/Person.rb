@@ -288,7 +288,7 @@ end
 class Person < Entity
   attr_accessor :compta_due, :account_cash
   def setup_instance
-    ddputs(3){"Data is #{@proxy.data[@id].inspect}"}
+    dputs(3){"Data is #{@proxy.data[@id].inspect}"}
 
     data_set( :credit, data_get( :credit ).to_i )
     @account_due = @account_cash = nil
@@ -329,7 +329,7 @@ class Person < Entity
       acc = ( first_name || login_name ).capitalize 
       data_set( :account_name_cash, acc )
     end
-    ddputs(3){"Getting account #{acc}"}
+    dputs(3){"Getting account #{acc}"}
     cc = get_config( "Root::Cash::#{acc}", 
       :account, :cash )
     @account_cash = ( Accounts.get_by_path( cc ) or 
@@ -507,7 +507,7 @@ class Person < Entity
   end
   
   def get_cash( person, amount )
-    ddputs(3){"Amount is #{amount.inspect} and #{person.inspect} will receive it"}
+    dputs(3){"Amount is #{amount.inspect} and #{person.inspect} will receive it"}
     amount = amount.to_i
     if amount < 0
       dputs(0){"Can't transfer a negative amount here"}
@@ -521,7 +521,7 @@ class Person < Entity
       dputs(0){"#{self.inspect} has no account_cash"}
       return false
     end
-    ddputs(3){"Transferring #{amount} from #{@account_cash.get_path} to " +
+    dputs(3){"Transferring #{amount} from #{@account_cash.get_path} to " +
         "#{person.compta_due.src.get_path}"
     }
     Movements.create( "Payement au comptable", Date.today,

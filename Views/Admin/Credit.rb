@@ -3,6 +3,7 @@
 class AdminCredit < View
   def layout
     @order = 300
+    @visible = false
 		
     gui_vbox do
       show_text :user_credit

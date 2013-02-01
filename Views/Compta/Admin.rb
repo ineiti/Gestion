@@ -3,7 +3,7 @@
 
 class ComptaAdmin < View
   def layout
-    @order = 10
+    @order = 100
 		
     gui_hbox do
       show_button :archive, :update_totals, :clean_up
