@@ -44,13 +44,14 @@ end
 Permission.add( 'default', ',Welcome,SelfShow' )
 Permission.add( 'internet', 'SelfInternet,SelfChat', 'default' )
 Permission.add( 'student', '', 'internet' )
-Permission.add( 'assistant', 'TaskEdit,AdminTigo,FlagInternetFree', 'student' )
+Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
 Permission.add( 'teacher', 'CourseGrade,PersonModify,AdminRestriction', 'assistant' )
-Permission.add( 'secretary', 'SelfCash,SelfServices,CourseModify,PersonAdd,PersonCredit,' + 
-    'PersonModify,CourseDiploma,FlagCourseGradeAll,FlagAddInternet', 'assistant' )
+Permission.add( 'secretary', 'SelfServices,CourseModify,PersonAdd,' + 
+    'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
 Permission.add( 'director', 'CourseAdd', 'secretary' )
 Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
 Permission.add( 'maintenance', 'Inventory.*', 'default' )
+Permission.add( 'cybermanager', 'SelfCash,PersonCredit,AdminTigo,FlagAddInternet', '' )
 Permission.add( 'admin', '.*', '.*' )
 
 if uri = get_config( false, :LibNet, :URI )
