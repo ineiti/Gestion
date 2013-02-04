@@ -6,13 +6,15 @@ module Internet
   def self.take_money
     if $lib_net.call( :isp_connection_status ).to_i >= 4
       $lib_net.call( :users_connected ).split.each{|u|
-        dputs(3){"User is #{u}"}
+        ddputs(3){"User is #{u}"}
         cost = $lib_net.call( :user_cost_now ).to_i
 
-        isp = JSON.parse( $lib_net.call( :isp_params ) )
+        isp = JSON.parse( $lib_net.call( :isp_params ) ).to_sym
+        ddputs(3){"ISP-params is #{isp.inspect}"}
         user = Persons.find_by_login_name( u )
         if user
-          if ( isp.conn_type == "ondemand" ) or ( not self.free( user ) )
+          if ( isp._conn_type == "ondemand" ) or ( not self.free( user ) )
+            ddputs(3){"User #{u} will pay #{cost}"}
             if user.credit.to_i >= cost
               dputs(3){"Taking #{cost} credits from #{u} who has #{user.credit}"}
               user.credit = user.credit.to_i - cost
@@ -49,6 +51,7 @@ module Internet
   end
   
   def self.free( user )
+    #return false
     if user
       # We want an exact match, so we put the name between ^ and $
       courses = Entities.Courses.search_by_students( "^#{user.login_name}$" )

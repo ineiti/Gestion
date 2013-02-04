@@ -74,6 +74,7 @@ class SelfInternet < View
           reply( :hide, :disconnect )
       end
     end
+    dputs(3){"User #{session.owner.login_name} is connected: #{connected.inspect}" }
     if connected
       return reply( :hide, :connect ) +
         reply( :unhide, :disconnect )

@@ -19,6 +19,9 @@ class LibNet
       else
         return 15
       end
+    when :isp_params
+      ddputs(3){"Returning #{$libnet_isp.to_json}"}
+      return $libnet_isp.to_json
     end
   end
 	
@@ -60,7 +63,17 @@ class TC_Internet < Test::Unit::TestCase
   def teardown
   end
   
+  def libnet_isp_gprs
+    $libnet_isp = {:conn_type => "ondemand" }
+  end
+  
+  def libnet_isp_vsat
+    $libnet_isp = {:conn_type => "permanent" }
+  end
+  
   def test_take_money
+    libnet_isp_gprs
+    
     assert_equal 50, @test.credit
 
     Internet.take_money
