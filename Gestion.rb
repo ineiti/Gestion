@@ -6,7 +6,7 @@
 # - Login: - for payable laptop web-access
 #          - for students
 
-DEBUG_LVL=3
+DEBUG_LVL=2
 VERSION_GESTION="0.9.3"
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -139,14 +139,16 @@ trap("SIGINT") {
 
 catch :ctrl_c do
   begin
+    webrick_port = get_config( 3302, :webrick, :port )
+    ddputs(2){"Starting at port #{webrick_port}" }
     if $config[:profiling]
       require 'rubygems'
       require 'perftools'
       PerfTools::CpuProfiler.start("/tmp/#{$config[:profiling]}") do
-        QooxView::startWeb
+        QooxView::startWeb webrick_port
       end
     else
-      QooxView::startWeb
+      QooxView::startWeb webrick_port
     end
   rescue Exception
     dputs( 0 ){ "Saving all" }

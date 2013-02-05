@@ -6,15 +6,16 @@ module Internet
   def self.take_money
     if $lib_net.call( :isp_connection_status ).to_i >= 4
       $lib_net.call( :users_connected ).split.each{|u|
-        ddputs(3){"User is #{u}"}
+        dputs(3){"User is #{u}"}
         cost = $lib_net.call( :user_cost_now ).to_i
 
         isp = JSON.parse( $lib_net.call( :isp_params ) ).to_sym
-        ddputs(3){"ISP-params is #{isp.inspect}"}
+        dputs(3){"ISP-params is #{isp.inspect} and conn_type is #{isp._conn_type}"}
         user = Persons.find_by_login_name( u )
         if user
+          dputs(3){"Found user #{u}: #{user.full_name}"}
           if ( isp._conn_type == "ondemand" ) or ( not self.free( user ) )
-            ddputs(3){"User #{u} will pay #{cost}"}
+            dputs(3){"User #{u} will pay #{cost}"}
             if user.credit.to_i >= cost
               dputs(3){"Taking #{cost} credits from #{u} who has #{user.credit}"}
               user.credit = user.credit.to_i - cost
@@ -23,6 +24,8 @@ module Internet
               $lib_net.call_args( :user_disconnect_name, 
                 "#{user.login_name}")
             end
+          else
+            dputs(2){"User #{u} goes free"}
           end
         else
           dputs(1){"Couldn't find user #{u}"}

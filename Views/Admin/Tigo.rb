@@ -25,6 +25,7 @@ class AdminTigo < View
       gui_hbox :nogroup do
         gui_vbox :nogroup do
           show_str :tigo_number
+          show_str_ro :tigo_recharge
           show_button :update_tigo_number
         end
         gui_vbox :nogroup do
@@ -32,6 +33,7 @@ class AdminTigo < View
         end
         gui_vbox :nogroup do
           show_html :successful_promotions
+          show_button :show_all_promotions
         end
       end
 
@@ -114,6 +116,11 @@ class AdminTigo < View
     reply( :update, :tigo_number => @tigo_number.data_str = data['tigo_number'] )
   end
 
+  def rpc_button_show_all_promotions( session, data )
+    reply( :update, { :msg => "<pre>#{get_successful_promotions( true )}</pre>" } ) +
+      reply( :window_show, :error )
+  end
+
   def read_status
     str = case lib_net( :isp_connection_status ) 
     when /0/
@@ -147,11 +154,22 @@ class AdminTigo < View
     str += "\nSignal: #{rssi.to_i}/31"
   end
 
+  def get_successful_promotions( show_all = false )
+    proms = lib_net( :isp_tigo_promotion_list ).split("\n").reverse
+    if not show_all
+      proms = proms[0..5]
+    end
+    proms.collect{|s|
+      s.gsub(/ - .*user:/, '--' ).gsub(/ .*cost:/, '--' )
+    }.join("\n")
+  end
+
   def update( session )
     { :credit_left => lib_net( nil, :CREDIT_LEFT ),
       :promotion_left => lib_net( nil, :PROMOTION_LEFT ),
       :tigo_number => @tigo_number.data_str,
+      :tigo_recharge => "*190*1234*235#{@tigo_number.data_str.gsub(/ /,'')}*800#",
       :status => "<pre>#{read_status}</pre>",
-      :successful_promotion => "<pre>#{lib_net( :isp_tigo_promotion_list ).reverse} }
+      :successful_promotions => "<pre>#{get_successful_promotions}</pre>" }
   end
 end

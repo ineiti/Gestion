@@ -95,12 +95,13 @@ class SelfInternet < View
   end
 
   def rpc_update( session, nobutton = false )
+    users = $lib_net.call(:users_connected)
     ret = reply( :update, update( session ) ) +
       update_button( session, nobutton ) +
       update_connection_status( session ) +
       update_isp( session ) +
       reply( :update, :users_connected => 
-        $lib_net.call(:users_connected).split.count)
+        "#{users.split.count}: #{users}" )
     if @isp['has_promo'] == 'true'
       ret += reply( :update, :bytes_left => $lib_net.call( nil, :PROMOTION_LEFT ) )
     end
