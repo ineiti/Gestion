@@ -6,6 +6,8 @@ ldap*
 Test/data/*
 Test/data2/*
 Test/Diplomas/*
+Test/log
+Test/run
 .DS_Store
 *tgz
 \.external.*
