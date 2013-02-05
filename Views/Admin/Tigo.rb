@@ -30,6 +30,9 @@ class AdminTigo < View
         gui_vbox :nogroup do
           show_html :status
         end
+        gui_vbox :nogroup do
+          show_html :successful_promotions
+        end
       end
 
       gui_window :error do
@@ -84,7 +87,7 @@ class AdminTigo < View
   end
 
   def rpc_button_add_promotion( session, data )
-    lib_net_args :isp_tigo_promotion_add, data["size"]
+    lib_net_args :isp_tigo_promotion_add, data["size"], session.owner.login_name
     rpc_update( session )
   end
 
@@ -148,6 +151,7 @@ class AdminTigo < View
     { :credit_left => lib_net( nil, :CREDIT_LEFT ),
       :promotion_left => lib_net( nil, :PROMOTION_LEFT ),
       :tigo_number => @tigo_number.data_str,
-      :status => "<pre>#{read_status}</pre>" }
+      :status => "<pre>#{read_status}</pre>",
+      :successful_promotion => "<pre>#{lib_net( :isp_tigo_promotion_list ).reverse} }
   end
 end
