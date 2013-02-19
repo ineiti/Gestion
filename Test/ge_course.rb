@@ -140,7 +140,7 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_print_presence
-    @maint.print_presence
+    assert_equal true, @maint.print_presence
   end
   
   def test_person_courses

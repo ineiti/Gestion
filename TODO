@@ -1,11 +1,14 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - printing of student-card with accent in name fails (probably due to
-          accent in filename - sanitize using "accents_replace")
         - Why does it sometimes redirect to stuff like http://admin:3302/?afdj ??
           -> create a proper proxy-entry in the apache-config-file
-	- 1000 crashes when not operating "properly"
+        - When creating a username from "name1 name2 name3 name4", it gets to
+          "n3_name1_name2" instead of "n3_name1"
+        - Restriction is not waterproof: some local sites don't get shown, like
+          markas-al-nour.org which gets wrongly resolved by internal zentyal-boxes
+          eventually also problems with local logins
+	- 10 crashes when not operating "properly"
 	
 [5', 15', 30', 1h, 4h]
 Security:
@@ -13,7 +16,6 @@ Security:
 	  lower rights - use an own tab which is not active for non-allowed users
 
 UI:
-        - add list of "add_promotion"
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
 
@@ -32,11 +34,12 @@ Programming:
         -2 change Person::credit_due to Person::total_due
         -2 change Person::credit to Person::internet_credit
         -2 change Person::get_credit to Person::get_total_due
-        -2 change config::compta_due to config::account
+        -2 change config::compta_due to config::account::cash
         -2 change all cash-methods to credit-methods
         -2 add a AddCash-permission and change Person.setup_instance
         -2 verify if Person::data_set and Person::data_set_log are really
           necessary
+        -3 change Course::make_pdfs to OpenPrint
 
 > 1.0
 Features:
@@ -120,11 +123,15 @@ Unconfirmed bugs:
 	- TaskList: sometimes when pressing "list", it takes twice to show everything
 
 To check:
-        - FreeInternet for paying internet is not to be used
-        - Why are the people refused in Info.rb? -> Added FlagInternetFree
+        - printing of student-card with accent in name fails (probably due to
+          accent in filename - sanitize using "accents_replace")
 
 
 ** FIXED **:
+        - B 130219: Can't print presence-list
+        - TC130205: Why are the people refused in Info.rb? -> Added FlagInternetFree
+        - TC130205: FreeInternet for paying internet is not to be used
+        - F 130205: add list of "add_promotion"
         - B 130201: admin created repeatedly? Why? To secure in case of bug...
 	- UI130201: 2/4 PrintButton - Have a SplitButton with PDF and printers from local
          and remote computer - added config::OpenPrint::update_remote

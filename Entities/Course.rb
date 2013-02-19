@@ -296,8 +296,7 @@ base_gestion
 
   def print_presence( lp_cmd = nil )
     return false if not teacher or teacher.count == 0
-    teacher_person = Entities.Persons.find_by_login_name( teacher[0] )
-    return false if not start or not data_get( :end ) or students.count == 0 or not teacher_person
+    return false if not start or not data_get( :end ) or students.count == 0
     dstart = Date.strptime( start, '%d.%m.%Y' )
     dend = Date.strptime( data_get( :end ), '%d.%m.%Y' )
     stud_nr = 1
@@ -313,7 +312,7 @@ base_gestion
 
     lp_cmd and @proxy.print_presence.lp_cmd = lp_cmd
     @proxy.print_presence.print( studs.flatten(1) + [
-        [ /Teacher/, teacher_person.full_name ],
+        [ /Teacher/, teacher.full_name ],
         [ /Course_name/, name ],
         [ /2010-08-20/, dstart.to_s ],
         [ /20.08.10/, dstart.strftime("%d/%m/%y") ],
