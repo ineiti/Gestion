@@ -73,6 +73,14 @@ class PersonTabs < View
       result = result[0..19]
     end
 
+    # Check if we have an exact match on the login_name
+    if exact = Persons.match_by_login_name( s )
+      dputs( 3 ){"Found exact match"}
+      if pos = result.index( exact )
+        dputs( 3 ){"Found exact match at position #{pos}"}
+        result[0], result[pos] = result[pos], result[0]
+      end
+    end
     ret = reply( :empty, [:persons] ) +
       reply( :update, { :persons => result.collect{|p|
           p.to_list

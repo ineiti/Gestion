@@ -1,13 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Why does it sometimes redirect to stuff like http://admin:3302/?afdj ??
-          -> create a proper proxy-entry in the apache-config-file
-        - When creating a username from "name1 name2 name3 name4", it gets to
-          "n3_name1_name2" instead of "n3_name1"
         - Restriction is not waterproof: some local sites don't get shown, like
           markas-al-nour.org which gets wrongly resolved by internal zentyal-boxes
           eventually also problems with local logins
+        - don't get printers for remote users
 	- 10 crashes when not operating "properly"
 	
 [5', 15', 30', 1h, 4h]
@@ -128,6 +125,12 @@ To check:
 
 
 ** FIXED **:
+        - B 130219: Why does it sometimes redirect to stuff like http://admin:3302/?afdj ??
+          -> send proper files and do some regex-magic in Frontend/Lib/RPC.js
+        - B 130219: put full match first in Person::search
+        - B 130219: When creating a username from "name1 name2 name3 name4", it gets to
+          "n3_name1_name2" instead of "n3_name1"
+        - B 130219: when adding "cybermanager" to a person, account is not created
         - B 130219: Can't print presence-list
         - TC130205: Why are the people refused in Info.rb? -> Added FlagInternetFree
         - TC130205: FreeInternet for paying internet is not to be used

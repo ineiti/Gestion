@@ -51,6 +51,7 @@ class Courses < Entities
     value_int :salary_assistant
     value_int :students_start
     value_int :students_finish
+    value_int :entry_total
 
     @diploma_dir = $config[:DiplomaDir]
 

@@ -117,6 +117,11 @@ class TC_Person < Test::Unit::TestCase
     @name1 = Entities.Persons.create( {:first_name => "one two three"})
     assert_equal "One", @name1.first_name
     assert_equal "Two Three", @name1.family_name
+
+    @name2 = Entities.Persons.create( {:first_name => "one two three four"})
+    assert_equal "One Two", @name2.first_name
+    assert_equal "Three Four", @name2.family_name
+    assert_equal "tone2", @name2.login_name
   end
 
   def test_print
@@ -157,6 +162,11 @@ class TC_Person < Test::Unit::TestCase
       :permissions => ["secretary"] )
   
     assert_equal "Secretary", @secretary.account_due
+    
+    assert_equal nil, @surf.account_due
+
+    @surf.permissions = %w( default secretary )
+    assert_equal "Surf", @surf.account_due
   end
   
   def test_account_cash

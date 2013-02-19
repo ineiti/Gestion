@@ -115,9 +115,9 @@ class Persons < Entities
     end
     if family.length > 0
       dputs( 2 ){ "Family name + First name" }
-      login = family.chars.first + first
+      login = family.chars.first + first.split.first
     else
-      login = first
+      login = first.split.first
     end
 
     accents_replace( login )
@@ -317,29 +317,33 @@ class Person < Entity
   end
 
   def update_account_due
-    acc = data_get( :account_due )
-    if acc.to_s.length == 0
-      acc = ( first_name || login_name ).capitalize 
-      data_set( :account_due, acc )
+    if can_view :FlagAddInternet
+      acc = data_get( :account_due )
+      if acc.to_s.length == 0
+        acc = ( first_name || login_name ).capitalize 
+        data_set( :account_due, acc )
+      end
+      src = get_config( "Root::Lending", :compta_due, :src ) + "::#{acc}"
+      dputs( 2 ){ "Creating AfriCompta for #{full_name} with source-account: #{src}" }
+      @compta_due = AfriCompta.new( src, 
+        get_config( "Root::Income::Internet", :compta_due, :dst ) )
+      update_credit
     end
-    src = get_config( "Root::Lending", :compta_due, :src ) + "::#{acc}"
-    dputs( 2 ){ "Creating AfriCompta for #{full_name} with source-account: #{src}" }
-    @compta_due = AfriCompta.new( src, 
-      get_config( "Root::Income::Internet", :compta_due, :dst ) )
-    update_credit
   end
   
   def update_account_cash
-    acc = data_get( :account_name_cash )
-    if acc.to_s.length == 0
-      acc = ( first_name || login_name ).capitalize 
-      data_set( :account_name_cash, acc )
+    if can_view :FlagAccounting
+      acc = data_get( :account_name_cash )
+      if acc.to_s.length == 0
+        acc = ( first_name || login_name ).capitalize 
+        data_set( :account_name_cash, acc )
+      end
+      dputs(3){"Getting account #{acc}"}
+      cc = get_config( "Root::Cash::#{acc}", 
+        :account, :cash )
+      @account_cash = ( Accounts.get_by_path( cc ) or 
+          Accounts.create_path( cc, cc, false, -1, true ) )
     end
-    dputs(3){"Getting account #{acc}"}
-    cc = get_config( "Root::Cash::#{acc}", 
-      :account, :cash )
-    @account_cash = ( Accounts.get_by_path( cc ) or 
-        Accounts.create_path( cc, cc, false, -1, true ) )
   end
   
   def total_cash
@@ -365,8 +369,9 @@ class Person < Entity
     when /account_name_cash/
       update_account_cash
     when /permissions/
-      update_account_cash if value.index "accounting"
-      update_account_due if value.index "addinternet"
+      # They will check for themself
+      update_account_cash
+      update_account_due
     end
     return ret
   end
