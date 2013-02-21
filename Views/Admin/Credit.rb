@@ -16,7 +16,7 @@ class AdminCredit < View
       u, c = l.split
       if user = Persons.match_by_login_name(u)
         dputs(1){"Setting credit of #{u}:#{user.full_name} to #{c}"}
-        user.credit = c.to_i
+        user.internet_credit = c.to_i
         if not user.permissions 
           user.permissions = ["internet"]
         elsif not user.permissions.index( "internet" )

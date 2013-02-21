@@ -56,16 +56,16 @@ class Info < RPCQooxdooPath
     dputs(3){"Client use with #{args.inspect}"}
     user = Persons.match_by_login_name( args[:user] )
     if user
-      dputs(3){"Found user with groups #{user.groups.inspect} and credit #{user.credit.inspect}"}
+      dputs(3){"Found user with groups #{user.groups.inspect} and internet_credit #{user.internet_credit.inspect}"}
       if Internet.free( user )
         dputs(3){"Found free"}
         return "nopay"
       elsif user.groups and user.groups.index('localonly')
         dputs(3){"Found localonly"}
         return "local"
-      elsif user.credit
-        dputs(3){"Credit is #{user.credit.inspect}"}
-        return user.credit
+      elsif user.internet_credit
+        dputs(3){"Credit is #{user.internet_credit.inspect}"}
+        return user.internet_credit
       end
     end
     return 0

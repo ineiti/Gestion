@@ -21,7 +21,6 @@ class SelfCash < View
 
   def rpc_update( session, client = nil )
     person = session.owner
-    #person.update_credit
     reply( 'empty', %w( payments ) ) +
       reply( 'update', { :account_total_due => person.account_total_due } ) +
       reply( 'update', { :payments => list_payments( session, true ) } )
@@ -51,8 +50,8 @@ class SelfCash < View
     if desc = args['payments']
       desc = desc[0]
       dputs( 2 ){ "New choice #{name} - #{args.inspect}" }
-      if desc =~ /.*Gestion: credit/
-        login = desc.sub(/.*credit pour -([^:]*).*/, '\1')
+      if desc =~ /.*Gestion: internet_credit/
+        login = desc.sub(/.*internet_credit pour -([^:]*).*/, '\1')
     
         reply( :parent, 
           reply( :init_values, [ :PersonTabs, { :search => login, :persons => [] } ] ) +

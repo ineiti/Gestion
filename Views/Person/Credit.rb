@@ -7,7 +7,7 @@ class PersonCredit < View
     gui_vbox do
       show_int :credit_add
       show_str_ro :login_name
-      show_int_ro :credit
+      show_int_ro :internet_credit
       show_button :add_credit
 			
       show_int_ro :your_account_total_due
@@ -19,7 +19,7 @@ class PersonCredit < View
     rep = []
     if person = Persons.add_cash( session, data )
       rep = reply( :update, :credit_add => "" ) +
-        reply( :update, :credit => person.credit )
+        reply( :update, :internet_credit => person.internet_credit )
     end
     rep + rpc_update( session )
   end

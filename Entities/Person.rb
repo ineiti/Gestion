@@ -45,7 +45,7 @@ class Persons < Entities
     value_str_ro_LDAP :login_name, :ldap_name => "uid"
     # credit -> internet_credit
     # credit_due -> account_total_due
-    value_int_ro :credit
+    value_int_ro :internet_credit
     value_int_ro :account_total_due
 
     value_block :hidden
@@ -161,7 +161,7 @@ class Persons < Entities
   end
 
   def update( session )
-    super( session ).merge( { :account_total_due => session.owner.get_credit } )
+    super( session ).merge( { :account_total_due => session.owner.internet_credit } )
   end
 
   # Adds cash to a persons account. The hash "data" should contain the following
@@ -175,7 +175,7 @@ class Persons < Entities
       actor = session.owner
       dputs( 3 ){ "Adding cash to #{client.full_name} from #{actor.full_name}" }
       if client
-        actor.add_credit( client, data['credit_add'])
+        actor.add_internet_credit( client, data['credit_add'])
       end
       return client
     end
@@ -295,7 +295,7 @@ class Person < Entity
   def setup_instance
     dputs(3){"Data is #{@proxy.data[@id].inspect}"}
 
-    data_set( :credit, data_get( :credit ).to_i )
+    data_set( :internet_credit, data_get( :internet_credit ).to_i )
     @account_service = @account_due = @account_cash = nil
 
     if login_name != "admin"
@@ -310,9 +310,9 @@ class Person < Entity
   
   # This is only for testing - don't use in real life!
   def disable_africompta
-    credit = get_credit
-    credit = 0 if not credit
-    data_set( :account_total_due, credit )
+    internet_credit = internet_credit
+    internet_credit = 0 if not internet_credit
+    data_set( :account_total_due, internet_credit )
     @account_due = nil
   end
 
@@ -331,7 +331,6 @@ class Person < Entity
         lending, false, -1, true )
       @account_service = Accounts.get_by_path_or_create( service,
         service, false, 1, false )
-      update_credit
     end
   end
   
@@ -384,31 +383,26 @@ class Person < Entity
     data_set( field, value, msg, undo, logging )
   end
 
-  def get_credit
+  def account_total_due
     if @account_due
-      dputs( 2 ){ "credit is #{@account_due.total}" }
+      dputs( 2 ){ "internet_credit is #{@account_due.total}" }
       ( @account_due.total * 1000.0 + 0.5 ).to_i
     else
       data_get( :account_total_due )
-    end
+    end    
   end
 
-  def update_credit
-    #self.account_total_due = get_credit
-    #self.account_total_due = 0 if not self.account_total_due
-  end
-
-  def add_credit( client, credit )
-    dputs( 3 ){ "Adding #{credit}CFA to #{client.credit} for #{client.login_name}" }
-    credit_before = client.credit
-    if credit.to_i < 0 and credit.to_i.abs > client.credit.to_i
-      credit = -client.credit.to_i
+  def add_internet_credit( client, internet_credit )
+    dputs( 3 ){ "Adding #{internet_credit}CFA to #{client.internet_credit} for #{client.login_name}" }
+    internet_credit_before = client.internet_credit
+    if internet_credit.to_i < 0 and internet_credit.to_i.abs > client.internet_credit.to_i
+      internet_credit = -client.internet_credit.to_i
     end
-    client.data_set_log( :credit, ( client.credit.to_i + credit.to_i ).to_s,
-      "#{self.person_id}:#{credit}" )
-    move_cash( credit, "credit pour -#{client.login_name}:#{credit}-")
-    log_msg( "AddCash", "#{self.login_name} added #{credit} for #{client.login_name}: " +
-        "#{credit_before} + #{credit} = #{client.credit}" )
+    client.data_set_log( :internet_credit, ( client.internet_credit.to_i + internet_credit.to_i ).to_s,
+      "#{self.person_id}:#{internet_credit}" )
+    move_cash( internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
+    log_msg( "AddCash", "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
+        "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}" )
     log_msg( "AddCash", "Total due: #{data_get :account_total_due}")
   end
 
@@ -514,10 +508,6 @@ class Person < Entity
 	
   def family_name=(v)
     data_set( :family_name, v.capitalize_all )
-  end
-  
-  def account_total_due
-    get_credit
   end
   
   def get_cash( person, amount )

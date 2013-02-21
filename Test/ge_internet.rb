@@ -52,10 +52,10 @@ class TC_Internet < Test::Unit::TestCase
   def setup
     Entities.delete_all_data()
     $lib_net = LibNet.new
-    @test = Persons.create( :login_name => "test", :credit => 50 )
+    @test = Persons.create( :login_name => "test", :internet_credit => 50 )
     Sessions.create( @test ).web_req = Web_req.new( 10 )
-    @test2 = Persons.create( :login_name => "test2", :credit => 50 )
-    @free = Persons.create( :login_name => "free", :credit => 50, 
+    @test2 = Persons.create( :login_name => "test2", :internet_credit => 50 )
+    @free = Persons.create( :login_name => "free", :internet_credit => 50, 
       :groups => ['freesurf'] )
     dputs(0){"#{@test.inspect}"}
   end
@@ -74,32 +74,32 @@ class TC_Internet < Test::Unit::TestCase
   def test_take_money
     libnet_isp_gprs
     
-    assert_equal 50, @test.credit
+    assert_equal 50, @test.internet_credit
 
     Internet.take_money
-    assert_equal 50, @test.credit
+    assert_equal 50, @test.internet_credit
 
     $connection_status = 5
 	
     $lib_net.call_args( :user_connect, "10 test")
     Internet.take_money
-    assert_equal 35, @test.credit
+    assert_equal 35, @test.internet_credit
 
     $lib_net.call_args( :user_connect, "11 test2")
     Internet.take_money
-    assert_equal 25, @test.credit
-    assert_equal 40, @test2.credit
+    assert_equal 25, @test.internet_credit
+    assert_equal 40, @test2.internet_credit
 
     $lib_net.call_args( :user_connect, "12 free")
     Internet.take_money
-    assert_equal 17, @test.credit
-    assert_equal 32, @test2.credit
-    assert_equal 42, @free.credit
+    assert_equal 17, @test.internet_credit
+    assert_equal 32, @test2.internet_credit
+    assert_equal 42, @free.internet_credit
 
     $lib_net.call_args( :user_disconnect, "12 free")
     $lib_net.call_args( :user_disconnect, "11 test2")
     Internet.take_money
-    assert_equal 2, @test.credit
+    assert_equal 2, @test.internet_credit
     Internet.take_money
     assert_equal [], $users_connected
   end
@@ -108,33 +108,33 @@ class TC_Internet < Test::Unit::TestCase
   def test_take_money_perm
     libnet_isp_vsat
     
-    assert_equal 50, @test.credit
+    assert_equal 50, @test.internet_credit
 
     Internet.take_money
-    assert_equal 50, @test.credit
+    assert_equal 50, @test.internet_credit
 
     $connection_status = 5
 	
     $lib_net.call_args( :user_connect, "10 test")
     Internet.take_money
-    assert_equal 35, @test.credit
+    assert_equal 35, @test.internet_credit
 
     $lib_net.call_args( :user_connect, "11 test2")
     Internet.take_money
-    assert_equal 25, @test.credit
-    assert_equal 40, @test2.credit
+    assert_equal 25, @test.internet_credit
+    assert_equal 40, @test2.internet_credit
 
-    assert_equal 50, @free.credit
+    assert_equal 50, @free.internet_credit
     $lib_net.call_args( :user_connect, "12 free")
     Internet.take_money
-    assert_equal 17, @test.credit
-    assert_equal 32, @test2.credit
-    assert_equal 50, @free.credit
+    assert_equal 17, @test.internet_credit
+    assert_equal 32, @test2.internet_credit
+    assert_equal 50, @free.internet_credit
 
     $lib_net.call_args( :user_disconnect, "12 free")
     $lib_net.call_args( :user_disconnect, "11 test2")
     Internet.take_money
-    assert_equal 2, @test.credit
+    assert_equal 2, @test.internet_credit
     Internet.take_money
     assert_equal [], $users_connected
   end

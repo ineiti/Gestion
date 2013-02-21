@@ -85,7 +85,7 @@ admin = Entities.Persons.find_by_login_name( "admin" )
 if not admin
   dputs( 0 ){ "OK, creating admin" }
   admin = Entities.Persons.create( :login_name => "admin", :password => "super123", :permissions => [ "admin" ] ,
-    :credit => "100" )
+    :internet_credit => "100" )
 else
   admin.permissions = ["admin"];
 end

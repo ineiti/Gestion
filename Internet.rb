@@ -16,9 +16,9 @@ module Internet
           dputs(3){"Found user #{u}: #{user.full_name}"}
           if ( isp._conn_type == "ondemand" ) or ( not self.free( user ) )
             dputs(3){"User #{u} will pay #{cost}"}
-            if user.credit.to_i >= cost
-              dputs(3){"Taking #{cost} credits from #{u} who has #{user.credit}"}
-              user.credit = user.credit.to_i - cost
+            if user.internet_credit.to_i >= cost
+              dputs(3){"Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}"}
+              user.internet_credit = user.internet_credit.to_i - cost
             else
               dputs(2){"Kicking user #{u}"}
               $lib_net.call_args( :user_disconnect_name, 

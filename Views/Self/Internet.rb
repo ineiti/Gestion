@@ -9,7 +9,7 @@ class SelfInternet < View
 
     gui_vbox do
       show_html :connection_status
-      show_int_ro :credit
+      show_int_ro :internet_credit
       show_int_ro :users_connected
       show_int_ro :bytes_left
       show_button :connect, :disconnect
@@ -25,7 +25,7 @@ class SelfInternet < View
     elsif Internet.free( session.owner )
       return 0
     else
-      return session.owner.credit.to_i >= $lib_net.call( :user_cost_max ).to_i ? 
+      return session.owner.internet_credit.to_i >= $lib_net.call( :user_cost_max ).to_i ? 
         0 : 1
     end
   end
