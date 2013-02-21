@@ -25,8 +25,6 @@ FEATURES:
 		-3 Delete accounts
 
 Programming:
-        -2 change all cash-methods to credit-methods
-        -2 add a AddCash-permission and change Person.setup_instance
         -2 verify if Person::data_set and Person::data_set_log are really
           necessary
         -3 change Course::make_pdfs to OpenPrint
@@ -118,6 +116,8 @@ To check:
 
 
 ** FIXED **:
+        - P 130221: change all cash-methods to credit-methods
+        - P 130221: add a AddCash-permission and change Person.setup_instance
         - P 130221: change Person::credit to Person::internet_credit
         - P 130221: change config::compta_due to config::account::cash
         - P 130221: change Person::credit_due to Person::account_total_due
