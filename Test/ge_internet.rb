@@ -94,6 +94,41 @@ class TC_Internet < Test::Unit::TestCase
     Internet.take_money
     assert_equal 17, @test.credit
     assert_equal 32, @test2.credit
+    assert_equal 42, @free.credit
+
+    $lib_net.call_args( :user_disconnect, "12 free")
+    $lib_net.call_args( :user_disconnect, "11 test2")
+    Internet.take_money
+    assert_equal 2, @test.credit
+    Internet.take_money
+    assert_equal [], $users_connected
+  end
+  
+  
+  def test_take_money_perm
+    libnet_isp_vsat
+    
+    assert_equal 50, @test.credit
+
+    Internet.take_money
+    assert_equal 50, @test.credit
+
+    $connection_status = 5
+	
+    $lib_net.call_args( :user_connect, "10 test")
+    Internet.take_money
+    assert_equal 35, @test.credit
+
+    $lib_net.call_args( :user_connect, "11 test2")
+    Internet.take_money
+    assert_equal 25, @test.credit
+    assert_equal 40, @test2.credit
+
+    assert_equal 50, @free.credit
+    $lib_net.call_args( :user_connect, "12 free")
+    Internet.take_money
+    assert_equal 17, @test.credit
+    assert_equal 32, @test2.credit
     assert_equal 50, @free.credit
 
     $lib_net.call_args( :user_disconnect, "12 free")

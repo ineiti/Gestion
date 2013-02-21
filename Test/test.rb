@@ -26,7 +26,7 @@ QooxView.init( '../Entities', '../Views' )
 
 
 tests = %w( login view tasks internet info course person )
-tests = %w( person )
+#tests = %w( internet )
 tests.each{|t|
   require "ge_#{t}"
 }
