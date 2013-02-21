@@ -75,13 +75,13 @@ class TC_Person < Test::Unit::TestCase
     session = Sessions.create( @josue )
 
     surf_credit = @surf.credit.to_i
-    josue_due = @josue.credit_due.to_i
+    josue_due = @josue.account_total_due.to_i
     dputs( 0 ){ "surf_credit: #{surf_credit} - josue_due: #{josue_due}" }
     # Josue puts 500 on "surf"s account
     View.PersonCredit.rpc_button( session, "add_credit",
       {'person_id' => 2, 'login_name' => 'surf', 'credit_add' => 500 } )
     assert_equal 500, @surf.credit.to_i - surf_credit, "Credit"
-    assert_equal 500, @josue.credit_due.to_i - josue_due, "Credit_due"
+    assert_equal 500, @josue.account_total_due.to_i - josue_due, "account_total_due"
     dputs( 0 ){ "surf.log_list is #{@surf.log_list.inspect}" }
     dputs( 0 ){ "josue.log_list #{@josue.log_list.inspect}" }
     log_list = [ @surf.log_list.last, @josue.log_list.last]
@@ -94,7 +94,7 @@ class TC_Person < Test::Unit::TestCase
       log_list[0].unlogid )
     assert_equal( {:data_value=>josue_due + 500, :undo_function=>:undo_set_entry,
         :data_old=>josue_due, :data_class_id=>2,
-        :data_class=>"Person", :msg=>"credit pour -surf:500-", :data_field=>:credit_due},
+        :data_class=>"Person", :msg=>"credit pour -surf:500-", :data_field=>:account_total_due},
       log_list[1].unlogid )
   end
 
@@ -182,12 +182,12 @@ class TC_Person < Test::Unit::TestCase
     assert_equal 0, @accountant.total_cash.to_f
     assert_equal 0, @accountant2.total_cash.to_f
     
-    credit = @josue.credit_due
+    credit = @josue.account_total_due
     @josue.add_credit( @surf, 1000 )
-    assert_equal 1000, @josue.credit_due - credit
+    assert_equal 1000, @josue.account_total_due - credit
     
     assert @accountant.get_cash( @josue, 1000 )
-    assert_equal 0, @josue.credit_due - credit
+    assert_equal 0, @josue.account_total_due - credit
     assert_equal 0, @accountant2.total_cash.to_f
   end
   

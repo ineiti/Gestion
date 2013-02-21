@@ -25,7 +25,7 @@ FEATURES:
 		-3 Delete accounts
 
 Programming:
-        -2 change Person::credit_due to Person::total_due
+        -2 change Person::credit_due to Person::account_total_due
         -2 change Person::credit to Person::internet_credit
         -2 change Person::get_credit to Person::get_total_due
         -2 change config::compta_due to config::account::cash

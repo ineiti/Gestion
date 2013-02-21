@@ -44,9 +44,9 @@ class Persons < Entities
     value_block :read_only
     value_str_ro_LDAP :login_name, :ldap_name => "uid"
     # credit -> internet_credit
-    # credit_due -> cash_due
+    # credit_due -> account_total_due
     value_int_ro :credit
-    value_int_ro :credit_due
+    value_int_ro :account_total_due
 
     value_block :hidden
     value_str :session_id
@@ -161,7 +161,7 @@ class Persons < Entities
   end
 
   def update( session )
-    super( session ).merge( { :credit_due => session.owner.get_credit } )
+    super( session ).merge( { :account_total_due => session.owner.get_credit } )
   end
 
   # Adds cash to a persons account. The hash "data" should contain the following
@@ -312,7 +312,7 @@ class Person < Entity
   def disable_africompta
     credit = get_credit
     credit = 0 if not credit
-    data_set( :credit_due, credit )
+    data_set( :account_total_due, credit )
     @account_due = nil
   end
 
@@ -389,13 +389,13 @@ class Person < Entity
       dputs( 2 ){ "credit is #{@account_due.total}" }
       ( @account_due.total * 1000.0 + 0.5 ).to_i
     else
-      data_get( :credit_due )
+      data_get( :account_total_due )
     end
   end
 
   def update_credit
-    #self.credit_due = get_credit
-    #self.credit_due = 0 if not self.credit_due
+    #self.account_total_due = get_credit
+    #self.account_total_due = 0 if not self.account_total_due
   end
 
   def add_credit( client, credit )
@@ -409,18 +409,18 @@ class Person < Entity
     move_cash( credit, "credit pour -#{client.login_name}:#{credit}-")
     log_msg( "AddCash", "#{self.login_name} added #{credit} for #{client.login_name}: " +
         "#{credit_before} + #{credit} = #{client.credit}" )
-    log_msg( "AddCash", "Total due: #{data_get :credit_due}")
+    log_msg( "AddCash", "Total due: #{data_get :account_total_due}")
   end
 
   def move_cash( credit, msg )
-    credit_due = 0
+    account_total_due = 0
     if @account_due
       Movements.create( "Automatic from Gestion: #{msg}", Time.now.strftime("%Y-%m-%d"), 
         credit.to_i / 1000.0, @account_due, @account_service )
-      credit_due = ( @account_due.total * 1000.0 + 0.5 ).to_i
+      account_total_due = ( @account_due.total * 1000.0 + 0.5 ).to_i
     else
-      credit_due = data_get( :credit_due ).to_i + credit.to_i
-      data_set_log( :credit_due, credit_due, msg )
+      account_total_due = data_get( :account_total_due ).to_i + credit.to_i
+      data_set_log( :account_total_due, account_total_due, msg )
     end
   end
 
@@ -516,7 +516,7 @@ class Person < Entity
     data_set( :family_name, v.capitalize_all )
   end
   
-  def credit_due
+  def account_total_due
     get_credit
   end
   

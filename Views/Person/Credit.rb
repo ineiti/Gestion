@@ -10,7 +10,7 @@ class PersonCredit < View
       show_int_ro :credit
       show_button :add_credit
 			
-      show_int_ro :your_credit_due
+      show_int_ro :your_account_total_due
     end
   end
 	
@@ -26,7 +26,7 @@ class PersonCredit < View
 	
   def update( session )
     if person = session.owner
-      {:your_credit_due => person.credit_due }
+      {:your_account_total_due => person.account_total_due }
     end
   end
 

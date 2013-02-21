@@ -7,7 +7,7 @@ class SelfCash < View
 
     gui_vbox do
       gui_fields do
-        show_int_ro :credit_due, :width => 100
+        show_int_ro :account_total_due, :width => 100
       end
       gui_fields do
         show_list_single :payments, :width => 500, :callback => true,
@@ -23,7 +23,7 @@ class SelfCash < View
     person = session.owner
     #person.update_credit
     reply( 'empty', %w( payments ) ) +
-      reply( 'update', { :credit_due => person.credit_due } ) +
+      reply( 'update', { :account_total_due => person.account_total_due } ) +
       reply( 'update', { :payments => list_payments( session, true ) } )
   end
 

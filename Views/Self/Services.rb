@@ -21,7 +21,7 @@ class SelfServices < View
         end
         show_button :add_cash
       end
-      show_int_ro :credit_due
+      show_int_ro :account_total_due
     end
   end
   
@@ -54,13 +54,13 @@ class SelfServices < View
     dputs( 5 ){ "which amounts to #{services_total} CFA" }
     actor = session.owner
     data.delete( "services_total" )
-    data.delete( "credit_due" )
+    data.delete( "account_total_due" )
     actor.move_cash( services_total, data.inspect )
     reply( 'empty', nil ) + rpc_update( session )
   end
   
   def rpc_update( session )
-    reply( 'update', { :credit_due => session.owner.credit_due } )
+    reply( 'update', { :account_total_due => session.owner.account_total_due } )
   end
   
   def rpc_update_with_values( session, values = nil )

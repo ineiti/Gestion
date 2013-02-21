@@ -92,6 +92,6 @@ class PersonAdmin < View
   end
 
   def update( session )
-    {:your_credit_due => session.owner.credit_due }
+    {:your_account_total_due => session.owner.account_total_due }
   end
 end

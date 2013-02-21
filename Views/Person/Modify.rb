@@ -83,7 +83,7 @@ class PersonModify < View
 
   def update( session )
     if person = session.owner
-      {:your_credit_due => person.credit_due }
+      {:your_account_total_due => person.account_total_due }
     end
   end
 
