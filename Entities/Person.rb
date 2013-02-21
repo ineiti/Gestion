@@ -282,6 +282,12 @@ class Persons < Entities
       dputs(0){"Putting person-id to #{p.person_id}"}
     end
   end
+  
+  def migration_2( p )
+    p.internet_credit = p.credit
+    p.account_total_due = p.credit_due
+    p.account_name_due = p.account_due
+  end
 end
 
 
@@ -324,7 +330,7 @@ class Person < Entity
         data_set( :account_name_due, acc )
       end
       lending = "#{get_config( 'Root::Lending', :Accounting, :Lending )}::#{acc}"
-      service = get_config( "Root::Income::Internet", :Accounting, :Service )
+      service = get_config( "Root::Income::Services", :Accounting, :Service )
       dputs( 2 ){ "Searching accounts for #{full_name} with "+
           "lending: #{lending} - service: #{service}" }
       @account_due = Accounts.get_by_path_or_create( lending, 
@@ -385,8 +391,8 @@ class Person < Entity
 
   def account_total_due
     if @account_due
-      dputs( 2 ){ "internet_credit is #{@account_due.total}" }
-      ( @account_due.total * 1000.0 + 0.5 ).to_i
+      dputs( 2 ){ "internet_credit is #{@account_due.total.inspect}" }
+      ( @account_due.total.to_f * 1000.0 + 0.5 ).to_i
     else
       data_get( :account_total_due )
     end    
@@ -411,7 +417,7 @@ class Person < Entity
     if @account_due
       Movements.create( "Automatic from Gestion: #{msg}", Time.now.strftime("%Y-%m-%d"), 
         credit.to_i / 1000.0, @account_due, @account_service )
-      account_total_due = ( @account_due.total * 1000.0 + 0.5 ).to_i
+      account_total_due = ( @account_due.total.to_f * 1000.0 + 0.5 ).to_i
     else
       account_total_due = data_get( :account_total_due ).to_i + credit.to_i
       data_set_log( :account_total_due, account_total_due, msg )
