@@ -55,7 +55,7 @@ class SelfServices < View
     actor = session.owner
     data.delete( "services_total" )
     data.delete( "account_total_due" )
-    actor.move_cash( services_total, data.inspect )
+    actor.pay_service( services_total, data.inspect )
     reply( 'empty', nil ) + rpc_update( session )
   end
   

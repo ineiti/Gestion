@@ -17,7 +17,7 @@ class PersonCredit < View
   def rpc_button_add_credit( session, data )
     dputs(3){"Adding credit"}
     rep = []
-    if person = Persons.add_cash( session, data )
+    if person = Persons.add_internet_credit( session, data )
       rep = reply( :update, :credit_add => "" ) +
         reply( :update, :internet_credit => person.internet_credit )
     end

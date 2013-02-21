@@ -168,7 +168,7 @@ class Persons < Entities
   # fields:
   # - credit_add : how much CFA to add
   # - person_id : the id of the person to receive the credit
-  def add_cash( session, data )
+  def add_internet_credit( session, data )
     dputs( 5 ){ "data is #{data.inspect}" }
     client = match_by_login_name( data['login_name'].to_s )
     if data['credit_add'] and client
@@ -400,13 +400,13 @@ class Person < Entity
     end
     client.data_set_log( :internet_credit, ( client.internet_credit.to_i + internet_credit.to_i ).to_s,
       "#{self.person_id}:#{internet_credit}" )
-    move_cash( internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
+    pay_service( internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
     log_msg( "AddCash", "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
         "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}" )
     log_msg( "AddCash", "Total due: #{data_get :account_total_due}")
   end
 
-  def move_cash( credit, msg )
+  def pay_service( credit, msg )
     account_total_due = 0
     if @account_due
       Movements.create( "Automatic from Gestion: #{msg}", Time.now.strftime("%Y-%m-%d"), 
