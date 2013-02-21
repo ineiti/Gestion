@@ -12,7 +12,7 @@ class ComptaTransfer < View
 
     gui_hbox  do
       gui_vbox :nogroup do
-        vtlp_list :person_list, :compta_due
+        vtlp_list :person_list, :account_due
         show_button :empty
       end
       gui_vbox :nogroup do
@@ -25,7 +25,7 @@ class ComptaTransfer < View
     dputs(3){"data is #{data.inspect} with owner #{session.owner.full_name}"}
     other = Persons.find_by_person_id( data["person_list"][0] )
     dputs(3){"Other is #{other.inspect}, id is #{data["person_list"].to_s.inspect}"}
-    amount = ( other.compta_due.src.total.to_f * 1000 ).to_i
+    amount = ( other.account_due.total.to_f * 1000 ).to_i
     session.owner.get_cash( other, amount )
     
     vtlp_update_list + rpc_update( session )

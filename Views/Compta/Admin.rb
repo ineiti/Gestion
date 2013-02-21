@@ -20,8 +20,8 @@ class ComptaAdmin < View
   end
 	
   def rpc_button_update_totals( session, data )
-    if session.owner.compta_due
-      session.owner.compta_due.src.update_total
+    if session.owner.account_due
+      session.owner.account_due.update_total
     end
   end
   

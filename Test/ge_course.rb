@@ -52,7 +52,7 @@ class TC_Course < Test::Unit::TestCase
       names.shift
     end
     bulk = [ [ "zero", "Zero", "" ], %w( tone One Two ), [ "eten", "Ten", "Eleven Twelve" ],
-      ["ca_b", "A B", "C D"], %w( admin2 Dmin A ), %w( mhelene Hélène Méyère ) ]
+      ["ca", "A B", "C D"], %w( admin2 Dmin A ), %w( mhelene Hélène Méyère ) ]
     bulk.each{|b|
       login, first, family = b
       dputs( 0 ){ "Doing #{b.inspect}" }
@@ -65,7 +65,7 @@ class TC_Course < Test::Unit::TestCase
     }
     
     students = Entities.Courses.find_by_name( 'net_1001' ).students
-    assert_equal %w( admin2 ca_b eten mhelene s_eri tone zero ), students.sort
+    assert_equal %w( admin2 ca eten mhelene s_eri tone zero ), students.sort
   end
 
   def test_grade

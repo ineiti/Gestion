@@ -20,7 +20,7 @@ class TC_View < Test::Unit::TestCase
     sa = Sessions.create( @admin )
     sj = Sessions.create( @josue )
     PersonModify.class_eval("
-      def get_remote_printers(ip)
+      def call_lpstat(ip)
         return []
       end ")
     

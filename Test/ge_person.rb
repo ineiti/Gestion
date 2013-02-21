@@ -41,9 +41,9 @@ class TC_Person < Test::Unit::TestCase
     SQLite.dbs_open_load_migrate
 
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123",
-      :permissions => [ "default" ], :account_due => "Linus" )
+      :permissions => [ "default" ], :account_name_due => "Linus" )
     @josue = Entities.Persons.create( :login_name => "josue", :password => "super",
-      :permissions => %w( default addinternet secretary ), :account_due => "Josué" )
+      :permissions => %w( default addinternet secretary ), :account_name_due => "Josué" )
     @surf = Entities.Persons.create( :login_name => "surf", :password => "super",
       :permissions => [ "default" ] )
     Entities.Services.create( :name => "surf", :price => 1000, :duration => 20 )
@@ -124,11 +124,11 @@ class TC_Person < Test::Unit::TestCase
     assert_equal "tone2", @name2.login_name
   end
 
-  def test_print
+  def tesst_print
     @admin.print
   end
 
-  def test_print_accent
+  def tesst_print_accent
     @accents = Entities.Persons.create( {:first_name => "éaënne", :family_name => "ässer"})
     @accents.print
   end
@@ -161,12 +161,12 @@ class TC_Person < Test::Unit::TestCase
     @secretary = Entities.Persons.create( :login_name => "secretary",
       :permissions => ["secretary"] )
   
-    assert_equal "Secretary", @secretary.account_due
+    assert_equal "Secretary", @secretary.account_name_due
     
-    assert_equal nil, @surf.account_due
+    assert_equal nil, @surf.account_name_due
 
     @surf.permissions = %w( default secretary )
-    assert_equal "Surf", @surf.account_due
+    assert_equal "Surf", @surf.account_name_due
   end
   
   def test_account_cash
@@ -194,12 +194,12 @@ class TC_Person < Test::Unit::TestCase
   def test_account_cash_update
     assert_equal nil, @josue.account_cash
     
-    @josue.permissions = %w( default accounting )
+    @josue.permissions = %w( default accountant )
     assert_not_nil @josue.account_cash
   end
   
-  def test_listp_compta_due
-    list = Persons.listp_compta_due
+  def test_listp_account_due
+    list = Persons.listp_account_due
     assert list
   end
 end

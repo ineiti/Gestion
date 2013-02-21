@@ -1,5 +1,12 @@
 Important notices for versions:
 
+- 130221: 0.9.4
+  - Renaming of some config-vars:
+    - compta_due::src,dst -> 
+      Accounting::Lending - where the secretaries write how much they owe
+      Accounting::Service - where the center sees how much came in
+      Accounting::Cash - where the accountant stores its cash
+
 - 121210: 0.9.2
   - Renaming of some views:
     AdminAccess / Admin/ControlAccess -> AdminRestriction / Admin/Restriction

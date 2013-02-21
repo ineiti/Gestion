@@ -7,7 +7,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="0.9.3"
+VERSION_GESTION="0.9.4"
 
 GESTION_DIR=File.dirname(__FILE__)
 CONFIG_FILE="config.yaml"
@@ -85,7 +85,7 @@ admin = Entities.Persons.find_by_login_name( "admin" )
 if not admin
   dputs( 0 ){ "OK, creating admin" }
   admin = Entities.Persons.create( :login_name => "admin", :password => "super123", :permissions => [ "admin" ] ,
-    :credit => "100", :account_due => "admin" )
+    :credit => "100" )
 else
   admin.permissions = ["admin"];
 end

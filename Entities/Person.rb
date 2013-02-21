@@ -32,7 +32,7 @@ class Persons < Entities
     value_str_LDAP :country, :ldap_name => "st"
 
     value_block :admin
-    value_str :account_due
+    value_str :account_name_due
     value_str :account_name_cash
     value_str :role_diploma
     value_list :permissions, "Permission.list"
@@ -206,13 +206,13 @@ class Persons < Entities
     get_login_with_permission( "student" ).sort
   end
   
-  def listp_compta_due
+  def listp_account_due
     search_all.select{|p|
-      p.compta_due and p.compta_due.src and p.login_name != "admin"
+      p.account_due and p.login_name != "admin"
     }.collect{|p|
       ddputs( 4 ){ "p is #{p.full_name}" }
-      ddputs( 4 ){ "account is #{p.compta_due.src.get_path}" }
-      amount = (p.compta_due.src.total.to_f * 1000).to_i
+      ddputs( 4 ){ "account is #{p.account_due.get_path}" }
+      amount = (p.account_due.total.to_f * 1000).to_i
       name = p.full_name
       if name.length == 0
         name = p.login_name
@@ -291,12 +291,12 @@ end
 #
 
 class Person < Entity
-  attr_accessor :compta_due, :account_cash
+  attr_accessor :account_due, :account_cash
   def setup_instance
     dputs(3){"Data is #{@proxy.data[@id].inspect}"}
 
     data_set( :credit, data_get( :credit ).to_i )
-    @account_due = @account_cash = nil
+    @account_service = @account_due = @account_cash = nil
 
     if login_name != "admin"
       if can_view :FlagAddInternet
@@ -313,20 +313,24 @@ class Person < Entity
     credit = get_credit
     credit = 0 if not credit
     data_set( :credit_due, credit )
-    @compta_due = nil
+    @account_due = nil
   end
 
   def update_account_due
     if can_view :FlagAddInternet
-      acc = data_get( :account_due )
+      acc = data_get( :account_name_due )
       if acc.to_s.length == 0
         acc = ( first_name || login_name ).capitalize 
-        data_set( :account_due, acc )
+        data_set( :account_name_due, acc )
       end
-      src = get_config( "Root::Lending", :compta_due, :src ) + "::#{acc}"
-      dputs( 2 ){ "Creating AfriCompta for #{full_name} with source-account: #{src}" }
-      @compta_due = AfriCompta.new( src, 
-        get_config( "Root::Income::Internet", :compta_due, :dst ) )
+      lending = "#{get_config( 'Root::Lending', :Accounting, :Lending )}::#{acc}"
+      service = get_config( "Root::Income::Internet", :Accounting, :Service )
+      dputs( 2 ){ "Searching accounts for #{full_name} with "+
+          "lending: #{lending} - service: #{service}" }
+      @account_due = Accounts.get_by_path_or_create( lending, 
+        lending, false, -1, true )
+      @account_service = Accounts.get_by_path_or_create( service,
+        service, false, 1, false )
       update_credit
     end
   end
@@ -340,7 +344,7 @@ class Person < Entity
       end
       dputs(3){"Getting account #{acc}"}
       cc = get_config( "Root::Cash::#{acc}", 
-        :account, :cash )
+        :Accounting, :Cash )
       @account_cash = ( Accounts.get_by_path( cc ) or 
           Accounts.create_path( cc, cc, false, -1, true ) )
     end
@@ -364,7 +368,7 @@ class Person < Entity
     end
     ret = super( field, value )
     case field.to_s
-    when /account_due/
+    when /account_name_due/
       update_account_due
     when /account_name_cash/
       update_account_cash
@@ -381,10 +385,9 @@ class Person < Entity
   end
 
   def get_credit
-    if @compta_due and not @compta_due.disabled
-      #@compta_due.src.update_total
-      dputs( 2 ){ "credit is #{@compta_due.get_credit}" }
-      ( @compta_due.get_credit * 1000.0 + 0.5 ).to_i
+    if @account_due
+      dputs( 2 ){ "credit is #{@account_due.total}" }
+      ( @account_due.total * 1000.0 + 0.5 ).to_i
     else
       data_get( :credit_due )
     end
@@ -411,10 +414,10 @@ class Person < Entity
 
   def move_cash( credit, msg )
     credit_due = 0
-    if @compta_due and not @compta_due.disabled
-      credit_due = @compta_due.add_movement( credit.to_i / 1000.0,
-        "Gestion: #{msg}" )
-      credit_due = ( credit_due * 1000.0 + 0.5 ).to_i
+    if @account_due
+      Movements.create( "Automatic from Gestion: #{msg}", Time.now.strftime("%Y-%m-%d"), 
+        credit.to_i / 1000.0, @account_due, @account_service )
+      credit_due = ( @account_due.total * 1000.0 + 0.5 ).to_i
     else
       credit_due = data_get( :credit_due ).to_i + credit.to_i
       data_set_log( :credit_due, credit_due, msg )
@@ -524,7 +527,7 @@ class Person < Entity
       dputs(0){"Can't transfer a negative amount here"}
       return false
     end
-    if not person.compta_due.src
+    if not person.account_due
       dputs(0){"#{person.login_name}::#{person.full_name} has no account_due"}
       return false
     end
@@ -533,10 +536,10 @@ class Person < Entity
       return false
     end
     dputs(3){"Transferring #{amount} from #{@account_cash.get_path} to " +
-        "#{person.compta_due.src.get_path}"
+        "#{person.account_due.get_path}"
     }
     Movements.create( "Payement au comptable", Date.today,
-      amount / 1000.0, @account_cash, person.compta_due.src )
+      amount / 1000.0, @account_cash, person.account_due )
     return true
   end
   
