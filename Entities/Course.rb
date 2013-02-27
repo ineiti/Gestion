@@ -59,6 +59,14 @@ class Courses < Entities
     @print_presence = OpenPrint.new( "#{@diploma_dir}/fiche_presence.ods" )
   end
   
+  def set_entry( id, field, value )
+    case field.to_s
+    when "name"
+      value.gsub!(/[^a-zA-Z0-9_-]/, '_' )
+    end
+    super( id, field, value )
+  end
+
   def list_courses(session=nil)
     ret = @data.values
     if session != nil
@@ -204,7 +212,7 @@ class Course < Entity
   def diploma_dir
     @proxy.diploma_dir + "/#{self.name}"
   end
-
+  
   def list_students
     dputs( 3 ){ "Students for #{self.name} are: #{self.students.inspect}" }
     ret = []

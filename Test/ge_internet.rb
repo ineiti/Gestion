@@ -138,4 +138,15 @@ class TC_Internet < Test::Unit::TestCase
     Internet.take_money
     assert_equal [], $users_connected
   end
+  
+  def test_users_str
+    assert_equal "one, three, two", 
+      SelfInternet.make_users_str(%w( one two three) )
+
+    assert_equal "four, one, three, two", 
+      SelfInternet.make_users_str(%w( one two three four ) )
+
+    assert_equal "five, four, one, six,<br>three, two", 
+      SelfInternet.make_users_str(%w( one two three four five six ) )
+  end
 end

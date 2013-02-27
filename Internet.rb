@@ -92,6 +92,7 @@ module Internet
   end
 
   def self.connect_user( ip, name )
-    $lib_net.call_args( :user_connect, "#{ip} #{name}" )
+    $lib_net.call_args( :user_connect, "#{ip} #{name} " +
+     "#{self.free(name) ? 'yes' : 'no'}" )
   end
 end

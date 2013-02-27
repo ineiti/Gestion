@@ -229,4 +229,12 @@ class TC_Course < Test::Unit::TestCase
     assert_equal @linus, @maint2.assistant
     assert_equal @linus, @maint2.responsible
   end
+  
+  def test_spaces
+    @ct = CourseTypes.create( :name => "base arabe 1" )
+    assert_equal "base_arabe_1", @ct.name
+    
+    @c1 = Courses.create( :name => "base_arabe 1201", :ctype => @ct )
+    assert_equal "base_arabe_1201", @c1.name
+  end
 end

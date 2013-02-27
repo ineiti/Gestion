@@ -19,4 +19,12 @@ class CourseTypes < Entities
         collect{|f| f.sub( /^.*\//, '' ) }
     end
   end
+
+  def set_entry( id, field, value )
+    case field.to_s
+    when "name"
+      value.gsub!(/[^a-zA-Z0-9_-]/, '_' )
+    end
+    super( id, field, value )
+  end
 end

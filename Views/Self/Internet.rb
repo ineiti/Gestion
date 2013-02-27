@@ -87,21 +87,35 @@ class SelfInternet < View
   def update_isp( session )
     @isp = JSON.parse( $lib_net.call( :isp_params ) )
     show_status = ( ( @isp['conn_type'] == 'ondemand' ) or 
-        ( can_connect(session) > 0 ) )
+        ( can_connect(session) == 0 ) )
     dputs(2){"isp-params is: #{@isp.inspect}, " +
         "show_status is #{show_status.inspect}"}
     reply( @isp['has_promo'] == 'true' ? :unhide : :hide, :bytes_left ) +
       reply( show_status ? :unhide : :hide, :connection_status )
   end
+  
+  def self.make_users_str( users )
+    users_str = [[]]
+    users.sort.each{|u|
+      if users_str.last.count > 3
+        users_str[-1] = users_str.last.join(", ")
+        users_str.push []
+      end
+      users_str.last.push u
+    }
+    users_str[-1] = users_str.last.join(", ")
+    users_str.join(",<br>")
+  end
 
   def rpc_update( session, nobutton = false )
     users = $lib_net.call(:users_connected)
+    users_str = self.make_users_str( users )
     ret = reply( :update, update( session ) ) +
       update_button( session, nobutton ) +
       update_connection_status( session ) +
       update_isp( session ) +
       reply( :update, :users_connected => 
-        "#{users.split.count}: #{users}" )
+        "#{users.split.count}: #{users_str}" )
     if @isp['has_promo'] == 'true'
       ret += reply( :update, :bytes_left => $lib_net.call( nil, :PROMOTION_LEFT ) )
     end

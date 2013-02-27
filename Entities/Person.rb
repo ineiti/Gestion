@@ -304,14 +304,8 @@ class Person < Entity
     data_set( :internet_credit, data_get( :internet_credit ).to_i )
     @account_service = @account_due = @account_cash = nil
 
-    if login_name != "admin"
-      if can_view :FlagAddInternet
-        update_account_due
-      end
-      if can_view :FlagAccounting
-        update_account_cash
-      end
-    end
+    update_account_due
+    update_account_cash
   end
   
   # This is only for testing - don't use in real life!
@@ -323,7 +317,7 @@ class Person < Entity
   end
 
   def update_account_due
-    if can_view :FlagAddInternet
+    if can_view :FlagAddInternet and login_name != "admin"
       acc = data_get( :account_name_due )
       if acc.to_s.length == 0
         acc = ( first_name || login_name ).capitalize 
@@ -341,7 +335,7 @@ class Person < Entity
   end
   
   def update_account_cash
-    if can_view :FlagAccounting
+    if can_view :FlagAccounting and login_name != "admin"
       acc = data_get( :account_name_cash )
       if acc.to_s.length == 0
         acc = ( first_name || login_name ).capitalize 

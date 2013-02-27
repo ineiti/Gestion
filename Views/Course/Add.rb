@@ -37,4 +37,8 @@ class CourseAdd < View
       reply( "switch_tab", :CourseModify )
   end
 
+    
+  def rpc_update( session )
+    reply( :update, :name_date => "#{Date.today.strftime('%y%m')}")
+  end
 end

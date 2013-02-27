@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Noms de cours sans espaces!
         - Restriction is not waterproof: some local sites don't get shown, like
           markas-al-nour.org which gets wrongly resolved by internal zentyal-boxes
           eventually also problems with local logins
@@ -16,6 +17,7 @@ UI:
         - write a good documentation...
 
 FEATURES:
+        -3 Allow for freebies to log in twice
         -3 Print student-cards the Markas-way with the idea of Josue and Viviane
 	-4 Courses::Days - add other days to the list
 	-3 check diploma-templates

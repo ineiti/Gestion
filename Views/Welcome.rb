@@ -16,7 +16,8 @@ class Welcome < View
         version_local = "-#{version_local}"
       end
       super +
-        reply( :update, :version => VERSION_GESTION + version_local )
+        reply( :update, :version => VERSION_GESTION + version_local ) +
+        reply( :update, :links => get_config("", :WelcomeText ) )
     end
   end
 
