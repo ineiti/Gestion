@@ -20,7 +20,7 @@ class LibNet
         return 15
       end
     when :isp_params
-      ddputs(3){"Returning #{$libnet_isp.to_json}"}
+      dputs(3){"Returning #{$libnet_isp.to_json}"}
       return $libnet_isp.to_json
     end
   end

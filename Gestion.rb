@@ -7,7 +7,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="0.9.4"
+VERSION_GESTION="0.9.5"
 
 GESTION_DIR=File.dirname(__FILE__)
 CONFIG_FILE="config.yaml"
@@ -15,7 +15,7 @@ if not FileTest.exists? CONFIG_FILE
   puts "Config-file doesn't exist"
   print "Do you want me to copy a standard one? [Y/n] "
   if gets.chomp.downcase != "n"
-    %x[ cp config.yaml.default config.yaml ]
+    FilesUtils.cp "config.yaml.default", "config.yaml"
   end
 end
 
@@ -23,9 +23,7 @@ begin
   require 'QooxView'
   require 'Internet'
   require 'Info'
-  if not get_config( false, :AfriCompta, :disabled )
-    require 'ACQooxView'
-  end
+  require 'ACQooxView'
 rescue Exception => e
   dputs( 0 ){ "#{e.inspect}" }
   dputs( 0 ){ "#{e.to_s}" }
@@ -90,12 +88,8 @@ else
   admin.permissions = ["admin"];
 end
 
-if not get_config( false, :AfriCompta, :disabled )
-  dputs( 0 ){ "Loading database" }
-  ACQooxView::check_db
-else
-  dputs( 0 ){ "Not loading" }
-end
+dputs( 0 ){ "Loading database" }
+ACQooxView::check_db
 
 if not Entities.Services.find_by_name( "Free solar" )
   dputs( 0 ){ "Creating services" }
@@ -137,20 +131,24 @@ trap("SIGINT") {
   throw :ctrl_c
 }
 
+$profiling = get_config( nil, :profiling )
 catch :ctrl_c do
   begin
     webrick_port = get_config( 3302, :webrick, :port )
-    ddputs(2){"Starting at port #{webrick_port}" }
-    if $config[:profiling]
+    dputs(2){"Starting at port #{webrick_port}" }
+    if $profiling
       require 'rubygems'
       require 'perftools'
-      PerfTools::CpuProfiler.start("/tmp/#{$config[:profiling]}") do
+      PerfTools::CpuProfiler.start("/tmp/#{$profiling}") do
         QooxView::startWeb webrick_port
       end
     else
       QooxView::startWeb webrick_port
     end
-  rescue Exception
+  rescue Exception => e
+  dputs( 0 ){ "#{e.inspect}" }
+  dputs( 0 ){ "#{e.to_s}" }
+  puts e.backtrace
     dputs( 0 ){ "Saving all" }
     Entities.save_all
   end
@@ -160,3 +158,10 @@ if get_config( true, :autosave )
   $autosave.kill
 end
 $internet.kill
+
+if $profiling
+  dputs(0){"Now run the following:
+pprof.rb --pdf /tmp/#{$profiling} > /tmp/#{$profiling}.pdf
+open /tmp/#{$profiling}.pdf
+    "}
+end

@@ -1,7 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Noms de cours sans espaces!
+        - When entering user-name only, a bug appears -> probably LDAP-related...
         - Restriction is not waterproof: some local sites don't get shown, like
           markas-al-nour.org which gets wrongly resolved by internal zentyal-boxes
           eventually also problems with local logins
@@ -17,14 +17,11 @@ UI:
         - write a good documentation...
 
 FEATURES:
-        -3 Allow for freebies to log in twice
+        - Add a cookie to log in automatically
         -3 Print student-cards the Markas-way with the idea of Josue and Viviane
 	-4 Courses::Days - add other days to the list
 	-3 check diploma-templates
         -2 Rename course
-	- AfriCompta-support:
-		-4 Don't show archived and deleted accounts, but do stats on them
-		-3 Delete accounts
 
 Programming:
         -2 verify if Person::data_set and Person::data_set_log are really
@@ -48,10 +45,6 @@ Features:
         -3 take Admin::ControlAccess from Rooms-definition
 	-Tigo
           - 3 auto-reconnect on error
-          - Ajouter
-            AT+CREG? pour l'id de la cellule
-            AT+CSQ pour voir la qualité
-            AT+COPS=? pour voir les fournisseurs
           - vérifier si la sim est expirée
           - Montrer le log des derniers communications avec le Modem
 	-3 Inventory of screens, mice, routers
@@ -118,6 +111,14 @@ To check:
 
 
 ** FIXED **:
+        - B 130312: AfriCompta::merge is very slow
+        - P 130312: added creation of methods in method_missing of Entit(y|ies)
+	- P 130225: AfriCompta-support:
+		-4 Don't show archived and deleted accounts, but do stats on them
+		-3 Delete accounts
+        - F 130225: Allow for freebies to log in twice
+        - F 130225: Lots of debugging and adding for AfriCompta
+        - B 130221: Noms de cours sans espaces!
         - P 130221: change all cash-methods to credit-methods
         - P 130221: add a AddCash-permission and change Person.setup_instance
         - P 130221: change Person::credit to Person::internet_credit
@@ -155,6 +156,11 @@ To check:
 	- NB130123: AfriCompta::check doesn't work anymore - couldn't reproduce
 	- P 130115: 4 Correctly delete accounts and migrate through AfriCompta
         - P 130115: 4 Correctly archive accounts and keep total only of selected ones
+        - P 130110: Tigo:
+          - Ajouter
+            AT+CREG? pour l'id de la cellule
+            AT+CSQ pour voir la qualité
+            AT+COPS=? pour voir les fournisseurs
         - UI130108: keep focus for <enter> in current group
         - B 130108: Auto-update = 0 makes reload very fast -> Course:Diplomas:do_diplomas
         - F 130108: 2/3.5 Use Entities in Course::Modify

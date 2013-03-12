@@ -109,7 +109,7 @@ class SelfInternet < View
 
   def rpc_update( session, nobutton = false )
     users = $lib_net.call(:users_connected)
-    users_str = self.make_users_str( users )
+    users_str = SelfInternet.make_users_str( users )
     ret = reply( :update, update( session ) ) +
       update_button( session, nobutton ) +
       update_connection_status( session ) +

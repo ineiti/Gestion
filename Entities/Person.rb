@@ -210,8 +210,8 @@ class Persons < Entities
     search_all.select{|p|
       p.account_due and p.login_name != "admin"
     }.collect{|p|
-      ddputs( 4 ){ "p is #{p.full_name}" }
-      ddputs( 4 ){ "account is #{p.account_due.get_path}" }
+      dputs( 4 ){ "p is #{p.full_name}" }
+      dputs( 4 ){ "account is #{p.account_due.get_path}" }
       amount = (p.account_due.total.to_f * 1000).to_i
       name = p.full_name
       if name.length == 0
@@ -350,7 +350,11 @@ class Person < Entity
   end
   
   def total_cash
-    ( @account_cash.total.to_f * 1000 ).to_i
+    if @account_cash
+      ( @account_cash.total.to_f * 1000 ).to_i
+    else
+      0
+    end
   end
 
   def data_set(field, value, msg = nil, undo = true, logging = true )
