@@ -46,5 +46,4 @@ class TC_View < Test::Unit::TestCase
     assert_equal "HP_LaserJet", mm.stat_printer( sa, :print_student ).data_str
     assert_equal "HP_LaserJet2", mm.stat_printer( sj, :print_student ).data_str
   end
-
 end

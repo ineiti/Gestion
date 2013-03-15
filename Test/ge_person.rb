@@ -43,9 +43,13 @@ class TC_Person < Test::Unit::TestCase
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123",
       :permissions => [ "default" ], :account_name_due => "Linus" )
     @josue = Entities.Persons.create( :login_name => "josue", :password => "super",
-      :permissions => %w( default addinternet secretary ), :account_name_due => "Josué" )
+      :permissions => %w( default admin secretary ), :account_name_due => "Josué" )
     @surf = Entities.Persons.create( :login_name => "surf", :password => "super",
       :permissions => [ "default" ] )
+    @secretary = Entities.Persons.create( :login_name => "secr",
+      :permissions => ["secretary"] )
+    @teacher = Entities.Persons.create( :login_name => "teacher",
+      :permissions => ["professor"] )
     Entities.Services.create( :name => "surf", :price => 1000, :duration => 20 )
     Entities.Services.create( :name => "solar", :price => 1000, :duration => 20 )
     Entities.Services.create( :name => "club", :price => 1000, :duration => 0 )
@@ -201,5 +205,19 @@ class TC_Person < Test::Unit::TestCase
   def test_listp_account_due
     list = Persons.listp_account_due
     assert list
+  end
+  
+  def test_has_all_rights
+    assert_equal [".*", "FlagAddInternet", "Internet", "PersonModify",
+      "PersonShow", "View", "Welcome"], Permission.views( @josue.permissions )
+    assert_equal ["FlagAddInternet", "Internet", "PersonModify",
+      "PersonShow", "View", "Welcome"], Permission.views( @secretary.permissions )
+    assert_equal ["View", "Welcome"], Permission.views( @surf.permissions )
+    assert_equal ["Internet", "PersonShow", "View", "Welcome"], 
+      Permission.views( @teacher.permissions )
+    assert_equal true, @josue.has_all_rights_of( @secretary )
+    assert_equal false, @secretary.has_all_rights_of( @josue )
+    assert_equal true, @secretary.has_all_rights_of( @surf )
+    assert_equal false, @teacher.has_all_rights_of( @secretary )
   end
 end

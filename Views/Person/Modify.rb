@@ -40,7 +40,9 @@ class PersonModify < View
     if person
       case name
       when "change_password"
-        person.password = data['new_password']
+        if session.owner.has_all_rights_of( person )
+          person.password = data['new_password']
+        end
       when "save"
         # "internet_none" only reflects chosen entries, not the available ones per se!
         data.delete("internet_none")
@@ -74,9 +76,16 @@ class PersonModify < View
   def rpc_list_choice( session, name, data )
     if name == "persons"
       dputs( 2 ){ "Got data: #{data.inspect}" }
-      if data['persons'][0] and p = Persons.find_by_login_name( data['persons'].flatten[0])
+      if data['persons'][0] and 
+          p = Persons.find_by_login_name( data['persons'].flatten[0])
+        can_change = session.owner.has_all_rights_of( p )
+        change_pwd = [ :new_password, :password_plain, :change_password ].collect{|f|
+          reply( can_change ? :unhide : :hide, f )
+        }.flatten 
+        #+ reply( can_change ? :hide : :unhide, :not_allowed )
+        ddputs(4){"change_pwd is #{change_pwd.inspect}"}
         reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) ) +
-          reply( :focus, :credit_add ) + reply_print( session )
+          reply( :focus, :credit_add ) + reply_print( session ) + change_pwd
       end
     end
   end
@@ -86,7 +95,7 @@ class PersonModify < View
       {:your_account_total_due => person.account_total_due }
     end
   end
-
+  
   def rpc_update( session )
     super( session ) +
       reply( :parent, reply( :focus, :search ) ) +

@@ -29,7 +29,9 @@ class Welcome < View
     if person
       dputs( 3 ){ "Person is #{person.inspect} and #{person.password}" }
     end
-    if person and person.check_pass( password ) then
+    if password.to_s.length == 0 then
+      return reply( :focus, :password )
+    elsif person and person.check_pass( password ) then
       dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
       dputs( 2 ){ "Authenticated person #{person.login_name}" }
       session = Sessions.create( person )

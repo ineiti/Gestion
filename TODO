@@ -1,24 +1,20 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - When entering user-name only, a bug appears -> probably LDAP-related...
 	- 10 crashes when not operating "properly"
 	
 [5', 15', 30', 1h, 4h]
 Security:
-	-3 PersonModify - only allow to change password from persons which have equal or
-	  lower rights - use an own tab which is not active for non-allowed users
 
 UI:
+        - add show_label or make show_html without a border
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
 
 FEATURES:
-        - Add a cookie to log in automatically
-        -3 Print student-cards the Markas-way with the idea of Josue and Viviane
+        - Add a Profeda-type of course
 	-4 Courses::Days - add other days to the list
 	-3 check diploma-templates
-        -2 Rename course
 
 Programming:
         -2 verify if Person::data_set and Person::data_set_log are really
@@ -27,6 +23,10 @@ Programming:
 
 > 1.0
 Features:
+        - Add accounting for students-money and service-money
+        - Add a cookie to log in automatically
+        -3 Print student-cards the Markas-way with the idea of Josue and Viviane
+        -2 Rename course
         -3 Add a status-bar on bottom for progresses and information like:
            printing, progress, messages, connect/disconnect, ...
 	-3 Admin::Restore - show progress
@@ -117,6 +117,16 @@ To check:
 
 
 ** FIXED **:
+	- B 130315: 3 PersonModify - only allow to change password from persons which have equal or
+	  lower rights - not very nice looking empty border when not allowed to
+          change the password
+        - B 130315: When entering user-name only, a bug appears -> 
+         probably LDAP-related... yes, confirmed. Now it asks for the password
+         if it is empty
+        - B 130315: AfriCompta: when doing reports, accounts with movs. but a total of 0
+         don't get listed
+        - B 130315: When having more than 24 students, they don't appear on the
+         presence-list -> made 30 students per list
         - B 130312: AfriCompta::merge is very slow
         - P 130312: added creation of methods in method_missing of Entit(y|ies)
 	- P 130225: AfriCompta-support:

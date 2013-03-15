@@ -546,4 +546,12 @@ class Person < Entity
   def can_view( v )
     Permission.can_view( data_get(:permissions), v )
   end
+  
+  def has_all_rights_of( p )
+    ddputs(4){"#{p.permissions} - #{permissions}"}
+    pv1 = Permission.views( p.permissions )
+    pv2 = Permission.views( permissions )
+    ddputs(4){"#{pv1} - #{pv2}"}
+    ( pv1 - pv2 ).size == 0
+  end
 end
