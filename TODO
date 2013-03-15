@@ -1,12 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - When copying compta.db over to standalone AfriCompta, then checking,
-         some accounts are marked as "local only" - why?
         - When entering user-name only, a bug appears -> probably LDAP-related...
-        - Restriction is not waterproof: some local sites don't get shown, like
-          markas-al-nour.org which gets wrongly resolved by internal zentyal-boxes
-          eventually also problems with local logins
 	- 10 crashes when not operating "properly"
 	
 [5', 15', 30', 1h, 4h]
@@ -98,6 +93,15 @@ Rare bugs:
 	  of Gestion: CourseModify::add_students doesn't work sometimes 
           (when there is a stale uid of a removed user)
 	- check why ruby-gettext from debian/squeeze messes things up
+        - When copying compta.db over to standalone AfriCompta, then checking,
+         some accounts are marked as "local only" - why? - because the "check"
+         doesn't return ALL accounts, but only those attached to a top-level
+         account - now, why are not all accounts attached, and what to do about
+         them? - seems to be rests of Accounts::archive, but concrete
+         circumstances are not known...
+        - Restriction is not waterproof: some local sites don't get shown, like
+          markas-al-nour.org which gets wrongly resolved by internal zentyal-boxes
+          eventually also problems with local logins
 
 Unconfirmed bugs:
         - ??? Wrong printer-dialog in Cours/Attestations/Print

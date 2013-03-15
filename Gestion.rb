@@ -49,7 +49,7 @@ Permission.add( 'secretary', 'SelfServices,CourseModify,PersonAdd,' +
 Permission.add( 'director', 'CourseAdd', 'secretary' )
 Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
 Permission.add( 'maintenance', 'Inventory.*', 'default' )
-Permission.add( 'cybermanager', 'SelfCash,PersonCredit,AdminTigo,FlagAddInternet', '' )
+Permission.add( 'cybermanager', 'SelfCash,PersonCredit,AdminTigo,FlagAddInternet,SelfServices', '' )
 Permission.add( 'admin', '.*', '.*' )
 
 if uri = get_config( false, :LibNet, :URI )
@@ -160,8 +160,9 @@ end
 $internet.kill
 
 if $profiling
-  dputs(0){"Now run the following:
+  puts "Now run the following:
 pprof.rb --pdf /tmp/#{$profiling} > /tmp/#{$profiling}.pdf
 open /tmp/#{$profiling}.pdf
-    "}
+CPUPROFILE_FREQUENCY=500
+    "
 end

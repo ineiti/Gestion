@@ -8,7 +8,7 @@ class SelfServices < View
       gui_vbox do
         gui_vbox :nogroup do
           show_int :copies_laser, :callback => :calc
-          show_int :heures_groupe_petit, :callback => :calc
+          #show_int :heures_groupe_petit, :callback => :calc
           show_int :heures_groupe_grand, :callback => :calc
           show_int :CDs, :callback => :calc
         end
@@ -36,7 +36,7 @@ class SelfServices < View
       when "heures_groupe_petit"
         services_total += v.to_f * 1000
       when "heures_groupe_grand"
-        services_total += v.to_f * 2000
+        services_total += v.to_f * 2500
       when "CDs"
         services_total += v.to_i * 500
       when "autres_cfa"
@@ -73,3 +73,4 @@ class SelfServices < View
   end
 
 end
+

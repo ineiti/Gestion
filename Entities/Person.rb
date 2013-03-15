@@ -288,6 +288,12 @@ class Persons < Entities
     p.account_total_due = p.credit_due
     p.account_name_due = p.account_due
   end
+
+  def migration_3(p)
+    if p.permissions.class != Array
+      p.permissions = []
+    end
+  end
 end
 
 
