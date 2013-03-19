@@ -28,7 +28,7 @@ class ComptaTransfer < View
     amount = ( other.account_due.total.to_f * 1000 ).to_i
     session.owner.get_cash( other, amount )
     
-    vtlp_update_list + rpc_update( session )
+    vtlp_update_list( session )
   end
   
   def rpc_update( session )

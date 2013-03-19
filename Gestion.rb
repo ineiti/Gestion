@@ -103,7 +103,7 @@ if not Entities.Services.find_by_name( "Free solar" )
     :price => 25000, :duration => 30 )
 end
 
-# Autosave every 5 minutes
+# Autosave every 2 minutes
 if get_config( true, :autosave )
   $autosave = Thread.new{
     loop {

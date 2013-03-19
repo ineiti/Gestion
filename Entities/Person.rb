@@ -38,7 +38,7 @@ class Persons < Entities
     value_list :permissions, "Permission.list"
 
     value_block :internet
-    value_list :groups, "%w( freesurf sudo print localonly )"
+    value_list :groups, "%w( freesurf sudo print localonly share )"
     value_list_single :internet_none, "[]"
 
     value_block :read_only
@@ -461,13 +461,21 @@ class Person < Entity
   end
 
   def password=(pass)
+    p = pass
     if @proxy.has_storage? :LDAP
       dputs( 1 ){ "Changing password for #{self.login_name}: #{pass}" }
-      pass = %x[ slappasswd -s #{pass} ]
+      p = %x[ slappasswd -s #{pass} ]
       dputs( 1 ){ "Hashed password for #{self.login_name} is: #{pass}" }
     end
-    dputs( 1 ){ "Setting password for #{self.login_name} to #{pass}" }
-    data_set( :password, pass )
+    if get_config( false, :Samba, :enable )
+      if not @proxy.has_storage? :LDAP
+        %x[ adduser --disabled-password --gecos "#{self.full_name}" self.login_name ]
+      end
+      dputs(1){"Changing password in Samba to #{pass}"}
+      %x[ echo -ne "#{pass}\n#{pass}\n" | smbpasswd -s -a $#{self.login_name} ]
+    end
+    dputs( 1 ){ "Setting password for #{self.login_name} to #{p}" }
+    data_set( :password, p )
   end
 
   def full_name

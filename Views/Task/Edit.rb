@@ -22,7 +22,7 @@ class TaskEdit < View
   end
   
   def rpc_update( session )
-    vtlp_update_list
+    vtlp_update_list( session )
   end
   
   def rpc_button_save( session, data )
