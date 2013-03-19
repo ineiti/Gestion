@@ -22,6 +22,7 @@ class PersonModify < View
       gui_vbox :nogroup do
         show_str :new_password
         show_str_ro :password_plain
+        show_html :not_allowed
         show_button :change_password
       end
 
@@ -81,8 +82,9 @@ class PersonModify < View
         can_change = session.owner.has_all_rights_of( p )
         change_pwd = [ :new_password, :password_plain, :change_password ].collect{|f|
           reply( can_change ? :unhide : :hide, f )
-        }.flatten 
-        #+ reply( can_change ? :hide : :unhide, :not_allowed )
+        }.flatten + reply( can_change ? :hide : :unhide, :not_allowed ) +
+          reply( :update, :not_allowed => "<b>Vous n'avez pas le droit<br>" +
+            "de changer ce mot de passe</b>" )
         ddputs(4){"change_pwd is #{change_pwd.inspect}"}
         reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) ) +
           reply( :focus, :credit_add ) + reply_print( session ) + change_pwd

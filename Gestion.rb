@@ -6,7 +6,7 @@
 # - Login: - for payable laptop web-access
 #          - for students
 
-DEBUG_LVL=2
+DEBUG_LVL=3
 VERSION_GESTION="0.9.5"
 
 GESTION_DIR=File.dirname(__FILE__)

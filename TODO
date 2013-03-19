@@ -7,12 +7,19 @@ BUGS:
 Security:
 
 UI:
-        - add show_label or make show_html without a border
         - clean up the interface, mostly the tabs and sub-tabs
+          - make network-tab with all the Network-stuff
         - write a good documentation...
 
 FEATURES:
         - Add a Profeda-type of course
+          - added a new tab for this type of course
+          - migrated the coursetype over for profeda_code
+          - contact profeda.org over the network
+          - fetch the course-description on profeda.org
+          - input multiple notes
+          - send everything to profeda.org with the notes
+          - get names and appreciations back
 	-4 Courses::Days - add other days to the list
 	-3 check diploma-templates
 

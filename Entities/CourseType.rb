@@ -9,8 +9,12 @@ class CourseTypes < Entities
     
     value_str :name
     value_str :duration
+    value_int :tests
     value_str :description
     value_text :contents
+    
+    value_block :profeda
+    value_str :profeda_code
   end
   
   def self.files
@@ -26,5 +30,21 @@ class CourseTypes < Entities
       value.gsub!(/[^a-zA-Z0-9_-]/, '_' )
     end
     super( id, field, value )
+  end
+  
+  def listp_profeda_code
+    self.search_by_profeda_code( "^.+$" ).collect{|ct|
+      [ ct.coursetype_id, ct.profeda_code ]
+    }
+  end
+  
+  def listp_name
+    self.search_by_profeda_code( "^$" ).collect{|ct|
+      [ ct.coursetype_id, ct.name ]
+    }
+  end
+  
+  def migration_1(ct)
+    ct.tests = 1
   end
 end
