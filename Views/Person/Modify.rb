@@ -45,8 +45,6 @@ class PersonModify < View
           person.password = data['new_password']
         end
       when "save"
-        # "internet_none" only reflects chosen entries, not the available ones per se!
-        data.delete("internet_none")
         rep = reply( 'update', Persons.save_data( data ) )
       when "print_student"
         rep = rpc_print( session, name, data )
