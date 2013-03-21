@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -I../../QooxView -I../../AfriCompta -I../../LibNet -wKU
+#!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -wKU
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"

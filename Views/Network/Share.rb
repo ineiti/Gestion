@@ -138,7 +138,7 @@ class NetworkShare < View
     a.gsub!( /SERVER/, "Profeda-server on #{@samba.data_str['domain']}" )
     a += "\n"
     Shares.search_all.each{|sh|
-      a += "\n\n[#{sh.name}]\n  path = '#{sh.path}'\n  comment = '#{sh.comment}'\n"
+      a += "\n\n[#{sh.name}]\n  path = #{sh.path}\n  comment = #{sh.comment}\n"
       if sh.public == ["Yes"]
         a += "  guest ok = yes\n  writeable = yes\n"
       else
@@ -163,6 +163,7 @@ class NetworkShare < View
   end
 
   def rpc_button_samba_restart( session, data )
+    rpc_button_samba_save( session, data )
     if File.exists? "/etc/init.d/samba"
       Command::run( "/etc/init.d/samba restart")
     elsif File.exists? "/etc/init.d/smb"

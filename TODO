@@ -2,7 +2,6 @@
 
 BUGS:
         - When clicking Network::Tigo::"recharge", all is empty
-        - admin has not the right to change password of "internet"-user??
 	- 10 crashes when not operating "properly"
 	
 [5', 15', 30', 1h, 4h]
@@ -126,6 +125,7 @@ To check:
 
 
 ** FIXED **:
+        - B 130321: admin has not the right to change password of "internet"-user??
 	- B 130315: 3 PersonModify - only allow to change password from persons which have equal or
 	  lower rights - not very nice looking empty border when not allowed to
           change the password

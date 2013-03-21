@@ -469,7 +469,7 @@ class Person < Entity
     end
     if get_config( false, :Samba, :enable )
       if not @proxy.has_storage? :LDAP
-        %x[ adduser --disabled-password --gecos "#{self.full_name}" self.login_name ]
+        %x[ adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name} ]
       end
       dputs(1){"Changing password in Samba to #{pass}"}
       %x[ echo -ne "#{pass}\n#{pass}\n" | smbpasswd -s -a $#{self.login_name} ]
@@ -555,11 +555,19 @@ class Person < Entity
     Permission.can_view( data_get(:permissions), v )
   end
   
-  def has_all_rights_of( p )
-    ddputs(4){"#{p.permissions} - #{permissions}"}
-    pv1 = Permission.views( p.permissions )
-    pv2 = Permission.views( permissions )
-    ddputs(4){"#{pv1} - #{pv2}"}
-    ( pv1 - pv2 ).size == 0
+  def has_all_rights_of( person )
+    ddputs(4){"#{person.permissions} - #{permissions}"}
+    pv1 = Permission.views( permissions )
+    Permission.views( person.permissions ).each{|p|
+      found = false
+      pv1.each{|p1|
+        if p =~ /#{p1}/ 
+          found = true
+          ddputs(4){"Found my #{p1} matches his #{p}"}
+        end
+      }
+      not found and return false
+    }
+    return true
   end
 end

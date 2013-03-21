@@ -41,7 +41,7 @@ class TC_Person < Test::Unit::TestCase
     SQLite.dbs_open_load_migrate
 
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123",
-      :permissions => [ "default" ], :account_name_due => "Linus" )
+      :permissions => [ "admin" ], :account_name_due => "Linus" )
     @josue = Entities.Persons.create( :login_name => "josue", :password => "super",
       :permissions => %w( default admin secretary ), :account_name_due => "Josué" )
     @surf = Entities.Persons.create( :login_name => "surf", :password => "super",
@@ -215,6 +215,10 @@ class TC_Person < Test::Unit::TestCase
     assert_equal ["View", "Welcome"], Permission.views( @surf.permissions )
     assert_equal ["Internet", "PersonShow", "View", "Welcome"], 
       Permission.views( @teacher.permissions )
+    assert_equal true, @admin.has_all_rights_of( @josue )
+    assert_equal true, @josue.has_all_rights_of( @admin )
+    assert_equal true, @admin.has_all_rights_of( @secretary )
+    assert_equal false, @secretary.has_all_rights_of( @admin )
     assert_equal true, @josue.has_all_rights_of( @secretary )
     assert_equal false, @secretary.has_all_rights_of( @josue )
     assert_equal true, @secretary.has_all_rights_of( @surf )
