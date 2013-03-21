@@ -8,6 +8,7 @@
 
 DEBUG_LVL=3
 VERSION_GESTION="0.9.5"
+require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
 CONFIG_FILE="config.yaml"
@@ -15,7 +16,7 @@ if not FileTest.exists? CONFIG_FILE
   puts "Config-file doesn't exist"
   print "Do you want me to copy a standard one? [Y/n] "
   if gets.chomp.downcase != "n"
-    FilesUtils.cp "config.yaml.default", "config.yaml"
+    FileUtils.cp "config.yaml.default", "config.yaml"
   end
 end
 

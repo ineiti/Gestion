@@ -1,6 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - When clicking Network::Tigo::"recharge", all is empty
+        - admin has not the right to change password of "internet"-user??
 	- 10 crashes when not operating "properly"
 	
 [5', 15', 30', 1h, 4h]

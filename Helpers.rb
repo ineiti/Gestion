@@ -2,7 +2,7 @@
 
 # To help testing of command-stuff
 module Command
-  def run( cmd )
+  def self.run( cmd )
     %x[ #{cmd} ]
   end
 end

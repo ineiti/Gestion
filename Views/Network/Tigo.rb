@@ -147,6 +147,8 @@ class NetworkTigo < View
         ":Bitkine3"
       when /AB7/
         ":Route Bitkine"
+      else
+        ":unknown"
       end
       str += "\nLocation: #{lac}\nAnteanna: #{ci + antenna}"
     else
@@ -168,7 +170,7 @@ class NetworkTigo < View
   def update( session )
     { :credit_left => lib_net( nil, :CREDIT_LEFT ),
       :promotion_left => lib_net( nil, :PROMOTION_LEFT ),
-      :usage_day_mo => lib_net( nil, :USAGE_DAY ),
+      :usage_day_mo => lib_net( nil, :USAGE_DAILY ).to_i / 1_000,
       :tigo_number => @tigo_number.data_str,
       :tigo_recharge => "*190*1234*235#{@tigo_number.data_str.gsub(/ /,'')}*800#",
       :status => "<pre>#{read_status}</pre>",

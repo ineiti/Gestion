@@ -1,3 +1,5 @@
+require 'Helpers.rb'
+
 class NetworkShare < View
   include VTListPane
   
@@ -27,20 +29,20 @@ class NetworkShare < View
           show_list_single :users, :width => 200
           show_button :no_access, :read_write, :read_only
         end
-        
-        gui_window :msg do
-          show_html :msg_txt
-          show_button :close
+      end
+      gui_hbox :nogroup do
+        gui_vbox :nogroup do
+          show_str :domain, :width => 200
+          show_str :hostname
+          show_button :samba_save, :samba_restart
+        end
+        gui_vbox :nogroup do
         end
       end
-    end
-    gui_hbox :nogroup do
-      gui_vbox :nogroup do
-        show_str :domain, :width => 200
-        show_str :hostname
-        show_button :samba_save, :samba_restart
-      end
-      gui_vbox :nogroup do
+        
+      gui_window :msg do
+        show_html :msg_txt
+        show_button :close
       end
     end
   end
@@ -128,6 +130,47 @@ class NetworkShare < View
 
   def rpc_button_close( session, data )
     reply( :window_hide )
+  end
+  
+  def rpc_button_samba_save( session, data )
+    a = Command::run( "cat Files/smb.conf" )
+    a.gsub!( /WORKGROUP/, @samba.data_str['domain'] )
+    a.gsub!( /SERVER/, "Profeda-server on #{@samba.data_str['domain']}" )
+    a += "\n"
+    Shares.search_all.each{|sh|
+      a += "\n\n[#{sh.name}]\n  path = '#{sh.path}'\n  comment = '#{sh.comment}'\n"
+      if sh.public == "Yes"
+        a += "  guest ok = yes\n  writeable = yes\n"
+      else
+        read = []
+        write = []
+        sh.acl.class == Hash and sh.acl.each{|k,v|
+          case v
+          when /rw/
+            write.push k
+          when /ro/
+            read.push k
+          end
+        }
+        a += "  read list = #{read.join(',')}\n  write list = #{write.join(',')}\n"
+      end
+    }
+    file_smb = "#{get_config( '/etc/samba', :Samba, :config_dir )}/smb.conf"
+    File.open( file_smb, 'w' ){|f|
+      f.write( a )
+    }
+    return ""
+  end
+
+  def rpc_button_samba_restart( session, data )
+    if File.exists? "/etc/init.d/samba"
+      Command::run( "/etc/init.d/samba restart")
+    elsif File.exists? "/etc/init.d/smb"
+      Command::run( "/etc/init.d/smb restart")
+      Command::run( "/etc/init.d/nmb restart")
+    else
+      dputs(0){"Couldn't restart samba as there was no init.d-file"}
+    end
   end
 
 end
