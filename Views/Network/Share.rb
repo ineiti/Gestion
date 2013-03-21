@@ -139,7 +139,7 @@ class NetworkShare < View
     a += "\n"
     Shares.search_all.each{|sh|
       a += "\n\n[#{sh.name}]\n  path = '#{sh.path}'\n  comment = '#{sh.comment}'\n"
-      if sh.public == "Yes"
+      if sh.public == ["Yes"]
         a += "  guest ok = yes\n  writeable = yes\n"
       else
         read = []
