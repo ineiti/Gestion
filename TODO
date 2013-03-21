@@ -1,6 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - PersonAdmin sometimes doesn't show permissions and groups when
+         added new stuff
         - When clicking Network::Tigo::"recharge", all is empty
 	- 10 crashes when not operating "properly"
 	

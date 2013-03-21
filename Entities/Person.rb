@@ -467,7 +467,7 @@ class Person < Entity
       p = %x[ slappasswd -s #{pass} ]
       dputs( 1 ){ "Hashed password for #{self.login_name} is: #{pass}" }
     end
-    if get_config( false, :Samba, :enable ) and permissions.index( "share" )
+    if get_config( false, :Samba, :enable ) and groups.index( "share" )
       if not @proxy.has_storage? :LDAP
         %x[ adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name} ]
       end
