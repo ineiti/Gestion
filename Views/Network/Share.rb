@@ -23,7 +23,7 @@ class NetworkShare < View
         end
         gui_vbox :nogroup do
           show_block :config, :width => 300
-          show_button :save, :change_path
+          show_button :share_save, :change_path
         end
         gui_vbox :nogroup do
           show_list_single :users, :width => 200
@@ -34,7 +34,7 @@ class NetworkShare < View
         gui_vbox :nogroup do
           show_str :domain, :width => 200
           show_str :hostname
-          show_button :samba_save, :samba_restart
+          show_button :samba_save
         end
         gui_vbox :nogroup do
         end
@@ -86,20 +86,18 @@ class NetworkShare < View
 
   def rpc_update( session )
     ddputs(4){"Updating samba: #{users_update( session )}"}
+    show_users = reply( :unhide, :users )
+    if ( share_id = session.s_data[:share] ) and
+        (Shares.find_by_share_id( share_id ).public == ["Yes"])
+      show_users = reply( :hide, :users )      
+    end
     reply( :empty_only, [ :users ] ) +
       reply( :update, 
       :users => users_update( session ) ) +
       %w( domain hostname ).collect{|d|
       reply( :update, d => @samba.data_str[d])
-    }.flatten
-  end
-    
-  def rpc_button_samba_save( session, data )
-    %w( domain hostname ).each{|d|
-      ddputs(4){"Saving -#{d}- for -#{@samba.data_str.inspect}-"}
-      data[d] and @samba.data_str[d] = data[d]
-    }
-    ddputs(4){"@samba is now -#{@samba.data_str.inspect}-"}
+    }.flatten +
+      show_users
   end
     
   def rpc_button( session, name, data )
@@ -127,12 +125,23 @@ class NetworkShare < View
       super( session, name, data )
     end
   end
+  
+  def rpc_button_share_save( session, data )
+    ret = rpc_button_save( session, data ) +
+      rpc_button_samba_save( session, data )
+  end
 
   def rpc_button_close( session, data )
     reply( :window_hide )
   end
   
   def rpc_button_samba_save( session, data )
+    %w( domain hostname ).each{|d|
+      ddputs(4){"Saving -#{d}- for -#{@samba.data_str.inspect}-"}
+      data[d] and @samba.data_str[d] = data[d]
+    }
+    ddputs(4){"@samba is now -#{@samba.data_str.inspect}-"}
+
     a = Command::run( "cat Files/smb.conf" )
     a.gsub!( /WORKGROUP/, @samba.data_str['domain'] )
     a.gsub!( /SERVER/, "Profeda-server on #{@samba.data_str['domain']}" )
@@ -144,7 +153,9 @@ class NetworkShare < View
       else
         read = []
         write = []
+        dputs(4){"sh is #{sh.class}"}
         sh.acl.class == Hash and sh.acl.each{|k,v|
+          dputs(4){"Found #{k}: #{v}"}
           case v
           when /rw/
             write.push k
@@ -159,11 +170,7 @@ class NetworkShare < View
     File.open( file_smb, 'w' ){|f|
       f.write( a )
     }
-    return ""
-  end
 
-  def rpc_button_samba_restart( session, data )
-    rpc_button_samba_save( session, data )
     if File.exists? "/etc/init.d/samba"
       Command::run( "/etc/init.d/samba restart")
     elsif File.exists? "/etc/init.d/smb"
@@ -172,6 +179,8 @@ class NetworkShare < View
     else
       dputs(0){"Couldn't restart samba as there was no init.d-file"}
     end
+
+    return []
   end
 
 end

@@ -472,7 +472,8 @@ class Person < Entity
         %x[ adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name} ]
       end
       dputs(1){"Changing password in Samba to #{pass}"}
-      %x[ echo -ne "#{pass}\n#{pass}\n" | smbpasswd -s -a $#{self.login_name} ]
+      dputs(3){"( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name}"}
+      %x[ ( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name} ]
     end
     dputs( 1 ){ "Setting password for #{self.login_name} to #{p}" }
     data_set( :password, p )
@@ -556,14 +557,14 @@ class Person < Entity
   end
   
   def has_all_rights_of( person )
-    ddputs(4){"#{person.permissions} - #{permissions}"}
+    dputs(4){"#{person.permissions} - #{permissions}"}
     pv1 = Permission.views( permissions )
     Permission.views( person.permissions ).each{|p|
       found = false
       pv1.each{|p1|
         if p =~ /#{p1}/ 
           found = true
-          ddputs(4){"Found my #{p1} matches his #{p}"}
+          dputs(4){"Found my #{p1} matches his #{p}"}
         end
       }
       not found and return false
