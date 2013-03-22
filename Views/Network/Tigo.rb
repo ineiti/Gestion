@@ -83,10 +83,13 @@ class NetworkTigo < View
   end
 
   def rpc_button_recharge( session, data )
-    code = data['code'].gsub( /[^0-9]/, '' )
-    dputs( 0 ){ "Code is #{code}" }
-    lib_net_args :isp_tigo_credit_add, code
-    rpc_update( session ) + reply( :empty, [:code])
+    begin
+      code = data['code'].gsub( /[^0-9]/, '' )
+      dputs( 0 ){ "Code is #{code}" }
+      lib_net_args :isp_tigo_credit_add, code
+    rescue NoMethodError
+    end
+    rpc_update( session ) + reply( :empty_only, [:code])
   end
 
   def rpc_button_add_promotion( session, data )
@@ -105,7 +108,7 @@ class NetworkTigo < View
       dputs( 3 ){ "Updating promotion" }
       lib_net :isp_tigo_promotion_update
       dputs( 3 ){ "Replying for update" }
-      reply( 'update', update( session ) )
+      reply( :update, update( session ) )
     end
   end
 

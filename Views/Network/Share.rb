@@ -48,7 +48,7 @@ class NetworkShare < View
   end
   
   def users_update( session )
-    if share_str = session.s_data[:share]
+    if session and ( share_str = session.s_data[:share] )
       users = Persons.search_by_groups( "share" )
       share = Shares.find_by_share_id( share_str )
       dputs(3){"Users is #{users.inspect} and share is #{share.inspect}"}
@@ -86,10 +86,13 @@ class NetworkShare < View
 
   def rpc_update( session )
     ddputs(4){"Updating samba: #{users_update( session )}"}
-    show_users = reply( :unhide, :users )
-    if ( share_id = session.s_data[:share] ) and
-        (Shares.find_by_share_id( share_id ).public == ["Yes"])
-      show_users = reply( :hide, :users )      
+    show_users = reply( :hide, :users )
+    begin
+      if ( share_id = session.s_data[:share] ) and
+          (Shares.find_by_share_id( share_id ).public == ["No"])
+        show_users = reply( :unhide, :users )
+      end
+    rescue NoMethodError
     end
     reply( :empty_only, [ :users ] ) +
       reply( :update, 

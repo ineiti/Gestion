@@ -24,3 +24,17 @@ http://localhost:3302
 
 and log in using admin/super123
 
+======== Further installation
+
+If you want to use it more thoroughly, I propose you go into
+
+LibNet/tools
+
+and run ./install there. This will copy some links around the system.
+
+
+======== Slowness on connection
+
+if the system reacts very slowly whenever there is a connection, check that the
+DNS-server doesn't send out private reverse-requests (--bogus-priv on dnsmasq) and
+also some other requests (--filterwin2k on dnsmasq)

@@ -4,34 +4,36 @@ Internet - an interface for the internet-part of Markas-al-Nour.
 
 module Internet
   def self.take_money
-    if $lib_net.call( :isp_connection_status ).to_i >= 4
-      $lib_net.call( :users_connected ).split.each{|u|
-        dputs(3){"User is #{u}"}
-        cost = $lib_net.call( :user_cost_now ).to_i
+    $lib_net.call( :users_connected ).split.each{|u|
+      dputs(3){"User is #{u}"}
+      cost = $lib_net.call( :user_cost_now ).to_i
 
-        isp = JSON.parse( $lib_net.call( :isp_params ) ).to_sym
-        dputs(3){"ISP-params is #{isp.inspect} and conn_type is #{isp._conn_type}"}
-        user = Persons.find_by_login_name( u )
-        if user
-          dputs(3){"Found user #{u}: #{user.full_name}"}
-          if ( isp._conn_type == "ondemand" ) or ( not self.free( user ) )
-            dputs(3){"User #{u} will pay #{cost}"}
-            if user.internet_credit.to_i >= cost
-              dputs(3){"Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}"}
-              user.internet_credit = user.internet_credit.to_i - cost
-            else
-              dputs(2){"Kicking user #{u}"}
-              $lib_net.call_args( :user_disconnect_name, 
-                "#{user.login_name}")
-            end
+      isp = JSON.parse( $lib_net.call( :isp_params ) ).to_sym
+      dputs(3){"ISP-params is #{isp.inspect} and conn_type is #{isp._conn_type}"}
+      user = Persons.find_by_login_name( u )
+      if user
+        dputs(3){"Found user #{u}: #{user.full_name}"}
+        if not AccessGroups.allow_user_now( u )
+          dputs(2){"Kicking user #{u} because of accessgroups"}
+          $lib_net.call_args( :user_disconnect_name, 
+            "#{user.login_name}")
+        elsif ( isp._conn_type == "permanent" ) and self.free( user )
+          dputs(2){"User #{u} goes free"}
+        elsif $lib_net.call( :isp_connection_status ).to_i >= 3
+          dputs(3){"User #{u} will pay #{cost}"}
+          if user.internet_credit.to_i >= cost
+            dputs(3){"Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}"}
+            user.internet_credit = user.internet_credit.to_i - cost
           else
-            dputs(2){"User #{u} goes free"}
+            dputs(2){"Kicking user #{u}"}
+            $lib_net.call_args( :user_disconnect_name, 
+              "#{user.login_name}")
           end
-        else
-          dputs(1){"Couldn't find user #{u}"}
         end
-      }
-    end
+      else
+        dputs(1){"Couldn't find user #{u}"}
+      end
+    }
   end
 	
   def self.check_services
@@ -93,6 +95,6 @@ module Internet
 
   def self.connect_user( ip, name )
     $lib_net.call_args( :user_connect, "#{ip} #{name} " +
-     "#{self.free(name) ? 'yes' : 'no'}" )
+        "#{self.free(name) ? 'yes' : 'no'}" )
   end
 end

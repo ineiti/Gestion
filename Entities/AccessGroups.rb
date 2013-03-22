@@ -17,4 +17,80 @@ class AccessGroups < Entities
       [ag.accessgroup_id, "#{ag.priority.rjust(2,'0')}:#{ag.name}"]
     }
   end
+  
+  def self.allow_user( user, time )
+    dputs(4){"Searching for #{user} at #{time}"}
+    if user.class == Person
+      user = user.login_name
+    end
+    search_all().sort{|a,b| 
+      b.priority.to_i <=> a.priority.to_i 
+    }.each{|ag|
+      match_user = true
+      if ag.members.class == Array and ag.members.size > 0
+        dputs(5){"members.index is #{ag.members.index(user).inspect}"}
+        match_user = ag.members.index( user ) != nil
+      end
+      match_time = ag.time_in_atimes( time )
+      dputs(4){"Checking #{ag.name}, u,t = #{match_user},#{match_time}"}
+      dputs(4){"Action is #{ag.action[0].inspect}, members = #{ag.members.inspect}"}
+      case ag.action[0]
+      when /allow_else_block/
+        dputs(4){"allow_else_block"}
+        return true if ( match_time and match_user )
+        return false if match_time
+      when /block/
+        dputs(4){"block"}
+        return false if (match_time and match_user)
+      when /allow/
+        dputs(4){"allow"}
+        return true if (match_time and match_user)
+      end
+    }
+    dputs(4){"Nothing found - must be OK"}
+    return true
+  end
+  
+  def self.allow_user_now( user )
+    self.allow_user( user, Time.now )
+  end
+end
+
+class AccessGroup < Entity
+  
+  def self.time_in_atime( t, a )
+    dow_raw, start_raw, stop_raw = a.split(";")
+    {:di=>0,:lu=>1,:ma=>2,:me=>3,:je=>4,:ve=>5,:sa=>6}.each{|k,v|
+      dow_raw.gsub!(/#{k}/,"#{v}")
+    }
+    dputs(4){"dow_raw is #{dow_raw}"}
+    dow = []
+    dow_raw.split(",").each{|d|
+      if d =~ /(.)-(.)/
+        ($1..$2).each{|i|
+          dow.push i.to_i
+        }
+      else
+        dow.push d.to_i
+      end
+    }
+    start_raw = start_raw.split(":")
+    start = start_raw[0].to_i * 60 + start_raw[1].to_i
+    stop_raw = stop_raw.split(":")
+    stop = stop_raw[0].to_i * 60 + stop_raw[1].to_i
+    if stop == 0
+      stop = 24 * 60
+    end
+    time = t.hour * 60 + t.min
+    dputs(4){"#{dow.inspect} - #{start} - #{stop}"}
+    ( dow.index( t.wday ) and start <= time and time < stop ) == true
+  end
+  
+  def time_in_atimes( t )
+    ret = false
+    access_times and access_times.each{|a|
+      ret = ( ret or AccessGroup.time_in_atime( t, a ) )
+    }
+    ret
+  end
 end

@@ -19,8 +19,11 @@ class SelfInternet < View
   # 0 - yes
   # 1 - no money left
   # 2 - restrictions
+  # 3 - AccessGroups-rules
   def can_connect( session )
-    if $lib_net.call( :captive_restriction_get ).length > 0
+    if not AccessGroups.allow_user_now( session.owner )
+      return 3
+    elsif $lib_net.call( :captive_restriction_get ).length > 0
       return 2
     elsif Internet.free( session.owner )
       return 0
@@ -51,6 +54,8 @@ class SelfInternet < View
       reply( :update, :connection_status => "Not enough money in account" )
     when 2
       reply( :update, :connection_status => "Restricted access due to teaching" )
+    when 3
+      reply( :update, :connection_status => "Access-rules don't allow you")
     end
   end
 	
@@ -86,8 +91,9 @@ class SelfInternet < View
   
   def update_isp( session )
     @isp = JSON.parse( $lib_net.call( :isp_params ) )
-    show_status = ( ( @isp['conn_type'] == 'ondemand' ) or 
-        ( can_connect(session) == 0 ) )
+    show_status = true
+    #show_status = ( ( @isp['conn_type'] == 'ondemand' ) or 
+    #    ( can_connect(session) == 0 ) )
     dputs(2){"isp-params is: #{@isp.inspect}, " +
         "show_status is #{show_status.inspect}"}
     reply( @isp['has_promo'] == 'true' ? :unhide : :hide, :bytes_left ) +
@@ -110,6 +116,7 @@ class SelfInternet < View
   def rpc_update( session, nobutton = false )
     users = $lib_net.call(:users_connected)
     users_str = SelfInternet.make_users_str( users )
+    ddputs(4){"session is #{session.inspect}"}
     ret = reply( :update, update( session ) ) +
       update_button( session, nobutton ) +
       update_connection_status( session ) +

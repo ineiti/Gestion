@@ -3,7 +3,6 @@
 BUGS:
         - PersonAdmin sometimes doesn't show permissions and groups when
          added new stuff
-        - When clicking Network::Tigo::"recharge", all is empty
 	- 10 crashes when not operating "properly"
 	
 [5', 15', 30', 1h, 4h]
@@ -11,7 +10,6 @@ Security:
 
 UI:
         - clean up the interface, mostly the tabs and sub-tabs
-          - make network-tab with all the Network-stuff
         - write a good documentation...
 
 FEATURES:
@@ -127,6 +125,9 @@ To check:
 
 
 ** FIXED **:
+        - UI130322: make network-tab with all the Network-stuff
+        - P 130322: Arranging files for LibNet
+        - B 130322: When clicking Network::Tigo::"recharge", all is empty
         - F 130321: Shares for Bethanie
         - F 130321: Byte-counter for each day for Bethanie
         - UI130321: NetworkShare::public == Yes -> hide users

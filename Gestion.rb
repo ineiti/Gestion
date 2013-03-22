@@ -6,7 +6,7 @@
 # - Login: - for payable laptop web-access
 #          - for students
 
-DEBUG_LVL=3
+DEBUG_LVL=2
 VERSION_GESTION="0.9.5"
 require 'fileutils'
 
@@ -118,7 +118,7 @@ end
 $internet = Thread.new{
   loop {
     begin
-      sleep 60
+      sleep 20
       Internet::take_money
     rescue Exception => e
       dputs( 0 ){ "#{e.inspect}" }
