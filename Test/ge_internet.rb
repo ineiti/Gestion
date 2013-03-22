@@ -141,12 +141,12 @@ class TC_Internet < Test::Unit::TestCase
   
   def test_users_str
     assert_equal "one, three, two", 
-      SelfInternet.make_users_str(%w( one two three) )
+      SelfInternet.make_users_str(%w( one two three).join("\n") )
 
     assert_equal "four, one, three, two", 
-      SelfInternet.make_users_str(%w( one two three four ) )
+      SelfInternet.make_users_str(%w( one two three four ).join("\n") )
 
     assert_equal "five, four, one, six,<br>three, two", 
-      SelfInternet.make_users_str(%w( one two three four five six ) )
+      SelfInternet.make_users_str(%w( one two three four five six ).join("\n") )
   end
 end

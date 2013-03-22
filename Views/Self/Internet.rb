@@ -96,7 +96,7 @@ class SelfInternet < View
   
   def self.make_users_str( users )
     users_str = [[]]
-    users.sort.each{|u|
+    users.split.sort.each{|u|
       if users_str.last.count > 3
         users_str[-1] = users_str.last.join(", ")
         users_str.push []
