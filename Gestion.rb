@@ -7,7 +7,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="0.9.5"
+VERSION_GESTION="0.9.6"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)

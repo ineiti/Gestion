@@ -1,5 +1,9 @@
 Important notices for versions:
 
+- 130323: 0.9.6
+  - Added Network-access-control and Samba-shares
+  - LibNet/Tools-directory with lots of useful files
+
 - 130221: 0.9.4
   - Renaming of some config-vars:
     - compta_due::src,dst -> 
