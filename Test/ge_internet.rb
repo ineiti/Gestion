@@ -162,6 +162,8 @@ class TC_Internet < Test::Unit::TestCase
       AccessGroup.time_in_atime( Time.parse("1/2/2012 10:00"), "lu,ma;8:00;12:00")
     assert_equal false,
       AccessGroup.time_in_atime( Time.parse("1/2/2012 10:00"), "me;8:00;12:00")
+    assert_equal true,
+      AccessGroup.time_in_atime( Time.parse("1/2/2012 10:00"), "lu-di;8:00;12:00")
 
     assert_equal false,
       ag1.time_in_atimes( Time.parse( "1/1/2012 8:0" ) )
@@ -174,31 +176,33 @@ class TC_Internet < Test::Unit::TestCase
     :action => %w( allow_else_block ), :priority => 20, :limit_day_mo => 200,
     :access_times => %w( lu-ve;08:00;10:00 lu-ve;10:30;13:00 lu-ve;16:00;18:00 ) )
   
-    assert_equal true, AccessGroups.allow_user( "test", 
+    assert_equal [true, 'office'], AccessGroups.allow_user( "test", 
       Time.parse( "1/2/2012 8:0" ) )
-    assert_equal false, AccessGroups.allow_user( "test2", 
+    assert_equal [false, 'Blocked by office'], AccessGroups.allow_user( "test2", 
       Time.parse( "1/2/2012 8:0" ) )
     
-    assert_equal true, AccessGroups.allow_user( "test2", 
+    assert_equal [true, 'default'], AccessGroups.allow_user( "test2", 
       Time.parse( "1/2/2012 10:0" ) )
     ag2 = AccessGroups.create( :name => "block", :members => %w(  ),
     :action => %w( block ), :priority => 30, :limit_day_mo => 200,
     :access_times => %w( lu,ma,me,je,ve,sa,di;8:0;10:30 ) )
-    assert_equal false, AccessGroups.allow_user( "test2", 
+    assert_equal [false, 'Blocked by block'], AccessGroups.allow_user( "test2", 
       Time.parse( "1/2/2012 10:0" ) )
-    assert_equal false, AccessGroups.allow_user( "test", 
+    assert_equal [false, 'Blocked by block'], AccessGroups.allow_user( "test", 
       Time.parse( "1/2/2012 8:0" ) )
     ag2.priority = 10
-    assert_equal true, AccessGroups.allow_user( "test", 
+    assert_equal [true, 'office'], AccessGroups.allow_user( "test", 
       Time.parse( "1/2/2012 8:0" ) )
     
-    assert_equal false, AccessGroups.allow_user( "test2", 
+    assert_equal [false, 'Blocked by block'], AccessGroups.allow_user( "test2", 
       Time.parse( "1/2/2012 10:0" ) )
     ag2 = AccessGroups.create( :name => "director", :members => %w( test2 ),
     :action => %w( allow ), :priority => 40, :limit_day_mo => 200,
-    :access_times => %w( lu,ma,me,je,ve,sa,di;8:0;10:30 ) )
-    assert_equal true, AccessGroups.allow_user( "test2", 
+    :access_times => %w( lu-di;8:0;10:30 ) )
+    assert_equal [true, 'director'], AccessGroups.allow_user( "test2", 
       Time.parse( "1/2/2012 10:0" ) )
+    assert_equal [true, 'director'], AccessGroups.allow_user( "test2", 
+      Time.parse( "1/3/2012 10:0" ) )
     
   end
 end

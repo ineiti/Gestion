@@ -6,7 +6,7 @@ class Shares < Entities
     value_str :name
     value_str :path
     value_str :comment
-    value_text :args
+    #value_text :args
     value_list_drop :public, "%w( Yes No )"
     
     value_block :acl

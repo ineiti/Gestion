@@ -47,7 +47,7 @@ else
           Binaries/install_ldap
         fi
         echo $( cd ../QooxView; ./update_sqlite3 )
-        ./Gestion.rb $@
+        ./Gestion.rb -p $@
       else
         echo OK, wont run Gestion then
       fi

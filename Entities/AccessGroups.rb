@@ -32,23 +32,28 @@ class AccessGroups < Entities
         match_user = ag.members.index( user ) != nil
       end
       match_time = ag.time_in_atimes( time )
+      limit_ok = true
+      if ( limit = ag.limit_day_mo.to_i ) > 0
+        limit_ok = $lib_net.call( nil, :USAGE_DAILY ).to_i / 1e6 <= limit
+      end
       dputs(4){"Checking #{ag.name}, u,t = #{match_user},#{match_time}"}
       dputs(4){"Action is #{ag.action[0].inspect}, members = #{ag.members.inspect}"}
       case ag.action[0]
       when /allow_else_block/
         dputs(4){"allow_else_block"}
-        return true if ( match_time and match_user )
-        return false if match_time
+        return [true, "#{ag.name}"] if ( match_time and match_user and limit_ok )
+        return [false, "Over limit of #{ag.limit_day_mo}Mo in #{ag.name}"] if not limit_ok
+        return [false, "Blocked by #{ag.name}"] if match_time
       when /block/
         dputs(4){"block"}
-        return false if (match_time and match_user)
+        return [false, "Blocked by #{ag.name}"] if (match_time and match_user)
       when /allow/
         dputs(4){"allow"}
-        return true if (match_time and match_user)
+        return [true, "#{ag.name}"] if (match_time and match_user and limit_ok)
       end
     }
     dputs(4){"Nothing found - must be OK"}
-    return true
+    return [true, "default"]
   end
   
   def self.allow_user_now( user )
@@ -67,8 +72,12 @@ class AccessGroup < Entity
     dow = []
     dow_raw.split(",").each{|d|
       if d =~ /(.)-(.)/
-        ($1..$2).each{|i|
-          dow.push i.to_i
+        b, e = $1.to_i, $2.to_i
+        if e < b
+          e += 7
+        end
+        (b..e).each{|i|
+          dow.push (i % 7)
         }
       else
         dow.push d.to_i

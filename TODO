@@ -4,7 +4,7 @@ BUGS:
         - PersonAdmin sometimes doesn't show permissions and groups when
          added new stuff
 	- 10 crashes when not operating "properly"
-	
+
 [5', 15', 30', 1h, 4h]
 Security:
 
@@ -25,6 +25,8 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - configure also LibNet through Gestion
+        - replace gsm-ussd with something Debian
         -2 verify if Person::data_set and Person::data_set_log are really
           necessary
         -3 change Course::make_pdfs to OpenPrint
@@ -125,6 +127,9 @@ To check:
 
 
 ** FIXED **:
+        - UI130323: Update translation
+        - B 130323: MB-Limit in NetworkAccess is not considered
+        - UI130323: tell people why they can't connect if NetworkAccess kicks in
         - UI130322: make network-tab with all the Network-stuff
         - P 130322: Arranging files for LibNet
         - B 130322: When clicking Network::Tigo::"recharge", all is empty

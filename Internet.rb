@@ -13,8 +13,8 @@ module Internet
       user = Persons.find_by_login_name( u )
       if user
         dputs(3){"Found user #{u}: #{user.full_name}"}
-        if not AccessGroups.allow_user_now( u )
-          dputs(2){"Kicking user #{u} because of accessgroups"}
+        if not ( ag = AccessGroups.allow_user_now( u ) )[0]
+          dputs(2){"Kicking user #{u} because of accessgroups: #{ag[1]}"}
           $lib_net.call_args( :user_disconnect_name, 
             "#{user.login_name}")
         elsif ( isp._conn_type == "permanent" ) and self.free( user )

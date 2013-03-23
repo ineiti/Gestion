@@ -21,8 +21,8 @@ class SelfInternet < View
   # 2 - restrictions
   # 3 - AccessGroups-rules
   def can_connect( session )
-    if not AccessGroups.allow_user_now( session.owner )
-      return 3
+    if not ( ag = AccessGroups.allow_user_now( session.owner ) )[0]
+      return ag[1]
     elsif $lib_net.call( :captive_restriction_get ).length > 0
       return 2
     elsif Internet.free( session.owner )
@@ -34,7 +34,7 @@ class SelfInternet < View
   end
 	
   def update_connection_status( session )
-    case can_connect( session )
+    case (cc = can_connect( session ))
     when 0
       status = $lib_net.call( :isp_connection_status ).to_i
       status_str = %w( None PPP PAP IP VPN )
@@ -54,8 +54,8 @@ class SelfInternet < View
       reply( :update, :connection_status => "Not enough money in account" )
     when 2
       reply( :update, :connection_status => "Restricted access due to teaching" )
-    when 3
-      reply( :update, :connection_status => "Access-rules don't allow you")
+    else
+      reply( :update, :connection_status => cc )
     end
   end
 	
