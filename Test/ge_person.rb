@@ -196,10 +196,10 @@ class TC_Person < Test::Unit::TestCase
   end
   
   def test_account_cash_update
-    assert_equal nil, @josue.account_cash
+    assert_equal nil, @surf.account_cash
     
-    @josue.permissions = %w( default accountant )
-    assert_not_nil @josue.account_cash
+    @surf.permissions = %w( default accountant )
+    assert_not_nil @surf.account_cash
   end
   
   def test_listp_account_due

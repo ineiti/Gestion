@@ -22,7 +22,7 @@ class NetworkShare < View
           show_button :new, :delete
         end
         gui_vbox :nogroup do
-          show_block :config, :width => 300
+          show_block :config, :width => 200
           show_button :share_save, :change_path
         end
         gui_vbox :nogroup do

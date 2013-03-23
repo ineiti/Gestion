@@ -127,6 +127,7 @@ To check:
 
 
 ** FIXED **:
+        - T 130323: Checked all tests
         - UI130323: Update translation
         - B 130323: MB-Limit in NetworkAccess is not considered
         - UI130323: tell people why they can't connect if NetworkAccess kicks in

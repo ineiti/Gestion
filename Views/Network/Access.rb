@@ -28,8 +28,13 @@ class NetworkAccess < View
   end
   
   def update_access_times( group )
+    ats = if group.access_times and (group.access_times.size > 0)
+      group.access_times
+    else
+      ["Always"]
+    end
     reply( :empty_only, [:access_times_view] ) +
-      reply( :update, :access_times_view => group.access_times )
+      reply( :update, :access_times_view => ats )
   end
   
   def update_members( group )
@@ -72,7 +77,8 @@ class NetworkAccess < View
   
   def rpc_button_delete_time( session, data )
     if (group = AccessGroups.find_by_accessgroup_id( data['groups'][0])) and
-        (time = data['access_times_view'][0])
+        (time = data['access_times_view'][0]) and
+        group.access_times
       group.access_times.delete( time )
       update_access_times( group )
     end
@@ -82,8 +88,14 @@ class NetworkAccess < View
     if (person = Persons.find_by_login_name( data['login_name'] )) and
         (group = AccessGroups.find_by_accessgroup_id( data['groups'][0]))
       ddputs(3){"Found person #{person.inspect} and group #{group.inspect}"}
-      group.members.push person.login_name
-      update_members( group )
+      if not group.members
+        group.members = []
+      end
+      if not group.members.index person.login_name
+        group.members.push person.login_name
+      end
+      update_members( group ) +
+        reply( :empty_only, [:login_name])
     end
   end
   

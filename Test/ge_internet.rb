@@ -164,6 +164,10 @@ class TC_Internet < Test::Unit::TestCase
       AccessGroup.time_in_atime( Time.parse("1/2/2012 10:00"), "me;8:00;12:00")
     assert_equal true,
       AccessGroup.time_in_atime( Time.parse("1/2/2012 10:00"), "lu-di;8:00;12:00")
+    assert_equal true,
+      AccessGroup.time_in_atime( Time.parse("1/3/2012 4:00"), "lu;22:00;6:00")
+    assert_equal false,
+      AccessGroup.time_in_atime( Time.parse("1/3/2012 6:00"), "lu;22:00;6:00")
 
     assert_equal false,
       ag1.time_in_atimes( Time.parse( "1/1/2012 8:0" ) )
@@ -196,7 +200,7 @@ class TC_Internet < Test::Unit::TestCase
     
     assert_equal [false, 'Blocked by block'], AccessGroups.allow_user( "test2", 
       Time.parse( "1/2/2012 10:0" ) )
-    ag2 = AccessGroups.create( :name => "director", :members => %w( test2 ),
+    ag3 = AccessGroups.create( :name => "director", :members => %w( test2 ),
     :action => %w( allow ), :priority => 40, :limit_day_mo => 200,
     :access_times => %w( lu-di;8:0;10:30 ) )
     assert_equal [true, 'director'], AccessGroups.allow_user( "test2", 
@@ -204,5 +208,13 @@ class TC_Internet < Test::Unit::TestCase
     assert_equal [true, 'director'], AccessGroups.allow_user( "test2", 
       Time.parse( "1/3/2012 10:0" ) )
     
+    ag2.priority = 30
+    assert_equal [false, 'Blocked by block'], AccessGroups.allow_user( "test", 
+      Time.parse( "1/2/2012 8:0" ) )
+    ag4 = AccessGroups.create( :name => "everybody", :members => %w( test ),
+    :action => %w( allow ), :priority => 60, :limit_day_mo => 200 )
+    assert_equal [true, 'everybody'], AccessGroups.allow_user( "test", 
+      Time.parse( "1/2/2012 8:0" ) )
+
   end
 end

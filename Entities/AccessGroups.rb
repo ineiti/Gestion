@@ -91,15 +91,26 @@ class AccessGroup < Entity
       stop = 24 * 60
     end
     time = t.hour * 60 + t.min
-    dputs(4){"#{dow.inspect} - #{start} - #{stop}"}
-    ( dow.index( t.wday ) and start <= time and time < stop ) == true
+    time_dow = t.wday
+    ddputs(4){"dow:#{dow.inspect} - start:#{start} - stop:#{stop}"}
+    ddputs(4){"time: #{time} - time_dow:#{time_dow}"}
+    
+    # If we start in the evening and end in the morning...
+    if start > stop and time < stop
+      return ( dow.index( ( time_dow + 6 ) % 7 ) ) != nil
+    end
+    ( dow.index( time_dow ) and start <= time and time < stop ) == true
   end
   
   def time_in_atimes( t )
-    ret = false
-    access_times and access_times.each{|a|
-      ret = ( ret or AccessGroup.time_in_atime( t, a ) )
-    }
-    ret
+    if access_times
+      ret = false
+      access_times and access_times.each{|a|
+        ret = ( ret or AccessGroup.time_in_atime( t, a ) )
+      }
+      return ret
+    else
+      return true
+    end
   end
 end
