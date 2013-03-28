@@ -1,5 +1,10 @@
 #!/bin/bash
 
+. /etc/environment
+export LANG
+export LC_ALL
+date >> /var/log/start_gestion
+set >> /var/log/start_gestion
 logger -s "Starting Gestion"
 sleep 2
 cd $( dirname $0 )/..

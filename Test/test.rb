@@ -24,9 +24,8 @@ permissions_init
 
 QooxView.init( '../Entities', '../Views' )
 
-
 tests = %w( login view tasks internet info course person )
-#tests = %w( person )
+tests = %w( course )
 tests.each{|t|
   require "ge_#{t}"
 }

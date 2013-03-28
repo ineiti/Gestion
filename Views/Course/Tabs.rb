@@ -8,6 +8,11 @@ class CourseTabs < View
       show_button :close
     end
     
+    gui_window :not_all_elements do
+      show_html :msg, "<h1>Some elements are missing</h1>"
+      show_button :add_elements
+    end
+    
     gui_vboxg :nogroup do
       show_list_single :courses, :callback => true
       show_button :delete
@@ -15,17 +20,44 @@ class CourseTabs < View
   end
   
   def rpc_update( session )
-    rep = reply( :empty, [ :courses ] ) +
-    reply( :update, :courses => Entities.Courses.list_courses(session))
-    if not session.can_view( 'CourseAdd' )
-      rep += reply( :hide, :delete )
+    if CourseTypes.search_all.size == 0
+      reply( :window_show, :not_all_elements ) +
+        reply( :update, :msg => "Please define a coursetype first" )
+    elsif Rooms.search_all.size == 0
+      reply( :window_show, :not_all_elements ) +
+        reply( :update, :msg => "Please define a room first" )
+    elsif Persons.search_by_permissions( "teacher" ).size == 0
+      reply( :window_show, :not_all_elements ) +
+        reply( :update, :msg => "Please define a teacher first" )
+    else
+      rep = reply( :empty, [ :courses ] ) +
+        reply( :update, :courses => Entities.Courses.list_courses(session))
+      if not session.can_view( 'CourseAdd' )
+        rep += reply( :hide, :delete )
+      end
+      rep
+    end    
+  end
+  
+  def rpc_button_add_elements( session, args )
+    if CourseTypes.search_all.size == 0
+      reply( :window_hide ) +
+        reply( :switch_tab, :AdminTabs ) +
+        reply( :child, reply( :switch_tab, :AdminCourseType ) )
+    elsif Rooms.search_all.size == 0
+      reply( :window_hide ) +
+        reply( :switch_tab, :InventoryTabs ) +
+        reply( :child, reply( :switch_tab, :InventoryRoom ) )
+    elsif Persons.search_by_permissions( "teacher" ).size == 0
+      reply( :window_hide ) +
+        reply( :switch_tab, :PersonTabs ) +
+        reply( :child, reply( :switch_tab, :PersonModify ) )
     end
-    rep
   end
 
   def rpc_button_delete( session, args )
     if not session.can_view( 'CourseAdd' )
-      reply( "window_show", "error")
+      reply( :window_show, :error )
     end
     dputs( 3 ){ "session, data: #{[session, data.inspect].join(':')}" }
     course = Courses.find_by_course_id( args['courses'][0])

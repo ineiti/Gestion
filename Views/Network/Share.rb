@@ -166,7 +166,8 @@ class NetworkShare < View
             read.push k
           end
         }
-        a += "  read list = #{read.join(',')}\n  write list = #{write.join(',')}\n"
+        a += "  read list = #{read.join(',')}\n  write list = #{write.join(',')}\n" +
+          "  valid users = #{ ( read + write ).uniq.join(',')}\n"
       end
     }
     file_smb = "#{get_config( '/etc/samba', :Samba, :config_dir )}/smb.conf"

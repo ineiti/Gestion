@@ -1,6 +1,20 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Course::Modify crashes for a new course when there is no teacher
+        - NetworkPermissions: sometimes when saving, the chosen entry shows up
+          as a number in the list. Seems to be somewhere in the Javascript where
+          things don't get updated in the correct way. Not reproducible in a
+          reliable manner.
+        - NetworkPermissions: if new group and direct "activer plage", it doesn't
+          work, as the group is not yet stored
+        - "***" as entry-method in Person:search fails. Might show 20 most recent if
+          "enter" on an empty line
+        - Network::share, when no domain or no hostname, it fails in 
+         ./Views/Network/Share.rb:149:in `gsub!'
+        - Network::share::new needs to clear users
+        - Person::Admin if adding "share", what to do with the password of the
+         samba-user? Store it anyway in clear, then add it to samba? Stupid, INSECURE
         - PersonAdmin sometimes doesn't show permissions and groups when
          added new stuff
 	- 10 crashes when not operating "properly"
@@ -9,10 +23,13 @@ BUGS:
 Security:
 
 UI:
+        - extend lists on all the height
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
 
 FEATURES:
+        - Show all users (for small installations)
+        - Delete users
         - Add a Profeda-type of course
           - added a new tab for this type of course
           - migrated the coursetype over for profeda_code
@@ -30,6 +47,9 @@ Programming:
         -2 verify if Person::data_set and Person::data_set_log are really
           necessary
         -3 change Course::make_pdfs to OpenPrint
+
+Documentation:
+        - make a nice config.yaml.orig which contains all major configurations
 
 > 1.0
 Features:
@@ -127,6 +147,8 @@ To check:
 
 
 ** FIXED **:
+        - B 130325: No write-access to external harddisk
+        - B 130325: Users have read-access to other directories!
         - T 130323: Checked all tests
         - UI130323: Update translation
         - B 130323: MB-Limit in NetworkAccess is not considered

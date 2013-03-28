@@ -56,11 +56,13 @@ class CourseModify < View
   end
 
   def rpc_button_save( session, data )
-    course = Courses.find_by_name( data['name'] )
-    if course
+    if course = Courses.find_by_name( data['name'] )
       # BUG: they're already saved, don't save it again
+      ddputs(4){"Found course #{course.inspect}"}
       data.delete( 'students' )
       course.data_set_hash( data )
+    else
+      ddputs(5){"Didn't find course #{data['name']}"}
     end
   end
 

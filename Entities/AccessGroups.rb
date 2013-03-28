@@ -77,7 +77,7 @@ class AccessGroup < Entity
           e += 7
         end
         (b..e).each{|i|
-          dow.push (i % 7)
+          dow.push(i % 7)
         }
       else
         dow.push d.to_i

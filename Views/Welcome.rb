@@ -1,4 +1,9 @@
 class Welcome < View
+  def dummy_for_translation
+    show_str :username
+    show_str :version
+  end
+
   # Overwrite the standard rpc_show to speed up testing...
   def rpc_show( session )
     if $config[:autologin]
