@@ -237,4 +237,19 @@ class TC_Course < Test::Unit::TestCase
     @c1 = Courses.create( :name => "base_arabe 1201", :ctype => @ct )
     assert_equal "base_arabe_1201", @c1.name
   end
+  
+  def test_duration_adds
+    dputs(0){"@maint is #{@maint.inspect}"}
+    @maint.dow = ["lu-me-ve"]
+    @maint.end = "30.01.2012"
+    assert_equal [6, [["J1", 0], ["J2", 2], ["J3", 4], ["J4", 7], ["J5", 9], ["J6", 11]]], 
+      @maint.get_duration_adds
+
+    @maint.dow = ["lu-ve"]
+    @maint.end = "30.01.2012"
+    assert_equal [10,
+      [["J1", 0],  ["J2", 1],  ["J3", 2],  ["J4", 3],  ["J5", 4],
+        ["J6", 7],  ["J7", 8],  ["J8", 9],  ["J9", 10],  ["J10", 11]]], 
+      @maint.get_duration_adds
+  end
 end

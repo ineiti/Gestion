@@ -10,7 +10,7 @@ require 'docsplit'
 
 
 class Courses < Entities
-  attr_reader :diploma_dir, :print_presence
+  attr_reader :diploma_dir, :print_presence, :print_presence_small
   
   def setup_data
 
@@ -57,6 +57,7 @@ class Courses < Entities
 
     @thread = nil
     @print_presence = OpenPrint.new( "#{@diploma_dir}/fiche_presence.ods" )
+    @print_presence_small = OpenPrint.new( "#{@diploma_dir}/fiche_presence_small.ods" )
   end
   
   def set_entry( id, field, value )
@@ -302,12 +303,39 @@ base_gestion
       []
     end
   end
+  
+  def dstart
+    Date.strptime( start, '%d.%m.%Y' )
+  end
+  
+  def dend
+    Date.strptime( data_get( :end ), '%d.%m.%Y' )
+  end
+  
+  def get_duration_adds
+    return [0,0] if not start or not data_get( :end )
+    ddputs(4){"start is: #{start} - end is #{data_get(:end)} - dow is #{dow}"}
+    days_per_week, adds = case dow.to_s
+    when /lu-me-ve/, /ma-je-sa/
+      [ 3,  [0, 2, 4] ]
+    when /lu-ve/, /ma-sa/
+      [ 5, [0, 1, 2, 3, 4] ]
+    end
+    weeks = ( ( dend - dstart ) / 7 ).ceil
+    day = 0
+    dow_adds = (0...weeks).collect{|w| adds.collect{|a|
+        day += 1
+        [ /#{1000 + day}/, a + w * 7 ]
+      }
+    }.flatten( 1 )
+    ddputs( 4 ){"dow_adds is now #{dow_adds.inspect}"}
+    
+    [ days_per_week * weeks, dow_adds ]
+  end
 
   def print_presence( lp_cmd = nil )
     return false if not teacher or teacher.count == 0
     return false if not start or not data_get( :end ) or students.count == 0
-    dstart = Date.strptime( start, '%d.%m.%Y' )
-    dend = Date.strptime( data_get( :end ), '%d.%m.%Y' )
     stud_nr = 1
     studs = students.collect{|s|
       stud = Entities.Persons.find_by_login_name( s )
@@ -318,9 +346,15 @@ base_gestion
         [ /Passe#{stud_str}/, stud.password_plain ] ]
     }
     dputs( 3 ){ "Students are: #{studs.inspect}" }
+    duration, dow_adds = get_duration_adds
 
     lp_cmd and @proxy.print_presence.lp_cmd = lp_cmd
-    @proxy.print_presence.print( studs.flatten(1) + [
+    pp = if duration <= 25 and stud_nr <= 16
+      @proxy.print_presence_small
+    else
+      @proxy.print_presence
+    end
+    pp.print( studs.flatten(1) + dow_adds + [
         [ /Teacher/, teacher.full_name ],
         [ /Course_name/, name ],
         [ /2010-08-20/, dstart.to_s ],
@@ -328,6 +362,7 @@ base_gestion
         [ /2010-10-20/, dend.to_s ],
         [ /20.10.10/, dend.strftime("%d/%m/%y") ],
         [ /123/, students.count ],
+        [ /321/, duration ],
       ] )
   end
 	

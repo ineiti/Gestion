@@ -64,28 +64,29 @@ class SelfInternet < View
       return reply( :hide, :connect ) +
         reply( :hide, :disconnect )
     end
+    show_button = :connect
     connected = $lib_net.call_args( :user_connected, session.owner.login_name )
     if can_connect( session ) == 0
       dputs( 3 ){ "User_connected #{session.owner.login_name}: #{connected.inspect}" +
           " - #{@isp.inspect}" }
       if connected == "yes"
-        dputs(4){"Showing disconnect"}
-        return reply( :hide, :connect ) +
-          reply( :unhide, :disconnect )
-      elsif $lib_net.call( nil, :PROMOTION_LEFT ).to_i > 0 or 
-          @isp['has_promo'] == 'false'
-        dputs(4){"Showing connect"}
-        return reply( :unhide, :connect ) +
-          reply( :hide, :disconnect )
+        dputs(4){"Showing disconnect because we're connected"}
+        show_button = :disconnect
+      elsif $lib_net.call( nil, :PROMOTION_LEFT ).to_i == 0 and 
+          @isp['has_promo'] == 'true'
+        dputs(4){"Showing disconnect because there is no promotion left"}
+        show_button = :disconnect
       end
+    else
+      dputs(3){"User #{session.owner.login_name} has connected-status: #{connected.inspect}" }
+      show_button = :disconnect
     end
-    dputs(3){"User #{session.owner.login_name} is connected: #{connected.inspect}" }
-    if connected
-      return reply( :hide, :connect ) +
-        reply( :unhide, :disconnect )
+    if show_button == :connect
+      return reply( :unhide, :connect ) +
+        reply( :hide, :disconnect )
     else
       return reply( :hide, :connect ) +
-        reply( :hide, :disconnect )
+        reply( :unhide, :disconnect )
     end
   end
   
@@ -116,7 +117,7 @@ class SelfInternet < View
   def rpc_update( session, nobutton = false )
     users = $lib_net.call(:users_connected)
     users_str = SelfInternet.make_users_str( users )
-    ddputs(4){"session is #{session.inspect}"}
+    dputs(4){"session is #{session.inspect}"}
     ret = reply( :update, update( session ) ) +
       update_button( session, nobutton ) +
       update_connection_status( session ) +

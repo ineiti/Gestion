@@ -92,8 +92,8 @@ class AccessGroup < Entity
     end
     time = t.hour * 60 + t.min
     time_dow = t.wday
-    ddputs(4){"dow:#{dow.inspect} - start:#{start} - stop:#{stop}"}
-    ddputs(4){"time: #{time} - time_dow:#{time_dow}"}
+    dputs(4){"dow:#{dow.inspect} - start:#{start} - stop:#{stop}"}
+    dputs(4){"time: #{time} - time_dow:#{time_dow}"}
     
     # If we start in the evening and end in the morning...
     if start > stop and time < stop

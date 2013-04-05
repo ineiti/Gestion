@@ -60,6 +60,7 @@ class CourseModify < View
       # BUG: they're already saved, don't save it again
       ddputs(4){"Found course #{course.inspect}"}
       data.delete( 'students' )
+      ddputs(4){"Setting data #{data}"}
       course.data_set_hash( data )
     else
       ddputs(5){"Didn't find course #{data['name']}"}

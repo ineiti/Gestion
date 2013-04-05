@@ -23,6 +23,7 @@ BUGS:
 Security:
 
 UI:
+        - sort permissions in Persons::Admin
         - extend lists on all the height
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
