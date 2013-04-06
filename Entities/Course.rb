@@ -314,7 +314,7 @@ base_gestion
   
   def get_duration_adds
     return [0,0] if not start or not data_get( :end )
-    ddputs(4){"start is: #{start} - end is #{data_get(:end)} - dow is #{dow}"}
+    dputs(4){"start is: #{start} - end is #{data_get(:end)} - dow is #{dow}"}
     days_per_week, adds = case dow.to_s
     when /lu-me-ve/, /ma-je-sa/
       [ 3,  [0, 2, 4] ]
@@ -328,7 +328,7 @@ base_gestion
         [ /#{1000 + day}/, a + w * 7 ]
       }
     }.flatten( 1 )
-    ddputs( 4 ){"dow_adds is now #{dow_adds.inspect}"}
+    dputs( 4 ){"dow_adds is now #{dow_adds.inspect}"}
     
     [ days_per_week * weeks, dow_adds ]
   end
