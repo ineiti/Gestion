@@ -348,12 +348,12 @@ base_gestion
     dputs( 3 ){ "Students are: #{studs.inspect}" }
     duration, dow_adds = get_duration_adds
 
-    lp_cmd and @proxy.print_presence.lp_cmd = lp_cmd
     pp = if duration <= 25 and stud_nr <= 16
       @proxy.print_presence_small
     else
       @proxy.print_presence
     end
+    lp_cmd and pp.lp_cmd = lp_cmd
     pp.print( studs.flatten(1) + dow_adds + [
         [ /Teacher/, teacher.full_name ],
         [ /Course_name/, name ],
