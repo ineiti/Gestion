@@ -44,13 +44,13 @@ Permission.add( 'default', ',Welcome,SelfShow' )
 Permission.add( 'internet', 'SelfInternet,SelfChat', 'default' )
 Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
-Permission.add( 'teacher', 'CourseGrade,PersonModify,AdminRestriction', 'assistant' )
+Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction', 'assistant' )
 Permission.add( 'secretary', 'SelfServices,CourseModify,PersonAdd,' + 
     'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
 Permission.add( 'director', 'CourseAdd', 'secretary' )
 Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
 Permission.add( 'maintenance', 'Inventory.*', 'default' )
-Permission.add( 'cybermanager', 'SelfCash,PersonCredit,AdminTigo,FlagAddInternet,SelfServices', '' )
+Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,SelfServices', '' )
 Permission.add( 'admin', '.*', '.*' )
 
 if uri = get_config( false, :LibNet, :URI )
@@ -118,7 +118,7 @@ end
 $internet = Thread.new{
   loop {
     begin
-      sleep 20
+      sleep 60
       Internet::take_money
     rescue Exception => e
       dputs( 0 ){ "#{e.inspect}" }
