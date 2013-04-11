@@ -36,6 +36,8 @@ FEATURES:
 Programming:
         - Lots of stuff in View/* should go into Entities/*
         - configure also LibNet through Gestion
+          - can set cost_* now
+          - also change the connection
         - replace gsm-ussd with something Debian
         -2 verify if Person::data_set and Person::data_set_log are really
           necessary
