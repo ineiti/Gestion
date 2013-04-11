@@ -141,7 +141,8 @@ class NetworkShare < View
   def rpc_button_samba_save( session, data )
     %w( domain hostname ).each{|d|
       ddputs(4){"Saving -#{d}- for -#{@samba.data_str.inspect}-"}
-      data[d] and @samba.data_str[d] = data[d]
+      store = data[d] ? data[d] : d
+      @samba.data_str[d] = store
     }
     ddputs(4){"@samba is now -#{@samba.data_str.inspect}-"}
 

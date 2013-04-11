@@ -3,8 +3,6 @@
 BUGS:
         - NetworkPermissions: if new group and direct "activer plage", it doesn't
           work, as the group is not yet stored
-        - Network::share, when no domain or no hostname, it fails in 
-         ./Views/Network/Share.rb:149:in `gsub!'
         - Network::share::new needs to clear users
         - Course::Modify doesn't show courses for teachers
         - Course::Modify crashes for a new course when there is no teacher
@@ -144,7 +142,9 @@ To check:
 
 
 ** FIXED **:
-        - Person::Admin if adding "share", what to do with the password of the
+        - B 130411: Network::share, when no domain or no hostname, it fails in 
+         ./Views/Network/Share.rb:149:in `gsub!'
+        - B 130411: Person::Admin if adding "share", what to do with the password of the
          samba-user? Store it anyway in clear, then add it to samba? Stupid, INSECURE
          When no LDAP, it works to add it later, as the password is stored in clear!
         - F 130411: Show all users (for small installations)
