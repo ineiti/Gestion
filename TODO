@@ -3,16 +3,17 @@
 BUGS:
         - NetworkPermissions: if new group and direct "activer plage", it doesn't
           work, as the group is not yet stored
-        - Network::share::new needs to clear users
         - Course::Modify doesn't show courses for teachers
         - Course::Modify crashes for a new course when there is no teacher
-        - NetworkPermissions: sometimes when saving, the chosen entry shows up
+	- 10 crashes when not operating "properly"
+
+HEISENBUGS:
+        - Confirmed: NetworkPermissions: sometimes when saving, the chosen entry shows up
           as a number in the list. Seems to be somewhere in the Javascript where
           things don't get updated in the correct way. Not reproducible in a
           reliable manner.
-        - PersonAdmin sometimes doesn't show permissions and groups when
+        - Confirmed: PersonAdmin sometimes doesn't show permissions and groups when
          added new stuff
-	- 10 crashes when not operating "properly"
 
 [5', 15', 30', 1h, 4h]
 Security:
@@ -142,6 +143,7 @@ To check:
 
 
 ** FIXED **:
+        - B 130411: Network::share::new needs to clear users
         - B 130411: Network::share, when no domain or no hostname, it fails in 
          ./Views/Network/Share.rb:149:in `gsub!'
         - B 130411: Person::Admin if adding "share", what to do with the password of the

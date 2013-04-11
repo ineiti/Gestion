@@ -124,6 +124,9 @@ class NetworkShare < View
             "then a user")
       end
       rpc_update( session )
+    when /new/
+      rpc_button_new( session, data ) +
+        reply( :hide, :users )
     else
       super( session, name, data )
     end
@@ -171,18 +174,20 @@ class NetworkShare < View
           "  valid users = #{ ( read + write ).uniq.join(',')}\n"
       end
     }
-    file_smb = "#{get_config( '/etc/samba', :Samba, :config_dir )}/smb.conf"
-    File.open( file_smb, 'w' ){|f|
-      f.write( a )
-    }
+    if not get_config( false, :Samba, :simulation )
+      file_smb = "#{get_config( '/etc/samba', :Samba, :config_dir )}/smb.conf"
+      File.open( file_smb, 'w' ){|f|
+        f.write( a )
+      }
 
-    if File.exists? "/etc/init.d/samba"
-      Command::run( "/etc/init.d/samba restart")
-    elsif File.exists? "/etc/init.d/smb"
-      Command::run( "/etc/init.d/smb restart")
-      Command::run( "/etc/init.d/nmb restart")
-    else
-      dputs(0){"Couldn't restart samba as there was no init.d-file"}
+      if File.exists? "/etc/init.d/samba"
+        Command::run( "/etc/init.d/samba restart")
+      elsif File.exists? "/etc/init.d/smb"
+        Command::run( "/etc/init.d/smb restart")
+        Command::run( "/etc/init.d/nmb restart")
+      else
+        dputs(0){"Couldn't restart samba as there was no init.d-file"}
+      end
     end
 
     return []
