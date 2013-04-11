@@ -37,6 +37,14 @@ class NetworkTigo < View
           show_button :show_all_promotions
         end
       end
+      
+      gui_hbox :nogroup do
+        gui_vbox :nogroup do
+          show_int :cost_base
+          show_int :cost_shared
+          show_button :save_costs
+        end
+      end
 
       gui_window :error do
         show_html :msg
@@ -47,16 +55,16 @@ class NetworkTigo < View
   end
 
   def lib_net( func, r = nil )
-    dputs( 3 ){ "Calling lib_net #{func} - #{r}" }
+    ddputs( 3 ){ "Calling lib_net #{func} - #{r}" }
     ret = $lib_net.call( func, r )
-    dputs( 3 ){ "returning from lib_net #{func}" }
+    ddputs( 3 ){ "returning from lib_net #{func}" }
     ret
   end
 
   def lib_net_args( func, *args )
-    dputs( 3 ){ "Calling lib_net_args #{func}" }
+    ddputs( 3 ){ "Calling lib_net_args #{func}" }
     ret = $lib_net.call_args( func, args.join(' ') )
-    dputs( 3 ){ "returning from lib_net #{func}" }
+    ddputs( 3 ){ "returning from lib_net #{func}" }
     ret
   end
 
@@ -124,6 +132,10 @@ class NetworkTigo < View
     reply( :update, { :msg => "<pre>#{get_successful_promotions( true )}</pre>" } ) +
       reply( :window_show, :error )
   end
+  
+  def rpc_button_save_costs( session, data )
+    lib_net_args( :isp_cost_set, data['cost_base'], data['cost_shared'] )
+  end
 
   def read_status
     str = case lib_net( :isp_connection_status ) 
@@ -177,6 +189,8 @@ class NetworkTigo < View
       :tigo_number => @tigo_number.data_str,
       :tigo_recharge => "*190*1234*235#{@tigo_number.data_str.gsub(/ /,'')}*800#",
       :status => "<pre>#{read_status}</pre>",
-      :successful_promotions => "<pre>#{get_successful_promotions}</pre>" }
+      :successful_promotions => "<pre>#{get_successful_promotions}</pre>",
+      :cost_base => lib_net( nil, :COST_BASE ),
+      :cost_shared => lib_net( nil, :COST_SHARED ) }
   end
 end

@@ -224,4 +224,8 @@ class TC_Person < Test::Unit::TestCase
     assert_equal true, @secretary.has_all_rights_of( @surf )
     assert_equal false, @teacher.has_all_rights_of( @secretary )
   end
+  
+  def test_permission_sort
+    assert_equal "", View.PersonAdmin.layout_find( "permissions" ).to_a
+  end
 end

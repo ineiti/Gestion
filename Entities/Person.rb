@@ -35,10 +35,10 @@ class Persons < Entities
     value_str :account_name_due
     value_str :account_name_cash
     value_str :role_diploma
-    value_list :permissions, "Permission.list"
+    value_list :permissions, "Permission.list.sort"
 
     value_block :internet
-    value_list :groups, "%w( freesurf sudo print localonly share )"
+    value_list :groups, "%w( freesurf sudo print localonly share ).sort"
     value_list_single :internet_none, "[]"
 
     value_block :read_only

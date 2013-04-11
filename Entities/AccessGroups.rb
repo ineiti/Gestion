@@ -14,6 +14,7 @@ class AccessGroups < Entities
     search_all.sort{|a,b|
       b.priority.to_i <=> a.priority.to_i
     }.collect{|ag|
+      ag.priority ||= "10"
       [ag.accessgroup_id, "#{ag.priority.rjust(2,'0')}:#{ag.name}"]
     }
   end

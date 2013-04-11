@@ -63,7 +63,8 @@ class NetworkAccess < View
   end
   
   def rpc_button_add_time( session, data )
-    if group = AccessGroups.find_by_accessgroup_id( data['groups'][0])
+    rep = rpc_button_save( session, data )
+    if group = AccessGroups.find_by_name( data['name'])
       if not group.access_times
         group.access_times = []
       end
@@ -71,8 +72,9 @@ class NetworkAccess < View
       if not group.access_times.index( time )
         group.access_times += [ time ]
       end
-      update_access_times( group )
+      rep += update_access_times( group )
     end
+    return rep
   end
   
   def rpc_button_delete_time( session, data )

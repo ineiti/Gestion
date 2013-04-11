@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 130401: 1.0.0
+  - Made the jump to a 1.0.0-version
+
 - 130323: 0.9.6
   - Added Network-access-control and Samba-shares
   - LibNet/Tools-directory with lots of useful files

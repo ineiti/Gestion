@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.5\n"
-"POT-Creation-Date: 2013-03-24 00:03+0100\n"
-"PO-Revision-Date: 2013-03-24 00:03+0100\n"
+"POT-Creation-Date: 2013-04-11 22:11+0100\n"
+"PO-Revision-Date: 2013-04-11 22:00+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: French <fr@profeda.org>\n"
 "Language: \n"
@@ -331,12 +331,12 @@ msgstr "Compte caisse"
 msgid "role_diploma"
 msgstr "Fonction sur attestation"
 
-#. Comes from file Entities/Person.rb and line is     value_list :permissions, "Permission.list"
+#. Comes from file Entities/Person.rb and line is     value_list :permissions, "Permission.list.sort"
 #: Entities/Person.rb:38
 msgid "permissions"
 msgstr "Permissions"
 
-#. Comes from file Entities/Person.rb and line is     value_list :groups, "%w( freesurf sudo print localonly share )"
+#. Comes from file Entities/Person.rb and line is     value_list :groups, "%w( freesurf sudo print localonly share ).sort"
 #. Comes from file Views/Network/Access.rb and line is         vtlp_list :groups, :name
 #: Entities/Person.rb:41Views/Network/Access.rb:10
 msgid "groups"
@@ -959,8 +959,18 @@ msgstr "Cours"
 msgid "      show_html \"<h1>You're not allowed to do that</h1>\""
 msgstr "Vous n'avez pas le droit de faire ça!"
 
-#. Comes from file Views/Course/Tabs.rb and line is       show_list_single :courses, :callback => true
+#. Comes from file Views/Course/Tabs.rb and line is       show_html :msg, "<h1>Some elements are missing</h1>"
 #: Views/Course/Tabs.rb:12
+msgid "msg"
+msgstr "Erreur"
+
+#. Comes from file Views/Course/Tabs.rb and line is       show_button :add_elements
+#: Views/Course/Tabs.rb:13
+msgid "add_elements"
+msgstr "Corriger cours"
+
+#. Comes from file Views/Course/Tabs.rb and line is       show_list_single :courses, :callback => true
+#: Views/Course/Tabs.rb:17
 msgid "courses"
 msgstr "Cours"
 
@@ -1048,6 +1058,26 @@ msgstr "Bloqué"
 #: Views/Network/Block.rb:15
 msgid "block"
 msgstr "Bloquer"
+
+#. Comes from file Views/Network/Connection.rb and line is class NetworkConnection < View
+#: Views/Network/Connection.rb:1
+msgid "NetworkConnection"
+msgstr "Connections"
+
+#. Comes from file Views/Network/Connection.rb and line is       show_int :cost_base
+#: Views/Network/Connection.rb:6
+msgid "cost_base"
+msgstr "Coût de base"
+
+#. Comes from file Views/Network/Connection.rb and line is       show_int :cost_shared
+#: Views/Network/Connection.rb:7
+msgid "cost_shared"
+msgstr "Coût partagé"
+
+#. Comes from file Views/Network/Connection.rb and line is       show_button :save_costs
+#: Views/Network/Connection.rb:8
+msgid "save_costs"
+msgstr "Enregistrer"
 
 #. Comes from file Views/Network/Restriction.rb and line is class NetworkRestriction < View
 #: Views/Network/Restriction.rb:1
@@ -1199,11 +1229,6 @@ msgstr "Promotions faites"
 msgid "show_all_promotions"
 msgstr "Montrer toutes"
 
-#. Comes from file Views/Network/Tigo.rb and line is         show_html :msg
-#: Views/Network/Tigo.rb:42
-msgid "msg"
-msgstr "Erreur"
-
 #. Comes from file Views/Person/Add.rb and line is class PersonAdd < View
 #: Views/Person/Add.rb:3
 msgid "PersonAdd"
@@ -1324,7 +1349,7 @@ msgstr "Personnes"
 msgid "search #"
 msgstr "Chercher"
 
-#. Comes from file Views/Person/Tabs.rb and line is       show_button :start_search
+#. Comes from file Views/Person/Tabs.rb and line is       show_button :start_search, :delete
 #: Views/Person/Tabs.rb:9
 msgid "start_search"
 msgstr "Chercher"

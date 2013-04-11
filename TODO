@@ -1,8 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - NetworkPermissions: if new group and direct "activer plage", it doesn't
-          work, as the group is not yet stored
         - Course::Modify doesn't show courses for teachers
         - Course::Modify crashes for a new course when there is no teacher
 	- 10 crashes when not operating "properly"
@@ -19,7 +17,6 @@ HEISENBUGS:
 Security:
 
 UI:
-        - sort permissions in Persons::Admin
         - extend lists on all the height
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
@@ -143,6 +140,9 @@ To check:
 
 
 ** FIXED **:
+        - B 130411: sort permissions in Persons::Admin
+        - B 130411: NetworkAccess: if new group and direct "activer plage", it doesn't
+          work, as the group is not yet stored
         - B 130411: Network::share::new needs to clear users
         - B 130411: Network::share, when no domain or no hostname, it fails in 
          ./Views/Network/Share.rb:149:in `gsub!'

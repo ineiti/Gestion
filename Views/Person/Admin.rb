@@ -83,7 +83,7 @@ class PersonAdmin < View
       if p = Persons.find_by_login_name( data['persons'].flatten[0])
         #reply( :empty, [:internet_none] ) +
         reply( :empty, [:permissions] ) +
-        reply( :update, :permissions => Permission.list) +
+        reply( :update, :permissions => Permission.list.sort) +
         reply( :empty, [:groups] ) +
         reply( :update, :groups => eval( Persons.get_value( :groups ).list ) ) +
         reply( :update, p )
