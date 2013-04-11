@@ -385,8 +385,21 @@ class Person < Entity
       # They will check for themself
       update_account_cash
       update_account_due
+    when /groups/
+      update_smb_passwd
     end
     return ret
+  end
+  
+  def update_smb_passwd( pass = password )
+    if get_config( false, :Samba, :enable ) and ( groups and groups.index( "share" ) )
+      if not @proxy.has_storage? :LDAP
+        %x[ adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name} ]
+      end
+      dputs(1){"Changing password in Samba to #{pass}"}
+      dputs(3){"( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name}"}
+      %x[ ( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name} ]
+    end
   end
 
   def data_set_log(field, value, msg = nil, undo = true, logging = true )
@@ -467,14 +480,7 @@ class Person < Entity
       p = %x[ slappasswd -s #{pass} ]
       dputs( 1 ){ "Hashed password for #{self.login_name} is: #{pass}" }
     end
-    if get_config( false, :Samba, :enable ) and ( groups and groups.index( "share" ) )
-      if not @proxy.has_storage? :LDAP
-        %x[ adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name} ]
-      end
-      dputs(1){"Changing password in Samba to #{pass}"}
-      dputs(3){"( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name}"}
-      %x[ ( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name} ]
-    end
+    update_smb_passwd( pass )
     dputs( 1 ){ "Setting password for #{self.login_name} to #{p}" }
     data_set( :password, p )
   end

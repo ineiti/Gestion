@@ -6,9 +6,6 @@ BUGS:
         - Network::share, when no domain or no hostname, it fails in 
          ./Views/Network/Share.rb:149:in `gsub!'
         - Network::share::new needs to clear users
-        - Person::Admin if adding "share", what to do with the password of the
-         samba-user? Store it anyway in clear, then add it to samba? Stupid, INSECURE
-         For the moment, just feed the password into smbpasswd anyway
         - Course::Modify doesn't show courses for teachers
         - Course::Modify crashes for a new course when there is no teacher
         - NetworkPermissions: sometimes when saving, the chosen entry shows up
@@ -147,6 +144,9 @@ To check:
 
 
 ** FIXED **:
+        - Person::Admin if adding "share", what to do with the password of the
+         samba-user? Store it anyway in clear, then add it to samba? Stupid, INSECURE
+         When no LDAP, it works to add it later, as the password is stored in clear!
         - F 130411: Show all users (for small installations)
         - F 130411: Delete users
         - B 130325: No write-access to external harddisk
