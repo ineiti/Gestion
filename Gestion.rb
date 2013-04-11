@@ -47,7 +47,7 @@ Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
 Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction', 'assistant' )
 Permission.add( 'secretary', 'SelfServices,CourseModify,PersonAdd,' + 
     'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
-Permission.add( 'director', 'CourseAdd', 'secretary' )
+Permission.add( 'director', 'CourseAdd,FlagDeletePerson', 'secretary' )
 Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
 Permission.add( 'maintenance', 'Inventory.*', 'default' )
 Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,SelfServices', '' )

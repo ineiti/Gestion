@@ -571,4 +571,19 @@ class Person < Entity
     }
     return true
   end
+  
+  def delete
+    Courses.data.values.select{|d|
+      d[:students] and d[:students].index( login_name )
+    }.each{|c|
+      c[:students] -= [login_name]
+    }
+    if not @proxy.has_storage? :LDAP
+      %x[ deluser #{self.login_name} ]
+    end
+    if get_config( false, :Samba, :enable )
+      %x[ smbpasswd -x #{self.login_name} ]
+    end
+    super
+  end
 end

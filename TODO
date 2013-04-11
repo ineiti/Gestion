@@ -1,20 +1,20 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Course::Modify crashes for a new course when there is no teacher
-        - NetworkPermissions: sometimes when saving, the chosen entry shows up
-          as a number in the list. Seems to be somewhere in the Javascript where
-          things don't get updated in the correct way. Not reproducible in a
-          reliable manner.
         - NetworkPermissions: if new group and direct "activer plage", it doesn't
           work, as the group is not yet stored
-        - "***" as entry-method in Person:search fails. Might show 20 most recent if
-          "enter" on an empty line
         - Network::share, when no domain or no hostname, it fails in 
          ./Views/Network/Share.rb:149:in `gsub!'
         - Network::share::new needs to clear users
         - Person::Admin if adding "share", what to do with the password of the
          samba-user? Store it anyway in clear, then add it to samba? Stupid, INSECURE
+         For the moment, just feed the password into smbpasswd anyway
+        - Course::Modify doesn't show courses for teachers
+        - Course::Modify crashes for a new course when there is no teacher
+        - NetworkPermissions: sometimes when saving, the chosen entry shows up
+          as a number in the list. Seems to be somewhere in the Javascript where
+          things don't get updated in the correct way. Not reproducible in a
+          reliable manner.
         - PersonAdmin sometimes doesn't show permissions and groups when
          added new stuff
 	- 10 crashes when not operating "properly"
@@ -29,8 +29,6 @@ UI:
         - write a good documentation...
 
 FEATURES:
-        - Show all users (for small installations)
-        - Delete users
         - Add a Profeda-type of course
           - added a new tab for this type of course
           - migrated the coursetype over for profeda_code
@@ -43,6 +41,7 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - Lots of stuff in View/* should go into Entities/*
         - configure also LibNet through Gestion
         - replace gsm-ussd with something Debian
         -2 verify if Person::data_set and Person::data_set_log are really
@@ -148,6 +147,8 @@ To check:
 
 
 ** FIXED **:
+        - F 130411: Show all users (for small installations)
+        - F 130411: Delete users
         - B 130325: No write-access to external harddisk
         - B 130325: Users have read-access to other directories!
         - T 130323: Checked all tests

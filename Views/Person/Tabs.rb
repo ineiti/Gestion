@@ -6,7 +6,7 @@ class PersonTabs < View
     gui_vboxg :nogroup do
       show_list_single :persons, "[]", :callback => true
       show_str :search #, :callback => :search
-      show_button :start_search
+      show_button :start_search, :delete
       #show_button :start_test
 			
       gui_window :test do
@@ -30,9 +30,21 @@ class PersonTabs < View
     rpc_callback_search( session, args )
   end
   
+  def rpc_button_delete( session, args )
+    if session.can_view( :FlagDeletePerson )
+      if ( p_login = args["persons"] ) and 
+          ( p = Persons.find_by_login_name( p_login[0] ) )
+        ddputs(3){"Found person #{p.inspect} - #{p.class.name}"}
+        p.delete
+        rpc_callback_search( session, args )
+      end
+    end
+  end
+  
   def rpc_update_view( session, args = nil )
     super( session, args ) +
-      reply( :focus, :search )
+      reply( :focus, :search ) +
+      reply( session.can_view( :FlagDeletePerson ) ? :unhide : :hide, :delete )
   end
   
   def rpc_list_choice( session, name, args )
@@ -50,13 +62,9 @@ class PersonTabs < View
     dputs( 2 ){ "Got data: #{data.inspect}" }
 
     s = data['search']
-		
-    if ( not s )
-      return reply( :focus, :search )
-    end
-    
-    # Slow typer, increase wait
-    if ( s and s.length < 3 )
+
+    # Don't search if there are few caracters and lots of Persons
+    if ( not s or s.length < 3 ) and ( Entities.Persons.new_id.values[0] > 100 )
       return reply( :focus, :search )
     end
 		
