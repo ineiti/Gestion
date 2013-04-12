@@ -584,6 +584,13 @@ class Person < Entity
     }.each{|c|
       c[:students] -= [login_name]
     }
+    Shares.search_all.each{|s|
+      s.acl.delete login_name
+    }
+    AccessGroups.search_all.each{|ag|
+      ag.members and ag.members.delete login_name
+    }
+
     if not @proxy.has_storage? :LDAP
       %x[ deluser #{self.login_name} ]
     end
