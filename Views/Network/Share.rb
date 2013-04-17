@@ -173,6 +173,8 @@ class NetworkShare < View
         a += "  read list = #{read.join(',')}\n  write list = #{write.join(',')}\n" +
           "  valid users = #{ ( read + write ).uniq.join(',')}\n"
       end
+      a += "  create mask = 741\n  map archive = yes\n  map system = yes\n" +
+        "  map hidden = yes\n"
     }
     if not get_config( false, :Samba, :simulation )
       file_smb = "#{get_config( '/etc/samba', :Samba, :config_dir )}/smb.conf"

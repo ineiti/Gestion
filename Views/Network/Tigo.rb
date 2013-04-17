@@ -38,14 +38,6 @@ class NetworkTigo < View
         end
       end
       
-      gui_hbox :nogroup do
-        gui_vbox :nogroup do
-          show_int :cost_base
-          show_int :cost_shared
-          show_button :save_costs
-        end
-      end
-
       gui_window :error do
         show_html :msg
         show_button :close
@@ -132,10 +124,6 @@ class NetworkTigo < View
     reply( :update, { :msg => "<pre>#{get_successful_promotions( true )}</pre>" } ) +
       reply( :window_show, :error )
   end
-  
-  def rpc_button_save_costs( session, data )
-    lib_net_args( :isp_cost_set, data['cost_base'], data['cost_shared'] )
-  end
 
   def read_status
     str = case lib_net( :isp_connection_status ) 
@@ -189,8 +177,6 @@ class NetworkTigo < View
       :tigo_number => @tigo_number.data_str,
       :tigo_recharge => "*190*1234*235#{@tigo_number.data_str.gsub(/ /,'')}*800#",
       :status => "<pre>#{read_status}</pre>",
-      :successful_promotions => "<pre>#{get_successful_promotions}</pre>",
-      :cost_base => lib_net( nil, :COST_BASE ),
-      :cost_shared => lib_net( nil, :COST_SHARED ) }
+      :successful_promotions => "<pre>#{get_successful_promotions}</pre>" }
   end
 end
