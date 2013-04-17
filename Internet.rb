@@ -57,7 +57,7 @@ module Internet
   
   def self.free( user )
     isp = JSON.parse( $lib_net.call( :isp_params ) ).to_sym
-    if isp._conn_type != "permanent"
+    if isp._allow_free != "true"
       return false
     end
     if user
