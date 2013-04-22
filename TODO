@@ -1,8 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Course::Modify doesn't show courses for teachers
         - Course::Modify crashes for a new course when there is no teacher
+        - Test if Admin::Backup::restore resets passwords as it should
 	- 10 crashes when not operating "properly"
 
 HEISENBUGS:
@@ -17,11 +17,13 @@ HEISENBUGS:
 Security:
 
 UI:
+        - Administration::Backup is not nicely bordered
         - extend lists on all the height
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
 
 FEATURES:
+        - progression-bar in Administration::Backup::restore
         - Add a Profeda-type of course
           - added a new tab for this type of course
           - migrated the coursetype over for profeda_code
@@ -144,6 +146,7 @@ To check:
 
 
 ** FIXED **:
+        - B 130422: Course::Modify doesn't show courses for teachers
         - B 130411: sort permissions in Persons::Admin
         - B 130411: NetworkAccess: if new group and direct "activer plage", it doesn't
           work, as the group is not yet stored

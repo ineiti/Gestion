@@ -173,7 +173,7 @@ class NetworkShare < View
         a += "  read list = #{read.join(',')}\n  write list = #{write.join(',')}\n" +
           "  valid users = #{ ( read + write ).uniq.join(',')}\n"
       end
-      a += "  hide files = /~$*/*.tmp/\n"
+      a += "  hide files = /~$*/*.tmp/\n   blocking locks = no\n"
       #a += "  create mask = 741\n  map archive = yes\n  map system = yes\n" +
       #  "  map hidden = yes\n"
     }

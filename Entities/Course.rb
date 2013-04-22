@@ -69,16 +69,17 @@ class Courses < Entities
   end
 
   def list_courses(session=nil)
-    ret = @data.values
+    ret = search_all
     if session != nil
       user = session.owner
       if not session.can_view( "FlagCourseGradeAll" )
         ret = ret.select{|d|
-          d[:teacher] and d[:teacher][0] == user.login_name
+          ddputs(4){"teacher is #{d.teacher.inspect}, user is #{user.inspect}"}
+          d.teacher and d.teacher.login_name == user.login_name
         }
       end
     end
-    ret.collect{ |d| [ d[:course_id ], d[:name] ] }.sort{|a,b|
+    ret.collect{ |d| [ d.course_id, d.name] }.sort{|a,b|
       a[1].gsub( /^[^0-9]*/, '' ) <=> b[1].gsub( /^[^0-9]*/, '' )
     }.reverse
   end
