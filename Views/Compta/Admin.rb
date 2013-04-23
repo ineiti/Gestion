@@ -12,7 +12,6 @@ class ComptaAdmin < View
         show_button :close
       end
     end
-    
   end
 	
   def rpc_button_archive( session, data )

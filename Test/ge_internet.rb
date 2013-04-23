@@ -64,11 +64,11 @@ class TC_Internet < Test::Unit::TestCase
   end
   
   def libnet_isp_gprs
-    $libnet_isp = {:conn_type => "ondemand" }
+    $libnet_isp = {:conn_type => "ondemand", :allow_free => "false" }
   end
   
   def libnet_isp_vsat
-    $libnet_isp = {:conn_type => "permanent" }
+    $libnet_isp = {:conn_type => "permanent", :allow_free => "true" }
   end
   
   def test_take_money

@@ -4,7 +4,7 @@ class AdminBackup < View
   def layout
     @order = 200
 		
-    gui_hbox do
+    gui_hbox :nogroup do
       gui_vbox do
         show_list_single :backups, "View.AdminBackup.list_backups", :width => 400
         show_button :do_backup, :do_restore

@@ -1,7 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Course::Modify crashes for a new course when there is no teacher
         - Test if Admin::Backup::restore resets passwords as it should
 	- 10 crashes when not operating "properly"
 
@@ -23,7 +22,6 @@ UI:
         - write a good documentation...
 
 FEATURES:
-        - progression-bar in Administration::Backup::restore
         - Add a Profeda-type of course
           - added a new tab for this type of course
           - migrated the coursetype over for profeda_code
@@ -32,6 +30,10 @@ FEATURES:
           - input multiple notes
           - send everything to profeda.org with the notes
           - get names and appreciations back
+        - receive SMS through LibNet and do actions
+          - make connection
+          - return stats
+        - progression-bar in Administration::Backup::restore
 	-4 Courses::Days - add other days to the list
 	-3 check diploma-templates
 
@@ -146,6 +148,7 @@ To check:
 
 
 ** FIXED **:
+        - B 130422: Course::Modify crashes for a new course when there is no teacher
         - B 130422: Course::Modify doesn't show courses for teachers
         - B 130411: sort permissions in Persons::Admin
         - B 130411: NetworkAccess: if new group and direct "activer plage", it doesn't

@@ -22,7 +22,7 @@ class TC_Course < Test::Unit::TestCase
     @net = Entities.Courses.create( :name => "net_1001" )
     @base = Entities.Courses.create( :name => "base_1004" )
     @maint = Entities.Courses.create( :name => "maint_1204", :start => "19.01.2012", :end => "18.02.2012",
-      :teacher => @secretaire )
+      :dow => "lu-ve", :teacher => @secretaire )
     @maint.students = %w( admin surf )
     @base.students = %w( admin2 surf )
     @maint_t = Entities.CourseTypes.create( :name => "maint", :duration => 72,
@@ -140,7 +140,7 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_print_presence
-    assert_equal "/tmp/0-fiche_presence.pdf", @maint.print_presence
+    assert_equal "/tmp/0-fiche_presence_small.pdf", @maint.print_presence
   end
   
   def test_person_courses
@@ -242,14 +242,15 @@ class TC_Course < Test::Unit::TestCase
     dputs(0){"@maint is #{@maint.inspect}"}
     @maint.dow = ["lu-me-ve"]
     @maint.end = "30.01.2012"
-    assert_equal [6, [["J1", 0], ["J2", 2], ["J3", 4], ["J4", 7], ["J5", 9], ["J6", 11]]], 
+    assert_equal [6, [[/1001/, 0],  [/1002/, 2],  [/1003/, 4],  [/1004/, 7],
+        [/1005/, 9],  [/1006/, 11]]], 
       @maint.get_duration_adds
 
     @maint.dow = ["lu-ve"]
     @maint.end = "30.01.2012"
     assert_equal [10,
-      [["J1", 0],  ["J2", 1],  ["J3", 2],  ["J4", 3],  ["J5", 4],
-        ["J6", 7],  ["J7", 8],  ["J8", 9],  ["J9", 10],  ["J10", 11]]], 
+      [[/1001/, 0],  [/1002/, 1],  [/1003/, 2],  [/1004/, 3],  [/1005/, 4],
+        [/1006/, 7],  [/1007/, 8],  [/1008/, 9],  [/1009/, 10],  [/1010/, 11]]], 
       @maint.get_duration_adds
   end
 end
