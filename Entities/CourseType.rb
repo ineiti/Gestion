@@ -6,15 +6,19 @@ class CourseTypes < Entities
     value_str :filename
 
     value_block :strings
-    
     value_str :name
     value_str :duration
     value_int :tests
+    
+    value_block :long
     value_str :description
     value_text :contents
     
-    value_block :profeda
-    value_str :profeda_code
+    value_block :central
+    value_str :central_name
+    value_str :central_pass
+    value_str :central_host
+    value_list_drop :collect_files, "%w( no share transfer )"
   end
   
   def self.files
@@ -47,5 +51,9 @@ class CourseTypes < Entities
   
   def migration_1(ct)
     ct.tests = 1
+  end
+  
+  def migration_2(ct)
+    ct.collect_files = ["no"]
   end
 end

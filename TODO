@@ -1,6 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - if course is created with an existing name, crash in
+          ./Views/Course/Add.rb:36
         - Test if Admin::Backup::restore resets passwords as it should
 	- 10 crashes when not operating "properly"
 

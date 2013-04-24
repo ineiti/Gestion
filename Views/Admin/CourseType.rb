@@ -13,11 +13,20 @@ class AdminCourseType < View
         show_button :new, :delete
       end
       
-      gui_vbox :nogroup do
-        show_block :strings, :width => 200
-        show_list_drop :filename, 'CourseTypes.files'
-        
-        show_button :save
+      gui_vbox do
+        gui_hbox :nogroup do
+          gui_vbox :nogroup do
+            show_block :strings
+          end
+          gui_vbox :nogroup do
+            show_block :central
+          end
+        end
+        gui_vbox :nogroup do
+          show_block :long, :width => 200
+          show_list_drop :filename, 'CourseTypes.files'
+        end
+        show_button :save        
       end
     end
   end

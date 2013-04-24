@@ -20,38 +20,40 @@ class CourseModify < View
     @update = true
     @order = 10
 
-    gui_hbox do
-      gui_vbox :nogroup do
-        show_block :name
-        show_arg :name, :ro => true
-        show_block :calendar
-        show_block :teacher
-        show_button :save
-      end
-      gui_vbox :nogroup do
-        show_block :content
+    gui_vbox do
+      gui_hbox :nogroup do
+        gui_vbox :nogroup do
+          show_block :name
+          show_arg :name, :ro => true
+          show_block :calendar
+          show_block :teacher
+        end
+        gui_vbox :nogroup do
+          show_block :content
         
-        show_print :print_presence
-        gui_vbox :nogroup do
-          show_list :students
+          show_print :print_presence
+          gui_vbox do
+            gui_fields do
+              show_list :students
+              show_button :bulk_add, :del_student, :edit_student
+            end
+            show_print :print_student
+          end
         end
-        gui_vbox :nogroup do
-          show_button :bulk_add, :del_student, :edit_student
-          show_print :print_student
+        gui_window :students_bulk do
+          show_text :names
+          show_button :bulk_students, :close
+        end
+        gui_window :missing_data do
+          show_html :missing
+          show_button :close
+        end
+        gui_window :printing do
+          show_html :msg_print
+          show_button :close
         end
       end
-      gui_window :students_bulk do
-        show_text :names
-        show_button :bulk_students, :close
-      end
-      gui_window :missing_data do
-        show_html :missing
-        show_button :close
-      end
-      gui_window :printing do
-        show_html :msg_print
-        show_button :close
-      end
+      show_button :save
     end
   end
 

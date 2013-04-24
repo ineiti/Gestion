@@ -6,7 +6,7 @@ class AdminCourseTypeProfeda < View
   
   def layout
     set_data_class :CourseTypes
-    @visible = false
+#    @visible = false
     
     gui_hbox do
       gui_vbox :nogroup do
@@ -15,7 +15,7 @@ class AdminCourseTypeProfeda < View
       end
       
       gui_vbox :nogroup do
-        show_block :profeda
+        show_block :central
         
         show_block_ro :strings, :width => 200
       end

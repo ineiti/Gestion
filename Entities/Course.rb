@@ -406,7 +406,7 @@ base_gestion
     end
   end
 
-  def make_pdfs( old, list )
+  def make_pdfs( old, list, format = :pdf )
     FileUtils::rm( old )
     if list.size == 0
       return
@@ -480,6 +480,36 @@ base_gestion
       counter += 1
     }
     if pdfs
+      make_pdfs( Dir.glob( diploma_dir + "/content.xml*" ), Dir.glob( diploma_dir + "/*odt" ) )
+    end
+  end
+	
+  def prepare_labels( pngs = true )
+    qr = RQRCode::QRCode.new( 'http://labels.profeda.org/cce/65536', :size => 5 )
+    png = qr.to_img
+    png.resize(900, 900).save("really_cool_qr_image.png")
+    digits = students.size.to_s.size
+    counter = 1
+    dputs( 2 ){ "Diploma_dir is: #{diploma_dir}" }
+    if not File::directory? diploma_dir
+      FileUtils::mkdir( diploma_dir )
+    else
+      FileUtils::rm( Dir.glob( diploma_dir + "/*" ) )
+    end
+    dputs( 2 ){ students.inspect }
+    students.each{ |s|
+      student = Persons.find_by_login_name( s )
+      if student
+        dputs( 2 ){ student.login_name }
+        student_file = "#{diploma_dir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
+        dputs( 2 ){ "Doing #{counter}: #{student.login_name}" }
+        FileUtils::cp( "#{Courses.diploma_dir}/#{ctype.filename.join}", 
+          student_file )
+        update_student_diploma( student_file, student )
+      end
+      counter += 1
+    }
+    if pngs
       make_pdfs( Dir.glob( diploma_dir + "/content.xml*" ), Dir.glob( diploma_dir + "/*odt" ) )
     end
   end
