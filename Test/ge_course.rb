@@ -1,4 +1,5 @@
 require 'test/unit'
+require 'ftools'
 
 
 class TC_Course < Test::Unit::TestCase
@@ -252,5 +253,40 @@ class TC_Course < Test::Unit::TestCase
       [[/1001/, 0],  [/1002/, 1],  [/1003/, 2],  [/1004/, 3],  [/1005/, 4],
         [/1006/, 7],  [/1007/, 8],  [/1008/, 9],  [/1009/, 10],  [/1010/, 11]]], 
       @maint.get_duration_adds
+  end
+  
+  def test_zip
+    center = "man"
+    @maint_2.students = %w( admin surf secretaire )
+    @maint_t.central_name = center
+
+    %x[ rm -rf Exas ]
+    FileUtils.mkdir "Exas"
+    
+    file = @maint_2.zip_create
+    file_tmp = "/tmp/#{file}"
+    file_exa_tmp = "/tmp/exa-#{file}"
+    assert_not_nil file
+    
+    File.copy( file_tmp, file_exa_tmp )
+    @maint_2.zip_read
+    
+    assert File.exists?( "Exas/#{@maint_2.name}" )
+    assert( ! File.exists?( "Exas/#{@maint_2.name}/#{center}-admin" ) )
+    
+    File.copy( file_tmp, file_exa_tmp )
+    Zip::ZipFile.open( file_exa_tmp ){|z|
+      %w( admin surf ).each{|s|
+        p = "exa-#{@maint_2.name}/#{center}-#{s}"
+        z.file.open("#{p}/first.doc", "w") { |f| f.puts "Hello world" }
+      }
+    }
+    
+    @maint_2.zip_read
+    %w( admin surf ).each{|s|
+      dir = "Exas/#{@maint_2.name}/#{center}-#{s}"
+      assert File.exists? dir
+      assert File.exists? "#{dir}/first.doc"
+    }
   end
 end

@@ -1,5 +1,13 @@
 Important notices for versions:
 
+- 130425: 1.0.3
+  - config-vars
+    DiplomaDir -> Courses::DiplomaDir
+    -- -> Courses::ExaDir
+
+- 130420: 1.0.2
+  - Different changes to LibNet/multiconf-*, verify that all is OK
+
 - 130401: 1.0.0
   - Made the jump to a 1.0.0-version
 

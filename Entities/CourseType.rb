@@ -23,8 +23,9 @@ class CourseTypes < Entities
   
   def self.files
     begin
-      ( Dir.glob( $config[:DiplomaDir] + "/*odt" ) +
-        Dir.glob( $config[:DiplomaDir] + "/*odg" ) ).
+      ddir = get_config( "Diplomas", :Courses, :DiplomaDir )
+      ( Dir.glob( ddir + "/*odt" ) +
+        Dir.glob( ddir + "/*odg" ) ).
         collect{|f| f.sub( /^.*\//, '' ) }
     end
   end

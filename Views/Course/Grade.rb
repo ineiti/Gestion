@@ -8,11 +8,17 @@ class CourseGrade < View
 
     @update = true
     @order = 20
+    # Not used - but don't dare deleting it - yet
+    @files = Entities.Statics.get( :CourseGradeFiles )
+    if @files.data_str.class != Array
+      @files.data_str = []
+    end
 
     gui_hbox do
       gui_hbox :nogroup do
         gui_vbox :nogroup do
           show_list_single :students, :width => 300, :callback => true
+          show_button :prepare_files, :fetch_files, :transfer_files
         end
         gui_vbox :nogroup do
           show_int :mean1
@@ -23,19 +29,23 @@ class CourseGrade < View
           show_str :remark
           show_str :first_name, :width => 150
           show_str :family_name
-          show_button :save, :transfer_files
+          show_button :save
         end
       end
       gui_window :transfer do
         show_html :txt
-        show_button :start
+        show_upload :files
+        show_button :close
       end
     end
   end
 
   def rpc_update( session )
     super( session ) +
-      reply( "empty" )
+      reply( "empty" ) +
+      [ :prepare_files, :fetch_files, :transfer_files ].collect{|b|
+      reply( :hide, b )
+    }.flatten
   end
 
   def update_grade( d )
@@ -75,6 +85,13 @@ class CourseGrade < View
           ( course and i <= course.ctype.tests.to_i ) ? 
             reply( :unhide, "mean#{i}" ) : reply( :hide, "mean#{i}")
         }.flatten
+        
+        buttons = [ :prepare_files, :fetch_files, :transfer_files ]
+        { :no => [0,0,0], :share => [1,1,0], :transfer => [0,0,1] }.fetch( 
+          course.ctype.collect_files[0].to_sym, [0,0,0] ).each{|show|
+          ret += reply( show == 1 ? :unhide : :hide, buttons.shift )
+        }
+        
         ddputs(4){"Course is #{course} - ret is #{ret.inspect}"}
       end
     when "students"
@@ -112,5 +129,26 @@ class CourseGrade < View
         reply( 'focus', :mean )
     end
   end
-
+  
+  def rpc_button_transfer_files( session, data )
+    ret = reply( :update, :txt => "no students" ) +
+      reply( :hide, :upload )
+    if course = Courses.find_by_course_id( data['courses'][0])
+      if file = course.zip_create
+        @files.data_str.push file
+        ret = reply( :update, :txt => "Download skeleton: " +
+            "<a href='/tmp/#{file}'>#{file}</a>" ) +
+          reply( :unhide, :upload )
+      end
+    end
+    reply( :window_show, :transfer ) +
+      ret
+  end
+  
+  def rpc_button_close( session, data )
+    if course = Courses.find_by_course_id( data['courses'][0])
+      course.zip_read
+      reply( :window_hide )
+    end
+  end
 end

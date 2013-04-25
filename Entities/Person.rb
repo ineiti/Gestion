@@ -54,7 +54,7 @@ class Persons < Entities
     value_str :password_plain
     value_int_LDAP :person_id, :ldap_name => "uidnumber"
 
-    if ddir = get_config( nil, :DiplomaDir )
+    if ddir = get_config( "Diplomas", :Courses, :DiplomaDir )
       cdir = "#{ddir}/cartes"
       if ! File.exist? cdir
         FileUtils::mkdir( cdir )

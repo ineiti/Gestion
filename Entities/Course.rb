@@ -10,7 +10,7 @@ require 'docsplit'
 
 
 class Courses < Entities
-  attr_reader :diploma_dir, :print_presence, :print_presence_small
+  attr_reader :diploma_dir, :exa_dir, :print_presence, :print_presence_small
   
   def setup_data
 
@@ -53,7 +53,9 @@ class Courses < Entities
     value_int :students_finish
     value_int :entry_total
 
-    @diploma_dir = $config[:DiplomaDir]
+    @diploma_dir = get_config( "Diplomas", :Courses, :DiplomaDir )
+    @exa_dir = get_config( "Exas", :Courses, :ExaDir )
+    File.exists? @exa_dir or FileUtils.mkdir @exa_dir
 
     @thread = nil
     @print_presence = OpenPrint.new( "#{@diploma_dir}/fiche_presence.ods" )
@@ -513,5 +515,56 @@ base_gestion
       make_pdfs( Dir.glob( diploma_dir + "/content.xml*" ), Dir.glob( diploma_dir + "/*odt" ) )
     end
   end
-	
+  
+  # This prepares a zip-file as a skeleton for the center to copy the
+  # files over.
+  # The name of the zip-file is different from the directory-name, so that the
+  # upload is less error-prone.
+  def zip_create
+    dir = "exa-#{name}"
+    center = ctype.central_name
+    file = "#{name}.zip"
+    tmp_file = "/tmp/#{file}"
+      
+    if students and students.size > 0
+      File.exists?( tmp_file ) and File.unlink( tmp_file )
+      Zip::ZipFile.open(tmp_file, Zip::ZipFile::CREATE){|z|
+        z.mkdir dir
+        students.each{|s|
+          p = "#{dir}/#{center}-#{s}"
+          z.mkdir( p )
+        }
+      }
+      return file
+    end
+    return nil
+  end
+  
+  def zip_read
+    dir_zip = "exa-#{name}"
+    dir_exas = @proxy.exa_dir + "/#{name}"
+    center = ctype.central_name
+    file = "/tmp/#{dir_zip}.zip"
+    
+    if File.exists?( file ) and students
+      %x[ mv #{dir_exas} /tmp ]
+      FileUtils.mkdir dir_exas
+
+      ZipFile.open( file ){|z|
+        students.each{|s|
+          dir_student = "#{center}-#{s}"
+          dir_zip_student = "#{dir_zip}/#{dir_student}"
+          dir_exas_student = "#{dir_exas}/#{dir_student}"
+          
+          if ( files_student = z.dir.entries( dir_zip_student ) ).size > 0
+            FileUtils.mkdir( dir_exas_student )
+            files_student.each{|fs|
+              z.extract( "#{dir_zip_student}/#{fs}", "#{dir_exas_student}/#{fs}")
+            }
+          end
+        }
+      }
+    end
+    File.unlink file
+  end
 end

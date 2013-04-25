@@ -6,6 +6,7 @@ ldap*
 Test/data/*
 Test/data2/*
 Test/Diplomas/*
+Test/Exas/*
 Test/log
 Test/run
 .DS_Store
