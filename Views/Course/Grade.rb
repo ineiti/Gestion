@@ -170,7 +170,7 @@ class CourseGrade < View
   
   def rpc_button_close( session, data )
     if course = Courses.find_by_course_id( data['courses'][0])
-      course.zip_read
+      course.zip_read( session )
       reply( :window_hide )
     end
   end

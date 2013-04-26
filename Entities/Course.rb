@@ -538,11 +538,6 @@ base_gestion
   # upload is less error-prone.
   def zip_create( session = nil )
     dir = "exa-#{name}"
-    center = if session and session.owner.permissions.index("center")
-      session.owner.login_name
-    else
-      ctype.central_name
-    end
     file = "#{name}.zip"
     tmp_file = "/tmp/#{file}"
       
@@ -551,7 +546,7 @@ base_gestion
       Zip::ZipFile.open(tmp_file, Zip::ZipFile::CREATE){|z|
         z.mkdir dir
         students.each{|s|
-          p = "#{dir}/#{center}-#{s}"
+          p = "#{dir}/#{s}"
           z.mkdir( p )
         }
       }
@@ -560,10 +555,9 @@ base_gestion
     return nil
   end
   
-  def zip_read
+  def zip_read( session = nil )
     dir_zip = "exa-#{name}"
     dir_exas = @proxy.exa_dir + "/#{name}"
-    center = ctype.central_name
     file = "/tmp/#{dir_zip}.zip"
     
     if File.exists?( file ) and students
@@ -572,9 +566,8 @@ base_gestion
 
       ZipFile.open( file ){|z|
         students.each{|s|
-          dir_student = "#{center}-#{s}"
-          dir_zip_student = "#{dir_zip}/#{dir_student}"
-          dir_exas_student = "#{dir_exas}/#{dir_student}"
+          dir_zip_student = "#{dir_zip}/#{s}"
+          dir_exas_student = "#{dir_exas}/#{s}"
           
           if ( files_student = z.dir.entries( dir_zip_student ) ).size > 0
             FileUtils.mkdir( dir_exas_student )
