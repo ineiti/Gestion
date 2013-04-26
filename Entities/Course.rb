@@ -40,7 +40,7 @@ class Courses < Entities
     value_entity_person :responsible, :drop, :full_name,
       lambda{|p| p.permissions.index("teacher") or
         p.permissions.index("center")
-      }
+    }
 
     value_block :content
     value_str :description
@@ -536,9 +536,13 @@ base_gestion
   # files over.
   # The name of the zip-file is different from the directory-name, so that the
   # upload is less error-prone.
-  def zip_create
+  def zip_create( session = nil )
     dir = "exa-#{name}"
-    center = ctype.central_name
+    center = if session and session.owner.permissions.index("center")
+      session.owner.login_name
+    else
+      ctype.central_name
+    end
     file = "#{name}.zip"
     tmp_file = "/tmp/#{file}"
       
@@ -580,8 +584,8 @@ base_gestion
           end
         }
       }
+      File.unlink file
     end
-    File.unlink file
   end
   
   def exam_files( student )

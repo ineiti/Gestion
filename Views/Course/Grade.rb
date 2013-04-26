@@ -157,7 +157,7 @@ class CourseGrade < View
     ret = reply( :update, :txt => "no students" ) +
       reply( :hide, :upload )
     if course = Courses.find_by_course_id( data['courses'][0])
-      if file = course.zip_create
+      if file = course.zip_create( session )
         @files.data_str.push file
         ret = reply( :update, :txt => "Download skeleton: " +
             "<a href='/tmp/#{file}'>#{file}</a>" ) +
