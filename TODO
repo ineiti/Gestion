@@ -1,6 +1,13 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - When CourseAdd is first tab and course is added, LTab.js:174 can't
+          find getActiveForm, as it is not drawn yet...
+        - if only Course-tabs are visible, the basic tab is not shown, so no
+         tabs can be added
+        - adding twice the same course-name fails
+        - empty installation: CourseModify complains about no CourseTypes, even
+          when one was added -> problem in html-display
         - why is Entity::get_value always called three times?
         - if course is created with an existing name, crash in
           ./Views/Course/Add.rb:36

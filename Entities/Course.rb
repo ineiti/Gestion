@@ -78,7 +78,8 @@ class Courses < Entities
       if not session.can_view( "FlagCourseGradeAll" )
         ret = ret.select{|d|
           ddputs(4){"teacher is #{d.teacher.inspect}, user is #{user.inspect}"}
-          d.teacher and d.teacher.login_name == user.login_name
+          ( d.teacher and d.teacher.login_name == user.login_name ) or
+            ( d.responsible and d.responsible.login_name == user.login_name )
         }
       end
     end

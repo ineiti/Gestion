@@ -189,11 +189,23 @@ class CourseModify < View
       reply("empty", [:students])
     end
   end
+  
+  def center?( session )
+    if session.owner.permissions.index( "center" )
+      %w( print_presence print_student edit_student duration dow hours
+      classroom ).collect{|e|
+        reply( :hide, e )        
+      }.flatten
+    else
+      []
+    end
+  end
 
   def rpc_update( session )
     reply( 'empty', [:students] ) +
       super( session ) +
-      reply_print( session )
+      reply_print( session ) +
+      center?( session )
   end
 
 end

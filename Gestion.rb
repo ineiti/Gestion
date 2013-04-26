@@ -51,8 +51,8 @@ Permission.add( 'director', 'CourseAdd,FlagDeletePerson', 'secretary' )
 Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
 Permission.add( 'maintenance', 'Inventory.*', 'default' )
 Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,SelfServices', '' )
-Permission.add( 'center', 'CourseModify,CourseAdd,CourseDiploma,CourseGrade' +
-    'FlagRemoteCourse', '' )
+Permission.add( 'center', 'CourseModify,CourseAdd,CourseDiploma,CourseGrade,' +
+    'FlagRemoteCourse,SelfShow,SelfChat', '' )
 Permission.add( 'admin', '.*', '.*' )
 
 if uri = get_config( false, :LibNet, :URI )
