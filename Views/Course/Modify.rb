@@ -155,8 +155,12 @@ class CourseModify < View
     course = Courses.find_by_name( data['name'] )
     users = []
     if data['names'] and users = data['names'].split("\n")
-      person = Entities.Persons.create( {:first_name => users.shift,
-          :permissions => %w( student ), :town => @town, :country => @country })
+      name = users.shift
+      if not ( person = Persons.find_by_login_name( name ) )
+        person = Entities.Persons.create( {:first_name => name,
+            :login_name_prefix => "#{session.owner.login_name}_",
+            :permissions => %w( student ), :town => @town, :country => @country })
+      end
       #person.email = "#{person.login_name}@ndjair.net"
       course.students.push( person.login_name )
     end

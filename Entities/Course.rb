@@ -33,15 +33,14 @@ class Courses < Entities
     value_list :students
 
     value_block :teacher
-    #value_list_drop :teacher, "Entities.Persons.list_teachers"
     value_entity_person :teacher, :drop, :full_name,
       lambda{|p| p.permissions.index("teacher")}
-    #value_list_drop :assistant, "['none'] + Entities.Persons.list_assistants"
     value_entity_person_empty :assistant, :drop, :full_name,
       lambda{|p| p.permissions.index("teacher")}
-    #value_list_drop :responsible, "Entities.Persons.list_teachers"
     value_entity_person :responsible, :drop, :full_name,
-      lambda{|p| p.permissions.index("teacher")}
+      lambda{|p| p.permissions.index("teacher") or
+        p.permissions.index("center")
+      }
 
     value_block :content
     value_str :description
