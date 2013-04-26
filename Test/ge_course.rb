@@ -160,18 +160,18 @@ class TC_Course < Test::Unit::TestCase
   end
 	
   def test_prepare_diplomas
-    dputs(0){"Checking for diplomas in #{@maint_2.diploma_dir}"}
+    dputs(0){"Checking for diplomas in #{@maint_2.dir_diplomas}"}
     @maint_2.prepare_diplomas( false )
-    assert_equal 0, Dir.glob( "#{@maint_2.diploma_dir}/*" ).count
+    assert_equal 0, Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count
 
     @maint_2.students.push 'josue'
     @maint_2.prepare_diplomas( false )
-    assert_equal 0, Dir.glob( "#{@maint_2.diploma_dir}/*" ).count
+    assert_equal 0, Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count
 		
     @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
         :course_id => @maint_2.course_id, :mean => 9})
     @maint_2.prepare_diplomas( false )
-    assert_equal 0, Dir.glob( "#{@maint_2.diploma_dir}/*" ).count
+    assert_equal 0, Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count
 
 
     @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
@@ -179,7 +179,7 @@ class TC_Course < Test::Unit::TestCase
     @secretaire.role_diploma = "Director"
     assert @secretaire, @maint_2.teacher
     @maint_2.prepare_diplomas( false )
-    assert_equal 1, Dir.glob( "#{@maint_2.diploma_dir}/*odt" ).count
+    assert_equal 1, Dir.glob( "#{@maint_2.dir_diplomas}/*odt" ).count
   end
 		
   def test_print_diplomas
@@ -188,7 +188,7 @@ class TC_Course < Test::Unit::TestCase
         :course_id => @maint_2.course_id, :mean => 11})
     @maint_2.prepare_diplomas
 
-    while Dir.glob( "#{@maint_2.diploma_dir}/*" ).count < 3 do
+    while Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count < 3 do
       dputs(0){"Waiting for diplomas"}
       sleep 1
     end
@@ -304,7 +304,7 @@ class TC_Course < Test::Unit::TestCase
         :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
     @maint_2.prepare_diplomas
     
-    while ( files = Dir.glob( "#{@maint_2.diploma_dir}/*" ) ).count < 3 do
+    while ( files = Dir.glob( "#{@maint_2.dir_diplomas}/*" ) ).count < 3 do
       dputs(0){"Waiting for diplomas - #{files.inspect}"}
       sleep 1
     end
@@ -326,14 +326,41 @@ class TC_Course < Test::Unit::TestCase
     @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
         :central_host => "label.profeda.org", :filename => ["label.odg"],
         :files_collect => ["no"]})
-    dputs(0){@maint_t.inspect}
-    @maint_2.ctype = @maint_t
     @maint_2.students.push 'josue'
     @maint_2.prepare_diplomas
 
-    while ( files = Dir.glob( "#{@maint_2.diploma_dir}/*" ) ).count < 3 do
+    while ( files = Dir.glob( "#{@maint_2.dir_diplomas}/*" ) ).count < 3 do
       dputs(0){"Waiting for diplomas - #{files.inspect}"}
       sleep 1
     end
+  end
+  
+  def test_files_move
+    @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
+        :central_host => "label.profeda.org", :filename => ["label.odg"],
+        :files_collect => ["no"]})
+    students = %w( josue admin surf )
+    @maint_2.students.concat students
+    
+    %x[ rm -rf #{@maint_2.dir_exas} ]
+    %x[ rm -rf #{@maint_2.dir_exas_share} ]
+
+    @maint_2.exas_prepare_files
+    assert ! File.exists?( @maint_2.dir_exas )
+    assert File.exists?( @maint_2.dir_exas_share )
+    students.each{|s|
+      student_dir = "#{@maint_2.dir_exas_share}/#{s}"
+      assert File.exists?( student_dir )
+      FileUtils.touch "#{student_dir}/exa.doc"
+    }
+    
+    @maint_2.exas_fetch_files
+    assert File.exists?( @maint_2.dir_exas )
+    assert ! File.exists?( @maint_2.dir_exas_share )
+    students.each{|s|
+      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      assert File.exists?( student_dir )
+      assert File.exists?( "#{student_dir}/exa.doc" )
+    }
   end
 end

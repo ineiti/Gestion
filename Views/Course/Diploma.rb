@@ -84,7 +84,7 @@ class CourseDiploma < View
       dputs( 2 ){ "Printing #{args['diplomas'].inspect}" }
       if lp_cmd
         args['diplomas'].each{|g|
-          `#{lp_cmd} #{course.diploma_dir}/#{g}`
+          `#{lp_cmd} #{course.dir_diplomas}/#{g}`
         }
         ret += reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Impression de<ul><li>#{args['diplomas'].join('</li><li>')}</li></ul>en cours" )
@@ -92,7 +92,7 @@ class CourseDiploma < View
         ret += reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Choisir le pdf:<ul>" +
             args['diplomas'].collect{|d|
-            %x[ cp #{course.diploma_dir}/#{d} /tmp ] 
+            %x[ cp #{course.dir_diplomas}/#{d} /tmp ] 
             "<li><a href=\"/tmp/#{d}\">#{d}</a></li>"
           }.join('') + "</ul>" )
       end

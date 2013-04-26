@@ -168,10 +168,25 @@ class CourseGrade < View
       ret
   end
   
+  def rpc_button_prepare_files( session, data )
+    if course = Courses.find_by_course_id( data['courses'][0])
+      course.exas_prepare_files
+    end
+    update_grade( data )
+  end
+  
+  def rpc_button_fetch_files( session, data )
+    if course = Courses.find_by_course_id( data['courses'][0])
+      course.exas_fetch_files
+    end
+    update_grade( data )
+  end
+  
   def rpc_button_close( session, data )
     if course = Courses.find_by_course_id( data['courses'][0])
       course.zip_read( session )
-      reply( :window_hide )
+      reply( :window_hide ) +
+        update_grade( data )
     end
   end
 end

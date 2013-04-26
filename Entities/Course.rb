@@ -8,10 +8,12 @@
 require 'zip/zipfilesystem'; include Zip
 require 'docsplit'
 require 'rqrcode_png'
+require 'ftools'
 
 
 class Courses < Entities
-  attr_reader :diploma_dir, :exa_dir, :print_presence, :print_presence_small
+  attr_reader :dir_diplomas, :dir_exas, :dir_exas_share,
+    :print_presence, :print_presence_small
   
   def setup_data
 
@@ -53,13 +55,17 @@ class Courses < Entities
     value_int :students_finish
     value_int :entry_total
 
-    @diploma_dir = get_config( "Diplomas", :Courses, :DiplomaDir )
-    @exa_dir = get_config( "Exas", :Courses, :ExaDir )
-    File.exists? @exa_dir or FileUtils.mkdir @exa_dir
+    @dir_diplomas = get_config( "Diplomas", :Courses, :DiplomaDir )
+    @dir_exas = get_config( "Exas", :Courses, :ExasDir )
+    @dir_exas_share = get_config( "Exas/Share", :Courses, :ExasShare )
+
+    [ @dir_exas, @dir_exas_share ].each{|d|
+      File.exists? d or FileUtils.mkdir d
+    }
 
     @thread = nil
-    @print_presence = OpenPrint.new( "#{@diploma_dir}/fiche_presence.ods" )
-    @print_presence_small = OpenPrint.new( "#{@diploma_dir}/fiche_presence_small.ods" )
+    @print_presence = OpenPrint.new( "#{@dir_diplomas}/fiche_presence.ods" )
+    @print_presence_small = OpenPrint.new( "#{@dir_diplomas}/fiche_presence_small.ods" )
   end
   
   def set_entry( id, field, value )
@@ -214,8 +220,16 @@ class Course < Entity
     end
   end
 
-  def diploma_dir
-    @proxy.diploma_dir + "/#{self.name}"
+  def dir_diplomas
+    @proxy.dir_diplomas + "/#{self.name}"
+  end
+  
+  def dir_exas
+    @proxy.dir_exas + "/#{self.name}"
+  end
+  
+  def dir_exas_share
+    @proxy.dir_exas_share + "/#{self.name}"
   end
   
   def list_students
@@ -301,12 +315,12 @@ base_gestion
   end
 
   def get_files
-    if File::directory?( diploma_dir )
+    if File::directory?( dir_diplomas )
       files = if ctype.output[0] == "certificate" 
-        Dir::glob( "#{diploma_dir}/*pdf" )
+        Dir::glob( "#{dir_diplomas}/*pdf" )
       else
-        Dir::glob( "#{diploma_dir}/*png" ) +
-          Dir::glob( "#{diploma_dir}/*zip" )
+        Dir::glob( "#{dir_diplomas}/*png" ) +
+          Dir::glob( "#{dir_diplomas}/*zip" )
       end
       files.collect{|f| 
         File::basename( f ) 
@@ -435,7 +449,7 @@ base_gestion
 
   def make_pdfs( old, list, format = :certificate )
     format = format.to_sym
-    FileUtils::rm( old )
+    FileUtils.rm( old )
     if list.size == 0
       ddputs(4){"No files here, quitting"}
       return
@@ -469,7 +483,7 @@ base_gestion
             :density => 300, :format => png
           end
           dputs( 5 ){ "Finished docsplit" }
-          FileUtils::rm( p )
+          FileUtils.rm( p )
           dputs( 5 ){ "Finished rm" }
           outfiles.push p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
         }
@@ -481,7 +495,7 @@ base_gestion
           `pdftk #{outfiles.join( ' ' )} cat output #{all}`
           dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
           `pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
-          FileUtils::mv( "#{psn}.tmp", psn )
+          FileUtils.mv( "#{psn}.tmp", psn )
           dputs( 2 ){ "Finished" }
         else
           ddputs(3){"Making a zip-file"}
@@ -507,28 +521,28 @@ base_gestion
   def prepare_diplomas( convert = true )
     digits = students.size.to_s.size
     counter = 1
-    dputs( 2 ){ "Diploma_dir is: #{diploma_dir}" }
-    if not File::directory? diploma_dir
-      FileUtils::mkdir( diploma_dir )
+    dputs( 2 ){ "dir_diplomas is: #{dir_diplomas}" }
+    if not File::directory? dir_diplomas
+      FileUtils.mkdir( dir_diplomas )
     else
-      FileUtils::rm( Dir.glob( diploma_dir + "/*" ) )
+      FileUtils.rm( Dir.glob( dir_diplomas + "/*" ) )
     end
     dputs( 2 ){ "Students: #{students.inspect}" }
     students.each{ |s|
       student = Persons.find_by_login_name( s )
       if student
         dputs( 2 ){ student.login_name }
-        student_file = "#{diploma_dir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
+        student_file = "#{dir_diplomas}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
         dputs( 2 ){ "Doing #{counter}: #{student.login_name} - file: #{student_file}" }
-        FileUtils::cp( "#{Courses.diploma_dir}/#{ctype.filename.join}", 
+        FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}", 
           student_file )
         update_student_diploma( student_file, student )
       end
       counter += 1
     }
     if convert
-      make_pdfs( Dir.glob( diploma_dir + "/content.xml*" ), 
-        Dir.glob( diploma_dir + "/*odt" ), ctype.output[0] )
+      make_pdfs( Dir.glob( dir_diplomas + "/content.xml*" ), 
+        Dir.glob( dir_diplomas + "/*odt" ), ctype.output[0] )
     end
   end
   
@@ -557,7 +571,7 @@ base_gestion
   
   def zip_read( session = nil )
     dir_zip = "exa-#{name}"
-    dir_exas = @proxy.exa_dir + "/#{name}"
+    dir_exas = @proxy.dir_exas + "/#{name}"
     file = "/tmp/#{dir_zip}.zip"
     
     if File.exists?( file ) and students
@@ -584,10 +598,45 @@ base_gestion
   def exam_files( student )
     student_name = student.class == Person ? student.login_name : student
     ddputs(4){"Student-name is #{student_name.inspect}"}
-    dir_exas = @proxy.exa_dir + "/#{name}"
-    center = ctype.central_name
-    dir_student = "#{dir_exas}/#{center}-#{student_name}"
+    dir_exas = @proxy.dir_exas + "/#{name}"
+    dir_student = "#{dir_exas}/#{student_name}"
     File.exists?( dir_student ) ?
       Dir.entries( dir_student ).select{|f| ! ( f =~ /^\./ ) } : []
+  end
+  
+  def exas_prepare_files
+    name.length == 0 and return
+    if File.exists? dir_exas_share
+      %x[ rm -rf #{dir_exas_share} ]
+    end
+      
+    FileUtils.mkdir dir_exas_share
+    students.each{|s|
+      dir_s_exas = "#{dir_exas}/#{s}"
+      if File.exists? dir_s_exas
+        File.move dir_s_exas, dir_exas_share
+      else
+        FileUtils.mkdir "#{dir_exas_share}/#{s}"
+      end
+    }
+    %x[ rm -rf #{dir_exas} ]
+  end
+  
+  def exas_fetch_files
+    name.length == 0 and return
+    ddputs(3){"Starting to fetch files for #{name}"}
+    if File.exists? dir_exas_share
+      ddputs(3){"#{dir_exas_share} exists"}
+      File.exists? dir_exas or FileUtils.mkdir dir_exas
+      students.each{|s|
+        ddputs(3){"Checking on student #{s}"}
+        dir_student = "#{dir_exas_share}/#{s}"
+        if File.exists? dir_student
+          ddputs(3){"Moving student-dir of #{s}"}
+          File.move dir_student, "#{dir_exas}"
+        end
+      }
+    end
+    %x[ rm -rf #{dir_exas_share} ]
   end
 end
