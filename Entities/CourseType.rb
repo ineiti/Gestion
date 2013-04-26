@@ -18,7 +18,9 @@ class CourseTypes < Entities
     value_str :central_name
     value_str :central_pass
     value_str :central_host
-    value_list_drop :collect_files, "%w( no share transfer )"
+    value_list_drop :files_collect, "%w( no share transfer )"
+    value_int :files_needed
+    value_list_drop :output, "%w( certificate label )"
   end
   
   def self.files
@@ -52,9 +54,7 @@ class CourseTypes < Entities
   
   def migration_1(ct)
     ct.tests = 1
-  end
-  
-  def migration_2(ct)
-    ct.collect_files = ["no"]
+    ct.files_collect = ["no"]
+    ct.output = ["certificate"]
   end
 end

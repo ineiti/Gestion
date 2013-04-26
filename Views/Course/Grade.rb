@@ -26,6 +26,7 @@ class CourseGrade < View
           show_int :mean3
           show_int :mean4
           show_int :mean5
+          show_int_ro :files_saved
           show_str :remark
           show_str :first_name, :width => 150
           show_str :family_name
@@ -52,15 +53,33 @@ class CourseGrade < View
     ret = []
     c_id, p_name = d['courses'][0], d['students'][0]
     if p_name and c_id
+      person = Persons.find_by_login_name( p_name )
+      course = Courses.find_by_course_id( c_id )
       grade = Entities.Grades.find_by_course_person( c_id, p_name )
       if grade
-        ret = reply( "update", grade.to_hash )
+        ret = reply( :update, grade.to_hash ) +
+          to_means_true( course ){|i| 
+          reply( :update, "mean#{i}" => grade.means[i-1])
+        }.flatten
       else
-        ret = reply( "empty" )
+        ret = reply( :empty )
       end
-      ret += reply( "update", Entities.Persons.find_by_login_name( p_name ).to_hash )
+      ret += reply( :update, person.to_hash ) +
+        reply( :update, :files_saved => course.exam_files( p_name ).count )
     end
     ret
+  end
+  
+  def to_means( course )
+    (1..5).collect{|i|
+      yield [ ( course and i <= course.ctype.tests.to_i ), i ]
+    }
+  end
+  
+  def to_means_true( course, &b )
+    to_means( course ){ |s, i|
+      s and b.call( i )
+    }.select{|v| v }
   end
 
   def rpc_list_choice( session, name, args )
@@ -75,20 +94,23 @@ class CourseGrade < View
         ret = reply("empty", [:students]) +
           reply("update", course.to_hash ) +
           reply("update", {:courses => [course_id]}) +
-          reply("focus", :mean)
+          reply("focus", :mean1 )
         if course.students.size > 0
           ret += reply("update", {:students => [course.students[0]]} ) +
             update_grade( {"courses" => [course.course_id],
               "students" => [course.students[0]]})
         end
-        ret += (1..5).collect{|i|
-          ( course and i <= course.ctype.tests.to_i ) ? 
-            reply( :unhide, "mean#{i}" ) : reply( :hide, "mean#{i}")
+
+        ret += to_means( course ){|s, i| 
+          s ?  reply( :unhide, "mean#{i}" ) : reply( :hide, "mean#{i}")
         }.flatten
+
+        ret += reply( course.ctype.files_collect[0] == "no" ? :hide : :unhide, 
+          :files_saved)
         
         buttons = [ :prepare_files, :fetch_files, :transfer_files ]
         { :no => [0,0,0], :share => [1,1,0], :transfer => [0,0,1] }.fetch( 
-          course.ctype.collect_files[0].to_sym, [0,0,0] ).each{|show|
+          course.ctype.files_collect[0].to_sym, [0,0,0] ).each{|show|
           ret += reply( show == 1 ? :unhide : :hide, buttons.shift )
         }
         
@@ -97,7 +119,7 @@ class CourseGrade < View
     when "students"
       ret += update_grade( args )
     end
-    ret + reply( :focus, :mean )
+    ret + reply( :focus, :mean1 )
   end
 
   def rpc_button_save( session, data )
@@ -106,7 +128,8 @@ class CourseGrade < View
     student = Entities.Persons.find_by_login_name( data['students'][0])
     if course and student
       Entities.Grades.save_data( {:course_id => course.course_id,
-          :person_id => student.person_id, :mean => data['mean'],
+          :person_id => student.person_id,
+          :means => to_means_true( course ){|i| data["mean#{i}"].to_i},
           :remark => data['remark']})
       if data['first_name']
         Entities.Persons.save_data({:person_id => student.person_id,
@@ -126,7 +149,7 @@ class CourseGrade < View
         update_grade( data ) +
         reply( 'update', {:students => course[:students]} ) +
         reply( 'update', {:students => [data['students'][0]] } ) +
-        reply( 'focus', :mean )
+        reply( 'focus', :mean1 )
     end
   end
   

@@ -6,7 +6,7 @@ class AdminCourseTypeProfeda < View
   
   def layout
     set_data_class :CourseTypes
-#    @visible = false
+    @visible = false
     
     gui_hbox do
       gui_vbox :nogroup do

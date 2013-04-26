@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - why is Entity::get_value always called three times?
         - if course is created with an existing name, crash in
           ./Views/Course/Add.rb:36
         - Test if Admin::Backup::restore resets passwords as it should

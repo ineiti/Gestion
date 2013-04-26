@@ -7,6 +7,7 @@
 #require 'rubygems'
 require 'zip/zipfilesystem'; include Zip
 require 'docsplit'
+require 'rqrcode_png'
 
 
 class Courses < Entities
@@ -299,9 +300,17 @@ base_gestion
     txt
   end
 
-  def get_pdfs
+  def get_files
     if File::directory?( diploma_dir )
-      Dir::glob( "#{diploma_dir}/*pdf" ).collect{|f| File::basename( f ) }.sort
+      files = if ctype.output[0] == "certificate" 
+        Dir::glob( "#{diploma_dir}/*pdf" )
+      else
+        Dir::glob( "#{diploma_dir}/*png" ) +
+          Dir::glob( "#{diploma_dir}/*zip" )
+      end
+      files.collect{|f| 
+        File::basename( f ) 
+      }.sort
     else
       []
     end
@@ -372,16 +381,30 @@ base_gestion
 	
   def update_student_diploma( file, student )
     grade = Grades.find_by_course_person( course_id, student.login_name )
-    if grade and grade.to_s != "NP"
+    dputs(0){"Course is #{name} - ctype is #{ctype.inspect}"}
+    if grade and grade.to_s != "NP" and 
+        ( ( ctype.files_collect[0] == "no" ) or
+          ( exam_files( student ).count >= ctype.files_needed.to_i ) )
       dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|
         #presponsible = Persons.find_by_login_name( responsible.join )
         doc = z.read("content.xml")
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
-        desc_p = /-DESC1-(.*)-DESC2-/.match( doc )[1]
-        dputs( 3 ){ "desc_p is #{desc_p}" }
-        doc.gsub!( /-DESC1-.*-DESC2-/,
-          contents.split("\n").join( desc_p ))
+        if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match( doc )
+          dputs( 2 ){"QRcode-image is #{qrcode[1]}"}
+          qr = RQRCode::QRCode.new( grade.get_url_label )
+          png = qr.to_img
+          png.resize(900, 900)
+          z.file.open(qrcode[1], "w"){ |f|
+            png.write( f )
+          }
+        end
+        if desc_p_match = /-DESC1-(.*)-DESC2-/.match( doc )
+          desc_p = desc_p_match[1]
+          dputs( 3 ){ "desc_p is #{desc_p}" }
+          doc.gsub!( /-DESC1-.*-DESC2-/,
+            contents.split("\n").join( desc_p ))
+        end
         doc.gsub!( /-PROF-/, teacher.full_name )
         role_diploma = "Responsable informatique"
         if responsible.role_diploma.to_s.length > 0
@@ -398,6 +421,8 @@ base_gestion
         doc.gsub!( /-SPECIAL-/, grade.remark || "" )
         doc.gsub!( /-MENTION-/, grade.mention )
         doc.gsub!( /-DATE-/, date_fr( sign ) )
+        doc.gsub!( /-COURS_TYPE-/, ctype.name )
+        doc.gsub!( /-URL_LABEL-/, grade.get_url_label )
         z.file.open("content.xml", "w"){ |f|
           f.write( doc )
         }
@@ -408,9 +433,11 @@ base_gestion
     end
   end
 
-  def make_pdfs( old, list, format = :pdf )
+  def make_pdfs( old, list, format = :certificate )
+    format = format.to_sym
     FileUtils::rm( old )
     if list.size == 0
+      ddputs(4){"No files here, quitting"}
       return
     end
 		
@@ -429,27 +456,45 @@ base_gestion
     dputs( 2 ){ "Starting new thread" }
     @thread = Thread.new{
       begin
-        dputs( 2 ){ "Creating pdfs #{list.inspect}" }
+        dputs( 2 ){ "Creating #{output} #{list.inspect}" }
         `date >> /tmp/cp`
-        pdfs = []
+        outfiles = []
         dir = File::dirname( list.first )
         list.sort.each{ |p|
           dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
-          Docsplit.extract_pdf p, :output => dir
+          if format == :certificate
+            Docsplit.extract_pdf p, :output => dir
+          else
+            Docsplit.extract_images p, :output => dir, 
+            :density => 300, :format => png
+          end
           dputs( 5 ){ "Finished docsplit" }
           FileUtils::rm( p )
           dputs( 5 ){ "Finished rm" }
-          pdfs.push p.sub( /\.[^\.]*$/, '.pdf' )
+          outfiles.push p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
         }
-        dputs( 3 ){ "Getting #{pdfs.inspect} out of #{dir}" }
-        all = "#{dir}/000-all.pdf"
-        psn = "#{dir}/000-4pp.pdf"
-        dputs( 3 ){ "Putting it all in one file: pdftk #{pdfs.join( ' ' )} cat output #{all}" }
-        `pdftk #{pdfs.join( ' ' )} cat output #{all}`
-        dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
-        `pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
-        FileUtils::mv( "#{psn}.tmp", psn )
-        dputs( 2 ){ "Finished" }
+        if format == :certificate
+          dputs( 3 ){ "Getting #{outfiles.inspect} out of #{dir}" }
+          all = "#{dir}/000-all.pdf"
+          psn = "#{dir}/000-4pp.pdf"
+          dputs( 3 ){ "Putting it all in one file: pdftk #{outfiles.join( ' ' )} cat output #{all}" }
+          `pdftk #{outfiles.join( ' ' )} cat output #{all}`
+          dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
+          `pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
+          FileUtils::mv( "#{psn}.tmp", psn )
+          dputs( 2 ){ "Finished" }
+        else
+          ddputs(3){"Making a zip-file"}
+          Zip::ZipFile.open("#{dir}/all.zip", Zip::ZipFile::CREATE){|z|
+            Dir.glob( "#{dir}/*" ).each{|image|
+              z.get_output_stream(image.sub(".*/", "")) { |f| 
+                File.open(image){|fi|
+                  f.write fi.read
+                }
+              }
+            }
+          }
+        end
       rescue Exception => e  
         dputs( 0 ){ "Error in thread: #{e.message}" }
         dputs( 0 ){ "#{e.inspect}" }
@@ -459,7 +504,7 @@ base_gestion
     }
   end
 
-  def prepare_diplomas( pdfs = true )
+  def prepare_diplomas( convert = true )
     digits = students.size.to_s.size
     counter = 1
     dputs( 2 ){ "Diploma_dir is: #{diploma_dir}" }
@@ -468,51 +513,22 @@ base_gestion
     else
       FileUtils::rm( Dir.glob( diploma_dir + "/*" ) )
     end
-    dputs( 2 ){ students.inspect }
+    dputs( 2 ){ "Students: #{students.inspect}" }
     students.each{ |s|
       student = Persons.find_by_login_name( s )
       if student
         dputs( 2 ){ student.login_name }
         student_file = "#{diploma_dir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
-        dputs( 2 ){ "Doing #{counter}: #{student.login_name}" }
+        dputs( 2 ){ "Doing #{counter}: #{student.login_name} - file: #{student_file}" }
         FileUtils::cp( "#{Courses.diploma_dir}/#{ctype.filename.join}", 
           student_file )
         update_student_diploma( student_file, student )
       end
       counter += 1
     }
-    if pdfs
-      make_pdfs( Dir.glob( diploma_dir + "/content.xml*" ), Dir.glob( diploma_dir + "/*odt" ) )
-    end
-  end
-	
-  def prepare_labels( pngs = true )
-    qr = RQRCode::QRCode.new( 'http://labels.profeda.org/cce/65536', :size => 5 )
-    png = qr.to_img
-    png.resize(900, 900).save("really_cool_qr_image.png")
-    digits = students.size.to_s.size
-    counter = 1
-    dputs( 2 ){ "Diploma_dir is: #{diploma_dir}" }
-    if not File::directory? diploma_dir
-      FileUtils::mkdir( diploma_dir )
-    else
-      FileUtils::rm( Dir.glob( diploma_dir + "/*" ) )
-    end
-    dputs( 2 ){ students.inspect }
-    students.each{ |s|
-      student = Persons.find_by_login_name( s )
-      if student
-        dputs( 2 ){ student.login_name }
-        student_file = "#{diploma_dir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
-        dputs( 2 ){ "Doing #{counter}: #{student.login_name}" }
-        FileUtils::cp( "#{Courses.diploma_dir}/#{ctype.filename.join}", 
-          student_file )
-        update_student_diploma( student_file, student )
-      end
-      counter += 1
-    }
-    if pngs
-      make_pdfs( Dir.glob( diploma_dir + "/content.xml*" ), Dir.glob( diploma_dir + "/*odt" ) )
+    if convert
+      make_pdfs( Dir.glob( diploma_dir + "/content.xml*" ), 
+        Dir.glob( diploma_dir + "/*odt" ), ctype.output[0] )
     end
   end
   
@@ -566,5 +582,15 @@ base_gestion
       }
     end
     File.unlink file
+  end
+  
+  def exam_files( student )
+    student_name = student.class == Person ? student.login_name : student
+    ddputs(4){"Student-name is #{student_name.inspect}"}
+    dir_exas = @proxy.exa_dir + "/#{name}"
+    center = ctype.central_name
+    dir_student = "#{dir_exas}/#{center}-#{student_name}"
+    File.exists?( dir_student ) ?
+      Dir.entries( dir_student ).select{|f| ! ( f =~ /^\./ ) } : []
   end
 end

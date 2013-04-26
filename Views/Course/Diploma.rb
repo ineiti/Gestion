@@ -38,7 +38,7 @@ class CourseDiploma < View
     when "courses"
       if args['courses'].length > 0
         course = Entities.Courses.find_by_course_id( args['courses'].to_a[0] )
-        course and ret += reply( 'update', :diplomas => course.get_pdfs )
+        course and ret += reply( 'update', :diplomas => course.get_files )
       end
     end
     return ret
@@ -65,7 +65,7 @@ class CourseDiploma < View
     course_id = args['courses'][0]
     ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
     course = Entities.Courses.find_by_course_id( course_id )
-    if course.get_pdfs.index( "000-4pp.pdf" )
+    if course.get_files.index{|f| f =~ /(000-4pp.pdf|zip)$/ }
       ret += reply( :auto_update, 0 )
     end
     return ret + reply_print( session )

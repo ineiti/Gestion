@@ -3,8 +3,10 @@ class Grades < Entities
   def setup_data
     value_int :course_id
     value_int :person_id
+    value_int :random
     
     value_block :info
+    value_list_int :means
     value_int :mean
     value_str :remark
   end
@@ -37,6 +39,9 @@ class Grades < Entities
         d[:grade_id] = id[0].grade_id
       end
     end
+    ddputs(4){"data is #{d.inspect}"}
+    d[:mean] = d[:means].reduce(:+) / d[:means].count
+    ddputs(4){"data is #{d.inspect}"}
     super( d )
   end
   
@@ -48,8 +53,14 @@ class Grades < Entities
     when /TB/ then 17
     when /E/ then 19
     else
-    9
+      9
     end
+  end
+  
+  def migration_1(g)
+    course = Courses.find_by_course_id( g.course_id )
+    g.means = [ g.mean || 0 ] * course.ctype.tests.to_i
+    dputs(4){"means is #{g.means.inspect} - tests are #{course.ctype.tests.inspect}"}
   end
 end
 
@@ -80,5 +91,14 @@ class Grade < Entity
 
   def set_course_student( c, s )
     @course, @student = c, s
+  end
+  
+  def get_url_label
+    course = Entities.Courses.find_by_course_id( course_id )
+    while not self.random
+      r = rand( 1_000_000_000 ).to_s.rjust( 9, "0" )
+      Grades.find_by_random( r ) or self.random = r
+    end
+    "http://#{course.ctype.central_host}/#{course.ctype.central_name}/#{random}"
   end
 end

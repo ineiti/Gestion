@@ -28,7 +28,7 @@ class TC_Course < Test::Unit::TestCase
     @base.students = %w( admin2 surf )
     @maint_t = Entities.CourseTypes.create( :name => "maint", :duration => 72,
       :desciption => "maintenance", :contents => "lots of work",
-      :filename => ['base_gestion.odt'])
+      :filename => ['base_gestion.odt'], :output => "certificate" )
     @maint_2 = Courses.create( :name => "maint_1210", :start => "1.10.2012",
       :end => "1.1.2013", :sign => "2.1.2012", :teacher => @secretaire,
       :contents => "lots of work", :description => "maintenance",
@@ -288,5 +288,52 @@ class TC_Course < Test::Unit::TestCase
       assert File.exists? dir
       assert File.exists? "#{dir}/first.doc"
     }
+    dir = "Exas/#{@maint_2.name}/#{center}-secretaire"
+    assert ! File.exists?( dir )
+    assert ! File.exists?( "#{dir}/first.doc" )
+    
+    assert ["first.doc"], @maint_2.exam_files( "admin" )
+    assert [], @maint_2.exam_files( "secretaire" )
+  end
+  
+  def test_label
+    @maint_t.output = ["label"]
+    @maint_t.files_collect = "no"
+    @maint_2.students.push 'josue'
+    @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
+        :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
+    @maint_2.prepare_diplomas
+    
+    while ( files = Dir.glob( "#{@maint_2.diploma_dir}/*" ) ).count < 3 do
+      dputs(0){"Waiting for diplomas - #{files.inspect}"}
+      sleep 1
+    end
+  end
+  
+  def test_get_url_label
+    @grade0 = Grades.create({:person_id => @secretaire.person_id,
+        :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
+
+    assert ! @grade0.random
+    assert @grade0.get_url_label =~ /^http:\/\//
+    dputs(0){"URL-label is #{@grade0.get_url_label}"}
+    assert @grade0.random
+  end
+  
+  def test_print_label
+    @grade0 = Grades.create({:person_id => @secretaire.person_id,
+        :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
+    @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
+        :central_host => "label.profeda.org", :filename => ["label.odg"],
+        :files_collect => ["no"]})
+    dputs(0){@maint_t.inspect}
+    @maint_2.ctype = @maint_t
+    @maint_2.students.push 'josue'
+    @maint_2.prepare_diplomas
+
+    while ( files = Dir.glob( "#{@maint_2.diploma_dir}/*" ) ).count < 3 do
+      dputs(0){"Waiting for diplomas - #{files.inspect}"}
+      sleep 1
+    end
   end
 end
