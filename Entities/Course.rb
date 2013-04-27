@@ -85,7 +85,9 @@ class Courses < Entities
         ret = ret.select{|d|
           ddputs(4){"teacher is #{d.teacher.inspect}, user is #{user.inspect}"}
           ( d.teacher and d.teacher.login_name == user.login_name ) or
-            ( d.responsible and d.responsible.login_name == user.login_name )
+            ( d.responsible and d.responsible.login_name == user.login_name ) or
+            ( ( d.name =~ /^#{session.owner.login_name}_/) and 
+              session.owner.permissions.index("center") )
         }
       end
     end

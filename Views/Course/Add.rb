@@ -26,10 +26,11 @@ class CourseAdd < View
     dputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
 
     ctype = data['ctype']
-    if center = session.owner.permissions.index( "center" )
-      data['name_date'] = "#{session.owner.login_name}-#{data['name_date']}"
+    name = if center = session.owner.permissions.index( "center" )
+      "#{session.owner.login_name}_#{ctype.name}_#{data['name_date']}"
+    else
+      name = "#{ctype.name}_#{data['name_date']}"
     end
-    name = "#{ctype.name}_#{data['name_date']}"
     if not ( course = Courses.find_by_name( name ) )
       course = Courses.create_ctype( data['name_date'], ctype )
       if center

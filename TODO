@@ -1,6 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Wrong new coursename in CourseAdd
+        - for user.center also show courses that start with "#{center}_"
         - CourseModify::add_bulk: Don't add username to users in a local course,
           only when connected "remote" for "label"s
         - missing fields won't work in Entity::to_hash( true )
