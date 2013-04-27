@@ -109,15 +109,15 @@ class Grade < Entity
     if course.ctype.central_host.to_s.length > 0 and
         course.ctype.central_name.to_s.length > 0
       ret = "#{course.ctype.central_host}/#{course.ctype.central_name}/#{random}"
-      if course.ctype.central_host !=~ /^http:\/\//
+      if ! ( ret =~ /^http:\/\// )
         ret = "http://#{ret}"
       end
       ret
     elsif owner
-      "http://#{get_config( %x[ hostname -f ], :Courses, :Hostname)}/" +
+      "http://#{get_config( %x[ hostname -f ].chomp, :Courses, :Hostname)}/" +
        "#{owner.login_name}/#{random}"
     else
-      "http://#{get_config( %x[ hostname -f ], :Courses, :Hostname)}/" +
+      "http://#{get_config( %x[ hostname -f ].chomp, :Courses, :Hostname)}/" +
        "pit/#{random}"
     end
   end
