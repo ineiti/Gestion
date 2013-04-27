@@ -7,6 +7,7 @@ BUGS:
         - adding twice the same course-name fails
         - if course is created with an existing name, crash in
           ./Views/Course/Add.rb:36
+        - Deleting an user doesn't take away it's grades
         - empty installation: CourseModify complains about no CourseTypes, even
           when one was added -> problem in html-display
         - When CourseAdd is first tab and course is added, LTab.js:174 can't

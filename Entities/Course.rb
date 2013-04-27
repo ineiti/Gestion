@@ -709,7 +709,10 @@ base_gestion
 
     if ( grades = Grades.search_by_course_id( course_id ) ).length > 0
       @sync_state = sync_s += "done</li><li>Transferring grades: "
-      sync_transfer( :grades, grades.collect{|g| 
+      sync_transfer( :grades, grades.select{|g|
+          g.course and g.person
+        }.collect{|g| 
+          ddputs(4){"Found grade with #{g.course.inspect} and #{g.person.inspect}"}
           g.to_hash( true ).merge( :course => g.course.name, 
             :person => g.person.login_name )
         }.to_json, slow )

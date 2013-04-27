@@ -139,10 +139,10 @@ class Persons < Entities
       d[:login_name] = create_login_name( d[:first_name], d[:family_name] )
     end
 
-    d[:login_name] = find_empty_login_name( d[:login_name] )
     if d.has_key? :login_name_prefix
       d[:login_name] = d[:login_name_prefix] + d[:login_name]
     end
+    d[:login_name] = find_empty_login_name( d[:login_name] )
     d[:person_id] = nil
     dputs( 1 ){ "Creating #{d.inspect}" }
 
