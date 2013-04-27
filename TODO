@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - ne pas afficher dans label quand "pas passé"
         - when creating labels the URL doesn't show up...
         - Wrong new coursename in CourseAdd
         - for user.center also show courses that start with "#{center}_"
