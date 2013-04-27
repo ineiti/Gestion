@@ -208,8 +208,6 @@ class Courses < Entities
       c[p.to_sym] = person
     }
   end
-
-
 end
 
 
@@ -248,8 +246,8 @@ class Course < Entity
     ret
   end
 
-  def to_hash
-    ret = super.clone
+  def to_hash( unique_ids = false )
+    ret = super( unique_ids ).clone
     ret.delete :students
     ret.merge :students => list_students
   end
@@ -553,7 +551,7 @@ base_gestion
   # files over.
   # The name of the zip-file is different from the directory-name, so that the
   # upload is less error-prone.
-  def zip_create
+  def zip_create( add_existing = false )
     dir = "exa-#{name}"
     file = "#{name}.zip"
     tmp_file = "/tmp/#{file}"
@@ -565,6 +563,15 @@ base_gestion
         students.each{|s|
           p = "#{dir}/#{s}"
           z.mkdir( p )
+          if add_existing
+            ddputs(3){"Searching in #{dir_exas}/#{s}"}
+            Dir.glob( "#{dir_exas}/#{s}/*" ).each{|exa_f|
+              ddputs(3){"Adding file #{exa_f}"}
+              z.file.open( "#{p}/#{exa_f.sub(/.*\//, '')}", "w"){|f|
+                f.write File.open(exa_f){|ef| ef.read }
+              }
+            }
+          end
         }
       }
       return file
@@ -572,18 +579,21 @@ base_gestion
     return nil
   end
   
-  def zip_read( f = nil )
-    dir_zip = "exa-#{name}"
+  def zip_read( f = nil, center = "" )
+    name.length == 0 and return
+    
+    dir_zip = "exa-#{name.sub(/^#{center}_/, '')}"
     dir_exas = @proxy.dir_exas + "/#{name}"
     file = f || "/tmp/#{dir_zip}.zip"
     
     if File.exists?( file ) and students
+      %x[ rm -rf /tmp/#{name} ]
       %x[ mv #{dir_exas} /tmp ]
       FileUtils.mkdir dir_exas
 
       ZipFile.open( file ){|z|
         students.each{|s|
-          dir_zip_student = "#{dir_zip}/#{s}"
+          dir_zip_student = "#{dir_zip}/#{s.sub(/^#{center}_/, '')}"
           dir_exas_student = "#{dir_exas}/#{s}"
           
           if ( files_student = z.dir.entries( dir_zip_student ) ).size > 0
@@ -683,22 +693,36 @@ base_gestion
     @sync_state = sync_s = "<li>Transferring course</li>"
     ddputs(3){@sync_state}
     slow and sleep 3
+
     if students.length > 0
       @sync_state = sync_s += "<li>Transferring users: "
-      sync_transfer( :students, students.collect{|s|
+      users = students + [ teacher.login_name, responsible.login_name ]
+      sync_transfer( :students, users.collect{|s|
           Persons.find_by_login_name( s ) 
         }.to_json, slow )
     end
+
+    @sync_state = sync_s += "done</li><li>Transferring course: "
+    myself = self.to_hash( true )
+    myself._students = students
+    sync_transfer( :course, myself.to_json, slow )
+
     if ( grades = Grades.search_by_course_id( course_id ) ).length > 0
       @sync_state = sync_s += "done</li><li>Transferring grades: "
-      sync_transfer( :grades, grades.to_json, slow )
+      sync_transfer( :grades, grades.collect{|g| 
+          g.to_hash( true ).merge( :course => g.course.name, 
+            :person => g.person.login_name )
+        }.to_json, slow )
     end
-    if file = zip_create
+    return
+
+    if file = zip_create( true )
       @sync_state = sync_s += "done</li><li>Transferring exams: "
       file = "/tmp/#{file}"
       ddputs(3){"Exa-file is #{file}"}
       sync_transfer( :exams, File.open(file){|f| f.read }, slow )
     end
+
     @sync_state = sync_s += "</ul>It is finished!"
     ddputs(3){@sync_state}
   end
@@ -728,5 +752,9 @@ base_gestion
         puts e.backtrace
       end
     }
+  end
+  
+  def get_unique
+    name
   end
 end

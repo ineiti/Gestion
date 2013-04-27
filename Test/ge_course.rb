@@ -367,7 +367,7 @@ class TC_Course < Test::Unit::TestCase
   def test_sync
     @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
         :central_host => "http://localhost:3302", :filename => ["label.odg"],
-        :central_pass => "1234",
+        :central_pass => "1234", :name => "it-101",
         :files_collect => ["no"]})
     students = %w( josue admin surf )
     @maint_2.students.concat students

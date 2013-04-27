@@ -67,6 +67,10 @@ end
 class Grade < Entity
   attr_reader :course, :student
   
+  def setup_instance
+    init_random
+  end
+  
   def to_s
     case data_get( :mean ).to_i
     when 10..11 then "P"
@@ -93,11 +97,15 @@ class Grade < Entity
     @course, @student = c, s
   end
   
-  def get_url_label
+  def init_random
     while not self.random
       r = rand( 1_000_000_000 ).to_s.rjust( 9, "0" )
       Grades.find_by_random( r ) or self.random = r
     end
+  end
+  
+  def get_url_label
+    init_random
     "http://#{course.ctype.central_host}/#{course.ctype.central_name}/#{random}"
   end
   

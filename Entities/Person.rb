@@ -602,4 +602,8 @@ class Person < Entity
     end
     super
   end
+  
+  def get_unique
+    login_name
+  end
 end

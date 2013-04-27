@@ -58,3 +58,10 @@ class CourseTypes < Entities
     ct.output = ["certificate"]
   end
 end
+
+
+class CourseType < Entity
+  def get_unique
+    name
+  end
+end

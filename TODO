@@ -49,6 +49,7 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - Grade needs to change course_id and person_id with real entities
         - merge two ways of free surfing: group::freesurf and
           permissions::FreeInternet
         - Lots of stuff in View/* should go into Entities/*

@@ -42,28 +42,80 @@ class Label < RPCQooxdooPath
   def self.get_student( center, grade_id )
     ddputs(3){"Printing student #{grade_id} of #{center}"}
     if grade = Grades.find_by_random( grade_id )
-      center = grade.course.responsible.full_name
+      center_short = grade.course.name.sub(/_.*/, '' )
+      ddputs(3){"Center_short is #{center_short}"}
+      center = Persons.match_by_login_name( center_short ).full_name
       ERB.new( File.open("Files/label.erb"){|f|f.read}).result(binding)
     else
       ERB.new( File.open("Files/label_notfound.erb"){|f|f.read}).result(binding)
     end
   end
-  {:field=>"start", :data=>"{\"md5\":\"693b255477353c9aec0412e48c0fc415\",
-\"tid\":\"ec6f22c26aa808d90226c30fc94f1599\",\"chunks\":7,\"field\":\"grades\",
-\"pass\":\"1234\",\"user\":\"foo\"}"}
+
   def self.field_save( tr )
     course_name = "#{tr._user}_#{tr._course}"
     ddputs(3){"Course-name is #{course_name} and field is #{tr._field}"}
     case tr._field
     when /students/
       students = JSON.parse( tr._data )
+      ddputs(3){"Students are #{students.inspect}"}
+      students.each{|s|
+        s.to_sym!
+        s._login_name = "#{tr._user}_#{s._login_name}"
+        s.delete :person_id
+        ddputs(4){"Looking for #{s._login_name}"}
+        if stud = Persons.find_by_login_name( s._login_name )
+          ddputs(3){"Updating person"}
+          stud.data_set_hash( s )
+        else
+          ddputs(3){"Creating person #{s.inspect}"}
+          Persons.create( s )
+        end
+      }
+    when /course/
+      course = JSON.parse( tr._data ).to_sym
+      ddputs(3){"Course is #{course.inspect}"}
+      course.delete :course_id
+      course._name = course_name
+      course._responsible = Persons.find_by_login_name( 
+        "#{tr._user}_#{course._responsible}" )
+      course._teacher = Persons.find_by_login_name( 
+        "#{tr._user}_#{course._teacher}" )
+      course._students = course._students.collect{|s| "#{tr._user}_#{s}"}
+      course._ctype = CourseTypes.find_by_name( course._ctype )
+      ddputs(3){"Course is now #{course.inspect}"}
+      if c = Courses.find_by_name( course._name )
+        ddputs(3){"Updating course #{course._name}"}
+        c.data_set_hash( course )
+      else
+        ddputs(3){"Creating course #{course._name}"}
+        Courses.create( course )
+      end
     when /grades/
-      grades = JSON.parse( tr._data )
+      JSON.parse( tr._data ).each{|grade|
+        grade.to_sym!
+        ddputs(3){"Grades is #{grade.inspect}"}
+        grade._course_id = 
+          Courses.find_by_name( "#{tr._user}_#{grade._course}" ).course_id
+        grade._person_id = 
+          Persons.find_by_login_name( "#{tr._user}_#{grade._person}" ).person_id
+        grade.delete :grade_id
+        if g = Grades.find_by_course_person( grade._course_id, 
+            "#{tr._user}_#{grade._person}" )
+          ddputs(3){"Updating grade #{g.inspect}"}
+          g.data_set_hash( grade )
+        else
+          g = Grades.create( grade )
+          ddputs(3){"Creating grade #{g.inspect}"}
+        end
+        ddputs(3){Grades.find_by_course_person( grade._course_id, 
+            "#{tr._user}_#{grade._person}" ).inspect }
+      }
     when /exams/
       file = "/tmp/#{tr._tid}.zip"
       File.open(file, "w"){|f| f.write tr._data }
       if course = Courses.find_by_name( course_name )
-        course.zip_read( file )
+        ddputs(3){"Updating exams"}
+        course.zip_read( file, tr._user )
       end
     end
   end
