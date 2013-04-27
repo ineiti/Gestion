@@ -114,11 +114,11 @@ class Grade < Entity
       end
       ret
     elsif owner
-      "http://#{get_config( %x[ hostname -f ].chomp, :Courses, :Hostname)}/" +
-       "#{owner.login_name}/#{random}"
+      "http://#{get_config( %x[ hostname -f ].chomp + ":3302", 
+      :Courses, :Hostname)}/label/#{owner.login_name}/#{random}"
     else
-      "http://#{get_config( %x[ hostname -f ].chomp, :Courses, :Hostname)}/" +
-       "pit/#{random}"
+      "http://#{get_config( %x[ hostname -f ].chomp + ":3302", 
+      :Courses, :Hostname)}/label/pit/#{random}"
     end
   end
   
