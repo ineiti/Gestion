@@ -9,6 +9,7 @@ require 'zip/zipfilesystem'; include Zip
 require 'docsplit'
 require 'rqrcode_png'
 require 'ftools'
+require 'net/http'
 
 
 class Courses < Entities
@@ -18,7 +19,7 @@ class Courses < Entities
   def setup_data
 
     value_block :name
-    value_entity_courseType :ctype, :drop, :name
+    value_entity_courseType_ro :ctype, :drop, :name
     value_str :name
 
     value_block :calendar
@@ -214,6 +215,8 @@ end
 
 
 class Course < Entity
+  attr_reader :sync_state
+  
   def setup_instance
     if not self.students.class == Array
       self.students = []
@@ -454,7 +457,7 @@ base_gestion
       ddputs(4){"No files here, quitting"}
       return
     end
-		
+
     if @thread
       dputs( 2 ){ "Thread is here, killing" }
       begin
@@ -550,7 +553,7 @@ base_gestion
   # files over.
   # The name of the zip-file is different from the directory-name, so that the
   # upload is less error-prone.
-  def zip_create( session = nil )
+  def zip_create
     dir = "exa-#{name}"
     file = "#{name}.zip"
     tmp_file = "/tmp/#{file}"
@@ -569,10 +572,10 @@ base_gestion
     return nil
   end
   
-  def zip_read( session = nil )
+  def zip_read( f = nil )
     dir_zip = "exa-#{name}"
     dir_exas = @proxy.dir_exas + "/#{name}"
-    file = "/tmp/#{dir_zip}.zip"
+    file = f || "/tmp/#{dir_zip}.zip"
     
     if File.exists?( file ) and students
       %x[ mv #{dir_exas} /tmp ]
@@ -638,5 +641,92 @@ base_gestion
       }
     end
     %x[ rm -rf #{dir_exas_share} ]
+  end
+  
+  def sync_send_post( field, data )
+    path = URI.parse( "#{ctype.central_host}/label" )
+    post = { :field => field, :data => data }
+    dputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
+    Net::HTTP.post_form( path, post )
+  end
+  
+  def sync_transfer( field, transfer, slow = true )
+    ss = @sync_state
+    block_size = 100
+    transfer_md5 = Digest::MD5.hexdigest( transfer )
+    t_array = []
+    while t_array.length * block_size < transfer.length
+      start = (block_size * t_array.length)
+      t_array.push transfer[start..(start+block_size -1)]
+    end
+    if t_array.length > 0
+      pos = 0
+      ddputs(4){"Going to transfer: #{t_array.inspect}"}
+      tid = Digest::MD5.hexdigest( rand.to_s )
+      sync_send_post( :start, { :field => field, :chunks => t_array.length,
+          :md5 => transfer_md5, :tid => tid,
+          :user => ctype.central_name, :pass => ctype.central_pass,
+          :course => name }.to_json )
+      t_array.each{|t|
+        @sync_state = "#{ss} #{pos}/#{t_array.length}"
+        ddputs(3){@sync_state}
+        sync_send_post( tid, t )
+        slow and sleep 3
+        pos += 1
+      }
+    else
+      ddputs(2){"Nothing to transfer"}
+    end
+  end
+  
+  def sync_do( slow = true )
+    @sync_state = sync_s = "<li>Transferring course</li>"
+    ddputs(3){@sync_state}
+    slow and sleep 3
+    if students.length > 0
+      @sync_state = sync_s += "<li>Transferring users: "
+      sync_transfer( :students, students.collect{|s|
+          Persons.find_by_login_name( s ) 
+        }.to_json, slow )
+    end
+    if ( grades = Grades.search_by_course_id( course_id ) ).length > 0
+      @sync_state = sync_s += "done</li><li>Transferring grades: "
+      sync_transfer( :grades, grades.to_json, slow )
+    end
+    if file = zip_create
+      @sync_state = sync_s += "done</li><li>Transferring exams: "
+      file = "/tmp/#{file}"
+      ddputs(3){"Exa-file is #{file}"}
+      sync_transfer( :exams, File.open(file){|f| f.read }, slow )
+    end
+    @sync_state = sync_s += "</ul>It is finished!"
+    ddputs(3){@sync_state}
+  end
+  
+  def sync_start
+    if @thread
+      dputs( 2 ){ "Thread is here, killing" }
+      begin
+        @thread.kill
+        @thread.join
+      rescue Exception => e  
+        dputs( 0 ){ "Error while killing: #{e.message}" }
+        dputs( 0 ){ "#{e.inspect}" }
+        dputs( 0 ){ "#{e.to_s}" }
+        puts e.backtrace
+      end
+    end
+    dputs( 2 ){ "Starting new thread" }
+    @sync_state = "Starting"
+    @thread = Thread.new{
+      begin
+        sync_do
+      rescue Exception => e  
+        dputs( 0 ){ "Error in thread: #{e.message}" }
+        dputs( 0 ){ "#{e.inspect}" }
+        dputs( 0 ){ "#{e.to_s}" }
+        puts e.backtrace
+      end
+    }
   end
 end

@@ -363,4 +363,24 @@ class TC_Course < Test::Unit::TestCase
       assert File.exists?( "#{student_dir}/exa.doc" )
     }
   end
+  
+  def test_sync
+    @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
+        :central_host => "http://localhost:3302", :filename => ["label.odg"],
+        :central_pass => "1234",
+        :files_collect => ["no"]})
+    students = %w( josue admin surf )
+    @maint_2.students.concat students
+    @grade0 = Grades.create({:person_id => @secretaire.person_id,
+        :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
+    
+    @maint_2.exas_prepare_files
+    @maint_2.exas_fetch_files
+    students[0..1].each{|s|
+      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      FileUtils.touch( "#{student_dir}/exa.doc" )
+    }
+    
+    @maint_2.sync_do( false )
+  end
 end

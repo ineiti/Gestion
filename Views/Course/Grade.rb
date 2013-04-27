@@ -18,7 +18,8 @@ class CourseGrade < View
       gui_hbox :nogroup do
         gui_vbox :nogroup do
           show_list_single :students, :width => 300, :callback => true
-          show_button :prepare_files, :fetch_files, :transfer_files
+          show_str_ro :last_synched
+          show_button :prepare_files, :fetch_files, :transfer_files, :sync_files
         end
         gui_vbox :nogroup do
           show_int :mean1
@@ -38,13 +39,19 @@ class CourseGrade < View
         show_upload :files
         show_button :close
       end
+      
+      gui_window :sync do
+        show_html :synching
+        show_button :close
+      end
     end
   end
 
   def rpc_update( session )
     super( session ) +
       reply( "empty" ) +
-      [ :prepare_files, :fetch_files, :transfer_files ].collect{|b|
+      [ :prepare_files, :fetch_files, :transfer_files, 
+      :last_synched, :sync_files ].collect{|b|
       reply( :hide, b )
     }.flatten
   end
@@ -113,6 +120,10 @@ class CourseGrade < View
           course.ctype.files_collect[0].to_sym, [0,0,0] ).each{|show|
           ret += reply( show == 1 ? :unhide : :hide, buttons.shift )
         }
+        if course.ctype.files_collect[0].to_sym != :no and
+            course.ctype.central_host.to_s.length > 0
+          ret += reply( :unhide, :sync_files )
+        end
         
         ddputs(4){"Course is #{course} - ret is #{ret.inspect}"}
       end
@@ -157,7 +168,7 @@ class CourseGrade < View
     ret = reply( :update, :txt => "no students" ) +
       reply( :hide, :upload )
     if course = Courses.find_by_course_id( data['courses'][0])
-      if file = course.zip_create( session )
+      if file = course.zip_create
         @files.data_str.push file
         ret = reply( :update, :txt => "Download skeleton: " +
             "<a href='/tmp/#{file}'>#{file}</a>" ) +
@@ -184,9 +195,34 @@ class CourseGrade < View
   
   def rpc_button_close( session, data )
     if course = Courses.find_by_course_id( data['courses'][0])
-      course.zip_read( session )
+      course.zip_read
       reply( :window_hide ) +
-        update_grade( data )
+        update_grade( data ) +
+        reply( :auto_update, 0 )
+    end
+  end
+
+  def rpc_update_with_values( session, data )
+    ret = []
+    if course = Courses.find_by_course_id( data['courses'][0])
+      ret = reply( :update, :synching => "Sync-state:<ul>" + course.sync_state )
+      if course.sync_state =~ /finished/
+        ret += reply( :auto_update, 0 )
+      end
+    end
+    ret
+  end
+
+  def rpc_button_sync_files( session, data )
+    if course = Courses.find_by_course_id( data['courses'][0])
+      course.sync_start
+
+      reply( :window_show, :sync ) +
+        reply( :auto_update, -2 ) +
+        rpc_update_with_values( session, data )
+    else
+      reply( :window_show, :sync ) +
+        reply( :update, :synching => "Please chose a course first")
     end
   end
 end

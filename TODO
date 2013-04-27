@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - auto_update from a window enables also the background (CourseGrade::sync)
         - When CourseAdd is first tab and course is added, LTab.js:174 can't
           find getActiveForm, as it is not drawn yet...
         - if only Course-tabs are visible, the basic tab is not shown, so no

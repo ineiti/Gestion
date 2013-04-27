@@ -24,6 +24,7 @@ begin
   require 'QooxView'
   require 'Internet'
   require 'Info'
+  require 'Label'
   require 'ACQooxView'
 rescue Exception => e
   dputs( 0 ){ "#{e.inspect}" }

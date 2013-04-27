@@ -94,11 +94,18 @@ class Grade < Entity
   end
   
   def get_url_label
-    course = Entities.Courses.find_by_course_id( course_id )
     while not self.random
       r = rand( 1_000_000_000 ).to_s.rjust( 9, "0" )
       Grades.find_by_random( r ) or self.random = r
     end
     "http://#{course.ctype.central_host}/#{course.ctype.central_name}/#{random}"
+  end
+  
+  def course
+    Courses.find_by_course_id( course_id )
+  end
+  
+  def person
+    Persons.find_by_person_id( person_id )
   end
 end
