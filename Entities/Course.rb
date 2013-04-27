@@ -660,7 +660,7 @@ base_gestion
     Net::HTTP.post_form( path, post )
   end
   
-  def sync_transfer( field, transfer, slow = true )
+  def sync_transfer( field, transfer, slow = false )
     ss = @sync_state
     block_size = 100
     transfer_md5 = Digest::MD5.hexdigest( transfer )
@@ -678,7 +678,7 @@ base_gestion
           :user => ctype.central_name, :pass => ctype.central_pass,
           :course => name }.to_json )
       t_array.each{|t|
-        @sync_state = "#{ss} #{pos}/#{t_array.length}"
+        @sync_state = "#{ss} #{pos+1}/#{t_array.length}"
         ddputs(3){@sync_state}
         sync_send_post( tid, t )
         slow and sleep 3
@@ -689,7 +689,7 @@ base_gestion
     end
   end
   
-  def sync_do( slow = true )
+  def sync_do( slow = false )
     @sync_state = sync_s = "<li>Transferring course</li>"
     ddputs(3){@sync_state}
     slow and sleep 3
@@ -714,7 +714,6 @@ base_gestion
             :person => g.person.login_name )
         }.to_json, slow )
     end
-    return
 
     if file = zip_create( true )
       @sync_state = sync_s += "done</li><li>Transferring exams: "

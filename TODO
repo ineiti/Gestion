@@ -1,17 +1,17 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - auto_update from a window enables also the background (CourseGrade::sync)
-        - When CourseAdd is first tab and course is added, LTab.js:174 can't
-          find getActiveForm, as it is not drawn yet...
-        - if only Course-tabs are visible, the basic tab is not shown, so no
-         tabs can be added
+        - CourseModify::add_bulk: Don't add username to users in a local course,
+          only when connected "remote" for "label"s
+        - missing fields won't work in Entity::to_hash( true )
         - adding twice the same course-name fails
-        - empty installation: CourseModify complains about no CourseTypes, even
-          when one was added -> problem in html-display
-        - why is Entity::get_value always called three times?
         - if course is created with an existing name, crash in
           ./Views/Course/Add.rb:36
+        - empty installation: CourseModify complains about no CourseTypes, even
+          when one was added -> problem in html-display
+        - When CourseAdd is first tab and course is added, LTab.js:174 can't
+          find getActiveForm, as it is not drawn yet...
+        - why is Entity::get_value always called three times?
         - Test if Admin::Backup::restore resets passwords as it should
 	- 10 crashes when not operating "properly"
 
@@ -27,6 +27,9 @@ HEISENBUGS:
 Security:
 
 UI:
+        - auto_update from a window enables also the background (CourseGrade::sync)
+        - if only Course-tabs are visible, the basic tab is not shown, so no
+         tabs can be added
         - Administration::Backup is not nicely bordered
         - extend lists on all the height
         - clean up the interface, mostly the tabs and sub-tabs
