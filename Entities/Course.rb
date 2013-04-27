@@ -114,7 +114,7 @@ class Courses < Entities
   end
   
   def self.create_ctype( name, ctype )
-    self.create( :name => "#{ctype.name}_#{name}" ).
+    self.create( :name => name ).
       data_set_hash( ctype.to_hash.except(:name), true ).
       data_set( :ctype, ctype )
   end

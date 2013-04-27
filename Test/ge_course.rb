@@ -152,6 +152,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal [[3, "maint_1204"]], courses
   end
   
+  # Needs to be updated as create_ctype only makes "name"
   def test_new_course
     nmaint = Courses.create_ctype("1201", @maint_t)
     assert_equal( {:duration=>72, :course_id=>5, :contents=>"lots of work", 

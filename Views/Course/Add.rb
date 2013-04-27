@@ -32,7 +32,7 @@ class CourseAdd < View
       name = "#{ctype.name}_#{data['name_date']}"
     end
     if not ( course = Courses.find_by_name( name ) )
-      course = Courses.create_ctype( data['name_date'], ctype )
+      course = Courses.create_ctype( name, ctype )
       if center
         course.responsible = session.owner
       end
