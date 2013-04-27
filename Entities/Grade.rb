@@ -104,9 +104,15 @@ class Grade < Entity
     end
   end
   
-  def get_url_label
+  def get_url_label( owner )
     init_random
-    "http://#{course.ctype.central_host}/#{course.ctype.central_name}/#{random}"
+    if course.ctype.central_host.length > 0 and
+        course.ctype.central_name.length > 0
+      "http://#{course.ctype.central_host}/#{course.ctype.central_name}/#{random}"
+    else
+      "http://#{get_config( %x[ hostname -f ], :Courses, :Hostname)}/" +
+       "#{owner.login_name}/#{random}"
+    end
   end
   
   def course

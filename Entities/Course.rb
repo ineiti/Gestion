@@ -396,7 +396,7 @@ base_gestion
   end
 	
 	
-  def update_student_diploma( file, student )
+  def update_student_diploma( file, student, owner = nil )
     grade = Grades.find_by_course_person( course_id, student.login_name )
     dputs(0){"Course is #{name} - ctype is #{ctype.inspect}"}
     if grade and grade.to_s != "NP" and 
@@ -439,7 +439,7 @@ base_gestion
         doc.gsub!( /-MENTION-/, grade.mention )
         doc.gsub!( /-DATE-/, date_fr( sign ) )
         doc.gsub!( /-COURS_TYPE-/, ctype.name )
-        doc.gsub!( /-URL_LABEL-/, grade.get_url_label )
+        doc.gsub!( /-URL_LABEL-/, grade.get_url_label, owner )
         z.file.open("content.xml", "w"){ |f|
           f.write( doc )
         }
@@ -521,7 +521,7 @@ base_gestion
     }
   end
 
-  def prepare_diplomas( convert = true )
+  def prepare_diplomas( convert = true, owner = nil )
     digits = students.size.to_s.size
     counter = 1
     dputs( 2 ){ "dir_diplomas is: #{dir_diplomas}" }
@@ -539,7 +539,7 @@ base_gestion
         dputs( 2 ){ "Doing #{counter}: #{student.login_name} - file: #{student_file}" }
         FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}", 
           student_file )
-        update_student_diploma( student_file, student )
+        update_student_diploma( student_file, student, owner )
       end
       counter += 1
     }

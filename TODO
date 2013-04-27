@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - when creating labels the URL doesn't show up...
         - Wrong new coursename in CourseAdd
         - for user.center also show courses that start with "#{center}_"
         - CourseModify::add_bulk: Don't add username to users in a local course,
