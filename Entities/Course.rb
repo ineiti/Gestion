@@ -409,7 +409,7 @@ base_gestion
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match( doc )
           dputs( 2 ){"QRcode-image is #{qrcode[1]}"}
-          qr = RQRCode::QRCode.new( grade.get_url_label )
+          qr = RQRCode::QRCode.new( grade.get_url_label( owner ) )
           png = qr.to_img
           png.resize(900, 900)
           z.file.open(qrcode[1], "w"){ |f|
@@ -439,7 +439,7 @@ base_gestion
         doc.gsub!( /-MENTION-/, grade.mention )
         doc.gsub!( /-DATE-/, date_fr( sign ) )
         doc.gsub!( /-COURS_TYPE-/, ctype.name )
-        doc.gsub!( /-URL_LABEL-/, grade.get_url_label, owner )
+        doc.gsub!( /-URL_LABEL-/, grade.get_url_label( owner ) )
         z.file.open("content.xml", "w"){ |f|
           f.write( doc )
         }
