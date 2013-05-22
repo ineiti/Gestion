@@ -48,11 +48,7 @@ FEATURES:
           - input multiple notes
           - store files for exams
           - send everything to profeda.org with the notes
-          - get names and appreciations back
           - for remote-only labels, add possibility for creating teachers
-        - Define roles of installation
-          - AdminFunction for chosing what to do
-          - Show tabs according to function
         - receive SMS through LibNet and do actions
           - make connection
           - return stats
@@ -62,7 +58,8 @@ FEATURES:
 
 Programming:
         - Why is a value_list-definition in Entities not able to give a default-
-          value for the list?
+          value for the list? -> it is, but only if it is taken as a show_block
+          in a View
         - Why is a false return-value in Entities::setup_data used for not
           auto-loading data? Change this to a @auto_load variable which is "true"
           by default... But first check who is really returning a false value anyway
@@ -177,6 +174,9 @@ To check:
 
 
 ** FIXED **:
+        - P 130522: Define roles of installation
+          - AdminFunction for chosing what to do
+          - Show tabs according to function
         - B 130422: Course::Modify crashes for a new course when there is no teacher
         - B 130422: Course::Modify doesn't show courses for teachers
         - B 130411: sort permissions in Persons::Admin
