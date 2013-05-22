@@ -3,6 +3,7 @@ class SelfServices < View
     set_data_class :Persons
     @update = true
     @order = 30
+    @functions_need = [:accounting]
     
     gui_hbox do
       gui_vbox do

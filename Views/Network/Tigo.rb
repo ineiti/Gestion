@@ -5,6 +5,7 @@ class NetworkTigo < View
     @auto_update_send_values = false
     @order = 20
     @tigo_number = Entities.Statics.get( :AdminTigo )
+    @functions_need = [:internet]
 
     gui_vbox do
       gui_hbox :nogroup do

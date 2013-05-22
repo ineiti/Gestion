@@ -3,6 +3,8 @@ class NetworkAccess < View
   
   def layout
     @order = 90
+    @functions_need = [:internet]
+
     set_data_class :AccessGroups
 
     gui_hbox do

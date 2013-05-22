@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - config:Samba:enable is stupid - it works nearly, even when it's off
+        - config.yaml.default is really not in a good shape - all different options
+         should be in there
         - ne pas afficher dans label quand "pas passé"
         - when creating labels the URL doesn't show up...
         - Wrong new coursename in CourseAdd
@@ -32,7 +35,6 @@ HEISENBUGS:
 Security:
 
 UI:
-        - for remote-only labels, add possibility for creating teachers
         - auto_update from a window enables also the background (CourseGrade::sync)
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
@@ -42,14 +44,15 @@ UI:
         - write a good documentation...
 
 FEATURES:
-        - Add a Profeda-type of course
-          - added a new tab for this type of course
-          - migrated the coursetype over for profeda_code
-          - contact profeda.org over the network
-          - fetch the course-description on profeda.org
+        - Have the possibility of storing course-data centrally
           - input multiple notes
+          - store files for exams
           - send everything to profeda.org with the notes
           - get names and appreciations back
+          - for remote-only labels, add possibility for creating teachers
+        - Define roles of installation
+          - AdminFunction for chosing what to do
+          - Show tabs according to function
         - receive SMS through LibNet and do actions
           - make connection
           - return stats
@@ -58,6 +61,11 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - Why is a value_list-definition in Entities not able to give a default-
+          value for the list?
+        - Why is a false return-value in Entities::setup_data used for not
+          auto-loading data? Change this to a @auto_load variable which is "true"
+          by default... But first check who is really returning a false value anyway
         - Grade needs to change course_id and person_id with real entities
         - merge two ways of free surfing: group::freesurf and
           permissions::FreeInternet

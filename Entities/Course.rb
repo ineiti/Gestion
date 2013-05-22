@@ -41,9 +41,11 @@ class Courses < Entities
     value_entity_person_empty :assistant, :drop, :full_name,
       lambda{|p| p.permissions.index("teacher")}
     value_entity_person :responsible, :drop, :full_name,
-      lambda{|p| p.permissions.index("teacher") or
-        p.permissions.index("center")
-    }
+      lambda{|p| p.permissions.index("teacher")}
+    
+    value_block :center
+    value_entity_person :center, :drop, :full_name,
+      lambda{|p| p.permissions.index("center")}
 
     value_block :content
     value_str :description

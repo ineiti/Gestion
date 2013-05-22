@@ -44,7 +44,10 @@ class Label < RPCQooxdooPath
     if grade = Grades.find_by_random( grade_id )
       center_short = grade.course.name.sub(/_.*/, '' )
       ddputs(3){"Center_short is #{center_short}"}
-      center = Persons.match_by_login_name( center_short ).full_name
+      center = center_short
+      if center_person = Persons.match_by_login_name( center_short )
+        center = center_person.full_name
+      end
       ERB.new( File.open("Files/label.erb"){|f|f.read}).result(binding)
     else
       ERB.new( File.open("Files/label_notfound.erb"){|f|f.read}).result(binding)

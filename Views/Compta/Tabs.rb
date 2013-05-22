@@ -3,6 +3,7 @@
 
 class ComptaTabs < View
   def layout
-		@order = 90
+    @order = 90
+    @functions_need = [:accounting]
   end
 end

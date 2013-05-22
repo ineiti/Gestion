@@ -5,6 +5,7 @@ class NetworkBlock < View
       return
     end
 
+    @functions_need = [:internet]
     @order = 100
     @blocking = Entities.Statics.get( :NetworkBlock )
     update_block( @blocking.data_str )

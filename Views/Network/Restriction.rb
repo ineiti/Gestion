@@ -1,6 +1,7 @@
 class NetworkRestriction < View
   def layout
     @update = true
+    @functions_need = [:internet]
 
     gui_vbox do
       show_html :state

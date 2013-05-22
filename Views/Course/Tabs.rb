@@ -2,6 +2,7 @@ class CourseTabs < View
   def layout
     @order = 20
     @update = true
+    @functions_need = [:courses]
 
     gui_window :error do
       show_html "<h1>You're not allowed to do that</h1>"

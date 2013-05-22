@@ -8,6 +8,7 @@ class NetworkShare < View
     
     @order = 50
     @update = true
+    @functions_need = [:share]
 
     @samba = Entities.Statics.get( :NetworkSamba )
     if @samba.data_str.class != Hash

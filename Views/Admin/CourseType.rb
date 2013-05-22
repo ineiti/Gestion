@@ -7,6 +7,8 @@ class AdminCourseType < View
   def layout
     set_data_class :CourseTypes
     
+    @functions_need = [:courses]
+    
     gui_hbox do
       gui_vbox :nogroup do
         vtlp_list :ctype, 'name'

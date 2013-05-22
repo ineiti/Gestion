@@ -1,6 +1,7 @@
 class NetworkConnection < View
   def layout
     @update = true
+    @functions_need = [:internet]
 
     gui_vbox do
       show_str_ro :connection

@@ -3,6 +3,7 @@ class PersonCredit < View
     set_data_class :Persons
     @order = 15
     @update = true
+    @functions_need = [:internet]
 
     gui_vbox do
       show_int :credit_add

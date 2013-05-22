@@ -4,6 +4,7 @@ class SelfCash < View
     @update = true
     @cache_payments = {}
     @order = 20
+    @functions_need = [:accounting]
 
     gui_vbox do
       gui_fields do

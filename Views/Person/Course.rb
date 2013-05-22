@@ -5,6 +5,7 @@ class PersonCourse < View
     set_data_class :Persons
     @update = true
     @order = 45
+    @functions_need = [:courses]
 
     gui_vbox do
       show_str_ro :first_name
