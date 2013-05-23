@@ -24,7 +24,14 @@ STOP=/tmp/stop_gestion
 rm $STOP
 while [ ! -f $STOP ]; do
   now=$( date +%s )
-  ./Gestion.rb 2>&1 | tee -a $LOG
+  if which unbuffer > /dev/null; then
+    PRE="unbuffer"
+  elif which stdbuf > /dev/null; then
+    PRE="stdbuf -i0 -o0 -e0"
+  else
+    PRE=""
+  fi
+  $PRE ./Gestion.rb 2>&1 | tee -a $LOG
   biglog Oups - quit Gestion after $(( quit - now )) seconds
   quit=$( date +%s )
   if [ $(( quit - now )) -lt 60 ]; then

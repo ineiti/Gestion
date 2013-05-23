@@ -384,4 +384,25 @@ class TC_Course < Test::Unit::TestCase
     
     @maint_2.sync_do( false )
   end
+    def test_responsible_error
+          Entities.delete_all_data()
+              @admin = Persons.create( :login_name => "admin", :password => "super123",
+                                          :permissions => [ "admin", "teacher" ], :first_name => "Admin", :family_name => "The" )
+                  @maint_t = CourseTypes.create( :name => "maint", :duration => 72,
+                                                    :desciption => "maintenance", :contents => "lots of work",
+                                                        :filename => ['base_gestion.odt'])
+                      @maint_2 = Courses.create( :name => "maint_1210",
+                                                    :contents => "lots of work", :description => "maintenance",
+                                                        :duration => 72, :ctype => @maint_t )
+                          @room = Rooms.create( :name => "base")
+                              View.CourseModify.rpc_button_save( nil,
+                                                                    {"responsible"=>[1], "duration"=>"20", "name"=>"maint_1210", "classroom"=>[1],
+                                                                          "dow"=>["lu-me-ve"], "courses"=>[1], "teacher"=>[1], "contents"=>"USB",
+                                                                              "description"=>"Introduction à l'informatique", "hours"=>["9-12"],
+                                                                                  "ctype"=>{:contents=>"USB", :description=>"Introduction à l'informatique", :tests=>"1",
+                                                                                        :filename=>["base_gestion.odt"], :duration=>"20", :name=>"maint", :coursetype_id=>1},
+                                                                                            "assistant"=>0, "students" => []})
+                                  assert_equal true, false
+                                    end
+
 end
