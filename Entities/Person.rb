@@ -30,6 +30,7 @@ class Persons < Entities
     value_str_LDAP :email, :ldap_name => "mail"
     value_str_LDAP :town, :ldap_name => "l"
     value_str_LDAP :country, :ldap_name => "st"
+    value_list_drop :gender, "%w( male female n/a )"
 
     value_block :admin
     value_str :account_name_due
@@ -296,6 +297,10 @@ class Persons < Entities
     if p.permissions.class != Array
       p.permissions = []
     end
+  end
+  
+  def migration_4(p)
+    p.gender = %w( n/a )
   end
 end
 

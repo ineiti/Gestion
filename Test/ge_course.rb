@@ -299,7 +299,7 @@ class TC_Course < Test::Unit::TestCase
   
   def test_label
     @maint_t.output = ["label"]
-    @maint_t.files_collect = "no"
+    @maint_t.diploma_type = "simple"
     @maint_2.students.push 'josue'
     @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
         :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
@@ -326,7 +326,7 @@ class TC_Course < Test::Unit::TestCase
         :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
     @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
         :central_host => "label.profeda.org", :filename => ["label.odg"],
-        :files_collect => ["no"]})
+        :diploma_type => ["simple"]})
     @maint_2.students.push 'josue'
     @maint_2.prepare_diplomas
 
@@ -339,7 +339,7 @@ class TC_Course < Test::Unit::TestCase
   def test_files_move
     @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
         :central_host => "label.profeda.org", :filename => ["label.odg"],
-        :files_collect => ["no"]})
+        :diploma_type => ["simple"]})
     students = %w( josue admin surf )
     @maint_2.students.concat students
     
@@ -369,7 +369,7 @@ class TC_Course < Test::Unit::TestCase
     @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
         :central_host => "http://localhost:3302", :filename => ["label.odg"],
         :central_pass => "1234", :name => "it-101",
-        :files_collect => ["no"]})
+        :diploma_type => ["simple"]})
     students = %w( josue admin surf )
     @maint_2.students.concat students
     @grade0 = Grades.create({:person_id => @secretaire.person_id,
@@ -384,25 +384,25 @@ class TC_Course < Test::Unit::TestCase
     
     @maint_2.sync_do( false )
   end
-    def test_responsible_error
-          Entities.delete_all_data()
-              @admin = Persons.create( :login_name => "admin", :password => "super123",
-                                          :permissions => [ "admin", "teacher" ], :first_name => "Admin", :family_name => "The" )
-                  @maint_t = CourseTypes.create( :name => "maint", :duration => 72,
-                                                    :desciption => "maintenance", :contents => "lots of work",
-                                                        :filename => ['base_gestion.odt'])
-                      @maint_2 = Courses.create( :name => "maint_1210",
-                                                    :contents => "lots of work", :description => "maintenance",
-                                                        :duration => 72, :ctype => @maint_t )
-                          @room = Rooms.create( :name => "base")
-                              View.CourseModify.rpc_button_save( nil,
-                                                                    {"responsible"=>[1], "duration"=>"20", "name"=>"maint_1210", "classroom"=>[1],
-                                                                          "dow"=>["lu-me-ve"], "courses"=>[1], "teacher"=>[1], "contents"=>"USB",
-                                                                              "description"=>"Introduction à l'informatique", "hours"=>["9-12"],
-                                                                                  "ctype"=>{:contents=>"USB", :description=>"Introduction à l'informatique", :tests=>"1",
-                                                                                        :filename=>["base_gestion.odt"], :duration=>"20", :name=>"maint", :coursetype_id=>1},
-                                                                                            "assistant"=>0, "students" => []})
-                                  assert_equal true, false
-                                    end
+  def test_responsible_error
+    Entities.delete_all_data()
+    @admin = Persons.create( :login_name => "admin", :password => "super123",
+      :permissions => [ "admin", "teacher" ], :first_name => "Admin", :family_name => "The" )
+    @maint_t = CourseTypes.create( :name => "maint", :duration => 72,
+      :desciption => "maintenance", :contents => "lots of work",
+      :filename => ['base_gestion.odt'])
+    @maint_2 = Courses.create( :name => "maint_1210",
+      :contents => "lots of work", :description => "maintenance",
+      :duration => 72, :ctype => @maint_t )
+    @room = Rooms.create( :name => "base")
+    View.CourseModify.rpc_button_save( nil,
+      {"responsible"=>[1], "duration"=>"20", "name"=>"maint_1210", "classroom"=>[1],
+        "dow"=>["lu-me-ve"], "courses"=>[1], "teacher"=>[1], "contents"=>"USB",
+        "description"=>"Introduction à l'informatique", "hours"=>["9-12"],
+        "ctype"=>{:contents=>"USB", :description=>"Introduction à l'informatique", :tests=>"1",
+          :filename=>["base_gestion.odt"], :duration=>"20", :name=>"maint", :coursetype_id=>1},
+        "assistant"=>0, "students" => []})
+    assert_equal true, false
+  end
 
 end

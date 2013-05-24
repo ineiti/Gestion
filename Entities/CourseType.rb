@@ -15,10 +15,10 @@ class CourseTypes < Entities
     value_text :contents
     
     value_block :central
+    value_list_drop :diploma_type, "%w( simple files accredited )"
     value_str :central_name
     value_str :central_pass
     value_str :central_host
-    value_list_drop :files_collect, "%w( no share transfer )"
     value_int :files_needed
     value_list_drop :output, "%w( certificate label )"
   end
@@ -54,8 +54,11 @@ class CourseTypes < Entities
   
   def migration_1(ct)
     ct.tests = 1
-    ct.files_collect = ["no"]
     ct.output = ["certificate"]
+  end
+
+  def migration_2(ct)
+    ct.diploma_type = ["simple"]
   end
 end
 

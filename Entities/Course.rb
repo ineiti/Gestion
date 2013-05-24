@@ -402,7 +402,7 @@ base_gestion
     grade = Grades.find_by_course_person( course_id, student.login_name )
     dputs(0){"Course is #{name} - ctype is #{ctype.inspect}"}
     if grade and grade.to_s != "NP" and 
-        ( ( ctype.files_collect[0] == "no" ) or
+        ( ( ctype.diploma_type[0] == "simple" ) or
           ( exam_files( student ).count >= ctype.files_needed.to_i ) )
       dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|

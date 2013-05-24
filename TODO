@@ -29,7 +29,7 @@ HEISENBUGS:
           things don't get updated in the correct way. Not reproducible in a
           reliable manner.
         - Confirmed: PersonAdmin sometimes doesn't show permissions and groups when
-         added new stuff
+          added new stuff
 
 [5', 15', 30', 1h, 4h]
 Security:

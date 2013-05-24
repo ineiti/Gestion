@@ -112,16 +112,18 @@ class CourseGrade < View
           s ?  reply( :unhide, "mean#{i}" ) : reply( :hide, "mean#{i}")
         }.flatten
 
-        ret += reply( course.ctype.files_collect[0] == "no" ? :hide : :unhide, 
+        ret += reply( course.ctype.diploma_type[0] == "simple" ? :hide : :unhide, 
           :files_saved)
-        
+
+        show_buttons = [0,0,0]
+        if course.ctype.diploma_type[0].to_sym != :simple
+          show_buttons = Shares.find_by_name( "CourseFiles" ) ? [1,1,1] : [0,0,1]
+        end
         buttons = [ :prepare_files, :fetch_files, :transfer_files ]
-        { :no => [0,0,0], :share => [1,1,0], :transfer => [0,0,1] }.fetch( 
-          course.ctype.files_collect[0].to_sym, [0,0,0] ).each{|show|
-          ret += reply( show == 1 ? :unhide : :hide, buttons.shift )
+        buttons.each{|b|
+          ret += reply( show_buttons.shift == 1 ? :unhide : :hide, b )
         }
-        if course.ctype.files_collect[0].to_sym != :no and
-            course.ctype.central_host.to_s.length > 0
+        if course.ctype.diploma_type[0].to_sym == :accredited
           ret += reply( :unhide, :sync_files )
         end
         
