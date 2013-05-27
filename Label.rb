@@ -13,7 +13,7 @@ class Label < RPCQooxdooPath
       if query._field == "start"
         d = JSON.parse( query._data ).to_sym
         ddputs(3){"d is #{d.inspect}"}
-        if ( user = Persons.find_by_login_name( d._user ) ) and
+        if ( user = Persons.match_by_login_name( d._user ) ) and
             ( user.check_pass( d._pass ) )
           @@transfers[d._tid] = d.merge( :data => "" )
         else
@@ -68,23 +68,25 @@ class Label < RPCQooxdooPath
         ddputs(4){"Looking for #{s._login_name}"}
         if stud = Persons.find_by_login_name( s._login_name )
           ddputs(3){"Updating person"}
-          stud.data_set_hash( s )
+          #stud.data_set_hash( s )
         else
           ddputs(3){"Creating person #{s.inspect}"}
           Persons.create( s )
         end
+        dputs(0){"****** Foo is #{Persons.match_by_login_name('foo').inspect}"}
       }
     when /course/
       course = JSON.parse( tr._data ).to_sym
       ddputs(3){"Course is #{course.inspect}"}
       course.delete :course_id
-      course._name = course_name
+      course._name = "#{tr._user}#{course_name}"
       course._responsible = Persons.find_by_login_name( 
         "#{tr._user}_#{course._responsible}" )
       course._teacher = Persons.find_by_login_name( 
         "#{tr._user}_#{course._teacher}" )
       course._students = course._students.collect{|s| "#{tr._user}_#{s}"}
       course._ctype = CourseTypes.find_by_name( course._ctype )
+      course._center = tr._user
       ddputs(3){"Course is now #{course.inspect}"}
       if c = Courses.find_by_name( course._name )
         ddputs(3){"Updating course #{course._name}"}
@@ -118,7 +120,7 @@ class Label < RPCQooxdooPath
       File.open(file, "w"){|f| f.write tr._data }
       if course = Courses.find_by_name( course_name )
         ddputs(3){"Updating exams"}
-        course.zip_read( file, tr._user )
+        course.zip_read( file )
       end
     end
   end

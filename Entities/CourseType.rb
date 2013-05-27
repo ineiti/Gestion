@@ -16,8 +16,6 @@ class CourseTypes < Entities
     
     value_block :central
     value_list_drop :diploma_type, "%w( simple files accredited )"
-    value_str :central_name
-    value_str :central_pass
     value_str :central_host
     value_int :files_needed
     value_list_drop :output, "%w( certificate label )"

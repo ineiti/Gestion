@@ -2,11 +2,12 @@
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"
-DEBUG_LVL=2
+DEBUG_LVL=3
 
 require 'QooxView'
 require 'ACQooxView'
 require 'LibNet'
+require 'Label'
 
 $lib_net = LibNet.new
 
@@ -25,7 +26,7 @@ permissions_init
 QooxView.init( '../Entities', '../Views' )
 
 tests = %w( login view tasks internet info course person )
-tests = %w( functions )
+tests = %w( course )
 tests.each{|t|
   require "ge_#{t}"
 }

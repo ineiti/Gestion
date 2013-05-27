@@ -44,7 +44,7 @@ class Courses < Entities
       lambda{|p| p.permissions.index("teacher")}
     
     value_block :center
-    value_entity_person :center, :drop, :full_name,
+    value_entity_person_empty :center, :drop, :full_name,
       lambda{|p| p.permissions.index("center")}
 
     value_block :content
@@ -85,7 +85,7 @@ class Courses < Entities
       user = session.owner
       if not session.can_view( "FlagCourseGradeAll" )
         ret = ret.select{|d|
-          ddputs(4){"teacher is #{d.teacher.inspect}, user is #{user.inspect}"}
+          dputs(4){"teacher is #{d.teacher.inspect}, user is #{user.inspect}"}
           ( d.teacher and d.teacher.login_name == user.login_name ) or
             ( d.responsible and d.responsible.login_name == user.login_name ) or
             ( ( d.name =~ /^#{session.owner.login_name}_/) and 
@@ -398,7 +398,7 @@ base_gestion
   end
 	
 	
-  def update_student_diploma( file, student, owner = nil )
+  def update_student_diploma( file, student )
     grade = Grades.find_by_course_person( course_id, student.login_name )
     dputs(0){"Course is #{name} - ctype is #{ctype.inspect}"}
     if grade and grade.to_s != "NP" and 
@@ -411,7 +411,7 @@ base_gestion
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match( doc )
           dputs( 2 ){"QRcode-image is #{qrcode[1]}"}
-          qr = RQRCode::QRCode.new( grade.get_url_label( owner ) )
+          qr = RQRCode::QRCode.new( grade.get_url_label )
           png = qr.to_img
           png.resize(900, 900)
           z.file.open(qrcode[1], "w"){ |f|
@@ -441,7 +441,7 @@ base_gestion
         doc.gsub!( /-MENTION-/, grade.mention )
         doc.gsub!( /-DATE-/, date_fr( sign ) )
         doc.gsub!( /-COURS_TYPE-/, ctype.name )
-        doc.gsub!( /-URL_LABEL-/, grade.get_url_label( owner ) )
+        doc.gsub!( /-URL_LABEL-/, grade.get_url_label )
         z.file.open("content.xml", "w"){ |f|
           f.write( doc )
         }
@@ -456,7 +456,7 @@ base_gestion
     format = format.to_sym
     FileUtils.rm( old )
     if list.size == 0
-      ddputs(4){"No files here, quitting"}
+      dputs(4){"No files here, quitting"}
       return
     end
 
@@ -503,7 +503,7 @@ base_gestion
           FileUtils.mv( "#{psn}.tmp", psn )
           dputs( 2 ){ "Finished" }
         else
-          ddputs(3){"Making a zip-file"}
+          dputs(3){"Making a zip-file"}
           Zip::ZipFile.open("#{dir}/all.zip", Zip::ZipFile::CREATE){|z|
             Dir.glob( "#{dir}/*" ).each{|image|
               z.get_output_stream(image.sub(".*/", "")) { |f| 
@@ -523,7 +523,7 @@ base_gestion
     }
   end
 
-  def prepare_diplomas( convert = true, owner = nil )
+  def prepare_diplomas( convert = true )
     digits = students.size.to_s.size
     counter = 1
     dputs( 2 ){ "dir_diplomas is: #{dir_diplomas}" }
@@ -541,7 +541,7 @@ base_gestion
         dputs( 2 ){ "Doing #{counter}: #{student.login_name} - file: #{student_file}" }
         FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}", 
           student_file )
-        update_student_diploma( student_file, student, owner )
+        update_student_diploma( student_file, student )
       end
       counter += 1
     }
@@ -555,9 +555,10 @@ base_gestion
   # files over.
   # The name of the zip-file is different from the directory-name, so that the
   # upload is less error-prone.
-  def zip_create( add_existing = false )
-    dir = "exa-#{name}"
-    file = "#{name}.zip"
+  def zip_create( for_server = false )
+    pre = for_server ? center.login_name + '_' : ''
+    dir = "exa-#{pre}#{name}"
+    file = "#{pre}#{name}.zip"
     tmp_file = "/tmp/#{file}"
       
     if students and students.size > 0
@@ -565,12 +566,12 @@ base_gestion
       Zip::ZipFile.open(tmp_file, Zip::ZipFile::CREATE){|z|
         z.mkdir dir
         students.each{|s|
-          p = "#{dir}/#{s}"
+          p = "#{dir}/#{pre}#{s}"
           z.mkdir( p )
-          if add_existing
-            ddputs(3){"Searching in #{dir_exas}/#{s}"}
+          if for_server
+            dputs(3){"Searching in #{dir_exas}/#{s}"}
             Dir.glob( "#{dir_exas}/#{s}/*" ).each{|exa_f|
-              ddputs(3){"Adding file #{exa_f}"}
+              dputs(3){"Adding file #{exa_f}"}
               z.file.open( "#{p}/#{exa_f.sub(/.*\//, '')}", "w"){|f|
                 f.write File.open(exa_f){|ef| ef.read }
               }
@@ -583,7 +584,7 @@ base_gestion
     return nil
   end
   
-  def zip_read( f = nil, center = "" )
+  def zip_read( f = nil )
     name.length == 0 and return
     
     dir_zip = "exa-#{name.sub(/^#{center}_/, '')}"
@@ -592,12 +593,12 @@ base_gestion
     
     if File.exists?( file ) and students
       %x[ rm -rf /tmp/#{name} ]
-      %x[ mv #{dir_exas} /tmp ]
+      %x[ test -d #{dir_exas} && mv #{dir_exas} /tmp ]
       FileUtils.mkdir dir_exas
 
       ZipFile.open( file ){|z|
         students.each{|s|
-          dir_zip_student = "#{dir_zip}/#{s.sub(/^#{center}_/, '')}"
+          dir_zip_student = "#{dir_zip}/#{s}"
           dir_exas_student = "#{dir_exas}/#{s}"
           
           if ( files_student = z.dir.entries( dir_zip_student ) ).size > 0
@@ -614,7 +615,7 @@ base_gestion
   
   def exam_files( student )
     student_name = student.class == Person ? student.login_name : student
-    ddputs(4){"Student-name is #{student_name.inspect}"}
+    dputs(4){"Student-name is #{student_name.inspect}"}
     dir_exas = @proxy.dir_exas + "/#{name}"
     dir_student = "#{dir_exas}/#{student_name}"
     File.exists?( dir_student ) ?
@@ -641,15 +642,15 @@ base_gestion
   
   def exas_fetch_files
     name.length == 0 and return
-    ddputs(3){"Starting to fetch files for #{name}"}
+    dputs(3){"Starting to fetch files for #{name}"}
     if File.exists? dir_exas_share
-      ddputs(3){"#{dir_exas_share} exists"}
+      dputs(3){"#{dir_exas_share} exists"}
       File.exists? dir_exas or FileUtils.mkdir dir_exas
       students.each{|s|
-        ddputs(3){"Checking on student #{s}"}
+        dputs(3){"Checking on student #{s}"}
         dir_student = "#{dir_exas_share}/#{s}"
         if File.exists? dir_student
-          ddputs(3){"Moving student-dir of #{s}"}
+          dputs(3){"Moving student-dir of #{s}"}
           File.move dir_student, "#{dir_exas}"
         end
       }
@@ -675,27 +676,27 @@ base_gestion
     end
     if t_array.length > 0
       pos = 0
-      ddputs(4){"Going to transfer: #{t_array.inspect}"}
+      dputs(4){"Going to transfer: #{t_array.inspect}"}
       tid = Digest::MD5.hexdigest( rand.to_s )
       sync_send_post( :start, { :field => field, :chunks => t_array.length,
           :md5 => transfer_md5, :tid => tid,
-          :user => ctype.central_name, :pass => ctype.central_pass,
+          :user => center.login_name, :pass => center.password_plain,
           :course => name }.to_json )
       t_array.each{|t|
         @sync_state = "#{ss} #{pos+1}/#{t_array.length}"
-        ddputs(3){@sync_state}
+        dputs(3){@sync_state}
         sync_send_post( tid, t )
         slow and sleep 3
         pos += 1
       }
     else
-      ddputs(2){"Nothing to transfer"}
+      dputs(2){"Nothing to transfer"}
     end
   end
   
   def sync_do( slow = false )
     @sync_state = sync_s = "<li>Transferring course</li>"
-    ddputs(3){@sync_state}
+    dputs(3){@sync_state}
     slow and sleep 3
 
     if students.length > 0
@@ -716,7 +717,7 @@ base_gestion
       sync_transfer( :grades, grades.select{|g|
           g.course and g.person
         }.collect{|g| 
-          ddputs(4){"Found grade with #{g.course.inspect} and #{g.person.inspect}"}
+          dputs(4){"Found grade with #{g.course.inspect} and #{g.person.inspect}"}
           g.to_hash( true ).merge( :course => g.course.name, 
             :person => g.person.login_name )
         }.to_json, slow )
@@ -725,12 +726,12 @@ base_gestion
     if file = zip_create( true )
       @sync_state = sync_s += "done</li><li>Transferring exams: "
       file = "/tmp/#{file}"
-      ddputs(3){"Exa-file is #{file}"}
+      dputs(3){"Exa-file is #{file}"}
       sync_transfer( :exams, File.open(file){|f| f.read }, slow )
     end
 
     @sync_state = sync_s += "</ul>It is finished!"
-    ddputs(3){@sync_state}
+    dputs(3){@sync_state}
   end
   
   def sync_start
@@ -762,5 +763,9 @@ base_gestion
   
   def get_unique
     name
+  end
+  
+  def center
+    data_get( :center ) || Persons.find_by_permissions( :center )
   end
 end

@@ -54,7 +54,7 @@ class CourseDiploma < View
             course.export_check.join("<br>"))
       end
     else
-      course.prepare_diplomas( session.owner )
+      course.prepare_diplomas
 
       rpc_list_choice( session, "courses", "courses" => course_id.to_s ) +
         reply( "auto_update", "-5" )
