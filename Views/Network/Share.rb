@@ -51,12 +51,12 @@ class NetworkShare < View
   def users_update( session )
     if session and ( share_str = session.s_data[:share] )
       users = Persons.search_by_groups( "share" )
-      share = Shares.find_by_share_id( share_str )
+      share = Shares.match_by_share_id( share_str )
       dputs(3){"Users is #{users.inspect} and share is #{share.inspect}"}
       if users and share
         dputs(3){"Acl of #{share.name} is #{share.acl.inspect}"}
         share.acl.collect{|k,v|
-          user = Persons.find_by_login_name( k )
+          user = Persons.match_by_login_name( k )
           users.delete( user )
           access = v == "ro" ? "read-only" : "read-write"
           name = user.full_name
@@ -90,7 +90,7 @@ class NetworkShare < View
     show_users = reply( :hide, :users )
     begin
       if ( share_id = session.s_data[:share] ) and
-          (Shares.find_by_share_id( share_id ).public == ["No"])
+          (Shares.match_by_share_id( share_id ).public == ["No"])
         show_users = reply( :unhide, :users )
       end
     rescue NoMethodError
@@ -107,8 +107,8 @@ class NetworkShare < View
   def rpc_button( session, name, data )
     case name
     when /no_access|read_write|read_only/
-      if (user = Persons.find_by_login_name( data["users"][0] )) and
-          (share = Shares.find_by_share_id( data['shares'][0] ))          
+      if (user = Persons.match_by_login_name( data["users"][0] )) and
+          (share = Shares.match_by_share_id( data['shares'][0] ))          
         case name
         when /no_access/
           share.acl.delete user.login_name

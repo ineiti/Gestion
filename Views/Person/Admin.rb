@@ -37,7 +37,7 @@ class PersonAdmin < View
 
   def rpc_button( session, name, data )
     dputs( 0 ){ "Pressed button #{name} with #{data.inspect}" }
-    person = Persons.find_by_person_id( data['person_id'] )
+    person = Persons.match_by_person_id( data['person_id'] )
     rep = reply( 'empty' )
     if person
       #rep += reply( 'empty', [:internet_none])
@@ -80,7 +80,7 @@ class PersonAdmin < View
   def rpc_list_choice( session, name, data )
     if name == "persons"
       dputs( 2 ){ "Got data: #{data.inspect}" }
-      if p = Persons.find_by_login_name( data['persons'].flatten[0])
+      if p = Persons.match_by_login_name( data['persons'].flatten[0])
         #reply( :empty, [:internet_none] ) +
         reply( :empty, [:permissions] ) +
         reply( :update, :permissions => Permission.list.sort) +

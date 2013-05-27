@@ -71,7 +71,7 @@ class Persons < Entities
   def find_empty_login_name( login )
     suffix = ""
     login = accents_replace( login )
-    while find_by_login_name( login + suffix.to_s )
+    while match_by_login_name( login + suffix.to_s )
       dputs( 2 ){ "Found #{login + suffix.to_s} to already exist" }
       suffix = suffix.to_i + 1
       suffix = 2 if suffix == 1
@@ -275,7 +275,7 @@ class Persons < Entities
   end
 
   def login_to_full( login )
-    p = find_by_login_name( login )
+    p = match_by_login_name( login )
     p ? p.full_name : ""
   end
   
@@ -467,7 +467,7 @@ class Person < Entity
       payments.select{|p|
         dputs( 3 ){ "Found payment for #{self.full_name}: #{p.inspect}" }
         if p.desc =~ /^Service:/
-          service = Entities.Services.find_by_name( p.desc.gsub(/^Service:/, ''))
+          service = Entities.Services.match_by_name( p.desc.gsub(/^Service:/, ''))
           dputs( 3 ){ "Found service #{service}" }
           service.duration == 0 or p.date + service.duration * 60 * 60 * 24 >= Time.now.to_i
         else
@@ -513,7 +513,7 @@ class Person < Entity
     courses = Courses.list_courses_for_person( self )
     if courses and courses.length > 0
       dputs(3){"Courses is #{courses.inspect}"}
-      ctype = Courses.find_by_course_id( courses[0][0] ).description
+      ctype = Courses.match_by_course_id( courses[0][0] ).description
     end
     fname = "#{person_id.to_s.rjust(6,'0')}-#{full_name.gsub(/ /,'_')}"
     @proxy.print_card.print( [ [ /--NOM--/, first_name ],
@@ -532,7 +532,7 @@ class Person < Entity
   end
 	
   def session
-    Sessions.find_by_sid( self.session_id )
+    Sessions.match_by_sid( self.session_id )
   end
 	
   def first_name=(v)

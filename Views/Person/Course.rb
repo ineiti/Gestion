@@ -28,7 +28,7 @@ class PersonCourse < View
     dputs( 0 ){ "args is #{args.inspect}" }
     ret = reply( :empty, [:courses] )
     if name == "persons" and args['persons']
-      p = Entities.Persons.find_by_login_name( args['persons'].flatten[0] )
+      p = Entities.Persons.match_by_login_name( args['persons'].flatten[0] )
       if p
         ret += reply( :update, :courses => Entities.Courses.list_courses_for_person( p ) ) +
         reply( :update, p.to_hash )
@@ -49,7 +49,7 @@ class PersonCourse < View
   
   def rpc_button_delete( session, args )
     if ca = args['courses'] and ca.length > 0
-      c = Entities.Courses.find_by_id( ca[0] )
+      c = Entities.Courses.match_by_id( ca[0] )
       c.students.delete( args['persons'].flatten[0] )
     end
     rpc_list_choice( session, 'persons', args )    
@@ -57,7 +57,7 @@ class PersonCourse < View
   
   def rpc_button_add_course( session, args )
     if ca = args['courses_available'] and ca.length > 0
-      c = Entities.Courses.find_by_id( ca[0] )
+      c = Entities.Courses.match_by_id( ca[0] )
       c.students.push args['persons'].flatten[0]
     end
     reply( :window_hide ) +

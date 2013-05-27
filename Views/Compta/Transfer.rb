@@ -23,7 +23,7 @@ class ComptaTransfer < View
   
   def rpc_button_empty( session, data )
     dputs(3){"data is #{data.inspect} with owner #{session.owner.full_name}"}
-    other = Persons.find_by_person_id( data["person_list"][0] )
+    other = Persons.match_by_person_id( data["person_list"][0] )
     dputs(3){"Other is #{other.inspect}, id is #{data["person_list"].to_s.inspect}"}
     amount = ( other.account_due.total.to_f * 1000 ).to_i
     session.owner.get_cash( other, amount )

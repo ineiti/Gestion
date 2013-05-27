@@ -60,9 +60,9 @@ class CourseGrade < View
     ret = []
     c_id, p_name = d['courses'][0], d['students'][0]
     if p_name and c_id
-      person = Persons.find_by_login_name( p_name )
-      course = Courses.find_by_course_id( c_id )
-      grade = Entities.Grades.find_by_course_person( c_id, p_name )
+      person = Persons.match_by_login_name( p_name )
+      course = Courses.match_by_course_id( c_id )
+      grade = Entities.Grades.match_by_course_person( c_id, p_name )
       if grade
         ret = reply( :update, grade.to_hash ) +
           to_means_true( course ){|i| 
@@ -95,7 +95,7 @@ class CourseGrade < View
     case name
     when "courses"
       course_id = args['courses'][0]
-      course = Courses.find_by_course_id(course_id)
+      course = Courses.match_by_course_id(course_id)
       if course
         dputs( 3 ){ "replying" }
         ret = reply("empty", [:students]) +
@@ -117,7 +117,7 @@ class CourseGrade < View
 
         show_buttons = [0,0,0]
         if course.ctype.diploma_type[0].to_sym != :simple
-          show_buttons = Shares.find_by_name( "CourseFiles" ) ? [1,1,1] : [0,0,1]
+          show_buttons = Shares.match_by_name( "CourseFiles" ) ? [1,1,1] : [0,0,1]
         end
         buttons = [ :prepare_files, :fetch_files, :transfer_files ]
         buttons.each{|b|
@@ -137,8 +137,8 @@ class CourseGrade < View
 
   def rpc_button_save( session, data )
     dputs( 3 ){ "Data is #{data.inspect}" }
-    course = Courses.find_by_course_id( data['courses'][0])
-    student = Entities.Persons.find_by_login_name( data['students'][0])
+    course = Courses.match_by_course_id( data['courses'][0])
+    student = Entities.Persons.match_by_login_name( data['students'][0])
     if course and student
       Entities.Grades.save_data( {:course_id => course.course_id,
           :person_id => student.person_id,
@@ -169,7 +169,7 @@ class CourseGrade < View
   def rpc_button_transfer_files( session, data )
     ret = reply( :update, :txt => "no students" ) +
       reply( :hide, :upload )
-    if course = Courses.find_by_course_id( data['courses'][0])
+    if course = Courses.match_by_course_id( data['courses'][0])
       if file = course.zip_create
         @files.data_str.push file
         ret = reply( :update, :txt => "Download skeleton: " +
@@ -182,21 +182,21 @@ class CourseGrade < View
   end
   
   def rpc_button_prepare_files( session, data )
-    if course = Courses.find_by_course_id( data['courses'][0])
+    if course = Courses.match_by_course_id( data['courses'][0])
       course.exas_prepare_files
     end
     update_grade( data )
   end
   
   def rpc_button_fetch_files( session, data )
-    if course = Courses.find_by_course_id( data['courses'][0])
+    if course = Courses.match_by_course_id( data['courses'][0])
       course.exas_fetch_files
     end
     update_grade( data )
   end
   
   def rpc_button_close( session, data )
-    if course = Courses.find_by_course_id( data['courses'][0])
+    if course = Courses.match_by_course_id( data['courses'][0])
       course.zip_read
       reply( :window_hide ) +
         update_grade( data ) +
@@ -206,7 +206,7 @@ class CourseGrade < View
 
   def rpc_update_with_values( session, data )
     ret = []
-    if course = Courses.find_by_course_id( data['courses'][0])
+    if course = Courses.match_by_course_id( data['courses'][0])
       ret = reply( :update, :synching => "Sync-state:<ul>" + course.sync_state )
       if course.sync_state =~ /finished/
         ret += reply( :auto_update, 0 )
@@ -216,7 +216,7 @@ class CourseGrade < View
   end
 
   def rpc_button_sync_files( session, data )
-    if course = Courses.find_by_course_id( data['courses'][0])
+    if course = Courses.match_by_course_id( data['courses'][0])
       course.sync_start
 
       reply( :window_show, :sync ) +

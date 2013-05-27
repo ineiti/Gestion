@@ -42,7 +42,7 @@ class NetworkAccess < View
   def update_members( group )
     if group and group.members
       members = group.members.collect{|m|
-        if member = Persons.find_by_login_name( m )
+        if member = Persons.match_by_login_name( m )
           name = member.full_name
           name.to_s == 0 and name = member.login_name
           [member.login_name, name]
@@ -66,7 +66,7 @@ class NetworkAccess < View
   
   def rpc_button_add_time( session, data )
     rep = rpc_button_save( session, data )
-    if group = AccessGroups.find_by_name( data['name'])
+    if group = AccessGroups.match_by_name( data['name'])
       if not group.access_times
         group.access_times = []
       end
@@ -80,7 +80,7 @@ class NetworkAccess < View
   end
   
   def rpc_button_delete_time( session, data )
-    if (group = AccessGroups.find_by_accessgroup_id( data['groups'][0])) and
+    if (group = AccessGroups.match_by_accessgroup_id( data['groups'][0])) and
         (time = data['access_times_view'][0]) and
         group.access_times
       group.access_times.delete( time )
@@ -89,8 +89,8 @@ class NetworkAccess < View
   end
   
   def rpc_button_add_member( session, data )
-    if (person = Persons.find_by_login_name( data['login_name'] )) and
-        (group = AccessGroups.find_by_accessgroup_id( data['groups'][0]))
+    if (person = Persons.match_by_login_name( data['login_name'] )) and
+        (group = AccessGroups.match_by_accessgroup_id( data['groups'][0]))
       ddputs(3){"Found person #{person.inspect} and group #{group.inspect}"}
       if not group.members
         group.members = []
@@ -104,8 +104,8 @@ class NetworkAccess < View
   end
   
   def rpc_button_delete_member( session, data )
-    if (person = Persons.find_by_login_name( data['members_view'][0] )) and
-        (group = AccessGroups.find_by_accessgroup_id( data['groups'][0]))
+    if (person = Persons.match_by_login_name( data['members_view'][0] )) and
+        (group = AccessGroups.match_by_accessgroup_id( data['groups'][0]))
       group.members.delete person.login_name
       update_members( group )
     end
@@ -122,7 +122,7 @@ class NetworkAccess < View
     case name
     when /groups/
       ret = rpc_list_choice_old( session, name, *args )
-      if group = AccessGroups.find_by_accessgroup_id( args[0]['groups'][0])
+      if group = AccessGroups.match_by_accessgroup_id( args[0]['groups'][0])
         ret += update_access_times( group ) + update_members( group )
       else
         ret += reply( :empty_only, [:access_times_view])

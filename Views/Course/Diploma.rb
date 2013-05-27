@@ -37,7 +37,7 @@ class CourseDiploma < View
     case name
     when "courses"
       if args['courses'].length > 0
-        course = Entities.Courses.find_by_course_id( args['courses'].to_a[0] )
+        course = Entities.Courses.match_by_course_id( args['courses'].to_a[0] )
         course and ret += reply( 'update', :diplomas => course.get_files )
       end
     end
@@ -46,7 +46,7 @@ class CourseDiploma < View
 
   def rpc_button_do_diplomas( session, args )
     course_id = args['courses'][0]
-    course = Courses.find_by_course_id(course_id)
+    course = Courses.match_by_course_id(course_id)
     if not course or course.export_check
       if course
         return reply( "window_show", :missing_data ) +
@@ -64,7 +64,7 @@ class CourseDiploma < View
   def rpc_update_with_values( session, args )
     course_id = args['courses'][0]
     ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
-    course = Entities.Courses.find_by_course_id( course_id )
+    course = Entities.Courses.match_by_course_id( course_id )
     if course.get_files.index{|f| f =~ /(000-4pp.pdf|zip)$/ }
       ret += reply( :auto_update, 0 )
     end
@@ -80,7 +80,7 @@ class CourseDiploma < View
     lp_cmd = cmd_printer( session, :print )
     if args['diplomas'].length > 0
       course_id = args['courses'][0]
-      course = Courses.find_by_course_id(course_id)
+      course = Courses.match_by_course_id(course_id)
       dputs( 2 ){ "Printing #{args['diplomas'].inspect}" }
       if lp_cmd
         args['diplomas'].each{|g|

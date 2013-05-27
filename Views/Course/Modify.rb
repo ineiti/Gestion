@@ -58,7 +58,7 @@ class CourseModify < View
   end
 
   def rpc_button_save( session, data )
-    if course = Courses.find_by_name( data['name'] )
+    if course = Courses.match_by_name( data['name'] )
       # BUG: they're already saved, don't save it again
       dputs(4){"Found course #{course.inspect}"}
       data.delete( 'students' )
@@ -87,7 +87,7 @@ class CourseModify < View
   end
 
   def rpc_button_del_student( session, data )
-    course = Courses.find_by_name( data['name'] )
+    course = Courses.match_by_name( data['name'] )
     data['students'].each{|s|
       course.students.delete( s )
     }
@@ -108,7 +108,7 @@ class CourseModify < View
     ret = rpc_print( session, :print_student, data )
     lp_cmd = cmd_printer( session, :print_student )
     data['students'].each{|s|
-      student = Persons.find_by_login_name( s )
+      student = Persons.match_by_login_name( s )
       dputs( 1 ){ "Printing student #{student.full_name}" }
       student.lp_cmd = lp_cmd
       rep.push student.print( rep.length )
@@ -131,7 +131,7 @@ class CourseModify < View
     ret = rpc_print( session, :print_presence, data )
     lp_cmd = cmd_printer( session, :print_presence )
     if data['name'] and data['name'].length > 0
-      case rep = Courses.find_by_name( data['name'] ).print_presence( lp_cmd )
+      case rep = Courses.match_by_name( data['name'] ).print_presence( lp_cmd )
       when true
         ret + reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours" )
@@ -152,13 +152,13 @@ class CourseModify < View
   # automatically generated.
   def rpc_button_bulk_students( session, data )
     dputs( 3 ){ data.inspect }
-    course = Courses.find_by_name( data['name'] )
+    course = Courses.match_by_name( data['name'] )
     users = []
     if data['names'] and users = data['names'].split("\n")
       prefix = session.owner.permissions.index("center") ?
         "#{session.owner.login_name}_" : ""
       name = users.shift
-      if not ( person = Persons.find_by_login_name( prefix + name ) )
+      if not ( person = Persons.match_by_login_name( prefix + name ) )
         person = Entities.Persons.create( {:first_name => name,
             :login_name_prefix => prefix,
             :permissions => %w( student ), :town => @town, :country => @country })
@@ -187,7 +187,7 @@ class CourseModify < View
     if name == "courses" and args['courses'].length > 0
       course_id = args['courses'][0]
       dputs( 3 ){ "replying for course_id #{course_id}" }
-      course = Courses.find_by_course_id(course_id)
+      course = Courses.match_by_course_id(course_id)
       reply("empty", [:students]) +
         reply("update", course.to_hash ) +
         reply("update", {:courses => [course_id] } )

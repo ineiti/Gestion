@@ -81,7 +81,7 @@ end
 QooxView::init( 'Entities', 'Views' )
 
 # Look for admin, create if it doesn't exist
-admin = Entities.Persons.find_by_login_name( "admin" )
+admin = Entities.Persons.match_by_login_name( "admin" )
 #dputs(0){ admin.inspect }
 #exit
 if not admin
@@ -95,7 +95,7 @@ end
 dputs( 0 ){ "Loading database" }
 ACQooxView::check_db
 
-if not Entities.Services.find_by_name( "Free solar" )
+if not Entities.Services.match_by_name( "Free solar" )
   dputs( 0 ){ "Creating services" }
   Entities.Services.create( :name => "CCC", :group => "ccc", 
     :price => 1000, :duration => 0 )

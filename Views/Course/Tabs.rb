@@ -61,7 +61,7 @@ class CourseTabs < View
       reply( :window_show, :error )
     end
     dputs( 3 ){ "session, data: #{[session, data.inspect].join(':')}" }
-    course = Courses.find_by_course_id( args['courses'][0])
+    course = Courses.match_by_course_id( args['courses'][0])
     dputs( 3 ){ "Got #{course.name} - #{course.inspect}" }
     if course
       dputs( 2 ){ "Deleting entry #{course}" }

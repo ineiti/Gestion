@@ -5,7 +5,7 @@ class Statics < Entities
   end
 
   def get( name )
-    find_by_view_name( name ) or
+    match_by_view_name( name ) or
     create( :view_name => name, :data_str => "" )
   end
 end

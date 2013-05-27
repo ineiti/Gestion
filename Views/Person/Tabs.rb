@@ -33,7 +33,7 @@ class PersonTabs < View
   def rpc_button_delete( session, args )
     if session.can_view( :FlagDeletePerson )
       if ( p_login = args["persons"] ) and 
-          ( p = Persons.find_by_login_name( p_login[0] ) )
+          ( p = Persons.match_by_login_name( p_login[0] ) )
         ddputs(3){"Found person #{p.inspect} - #{p.class.name}"}
         p.delete
         rpc_callback_search( session, args )
@@ -104,7 +104,7 @@ class PersonTabs < View
   def rpc_autofill( session, args )
     ret = []
     if args['persons'] and args['persons'].length > 0
-      p = Persons.find_by_login_name(args['persons'][0])
+      p = Persons.match_by_login_name(args['persons'][0])
       if args['search']
         ret += rpc_callback_search( session, args, false )
       else

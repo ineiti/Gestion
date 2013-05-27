@@ -20,7 +20,7 @@ class TC_Login < Test::Unit::TestCase
   end
 
   def test_login
-    admin = Entities.Persons.find_by_login_name( "admin" )
+    admin = Entities.Persons.match_by_login_name( "admin" )
     assert_not_nil admin, "Couldn't get 'admin'"
 
     reply = RPCQooxdooHandler.request( 1, "View.Welcome", "button", [["default", "login",

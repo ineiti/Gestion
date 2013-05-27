@@ -11,9 +11,9 @@ class Grades < Entities
     value_str :remark
   end
   
-  def find_by_course_person( course_id, person_login_name )
-    course = Entities.Courses.find_by_course_id( course_id )
-    student = Entities.Persons.find_by_login_name( person_login_name )
+  def match_by_course_person( course_id, person_login_name )
+    course = Entities.Courses.match_by_course_id( course_id )
+    student = Entities.Persons.match_by_login_name( person_login_name )
     if course and student
       dputs( 3 ){ "Found #{course} and #{student}" }
       grades = Entities.Grades.search_by_course_id( course.course_id )
@@ -58,7 +58,7 @@ class Grades < Entities
   end
   
   def migration_1(g)
-    course = Courses.find_by_course_id( g.course_id )
+    course = Courses.match_by_course_id( g.course_id )
     g.means = [ g.mean || 0 ] * course.ctype.tests.to_i
     dputs(4){"means is #{g.means.inspect} - tests are #{course.ctype.tests.inspect}"}
   end
@@ -100,7 +100,7 @@ class Grade < Entity
   def init_random
     while not self.random
       r = rand( 1_000_000_000 ).to_s.rjust( 9, "0" )
-      Grades.find_by_random( r ) or self.random = r
+      Grades.match_by_random( r ) or self.random = r
     end
   end
   
@@ -120,10 +120,10 @@ class Grade < Entity
   end
   
   def course
-    Courses.find_by_course_id( course_id )
+    Courses.match_by_course_id( course_id )
   end
   
   def person
-    Persons.find_by_person_id( person_id )
+    Persons.match_by_person_id( person_id )
   end
 end

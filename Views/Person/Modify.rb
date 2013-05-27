@@ -36,7 +36,7 @@ class PersonModify < View
 
   def rpc_button( session, name, data )
     dputs( 2 ){ "Pressed button #{name} with #{data.inspect}" }
-    person = Persons.find_by_person_id( data['person_id'] )
+    person = Persons.match_by_person_id( data['person_id'] )
     rep = [] #reply( 'empty' )
     if person
       case name
@@ -76,7 +76,7 @@ class PersonModify < View
     if name == "persons"
       dputs( 2 ){ "Got data: #{data.inspect}" }
       if data['persons'][0] and 
-          p = Persons.find_by_login_name( data['persons'].flatten[0])
+          p = Persons.match_by_login_name( data['persons'].flatten[0])
         can_change = session.owner.has_all_rights_of( p )
         change_pwd = [ :new_password, :password_plain, :change_password ].collect{|f|
           reply( can_change ? :unhide : :hide, f )

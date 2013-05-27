@@ -72,9 +72,9 @@ class TC_Person < Test::Unit::TestCase
   def test_addcash
     @josue.disable_africompta
     @surf.disable_africompta
-    assert_equal @josue, Entities.Persons.find_by_login_name( "josue" )
-    assert_equal @surf, Entities.Persons.find_by_login_name( "surf" )
-    assert_equal @admin, Entities.Persons.find_by_login_name( "admin" )
+    assert_equal @josue, Entities.Persons.match_by_login_name( "josue" )
+    assert_equal @surf, Entities.Persons.match_by_login_name( "surf" )
+    assert_equal @admin, Entities.Persons.match_by_login_name( "admin" )
     Sessions.create( @surf )
     session = Sessions.create( @josue )
 

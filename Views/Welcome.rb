@@ -7,7 +7,7 @@ class Welcome < View
   # Overwrite the standard rpc_show to speed up testing...
   def rpc_show( session )
     if $config[:autologin]
-      person = Entities.Persons.find_by_login_name( $config[:autologin] )
+      person = Entities.Persons.match_by_login_name( $config[:autologin] )
       person and dputs( 3 ){ "Found login #{person.data.inspect}" }
       if person then
         session = Sessions.create( person )
@@ -30,7 +30,7 @@ class Welcome < View
   def rpc_button_login( session, args )
     dputs( 3 ){ "args is #{args.inspect}" }
     login_name, password = args["username"].gsub(/ /,''), args["password"]
-    person = Entities.Persons.find_by_login_name( login_name )
+    person = Entities.Persons.match_by_login_name( login_name )
     if person
       dputs( 3 ){ "Person is #{person.inspect} and #{person.password}" }
     end

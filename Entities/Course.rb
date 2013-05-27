@@ -134,7 +134,7 @@ class Courses < Entities
 
   def self.from_diploma( course_name, course_str )
     dputs( 1 ){ "Importing #{course_name}: #{course_str.gsub(/\n/,'*')}" }
-    course = Entities.Courses.find_by_name( course_name ) or
+    course = Entities.Courses.match_by_name( course_name ) or
       Entities.Courses.create( :name => course_name )
 
     lines = course_str.split( "\n" )
@@ -166,7 +166,7 @@ class Courses < Entities
         grade, name = lines.shift.split( ' ', 2 )
         student = Entities.Persons.find_name_or_create( name )
         course.students.push( student.login_name )
-        g = Entities.Grades.find_by_course_person( course.course_id, student.login_name )
+        g = Entities.Grades.match_by_course_person( course.course_id, student.login_name )
         if g then
           g.mean, g.remark = Entities.Grades.grade_to_mean( grade ), lines.shift
         else
@@ -188,7 +188,7 @@ class Courses < Entities
     end
     dputs(4){"Converting for name #{name} with #{Rooms.search_all.inspect}"}
     r = Rooms.match_by_name( name )
-    if ( not r ) and ( not r = Rooms.find_by_name( "" ) )
+    if ( not r ) and ( not r = Rooms.match_by_name( "" ) )
       r = nil
     end
     c.data_set( :classroom, r )
@@ -203,9 +203,9 @@ class Courses < Entities
         person = nil
       else
         begin
-          person = Persons.find_by_login_name( person.join ).person_id
+          person = Persons.match_by_login_name( person.join ).person_id
         rescue NoMethodError
-          person = Persons.find_by_login_name("admin").person_id
+          person = Persons.match_by_login_name("admin").person_id
         end
       end
       dputs(4){"#{p} is after #{person.inspect}"}
@@ -242,7 +242,7 @@ class Course < Entity
     ret = []
     if self.students
       ret = self.students.collect{|s|
-        if person = Entities.Persons.find_by_login_name( s )
+        if person = Entities.Persons.match_by_login_name( s )
           [ s, "#{person.full_name} - #{person.login_name}:#{person.password_plain}" ]
         end
       }
@@ -298,8 +298,8 @@ class Course < Entity
     }
     txt = <<-END
 base_gestion
-#{Entities.Persons.find_by_login_name( data_get :teacher ).full_name}
-#{Entities.Persons.find_by_login_name( data_get :responsible ).full_name}
+#{Entities.Persons.match_by_login_name( data_get :teacher ).full_name}
+#{Entities.Persons.match_by_login_name( data_get :responsible ).full_name}
 #{data_get :duration}
 #{data_get :description}
 #{data_get :contents}
@@ -309,7 +309,7 @@ base_gestion
 #{date_fr(d_sign)}
     END
     data_get( :students ).each{|s|
-      grade = Entities.Grades.find_by_course_person( data_get( :course_id ), s )
+      grade = Entities.Grades.match_by_course_person( data_get( :course_id ), s )
       if grade
         txt += "#{grade} #{grade.student.full_name}\n" +
           "#{grade.remark}\n"
@@ -369,7 +369,7 @@ base_gestion
     return false if not start or not data_get( :end ) or students.count == 0
     stud_nr = 1
     studs = students.collect{|s|
-      stud = Entities.Persons.find_by_login_name( s )
+      stud = Entities.Persons.match_by_login_name( s )
       stud_str = stud_nr.to_s.rjust( 2, '0' )
       stud_nr += 1
       [ [ /Nom#{stud_str}/, stud.full_name ],
@@ -399,14 +399,14 @@ base_gestion
 	
 	
   def update_student_diploma( file, student )
-    grade = Grades.find_by_course_person( course_id, student.login_name )
+    grade = Grades.match_by_course_person( course_id, student.login_name )
     dputs(0){"Course is #{name} - ctype is #{ctype.inspect}"}
     if grade and grade.to_s != "NP" and 
         ( ( ctype.diploma_type[0] == "simple" ) or
           ( exam_files( student ).count >= ctype.files_needed.to_i ) )
       dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|
-        #presponsible = Persons.find_by_login_name( responsible.join )
+        #presponsible = Persons.match_by_login_name( responsible.join )
         doc = z.read("content.xml")
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match( doc )
@@ -534,7 +534,7 @@ base_gestion
     end
     dputs( 2 ){ "Students: #{students.inspect}" }
     students.each{ |s|
-      student = Persons.find_by_login_name( s )
+      student = Persons.match_by_login_name( s )
       if student
         dputs( 2 ){ student.login_name }
         student_file = "#{dir_diplomas}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
@@ -703,7 +703,7 @@ base_gestion
       @sync_state = sync_s += "<li>Transferring users: "
       users = students + [ teacher.login_name, responsible.login_name ]
       sync_transfer( :students, users.collect{|s|
-          Persons.find_by_login_name( s ) 
+          Persons.match_by_login_name( s ) 
         }.to_json, slow )
     end
 
@@ -766,6 +766,6 @@ base_gestion
   end
   
   def center
-    data_get( :center ) || Persons.find_by_permissions( :center )
+    data_get( :center ) || Persons.match_by_permissions( :center )
   end
 end

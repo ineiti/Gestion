@@ -13,7 +13,7 @@ class CourseStats < View
   end
 
   def rpc_button_save( session, data )
-    course = Courses.find_by_name( data['name'] )
+    course = Courses.match_by_name( data['name'] )
     if course
       # BUG: they're already saved, don't save it again
       data.delete( 'students' )

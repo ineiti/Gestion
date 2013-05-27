@@ -10,7 +10,7 @@ module Internet
 
       isp = JSON.parse( $lib_net.call( :isp_params ) ).to_sym
       dputs(3){"ISP-params is #{isp.inspect} and conn_type is #{isp._conn_type}"}
-      user = Persons.find_by_login_name( u )
+      user = Persons.match_by_login_name( u )
       if user
         dputs(3){"Found user #{u}: #{user.full_name}"}
         if not ( ag = AccessGroups.allow_user_now( u ) )[0]

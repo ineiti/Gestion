@@ -62,7 +62,7 @@ class TC_Course < Test::Unit::TestCase
     bulk.each{|b|
       login, first, family = b
       dputs( 0 ){ "Doing #{b.inspect}" }
-      p = Entities.Persons.find_by_login_name( login )
+      p = Entities.Persons.match_by_login_name( login )
       ddputs( 5 ){"p is #{p.inspect} - login is #{login.inspect}"}
       assert_not_nil p, login.inspect
       assert_equal login, p.login_name
@@ -71,7 +71,7 @@ class TC_Course < Test::Unit::TestCase
       assert_equal %w( student ), p.permissions
     }
     
-    students = Entities.Courses.find_by_name( 'net_1001' ).students
+    students = Entities.Courses.match_by_name( 'net_1001' ).students
     assert_equal %w( admin2 ca eten mhelene s_eri tone zero ), students.sort
   end
 
@@ -138,7 +138,7 @@ class TC_Course < Test::Unit::TestCase
     # As soon as value_entity are known to work OK, one has to replace
     # Course.teacher and Course.responsible with value_entity_person
     course = Courses.from_diploma( "net_1001", COURSE_STR )
-    @grade_admin = Entities.Grades.find_by_course_person( @net.course_id, @admin.login_name )
+    @grade_admin = Entities.Grades.match_by_course_person( @net.course_id, @admin.login_name )
     assert_not_nil @grade_admin
     assert_equal 10, @grade_admin.mean
     assert_equal %w( 01.02.2003 04.05.2003 04.06.2003 72 admin josue ),
@@ -226,12 +226,12 @@ class TC_Course < Test::Unit::TestCase
       
     dputs(0){"Courses are #{Courses.search_all.inspect}"}
 
-    @maint = Courses.find_by_name("maint_1204")
+    @maint = Courses.match_by_name("maint_1204")
     assert_equal @admin, @maint.teacher
     assert_equal nil, @maint.assistant
     assert_equal @linus, @maint.responsible
     
-    @maint2 = Courses.find_by_name("maint_1208")
+    @maint2 = Courses.match_by_name("maint_1208")
     assert_equal @admin, @maint2.teacher
     assert_equal @linus, @maint2.assistant
     assert_equal @linus, @maint2.responsible
@@ -395,7 +395,7 @@ class TC_Course < Test::Unit::TestCase
     }
     
     assert_equal [], Persons.search_by_login_name( "^#{cname}" )
-    assert_equal nil, Courses.find_by_name( "^#{cname}")
+    assert_equal nil, Courses.match_by_name( "^#{cname}")
 
     @maint_2.sync_do( false )
     
@@ -405,7 +405,7 @@ class TC_Course < Test::Unit::TestCase
       p.login_name
     }
     assert_equal ["foo_josue", "foo_admin", "foo_surf"], names
-    assert_equal "", Courses.find_by_name( "^#{cname}")
+    assert_equal "", Courses.match_by_name( "^#{cname}")
   end
   
   # Test taken from an old version - not really know what it's about

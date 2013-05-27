@@ -41,7 +41,7 @@ class Label < RPCQooxdooPath
 
   def self.get_student( center, grade_id )
     ddputs(3){"Printing student #{grade_id} of #{center}"}
-    if grade = Grades.find_by_random( grade_id )
+    if grade = Grades.match_by_random( grade_id )
       center_short = grade.course.name.sub(/_.*/, '' )
       ddputs(3){"Center_short is #{center_short}"}
       center = center_short
@@ -66,7 +66,7 @@ class Label < RPCQooxdooPath
         s._login_name = "#{tr._user}_#{s._login_name}"
         s.delete :person_id
         ddputs(4){"Looking for #{s._login_name}"}
-        if stud = Persons.find_by_login_name( s._login_name )
+        if stud = Persons.match_by_login_name( s._login_name )
           ddputs(3){"Updating person"}
           #stud.data_set_hash( s )
         else
@@ -80,15 +80,15 @@ class Label < RPCQooxdooPath
       ddputs(3){"Course is #{course.inspect}"}
       course.delete :course_id
       course._name = "#{tr._user}#{course_name}"
-      course._responsible = Persons.find_by_login_name( 
+      course._responsible = Persons.match_by_login_name( 
         "#{tr._user}_#{course._responsible}" )
-      course._teacher = Persons.find_by_login_name( 
+      course._teacher = Persons.match_by_login_name( 
         "#{tr._user}_#{course._teacher}" )
       course._students = course._students.collect{|s| "#{tr._user}_#{s}"}
-      course._ctype = CourseTypes.find_by_name( course._ctype )
+      course._ctype = CourseTypes.match_by_name( course._ctype )
       course._center = tr._user
       ddputs(3){"Course is now #{course.inspect}"}
-      if c = Courses.find_by_name( course._name )
+      if c = Courses.match_by_name( course._name )
         ddputs(3){"Updating course #{course._name}"}
         c.data_set_hash( course )
       else
@@ -100,11 +100,11 @@ class Label < RPCQooxdooPath
         grade.to_sym!
         ddputs(3){"Grades is #{grade.inspect}"}
         grade._course_id = 
-          Courses.find_by_name( "#{tr._user}_#{grade._course}" ).course_id
+          Courses.match_by_name( "#{tr._user}_#{grade._course}" ).course_id
         grade._person_id = 
-          Persons.find_by_login_name( "#{tr._user}_#{grade._person}" ).person_id
+          Persons.match_by_login_name( "#{tr._user}_#{grade._person}" ).person_id
         grade.delete :grade_id
-        if g = Grades.find_by_course_person( grade._course_id, 
+        if g = Grades.match_by_course_person( grade._course_id, 
             "#{tr._user}_#{grade._person}" )
           ddputs(3){"Updating grade #{g.inspect}"}
           g.data_set_hash( grade )
@@ -112,13 +112,13 @@ class Label < RPCQooxdooPath
           g = Grades.create( grade )
           ddputs(3){"Creating grade #{g.inspect}"}
         end
-        ddputs(3){Grades.find_by_course_person( grade._course_id, 
+        ddputs(3){Grades.match_by_course_person( grade._course_id, 
             "#{tr._user}_#{grade._person}" ).inspect }
       }
     when /exams/
       file = "/tmp/#{tr._tid}.zip"
       File.open(file, "w"){|f| f.write tr._data }
-      if course = Courses.find_by_name( course_name )
+      if course = Courses.match_by_name( course_name )
         ddputs(3){"Updating exams"}
         course.zip_read( file )
       end
