@@ -16,7 +16,7 @@ class CourseAdd < View
   def rpc_button_new_course( session, data )
     dputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
     
-    course = Courses.create_ctype( data['ctype'], data['name'], session.owner )
+    course = Courses.create_ctype( data['ctype'], data['name_date'], session.owner )
 
     reply( "parent",
       View.CourseTabs.rpc_update( session ) +

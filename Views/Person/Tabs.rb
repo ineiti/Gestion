@@ -68,8 +68,12 @@ class PersonTabs < View
       return reply( :focus, :search )
     end
 		
-    result = %w( login_name family_name first_name person_id email phone ).collect{|f|
+    result = %w( login_name family_name first_name 
+        permissions person_id email phone ).collect{|f|
       ret = Entities.Persons.search_by( f, s )
+      if session.owner.permissions.index( "center" )
+        ret = ret.select{|p| p.login_name =~ /^#{session.owner.login_name}(_|$)/}
+      end
       dputs( 3 ){ "Result for #{f} is: #{ret.collect{|r| r.login_name}}" }
       ret
     }.flatten.uniq.sort{|a,b|

@@ -36,12 +36,12 @@ class Courses < Entities
     value_list :students
 
     value_block :teacher
-    value_entity_person :teacher, :drop, :full_name,
-      lambda{|p| p.permissions.index("teacher")}
-    value_entity_person_empty :assistant, :drop, :full_name,
-      lambda{|p| p.permissions.index("teacher")}
-    value_entity_person :responsible, :drop, :full_name,
-      lambda{|p| p.permissions.index("teacher")}
+    value_entity_person_lazy :teacher, :drop, :full_name
+    #lambda{|p| p.permissions.index("teacher")}
+    value_entity_person_empty_lazy :assistant, :drop, :full_name
+    #lambda{|p| p.permissions.index("teacher")}
+    value_entity_person_lazy :responsible, :drop, :full_name
+    #lambda{|p| p.permissions.index("teacher")}
     
     value_block :center
     value_entity_person_empty :center, :drop, :full_name,
@@ -117,7 +117,7 @@ class Courses < Entities
   
   def self.create_ctype( ctype, date, creator = nil )
     needs_center = ( ConfigBase.has_function?( :course_server ) and
-      ( creator and creator.has_permission?( :center ) ) )
+        ( creator and creator.has_permission?( :center ) ) )
     dputs(4){"needs_center is #{needs_center.inspect}"}
 
     # Prepare correct name
@@ -140,8 +140,12 @@ class Courses < Entities
       data_set_hash( ctype.to_hash.except(:name), true ).
       data_set( :ctype, ctype )
 
-    creator and course.responsible = creator
-    needs_center and course.center = creator
+    if needs_center
+      course.center = creator
+      course.responsible = Persons.find_by_login_name( "^#{creator.login_name}_")
+    else
+      course.responsible = creator
+    end
     
     return course
   end

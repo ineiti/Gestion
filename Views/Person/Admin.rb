@@ -73,7 +73,7 @@ class PersonAdmin < View
     if not rep
       rep = { "#{field}" => data }
     end
-    update_layout +
+    update_layout( session ) +
     reply( 'update', rep ) + rpc_update( session )
   end
   

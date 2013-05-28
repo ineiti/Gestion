@@ -22,8 +22,13 @@ class PersonAdd < View
     dputs( 3 ){ "Pressed button accept with #{data.inspect}" }
     if data[:login_prop]
       data[:login_name] = data[:login_prop]
+      perms = ["internet"]
+      if session.owner.permissions.index( "center" )
+        data.merge!( {:login_name_prefix => "#{session.owner.login_name}_"} )
+        perms.push( "teacher" )
+      end
       person = Persons.create( data )
-      person.permissions = ["internet"]
+      person.permissions = perms
       reply( :empty ) +
         reply( :switch_tab, :PersonModify ) +
         reply( :parent, View.PersonTabs.rpc_callback_search( session,

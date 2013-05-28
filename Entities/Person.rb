@@ -279,8 +279,14 @@ class Persons < Entities
     p ? p.full_name : ""
   end
   
-  def listp_responsible
-    search_by_permissions( "teacher" ).collect{|p|
+  def listp_responsible( session = nil )
+    list = search_by_permissions( "teacher" )
+    if session
+      list = list.select{|p|
+        p.login_name =~ /^#{session.owner.login_name}_/
+      }.push( session.owner )
+    end
+    list.collect{|p|
       [p.person_id, p.full_name]
     }
   end

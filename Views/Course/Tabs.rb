@@ -60,7 +60,7 @@ class CourseTabs < View
     if not session.can_view( 'CourseAdd' )
       reply( :window_show, :error )
     end
-    dputs( 3 ){ "session, data: #{[session, data.inspect].join(':')}" }
+    dputs( 3 ){ "session, data: #{[session, args.inspect].join(':')}" }
     course = Courses.match_by_course_id( args['courses'][0])
     dputs( 3 ){ "Got #{course.name} - #{course.inspect}" }
     if course

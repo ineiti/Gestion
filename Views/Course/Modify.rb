@@ -198,7 +198,7 @@ class CourseModify < View
   
   def center?( session )
     if session.owner.permissions.index( "center" )
-      %w( print_presence print_student edit_student duration dow hours
+      %w( print_presence print_student duration dow hours
       classroom ).collect{|e|
         reply( :hide, e )        
       }.flatten
@@ -212,6 +212,27 @@ class CourseModify < View
       super( session ) +
       reply_print( session ) +
       center?( session )
+  end
+  
+  def update_layout( session )
+    resps = Persons.search_by_permissions( "teacher" )
+    if session.owner.permissions.index( "center" )
+      resps = resps.select{|p|
+        p.login_name =~ /^#{session.owner.login_name}_/
+      }
+    end
+    resps = resps.collect{|p|
+      [p.person_id, p.full_name]
+    }
+    
+    fields = %w( teacher assistant responsible )
+    
+    super( session ) +
+      reply( :empty, fields ) +
+      reply( :update, :assistant => [0, "---"]) +
+      fields.collect{|p|
+        reply( :update, p => resps )
+    }.flatten
   end
 
 end

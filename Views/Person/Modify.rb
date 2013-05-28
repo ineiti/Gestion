@@ -67,7 +67,7 @@ class PersonModify < View
     if not rep
       rep = { "#{field}" => data }
     end
-    update_layout +
+    update_layout( session ) +
       reply( 'update', rep ) + rpc_update( session )
   end
 
@@ -98,6 +98,8 @@ class PersonModify < View
   def rpc_update( session )
     super( session ) +
       reply( :parent, reply( :focus, :search ) ) +
-      reply_print( session )
+      reply_print( session ) +
+      ( session.owner.permissions.index("center") ? 
+        reply( :hide, :print_student ) : [] )
   end
 end
