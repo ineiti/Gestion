@@ -30,7 +30,7 @@ class Persons < Entities
     value_str_LDAP :email, :ldap_name => "mail"
     value_str_LDAP :town, :ldap_name => "l"
     value_str_LDAP :country, :ldap_name => "st"
-    value_list_dropx :gender, "%w( male female n/a )"
+    value_list_drop :gender, "%w( male female n/a )"
 
     value_block :admin
     value_str :account_name_due
@@ -277,6 +277,12 @@ class Persons < Entities
   def login_to_full( login )
     p = match_by_login_name( login )
     p ? p.full_name : ""
+  end
+  
+  def listp_responsible
+    search_by_permissions( "teacher" ).collect{|p|
+      [p.person_id, p.full_name]
+    }
   end
   
   def migration_1( p )

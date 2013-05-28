@@ -14,7 +14,7 @@ class AdminFunction < View
   
   def rpc_update( session )
     reply( :empty ) +
-      reply( :update, ConfigBases.singleton.to_hash )
+      update_form_data( ConfigBases.singleton )
   end
   
   def rpc_button_save( session, data )

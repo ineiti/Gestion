@@ -58,7 +58,6 @@ class PersonModify < View
       when "close"
         rep = reply( :window_hide )
       end
-      #      reply( 'update', get_form_data( person ) )
     end
     rep + rpc_update( session )
   end

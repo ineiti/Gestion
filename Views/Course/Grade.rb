@@ -64,14 +64,14 @@ class CourseGrade < View
       course = Courses.match_by_course_id( c_id )
       grade = Entities.Grades.match_by_course_person( c_id, p_name )
       if grade
-        ret = reply( :update, grade.to_hash ) +
+        ret = update_form_data( grade ) +
           to_means_true( course ){|i| 
           reply( :update, "mean#{i}" => grade.means[i-1])
         }.flatten
       else
         ret = reply( :empty )
       end
-      ret += reply( :update, person.to_hash ) +
+      ret += update_form_data( person ) +
         reply( :update, :files_saved => course.exam_files( p_name ).count )
     end
     ret
@@ -99,7 +99,7 @@ class CourseGrade < View
       if course
         dputs( 3 ){ "replying" }
         ret = reply("empty", [:students]) +
-          reply("update", course.to_hash ) +
+          update_form_data( course ) +
           reply("update", {:courses => [course_id]}) +
           reply("focus", :mean1 )
         if course.students.size > 0

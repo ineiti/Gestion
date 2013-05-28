@@ -63,7 +63,7 @@ class PersonAdmin < View
         # data.delete("internet_none")
         Persons.save_data( data )
       end
-      rep += reply( 'update', get_form_data( person ) )
+      rep += update_form_data( person )
     end
     rep + rpc_update( session )
   end

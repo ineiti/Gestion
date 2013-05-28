@@ -3,6 +3,7 @@
 BUGS:
         - ne pas afficher dans label quand "pas passé" -> when creating?
         - missing fields won't work in Entity::to_hash( true ) ??
+        - gender is not stored in CourseResponsible
 
         - config.yaml.default is really not in a good shape - all different options
          should be in there
@@ -41,6 +42,7 @@ FEATURES:
           - store files for exams
           - send everything to profeda.org with the notes
           - for remote-only labels, add possibility for creating teachers
+          - add the name and place of the center
         - receive SMS through LibNet and do actions
           - make connection
           - return stats

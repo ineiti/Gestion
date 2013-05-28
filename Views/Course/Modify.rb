@@ -189,7 +189,7 @@ class CourseModify < View
       dputs( 3 ){ "replying for course_id #{course_id}" }
       course = Courses.match_by_course_id(course_id)
       reply("empty", [:students]) +
-        reply("update", course.to_hash ) +
+        update_form_data( course ) +
         reply("update", {:courses => [course_id] } )
     else
       reply("empty", [:students])

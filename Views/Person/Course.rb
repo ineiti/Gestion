@@ -31,7 +31,7 @@ class PersonCourse < View
       p = Entities.Persons.match_by_login_name( args['persons'].flatten[0] )
       if p
         ret += reply( :update, :courses => Entities.Courses.list_courses_for_person( p ) ) +
-        reply( :update, p.to_hash )
+          update_form_data( p )
       end
     end
     ret
@@ -40,10 +40,10 @@ class PersonCourse < View
   def rpc_button_add( session, args )
     if args['persons'].flatten.length > 0
       reply( :empty_only, [ :courses_available ] ) +
-      reply( :update, :courses_available => 
-        ( Entities.Courses.list_courses - 
-          Entities.Courses.list_courses_for_person( args['persons'].flatten[0] ) ) ) +
-      reply( :window_show, :new_course )
+        reply( :update, :courses_available => 
+          ( Entities.Courses.list_courses - 
+            Entities.Courses.list_courses_for_person( args['persons'].flatten[0] ) ) ) +
+        reply( :window_show, :new_course )
     end
   end
   
@@ -61,7 +61,7 @@ class PersonCourse < View
       c.students.push args['persons'].flatten[0]
     end
     reply( :window_hide ) +
-    rpc_list_choice( session, 'persons', args )
+      rpc_list_choice( session, 'persons', args )
   end
   
   def rpc_button_close( session, args )
