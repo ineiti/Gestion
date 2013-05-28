@@ -727,7 +727,7 @@ base_gestion
       @sync_state = sync_s += "done</li><li>Transferring exams: "
       file = "/tmp/#{file}"
       dputs(3){"Exa-file is #{file}"}
-      sync_transfer( :exams, File.open(file){|f| f.read }, slow )
+      #sync_transfer( :exams, File.open(file){|f| f.read }, slow )
     end
 
     @sync_state = sync_s += "</ul>It is finished!"
@@ -766,6 +766,6 @@ base_gestion
   end
   
   def center
-    data_get( :center ) || Persons.match_by_permissions( :center )
+    data_get( :center ) || Persons.find_by_permissions( :center )
   end
 end

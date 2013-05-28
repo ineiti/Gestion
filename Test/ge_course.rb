@@ -63,7 +63,7 @@ class TC_Course < Test::Unit::TestCase
       login, first, family = b
       dputs( 0 ){ "Doing #{b.inspect}" }
       p = Entities.Persons.match_by_login_name( login )
-      ddputs( 5 ){"p is #{p.inspect} - login is #{login.inspect}"}
+      dputs( 5 ){"p is #{p.inspect} - login is #{login.inspect}"}
       assert_not_nil p, login.inspect
       assert_equal login, p.login_name
       assert_equal first, p.first_name
@@ -395,7 +395,7 @@ class TC_Course < Test::Unit::TestCase
     }
     
     assert_equal [], Persons.search_by_login_name( "^#{cname}" )
-    assert_equal nil, Courses.match_by_name( "^#{cname}")
+    assert_equal nil, Courses.find_by_name( "^#{cname}")
 
     @maint_2.sync_do( false )
     
@@ -405,7 +405,7 @@ class TC_Course < Test::Unit::TestCase
       p.login_name
     }
     assert_equal ["foo_josue", "foo_admin", "foo_surf"], names
-    assert_equal "", Courses.match_by_name( "^#{cname}")
+    assert_equal "foo_maint_1210", Courses.find_by_name( "^#{cname}" ).name
   end
   
   # Test taken from an old version - not really know what it's about

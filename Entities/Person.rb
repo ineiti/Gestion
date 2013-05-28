@@ -374,7 +374,7 @@ class Person < Entity
   def data_set(field, value, msg = nil, undo = true, logging = true )
     old_value = data_get(field)
     if old_value != value
-      dputs( 0 ){ "Saving #{field} = #{value}" }
+      dputs( 4 ){ "Saving #{field} = #{value}" }
       if logging
         if undo
           @proxy.log_action( @id, { field => value }, msg, :undo_set_entry, old_value )
