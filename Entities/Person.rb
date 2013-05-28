@@ -400,7 +400,7 @@ class Person < Entity
   end
   
   def update_smb_passwd( pass = password )
-    if get_config( false, :Samba, :enable ) and ( groups and groups.index( "share" ) )
+    if ConfigBase.has_function?( :share ) and ( groups and groups.index( "share" ) )
       if not @proxy.has_storage? :LDAP
         %x[ adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name} ]
       end
@@ -576,7 +576,7 @@ class Person < Entity
     Permission.views( person.permissions ).each{|p|
       found = false
       pv1.each{|p1|
-        if p =~ /#{p1}/ 
+        if p =~ /^#{p1}$/ 
           found = true
           dputs(4){"Found my #{p1} matches his #{p}"}
         end
@@ -598,11 +598,14 @@ class Person < Entity
     AccessGroups.search_all.each{|ag|
       ag.members and ag.members.delete login_name
     }
+    Grades.search_by_person_id( person_id ).each{|g|
+      g.delete
+    }
 
     if not @proxy.has_storage? :LDAP
       %x[ deluser #{self.login_name} ]
     end
-    if get_config( false, :Samba, :enable )
+    if ConfigBase.has_functions?( :share )
       %x[ smbpasswd -x #{self.login_name} ]
     end
     super
@@ -610,5 +613,16 @@ class Person < Entity
   
   def get_unique
     login_name
+  end
+  
+  def has_permission?( perm )
+    dputs(4){"Checking #{perm.inspect} in #{permissions.inspect}"}
+    dputs(4){"Which is #{Permission.views( permissions ).inspect }"}
+    return true if permissions.index( perm.to_s )
+    Permission.views( permissions ).select{|p|
+      dputs(4){"Checking permission #{p.inspect} of #{perm.inspect}"}
+      dputs(4){"Result is #{perm.to_s =~ /^#{p.to_s}$/}"}
+      perm.to_s =~ /^#{p.to_s}$/
+    }.length > 0
   end
 end

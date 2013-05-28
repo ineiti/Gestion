@@ -69,7 +69,7 @@ class CourseTabs < View
     end
 
     reply( "empty", [:courses] ) +
-      reply( "update", { :courses => Courses.list_courses } ) +
+      reply( "update", { :courses => Courses.list_courses(session) } ) +
       reply( :child, reply(:empty, [:students]) )
   end
 

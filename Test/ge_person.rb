@@ -230,4 +230,29 @@ class TC_Person < Test::Unit::TestCase
       "professor", "secretary", "student"], 
       View.PersonAdmin.layout_find( "permissions" ).to_a[3][:list_values]
   end
+  
+  def test_has_permission
+    assert @secretary.has_permission? :secretary
+    assert @secretary.has_permission? "secretary"
+    assert @secretary.has_permission? :PersonModify
+    assert @secretary.has_permission? "PersonModify"
+    assert @secretary.has_permission? :Internet
+    assert @secretary.has_permission? "Internet"
+    assert ! @secretary.has_permission?( :FlagAccounting )
+    assert ! @secretary.has_permission?( "FlagAccounting" )
+    assert ! @secretary.has_permission?( :admin )
+    assert ! @secretary.has_permission?( "admin" )
+  end
+  
+  def test_delete
+    @maint = Courses.create( :name => "maint_1201")
+    @grade = Grades.save_data( :course_id => @maint.course_id,
+    :person_id => @surf.person_id, :means => [12])
+  
+    assert_equal 1, Grades.search_by_person_id( @surf.person_id ).length
+    
+    @surf.delete
+  
+    assert_equal 0, Grades.search_by_person_id( @surf.person_id ).length
+  end
 end

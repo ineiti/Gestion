@@ -13,32 +13,10 @@ class CourseAdd < View
     end
   end
 
-  def rpc_button_save( session, data )
-    course = Courses.match_by_name( data['name'] )
-    if course
-      # BUG: they're already saved, don't save it again
-      data.delete( 'students' )
-      course.data_set_hash( data )
-    end
-  end
-
   def rpc_button_new_course( session, data )
     dputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
-
-    ctype = data['ctype']
-    name = if center = session.owner.permissions.index( "center" )
-      "#{session.owner.login_name}_#{ctype.name}_#{data['name_date']}"
-    else
-      name = "#{ctype.name}_#{data['name_date']}"
-    end
-    if not ( course = Courses.match_by_name( name ) )
-      course = Courses.create_ctype( name, ctype )
-      if center
-        course.responsible = session.owner
-      end
-      dputs(0){"Course in if is #{course.inspect}"}
-    end
-    dputs(0){"Course is #{course.inspect}"}
+    
+    course = Courses.create_ctype( data['ctype'], data['name'], session.owner )
 
     reply( "parent",
       View.CourseTabs.rpc_update( session ) +

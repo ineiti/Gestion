@@ -155,7 +155,7 @@ class CourseModify < View
     course = Courses.match_by_name( data['name'] )
     users = []
     if data['names'] and users = data['names'].split("\n")
-      prefix = session.owner.permissions.index("center") ?
+      prefix = ConfigBase.has_function?( :course_server ) ?
         "#{session.owner.login_name}_" : ""
       name = users.shift
       if not ( person = Persons.match_by_login_name( prefix + name ) )

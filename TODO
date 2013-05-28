@@ -1,29 +1,22 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - config:Samba:enable is stupid - it works nearly, even when it's off
+        - ne pas afficher dans label quand "pas passé" -> when creating?
+        - missing fields won't work in Entity::to_hash( true ) ??
+
         - config.yaml.default is really not in a good shape - all different options
          should be in there
-        - ne pas afficher dans label quand "pas passé"
-        - when creating labels the URL doesn't show up...
-        - Wrong new coursename in CourseAdd
-        - for user.center also show courses that start with "#{center}_"
-        - CourseModify::add_bulk: Don't add username to users in a local course,
-          only when connected "remote" for "label"s
-        - missing fields won't work in Entity::to_hash( true )
-        - adding twice the same course-name fails
-        - if course is created with an existing name, crash in
-          ./Views/Course/Add.rb:36
-        - Deleting an user doesn't take away it's grades
         - empty installation: CourseModify complains about no CourseTypes, even
           when one was added -> problem in html-display
+
+        - Test if Admin::Backup::restore resets passwords as it should
+        - why is Entity::get_value always called three times?
         - When CourseAdd is first tab and course is added, LTab.js:174 can't
           find getActiveForm, as it is not drawn yet...
-        - why is Entity::get_value always called three times?
-        - Test if Admin::Backup::restore resets passwords as it should
 	- 10 crashes when not operating "properly"
 
 HEISENBUGS:
+        - when creating labels the URL doesn't show up -> not reproducible
         - Confirmed: NetworkPermissions: sometimes when saving, the chosen entry shows up
           as a number in the list. Seems to be somewhere in the Javascript where
           things don't get updated in the correct way. Not reproducible in a
@@ -36,10 +29,9 @@ Security:
 
 UI:
         - auto_update from a window enables also the background (CourseGrade::sync)
+        - extend lists on all the height
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
-        - Administration::Backup is not nicely bordered
-        - extend lists on all the height
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
 
@@ -57,6 +49,9 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - Change ConfigBase functions_base: all functions are evaluated with
+          base_dependencies, like network, network_share and network_internet,
+          so that network_internet and network_share depend on network
         - Why is a value_list-definition in Entities not able to give a default-
           value for the list? -> it is, but only if it is taken as a show_block
           in a View
@@ -174,6 +169,18 @@ To check:
 
 
 ** FIXED **:
+        - B 130528: sort course-names using the 4-digit, if available
+        - B 130528: for user.center also show courses that start with "#{center}_"
+        - B 130528: Deleting an user doesn't take away it's grades
+        - B 130528: adding twice the same course-name fails -> also moved course-creation
+          to Course
+        - B 130528: CourseModify::add_bulk: Don't add username to users in a local course,
+          only when connected "remote" for "label"s
+        - B 130527: Wrong new coursename in CourseAdd -> fixed, depending on course_server
+          or not
+        - B 130528: config:Samba:enable is stupid - it works nearly, even when it's off ->
+          replaced with ConfigBase::share
+        - UI130528: Administration::Backup is not nicely bordered
         - P 130522: Define roles of installation
           - AdminFunction for chosing what to do
           - Show tabs according to function

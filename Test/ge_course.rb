@@ -4,7 +4,7 @@ require 'ftools'
 
 class TC_Course < Test::Unit::TestCase
   def setup
-    Permission.add( 'default', '.*' )
+    #    Permission.add( 'default', '.*' )
     Permission.add( 'student', '.*' )
     Permission.add( 'teacher', '.*' )
     Entities.delete_all_data()
@@ -16,7 +16,7 @@ class TC_Course < Test::Unit::TestCase
 
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123", 
       :permissions => [ "default", "teacher" ], :first_name => "Admin", :family_name => "The" )
-    @secretaire = Entities.Persons.create( :login_name => "josue", :password => "super", 
+    @secretaire = Entities.Persons.create( :login_name => "secretaire", :password => "super", 
       :permissions => [ "default", "teacher" ], :first_name => "Le", :family_name => "Secretaire" )
     @surf = Entities.Persons.create( :login_name => "surf", :password => "super", 
       :permissions => [ "default" ], :first_name => "Internet", :family_name => "Surfer" )
@@ -35,6 +35,14 @@ class TC_Course < Test::Unit::TestCase
       :contents => "lots of work", :description => "maintenance",
       :duration => 72, :responsible => @secretaire,
       :ctype => @maint_t )
+
+    @it_101_t = CourseTypes.create( :name => "it-101", :diploma_type => ["accredited"], 
+      :output => %w( label ), :filename => %w( label.odg ),
+      :contents => "it-101", :description => "windows, word, excel",
+      :central_host => "http://profeda.org/label")
+    @it_101 = Courses.create_ctype( @it_101_t, "1203" )
+    @it_101.data_set_hash( :responsible => @secretaire, :teacher => @surf,
+      :start => "1.11.2012", :end => "1.2.2013", :sign => "10.2.2013")
     @center = Persons.create( :login_name => "foo", :permissions => ["center"])
     @center.password = @center.password_plain = "1234"
 
@@ -49,9 +57,11 @@ class TC_Course < Test::Unit::TestCase
   end
   
   def test_bulk
+    ConfigBase.set_functions([])
     names = [ "Dmin A","Zero","One Two","Ten Eleven Twelve","A B C D",
       "Hélène Méyère","Äeri Soustroup" ]
     while names.length > 0
+      ddputs(4){"Doing #{names.inspect}"}
       reply = RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "bulk_students",
             {"name" => "net_1001", "names" => names.join("\n") }]])
       assert_not_nil reply
@@ -63,7 +73,7 @@ class TC_Course < Test::Unit::TestCase
       login, first, family = b
       dputs( 0 ){ "Doing #{b.inspect}" }
       p = Entities.Persons.match_by_login_name( login )
-      dputs( 5 ){"p is #{p.inspect} - login is #{login.inspect}"}
+      ddputs( 5 ){"p is #{p.inspect} - login is #{login.inspect}"}
       assert_not_nil p, login.inspect
       assert_equal login, p.login_name
       assert_equal first, p.first_name
@@ -141,7 +151,7 @@ class TC_Course < Test::Unit::TestCase
     @grade_admin = Entities.Grades.match_by_course_person( @net.course_id, @admin.login_name )
     assert_not_nil @grade_admin
     assert_equal 10, @grade_admin.mean
-    assert_equal %w( 01.02.2003 04.05.2003 04.06.2003 72 admin josue ),
+    assert_equal %w( 01.02.2003 04.05.2003 04.06.2003 72 admin secretaire ),
       course.data_get( %w( start end sign duration teacher responsible ) )
     dputs( 0 ){ @course.inspect }
   end
@@ -159,10 +169,29 @@ class TC_Course < Test::Unit::TestCase
   end
   
   def test_new_course
-    nmaint = Courses.create_ctype("maint_1201", @maint_t)
+    nmaint = Courses.create_ctype( @maint_t, "1201" )
     assert_equal( {:duration=>72, :course_id=>5, :contents=>"lots of work", 
         :students=>[], :name=>"maint_1201", :ctype => [1] },
       nmaint.to_hash )
+    
+    nmaint2 = Courses.create_ctype( @maint_t, "1201" )
+    assert_equal "maint_1201-2", nmaint2.name
+    
+    ConfigBase.add_function( :course_server )
+    it_101 = Courses.create_ctype( @it_101, "1202", @surf )
+    assert_equal( {:ctype=>[2],
+        :course_id=>7,
+        :responsible=>[3],
+        :students=>[],
+        :name=>"it-101_1202"}, it_101.to_hash)
+
+    it_101 = Courses.create_ctype( @it_101, "1202", @center )
+    assert_equal( {:ctype=>[2],
+        :course_id=>8,
+        :responsible=>[4],
+        :students=>[],
+        :center=>[4],
+        :name=>"foo_it-101_1202"}, it_101.to_hash)
   end
 	
   def test_prepare_diplomas
@@ -170,7 +199,7 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.prepare_diplomas( false )
     assert_equal 0, Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count
 
-    @maint_2.students.push 'josue'
+    @maint_2.students.push 'secretaire'
     @maint_2.prepare_diplomas( false )
     assert_equal 0, Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count
 		
@@ -189,7 +218,7 @@ class TC_Course < Test::Unit::TestCase
   end
 		
   def test_print_diplomas
-    @maint_2.students.push 'josue'
+    @maint_2.students.push 'secretaire'
     @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
         :course_id => @maint_2.course_id, :means => [11]})
     @maint_2.prepare_diplomas
@@ -304,14 +333,13 @@ class TC_Course < Test::Unit::TestCase
   end
   
   def test_label
-    @maint_t.output = ["label"]
-    @maint_t.diploma_type = "simple"
-    @maint_2.students.push 'josue'
+    @it_101_t.diploma_type = %w( accredited )
+    @it_101.students.push 'secretaire'
     @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
-        :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
-    @maint_2.prepare_diplomas
+        :course_id => @it_101.course_id, :mean => 11, :means => [11]})
+    @it_101.prepare_diplomas( false )
     
-    while ( files = Dir.glob( "#{@maint_2.dir_diplomas}/*" ) ).count < 3 do
+    while ( files = Dir.glob( "#{@it_101.dir_diplomas}/*" ) ).count < 3 do
       dputs(0){"Waiting for diplomas - #{files.inspect}"}
       sleep 1
     end
@@ -334,7 +362,7 @@ class TC_Course < Test::Unit::TestCase
     @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
         :central_host => "label.profeda.org", :filename => ["label.odg"],
         :diploma_type => ["simple"]})
-    @maint_2.students.push 'josue'
+    @maint_2.students.push 'secretaire'
     @maint_2.prepare_diplomas
 
     while ( files = Dir.glob( "#{@maint_2.dir_diplomas}/*" ) ).count < 3 do
@@ -347,7 +375,7 @@ class TC_Course < Test::Unit::TestCase
     @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
         :central_host => "label.profeda.org", :filename => ["label.odg"],
         :diploma_type => ["simple"]})
-    students = %w( josue admin surf )
+    students = %w( secretaire admin surf )
     @maint_2.students.concat students
     
     %x[ rm -rf #{@maint_2.dir_exas} ]
@@ -382,7 +410,7 @@ class TC_Course < Test::Unit::TestCase
         :central_host => "http://localhost:3302", :filename => ["label.odg"],
         :name => "it-101", :center => @center,
         :diploma_type => ["accredited"]})
-    students = %w( josue admin surf )
+    students = %w( secretaire admin surf )
     @maint_2.students.concat students
     @grade0 = Grades.create({:person_id => @secretaire.person_id,
         :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
@@ -404,7 +432,7 @@ class TC_Course < Test::Unit::TestCase
     names = Persons.search_by_login_name( "^#{cname}" ).collect{|p|
       p.login_name
     }
-    assert_equal ["foo_josue", "foo_admin", "foo_surf"], names
+    assert_equal ["foo_secretaire", "foo_admin", "foo_surf"], names
     assert_equal "foo_maint_1210", Courses.find_by_name( "^#{cname}" ).name
   end
   

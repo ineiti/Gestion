@@ -109,7 +109,7 @@ class Grade < Entity
     if course.ctype.central_host.to_s.length > 0 and
         course.center
       ret = "#{course.ctype.central_host}/#{course.center.login_name}/#{random}"
-      if ! ( ret =~ /^http:\/\// )
+      if ! ( ret =~ /^https{0,1}:\/\// )
         ret = "http://#{ret}"
       end
       ret

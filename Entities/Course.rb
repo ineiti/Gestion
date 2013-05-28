@@ -94,7 +94,7 @@ class Courses < Entities
       end
     end
     ret.collect{ |d| [ d.course_id, d.name] }.sort{|a,b|
-      a[1].gsub( /^[^0-9]*/, '' ) <=> b[1].gsub( /^[^0-9]*/, '' )
+      a[1].gsub( /.*([0-9]{4}.*)/, '\1' ) <=> b[1].gsub( /.*([0-9]{4}.*)/, '\1' )
     }.reverse
   end
   
@@ -115,10 +115,35 @@ class Courses < Entities
     return %w( base maint int net site )
   end
   
-  def self.create_ctype( name, ctype )
-    self.create( :name => name ).
+  def self.create_ctype( ctype, date, creator = nil )
+    needs_center = ( ConfigBase.has_function?( :course_server ) and
+      ( creator and creator.has_permission?( :center ) ) )
+    dputs(4){"needs_center is #{needs_center.inspect}"}
+
+    # Prepare correct name
+    name = if needs_center
+      "#{creator.login_name}_#{ctype.name}_#{date}"
+    else
+      "#{ctype.name}_#{date}"
+    end
+    
+    # Check for double names
+    suffix = ""
+    counter = 1
+    while Courses.match_by_name( name + suffix )
+      counter += 1
+      suffix = "-#{counter}"
+    end
+    name += suffix
+  
+    course = self.create( :name => name ).
       data_set_hash( ctype.to_hash.except(:name), true ).
       data_set( :ctype, ctype )
+
+    creator and course.responsible = creator
+    needs_center and course.center = creator
+    
+    return course
   end
 
   def self.from_date_fr( str )
@@ -406,14 +431,14 @@ base_gestion
           ( exam_files( student ).count >= ctype.files_needed.to_i ) )
       dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|
-        #presponsible = Persons.match_by_login_name( responsible.join )
+        ddputs(5){"Cours is #{self.inspect}"}
         doc = z.read("content.xml")
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match( doc )
           dputs( 2 ){"QRcode-image is #{qrcode[1]}"}
           qr = RQRCode::QRCode.new( grade.get_url_label )
           png = qr.to_img
-          png.resize(900, 900)
+          png.resample_nearest_neighbor!(900, 900)
           z.file.open(qrcode[1], "w"){ |f|
             png.write( f )
           }

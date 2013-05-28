@@ -20,13 +20,15 @@ def permissions_init
   Permission.add( 'professor', '', 'student' )
   Permission.add( 'secretary', 'PersonModify,FlagAddInternet', 'professor' )
   Permission.add( 'accountant', 'FlagAccounting' )
+  Permission.add( 'center', 'FlagAddCenter', 'professor')
 end
 permissions_init
 
 QooxView.init( '../Entities', '../Views' )
 
 tests = %w( login view tasks internet info course person )
-#tests = %w( course )
+tests = %w( course )
+#tests = %w( person )
 tests.each{|t|
   require "ge_#{t}"
 }
