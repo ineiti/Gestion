@@ -109,21 +109,22 @@ class CourseGrade < View
         end
 
         ret += to_means( course ){|s, i| 
-          s ?  reply( :unhide, "mean#{i}" ) : reply( :hide, "mean#{i}")
+          s ? reply( :unhide, "mean#{i}" ) : reply( :hide, "mean#{i}")
         }.flatten
 
         ret += reply( course.ctype.diploma_type[0] == "simple" ? :hide : :unhide, 
           :files_saved)
 
         show_buttons = [0,0,0]
-        if course.ctype.diploma_type[0].to_sym != :simple
+        if course.ctype.diploma_type[0] != "simple"
           show_buttons = Shares.match_by_name( "CourseFiles" ) ? [1,1,1] : [0,0,1]
         end
         buttons = [ :prepare_files, :fetch_files, :transfer_files ]
         buttons.each{|b|
           ret += reply( show_buttons.shift == 1 ? :unhide : :hide, b )
         }
-        if course.ctype.diploma_type[0].to_sym == :accredited
+        if course.ctype.diploma_type[0] == "accredited" and
+            ConfigBase.has_function?( :course_client )
           ret += reply( :unhide, :sync_files )
         end
         

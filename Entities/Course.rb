@@ -453,24 +453,35 @@ base_gestion
           doc.gsub!( /-DESC1-.*-DESC2-/,
             contents.split("\n").join( desc_p ))
         end
-        doc.gsub!( /-PROF-/, teacher.full_name )
+        doc.gsub!( /-TEACHER-/, teacher.full_name )
+        role_diploma = "Enseignant informatique"
+        if teacher.role_diploma.to_s.length > 0
+          role_diploma = teacher.role_diploma
+        end
+        doc.gsub!( /-TEACHER_ROLE-/, role_diploma )
         role_diploma = "Responsable informatique"
         if responsible.role_diploma.to_s.length > 0
           role_diploma = responsible.role_diploma
         end
-        doc.gsub!( /-RESP-ROLE-/, role_diploma )
+        doc.gsub!( /-RESP_ROLE-/, role_diploma )
         doc.gsub!( /-RESP-/, responsible.full_name )
-        doc.gsub!( /-NOM-/, student.full_name )
-        doc.gsub!( /-DUREE-/, duration.to_s )
-        doc.gsub!( /-COURS-/, description )
+        doc.gsub!( /-NAME-/, student.full_name )
+        doc.gsub!( /-DURATION-/, duration.to_s )
+        doc.gsub!( /-COURSE-/, description )
         show_year = start.gsub(/.*\./, '' ) != self.end.gsub(/.*\./, '' )
-        doc.gsub!( /-DU-/, date_fr( start, show_year ) )
-        doc.gsub!( /-AU-/, date_fr( self.end ) )
+        doc.gsub!( /-FROM-/, date_fr( start, show_year ) )
+        doc.gsub!( /-TO-/, date_fr( self.end ) )
         doc.gsub!( /-SPECIAL-/, grade.remark || "" )
         doc.gsub!( /-MENTION-/, grade.mention )
         doc.gsub!( /-DATE-/, date_fr( sign ) )
-        doc.gsub!( /-COURS_TYPE-/, ctype.name )
+        doc.gsub!( /-COURSE_TYPE-/, ctype.name )
         doc.gsub!( /-URL_LABEL-/, grade.get_url_label )
+        c = center.first || Persons.find_by_permissions( :center )
+        doc.gsub!( /-CENTER_NAME-/, c.full_name )
+        doc.gsub!( /-CENTER_PLACE-/, c.town )
+        doc.gsub!( /-CENTER_PHONE-/, c.phone )
+        doc.gsub!( /-CENTER_EMAIL-/, c.email )
+
         z.file.open("content.xml", "w"){ |f|
           f.write( doc )
         }

@@ -41,7 +41,7 @@ FEATURES:
           - store files for exams
           - send everything to profeda.org with the notes
           - 130528 for remote-only labels, add possibility for creating teachers
-          - 130528 add the name and place of the center - center itself
+          - 130530 add the name and place of the center - center itself
         - receive SMS through LibNet and do actions
           - make connection
           - return stats
@@ -64,8 +64,8 @@ Programming:
           permissions::FreeInternet
         - Lots of stuff in View/* should go into Entities/*
         - configure also LibNet through Gestion
-          - can set cost_* now
-          - also change the connection
+          - 130400 can set cost_* now
+          - 130400 also change the connection
         - replace gsm-ussd with something Debian
         -2 verify if Person::data_set and Person::data_set_log are really
           necessary
