@@ -4,6 +4,7 @@ class SelfShow < View
   def layout
     set_data_class :Persons
     @order = 20
+    @update = true
     
     gui_hbox do
       show_block :address, :width => 150
@@ -34,7 +35,11 @@ class SelfShow < View
     return nil
   end
   
-  def rpc_show( session )
-    super( session ) + [ { :cmd => "update", :data => update( session ) } ]
+#  def rpc_show( session )
+#    super( session ) + [ { :cmd => "update", :data => update( session ) } ]
+#  end
+  def rpc_update( session )
+    reply( :empty ) +
+      reply( :update, session.owner.to_hash )
   end
 end

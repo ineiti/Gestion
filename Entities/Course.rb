@@ -435,7 +435,7 @@ base_gestion
           ( exam_files( student ).count >= ctype.files_needed.to_i ) )
       dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|
-        ddputs(5){"Cours is #{self.inspect}"}
+        dputs(5){"Cours is #{self.inspect}"}
         doc = z.read("content.xml")
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match( doc )
@@ -478,10 +478,10 @@ base_gestion
         doc.gsub!( /-URL_LABEL-/, grade.get_url_label )
         c = center.first || Persons.find_by_permissions( :center )
         doc.gsub!( /-CENTER_NAME-/, c.full_name )
-        doc.gsub!( /-CENTER_ADDRESS-/, c.address )
-        doc.gsub!( /-CENTER_PLACE-/, c.town )
-        doc.gsub!( /-CENTER_PHONE-/, c.phone )
-        doc.gsub!( /-CENTER_EMAIL-/, c.email )
+        doc.gsub!( /-CENTER_ADDRESS-/, c.address || "" )
+        doc.gsub!( /-CENTER_PLACE-/, c.town || "" )
+        doc.gsub!( /-CENTER_PHONE-/, c.phone || "" )
+        doc.gsub!( /-CENTER_EMAIL-/, c.email || "" )
 
         z.file.open("content.xml", "w"){ |f|
           f.write( doc )
@@ -596,7 +596,7 @@ base_gestion
   # files over.
   # The name of the zip-file is different from the directory-name, so that the
   # upload is less error-prone.
-  def zip_create( for_server = false )
+  def zip_create( for_server = false, include_files = true )
     pre = for_server ? center.login_name + '_' : ''
     dir = "exa-#{pre}#{name}"
     file = "#{pre}#{name}.zip"
@@ -609,7 +609,7 @@ base_gestion
         students.each{|s|
           p = "#{dir}/#{pre}#{s}"
           z.mkdir( p )
-          if for_server
+          if include_files
             dputs(3){"Searching in #{dir_exas}/#{s}"}
             Dir.glob( "#{dir_exas}/#{s}/*" ).each{|exa_f|
               dputs(3){"Adding file #{exa_f}"}
@@ -700,17 +700,17 @@ base_gestion
   end
   
   def sync_send_post( field, data )
-    path = URI.parse( "#{ctype.central_host}/label" )
+    path = URI.parse( "#{ctype.get_url}/label" )
     post = { :field => field, :data => data }
-    ddputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
+    dputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
     ret = Net::HTTP.post_form( path, post )
-    ddputs(4){"Return-value is #{ret.inspect}, body is #{ret.body}"}
+    dputs(4){"Return-value is #{ret.inspect}, body is #{ret.body}"}
     return ret.body
   end
   
   def sync_transfer( field, transfer, slow = false )
     ss = @sync_state
-    block_size = 100
+    block_size = 1024
     transfer_md5 = Digest::MD5.hexdigest( transfer )
     t_array = []
     while t_array.length * block_size < transfer.length
@@ -727,7 +727,7 @@ base_gestion
           :course => name }.to_json )
       return ret if ret =~ /^Error:/
       t_array.each{|t|
-        @sync_state = "#{ss} #{pos+1}/#{t_array.length}"
+        @sync_state = "#{ss} #{( (pos+1) * 100 / t_array.length ).floor}%"
         dputs(3){@sync_state}
         ret = sync_send_post( tid, t )
         return ret if ret =~ /^Error:/
@@ -743,13 +743,24 @@ base_gestion
   
   def sync_do( slow = false )
     @sync_state = sync_s = "<li>Transferring course</li>"
-    ddputs(3){@sync_state}
+    dputs(3){@sync_state}
     slow and sleep 3
+
+    @sync_state = sync_s += "<li>Transferring responsibles: "
+    users = [ teacher.login_name, responsible.login_name, center.login_name ]
+    ret = sync_transfer( :users, users.collect{|s|
+        Persons.match_by_login_name( s ) 
+      }.to_json, slow )
+    @sync_state += ret
+    if ret =~ /^Error: /
+      return false
+    end
+    @sync_state = sync_s += "OK</li>"
 
     if students.length > 0
       @sync_state = sync_s += "<li>Transferring users: "
       users = students + [ teacher.login_name, responsible.login_name ]
-      ret = sync_transfer( :students, users.collect{|s|
+      ret = sync_transfer( :users, users.collect{|s|
           Persons.match_by_login_name( s ) 
         }.to_json, slow )
       @sync_state += ret

@@ -1,9 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - password_plain is not updated when changing the password for the
-          use of synching
-        - confusing use of /label in URL...
+        - prepare_diplomas takes a long time now -> put this into the thread, too
         - ne pas afficher dans label quand "pas passé" -> when creating?
         - missing fields won't work in Entity::to_hash( true ) ??
 
@@ -39,12 +37,6 @@ UI:
         - write a good documentation...
 
 FEATURES:
-        - Have the possibility of storing course-data centrally
-          - input multiple notes
-          - store files for exams
-          - send everything to profeda.org with the notes
-          - 130528 for remote-only labels, add possibility for creating teachers
-          - 130530 add the name and place of the center - center itself
         - receive SMS through LibNet and do actions
           - make connection
           - return stats
@@ -59,9 +51,6 @@ Programming:
         - Why is a value_list-definition in Entities not able to give a default-
           value for the list? -> it is, but only if it is taken as a show_block
           in a View
-        - Why is a false return-value in Entities::setup_data used for not
-          auto-loading data? Change this to a @auto_load variable which is "true"
-          by default... But first check who is really returning a false value anyway
         - Grade needs to change course_id and person_id with real entities
         - merge two ways of free surfing: group::freesurf and
           permissions::FreeInternet
@@ -173,6 +162,21 @@ To check:
 
 
 ** FIXED **:
+        - B 130604: Grades are not updated with sync_do
+        - B 130604: Center-person is not updated with sync_do, don't update
+         permissions and groups, only address!
+        - P 130604: Why is a false return-value in Entities::setup_data used for not
+          auto-loading data? Change this to a @auto_load variable which is "true"
+          by default... But first check who is really returning a false value anyway
+        - F 130604: Have the possibility of storing course-data centrally
+          - input multiple notes
+          - store files for exams
+          - send everything to profeda.org with the notes
+          - 130528 for remote-only labels, add possibility for creating teachers
+          - 130530 add the name and place of the center - center itself
+        - B 130604: password_plain is not updated when changing the password for the
+          use of synching -> update password_plain when in "center"-group
+        - B 130528: confusing use of /label in URL...
         - B 130528: Adding course doesn't add date
         - B 130528: CourseModify shows also teachers that are not of this center
         - B 130528: gender is not stored in CourseResponsible

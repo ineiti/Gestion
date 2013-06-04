@@ -40,7 +40,7 @@ else
       if [ "$a" != "n" -a "$a" != "N" ]; then
         echo
         sudo apt-get install ruby rubygems $OOFFICE pdftk psutils sqlite libsqlite3-dev \
-          default-jdk gettext comgt libexpect-perl gammu bc cups-client
+          default-jdk gettext comgt libexpect-perl gammu bc cups-client graphicsmagick
         echo -n "Do you also want ldap?"
         read a
         if [ "$a" = "y" -o "$a" = "Y" ]; then

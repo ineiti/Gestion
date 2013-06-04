@@ -63,8 +63,6 @@ class Persons < Entities
       @print_card = OpenPrint.new( 
         "#{ddir}/carte_etudiant.odg", "#{ddir}/cartes" )
     end
-
-    LOAD_DATA
   end
 
   # Searches for an empty name starting with "login", adding 2, 3, 4, ...
@@ -503,6 +501,9 @@ class Person < Entity
     update_smb_passwd( pass )
     dputs( 1 ){ "Setting password for #{self.login_name} to #{p}" }
     data_set( :password, p )
+    if permissions and permissions.index( "center" )
+      data_set( :password_plain, pass )
+    end
   end
 
   def full_name

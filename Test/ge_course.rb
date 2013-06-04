@@ -42,8 +42,11 @@ class TC_Course < Test::Unit::TestCase
       :central_host => "http://localhost:3302")
     @it_101 = Courses.create_ctype( @it_101_t, "1203" )
     @it_101.data_set_hash( :responsible => @secretaire, :teacher => @surf,
-      :start => "1.11.2012", :end => "1.2.2013", :sign => "10.2.2013")
-    @center = Persons.create( :login_name => "foo", :permissions => ["center"])
+      :start => "1.11.2012", :end => "1.2.2013", :sign => "10.2.2013",
+      :students => %w( secretaire surf ) )
+    @center = Persons.create( :login_name => "foo", :permissions => ["center"],
+      :address => "B.P. 1234", :town => "Sansibar",
+      :phone => "+23599999999", :email => "profeda@gmail.com")
     @center.password = @center.password_plain = "1234"
 
     Sessions.create( @admin, "default" )
@@ -170,7 +173,7 @@ class TC_Course < Test::Unit::TestCase
   
   def test_new_course
     nmaint = Courses.create_ctype( @maint_t, "1201" )
-    assert_equal( {:duration=>72, :course_id=>5, :contents=>"lots of work", 
+    assert_equal( {:duration=>72, :course_id=>6, :contents=>"lots of work", 
         :students=>[], :name=>"maint_1201", :ctype => [1] },
       nmaint.to_hash )
     
@@ -408,7 +411,7 @@ class TC_Course < Test::Unit::TestCase
 
     @maint_t.data_set_hash({:output => ["label"],
         :central_host => "http://localhost:3302", :filename => ["label.odg"],
-        :name => "it-101", :center => @center,
+        :name => "it-101",
         :diploma_type => ["accredited"]})
     students = %w( secretaire admin surf )
     @maint_2.students.concat students
@@ -435,6 +438,7 @@ class TC_Course < Test::Unit::TestCase
     }
     assert_equal ["foo_secretaire", "foo_admin", "foo_surf"], names
     assert_equal "foo_maint_1210", foo_maint.name
+    assert_equal "foo", foo_maint.data_get( :center ).login_name
     
     dputs(0){"Diploma-dir is #{foo_maint.dir_exas}"}
     
@@ -452,14 +456,40 @@ class TC_Course < Test::Unit::TestCase
       "<li>Transferring course: OK</li>It is finished!", 
       @it_101.sync_state
 
-    @center.password = ""
+    @center.password_plain = ""
     
     assert ! @it_101.sync_do
     assert_equal "<li>Transferring course</li>" +
       "<li>Transferring course: Error: authentification", 
       @it_101.sync_state
     
+    @center.password = ""
+    assert @it_101.sync_do
+    
     main.kill
   end
   
+  def test_update_grade
+    main = Thread.new{
+      QooxView::startWeb
+    }
+    sleep 1
+
+    grade = Grades.create({:person_id => @surf.person_id,
+        :course_id => @it_101.course_id, :means => [11]})
+
+    @it_101.sync_do
+    
+    foo = Courses.find_by_name( "foo_" )
+    foo_surf = Persons.match_by_login_name( "foo_surf" )
+    foo_grade = Grades.match_by_course_person( foo.course_id, foo_surf.login_name )
+    
+    assert_equal [11], foo_grade.means
+    grade.means = [12]
+    
+    @it_101.sync_do
+    assert_equal [12], foo_grade.means
+
+    main.kill
+  end  
 end

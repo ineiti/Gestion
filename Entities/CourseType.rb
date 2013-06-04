@@ -67,8 +67,8 @@ class CourseType < Entity
   end
   
   def get_url
-    if course.ctype.central_host.to_s.length > 0
-      ret = "#{course.ctype.central_host}"
+    if central_host.to_s.length > 0
+      ret = "#{central_host}"
     else
       ret = "#{get_config( %x[ hostname -f ].chomp + ":3302", :Courses, :Hostname)}"
     end

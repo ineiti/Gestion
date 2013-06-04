@@ -8,7 +8,7 @@ class Label < RPCQooxdooPath
     if req.request_method == "POST"
       #self.parse( req.request_method, req.path, req.query, req.peeraddr[2] )
       path, query, addr = req.path, req.query.to_sym, req.peeraddr[2]
-      ddputs(4){"Got query: #{path} - #{query.inspect} - #{addr}"}
+      dputs(4){"Got query: #{path} - #{query.inspect} - #{addr}"}
       
       if query._field == "start"
         d = JSON.parse( query._data ).to_sym
@@ -66,17 +66,21 @@ class Label < RPCQooxdooPath
     course_name = "#{tr._user}_#{tr._course}"
     dputs(3){"Course-name is #{course_name} and field is #{tr._field}"}
     case tr._field
-    when /students/
-      students = JSON.parse( tr._data )
-      dputs(3){"Students are #{students.inspect}"}
-      students.each{|s|
+    when /users/
+      users = JSON.parse( tr._data )
+      dputs(3){"users are #{users.inspect}"}
+      users.each{|s|
         s.to_sym!
-        s._login_name = "#{tr._user}_#{s._login_name}"
-        s.delete :person_id
+        if s._login_name != tr._user
+          s._login_name = "#{tr._user}_#{s._login_name}"
+        end
+        %w( person_id permissions groups ).each{|f|
+          s.delete f
+        }
         dputs(4){"Looking for #{s._login_name}"}
         if stud = Persons.match_by_login_name( s._login_name )
           dputs(3){"Updating person"}
-          #stud.data_set_hash( s )
+          stud.data_set_hash( s )
         else
           dputs(3){"Creating person #{s.inspect}"}
           Persons.create( s )
@@ -93,7 +97,7 @@ class Label < RPCQooxdooPath
         "#{tr._user}_#{course._teacher}" )
       course._students = course._students.collect{|s| "#{tr._user}_#{s}"}
       course._ctype = CourseTypes.match_by_name( course._ctype )
-      course._center = tr._user
+      course._center = Persons.match_by_login_name( tr._user )
       dputs(3){"Course is now #{course.inspect}"}
       if c = Courses.match_by_name( course._name )
         dputs(3){"Updating course #{course._name}"}
@@ -113,11 +117,11 @@ class Label < RPCQooxdooPath
         grade.delete :grade_id
         if g = Grades.match_by_course_person( grade._course_id, 
             "#{tr._user}_#{grade._person}" )
-          dputs(3){"Updating grade #{g.inspect}"}
+          ddputs(3){"Updating grade #{g.inspect}"}
           g.data_set_hash( grade )
         else
           g = Grades.create( grade )
-          dputs(3){"Creating grade #{g.inspect}"}
+          ddputs(3){"Creating grade #{g.inspect}"}
         end
         dputs(3){Grades.match_by_course_person( grade._course_id, 
             "#{tr._user}_#{grade._person}" ).inspect }

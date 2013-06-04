@@ -39,9 +39,9 @@ class Grades < Entities
         d[:grade_id] = id[0].grade_id
       end
     end
-    ddputs(4){"data is #{d.inspect}"}
+    dputs(4){"data is #{d.inspect}"}
     d[:mean] = d[:means].reduce(:+) / d[:means].count
-    ddputs(4){"data is #{d.inspect}"}
+    dputs(4){"data is #{d.inspect}"}
     super( d )
   end
   
@@ -106,7 +106,9 @@ class Grade < Entity
   
   def get_url_label
     init_random
-    center_id = course.center ? coures.center.login_name : "pit"
+    dputs(4){"Course is #{course.inspect}"}
+    center_id = course.center ? course.center.login_name : "pit"
+    dputs(4){"Course is #{course.inspect}"}
     "#{course.ctype.get_url}/label/#{center_id}/#{random}"
   end
   

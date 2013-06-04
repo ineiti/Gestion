@@ -226,7 +226,7 @@ class TC_Person < Test::Unit::TestCase
   end
   
   def test_permission_sort
-    assert_equal ["accountant", "admin", "default", "internet",
+    assert_equal ["accountant", "admin", "center", "default", "internet",
       "professor", "secretary", "student"], 
       View.PersonAdmin.layout_find( "permissions" ).to_a[3][:list_values]
   end
