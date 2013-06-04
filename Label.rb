@@ -8,7 +8,7 @@ class Label < RPCQooxdooPath
     if req.request_method == "POST"
       #self.parse( req.request_method, req.path, req.query, req.peeraddr[2] )
       path, query, addr = req.path, req.query.to_sym, req.peeraddr[2]
-      dputs(4){"Got query: #{path} - #{query.inspect} - #{addr}"}
+      ddputs(4){"Got query: #{path} - #{query.inspect} - #{addr}"}
       
       if query._field == "start"
         d = JSON.parse( query._data ).to_sym
@@ -16,8 +16,10 @@ class Label < RPCQooxdooPath
         if ( user = Persons.match_by_login_name( d._user ) ) and
             ( user.check_pass( d._pass ) )
           @@transfers[d._tid] = d.merge( :data => "" )
+          return "OK: send field"
         else
           dputs(3){"User #{d._user.inspect} with pass #{d._pass.inspect} unknown"}
+          return "Error: authentification"
         end
       elsif @@transfers.has_key? query._field
         tr = @@transfers[query._field]
@@ -27,12 +29,18 @@ class Label < RPCQooxdooPath
           if Digest::MD5.hexdigest( tr._data ) == tr._md5
             dputs(2){"Successfully received field #{tr._field}"}
             self.field_save( tr )
+            ret = "OK: field received"
           else
             dputs(2){"Field #{tr._field} transmitted with errors"}
+            ret = "Error: wrong MD5"
           end
           @@transfers.delete query._field
+          return ret
+        else
+          return "OK: send #{tr._chunks} more chunks"
         end
       end
+      return "Error: must start or use existing field"
     else
       path = /\/label\/([^\/]*)\/([^\/]*).*/.match( req.path )
       self.get_student( path[1], path[2] )

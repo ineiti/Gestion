@@ -6,7 +6,7 @@
 # - Login: - for payable laptop web-access
 #          - for students
 
-DEBUG_LVL=4
+DEBUG_LVL=2
 VERSION_GESTION="1.1"
 require 'fileutils'
 

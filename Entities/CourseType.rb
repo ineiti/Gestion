@@ -25,7 +25,7 @@ class CourseTypes < Entities
     begin
       ddir = get_config( "Diplomas", :Courses, :DiplomaDir )
       ( Dir.glob( ddir + "/*odt" ) +
-        Dir.glob( ddir + "/*odg" ) ).
+          Dir.glob( ddir + "/*odg" ) ).
         collect{|f| f.sub( /^.*\//, '' ) }
     end
   end
@@ -64,5 +64,17 @@ end
 class CourseType < Entity
   def get_unique
     name
+  end
+  
+  def get_url
+    if course.ctype.central_host.to_s.length > 0
+      ret = "#{course.ctype.central_host}"
+    else
+      ret = "#{get_config( %x[ hostname -f ].chomp + ":3302", :Courses, :Hostname)}"
+    end
+    if ! ( ret =~ /^https{0,1}:\/\// )
+      ret = "http://#{ret}"
+    end
+    ret
   end
 end

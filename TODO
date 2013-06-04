@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - password_plain is not updated when changing the password for the
+          use of synching
+        - confusing use of /label in URL...
         - ne pas afficher dans label quand "pas passé" -> when creating?
         - missing fields won't work in Entity::to_hash( true ) ??
 

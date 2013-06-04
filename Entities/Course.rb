@@ -478,6 +478,7 @@ base_gestion
         doc.gsub!( /-URL_LABEL-/, grade.get_url_label )
         c = center.first || Persons.find_by_permissions( :center )
         doc.gsub!( /-CENTER_NAME-/, c.full_name )
+        doc.gsub!( /-CENTER_ADDRESS-/, c.address )
         doc.gsub!( /-CENTER_PLACE-/, c.town )
         doc.gsub!( /-CENTER_PHONE-/, c.phone )
         doc.gsub!( /-CENTER_EMAIL-/, c.email )
@@ -701,8 +702,10 @@ base_gestion
   def sync_send_post( field, data )
     path = URI.parse( "#{ctype.central_host}/label" )
     post = { :field => field, :data => data }
-    dputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
-    Net::HTTP.post_form( path, post )
+    ddputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
+    ret = Net::HTTP.post_form( path, post )
+    ddputs(4){"Return-value is #{ret.inspect}, body is #{ret.body}"}
+    return ret.body
   end
   
   def sync_transfer( field, transfer, slow = false )
@@ -718,60 +721,85 @@ base_gestion
       pos = 0
       dputs(4){"Going to transfer: #{t_array.inspect}"}
       tid = Digest::MD5.hexdigest( rand.to_s )
-      sync_send_post( :start, { :field => field, :chunks => t_array.length,
+      ret = sync_send_post( :start, { :field => field, :chunks => t_array.length,
           :md5 => transfer_md5, :tid => tid,
           :user => center.login_name, :pass => center.password_plain,
           :course => name }.to_json )
+      return ret if ret =~ /^Error:/
       t_array.each{|t|
         @sync_state = "#{ss} #{pos+1}/#{t_array.length}"
         dputs(3){@sync_state}
-        sync_send_post( tid, t )
+        ret = sync_send_post( tid, t )
+        return ret if ret =~ /^Error:/
         slow and sleep 3
         pos += 1
       }
+      return ret
     else
       dputs(2){"Nothing to transfer"}
+      return nil
     end
   end
   
   def sync_do( slow = false )
     @sync_state = sync_s = "<li>Transferring course</li>"
-    dputs(3){@sync_state}
+    ddputs(3){@sync_state}
     slow and sleep 3
 
     if students.length > 0
       @sync_state = sync_s += "<li>Transferring users: "
       users = students + [ teacher.login_name, responsible.login_name ]
-      sync_transfer( :students, users.collect{|s|
+      ret = sync_transfer( :students, users.collect{|s|
           Persons.match_by_login_name( s ) 
         }.to_json, slow )
+      @sync_state += ret
+      if ret =~ /^Error: /
+        return false
+      end
+      @sync_state = sync_s += "OK</li>"
     end
 
-    @sync_state = sync_s += "done</li><li>Transferring course: "
+    @sync_state = sync_s += "<li>Transferring course: "
     myself = self.to_hash( true )
     myself._students = students
-    sync_transfer( :course, myself.to_json, slow )
+    ret = sync_transfer( :course, myself.to_json, slow )
+    @sync_state += ret
+    if ret =~ /^Error: /
+      return false
+    end
+    @sync_state = sync_s += "OK</li>"
 
     if ( grades = Grades.search_by_course_id( course_id ) ).length > 0
-      @sync_state = sync_s += "done</li><li>Transferring grades: "
-      sync_transfer( :grades, grades.select{|g|
+      @sync_state = sync_s += "<li>Transferring grades: "
+      ret = sync_transfer( :grades, grades.select{|g|
           g.course and g.person
         }.collect{|g| 
           dputs(4){"Found grade with #{g.course.inspect} and #{g.person.inspect}"}
           g.to_hash( true ).merge( :course => g.course.name, 
             :person => g.person.login_name )
         }.to_json, slow )
+      @sync_state += ret
+      if ret =~ /^Error: /
+        return false
+      end
+      @sync_state = sync_s += "OK</li>"
     end
 
     if file = zip_create( true )
-      @sync_state = sync_s += "done</li><li>Transferring exams: "
+      @sync_state = sync_s += "<li>Transferring exams: "
       file = "/tmp/#{file}"
       dputs(3){"Exa-file is #{file}"}
-      #sync_transfer( :exams, File.open(file){|f| f.read }, slow )
+      ret = sync_transfer( :exams, File.open(file){|f| f.read }, slow )
+      @sync_state += ret
+      if ret =~ /^Error: /
+        return false
+      end
+      @sync_state = sync_s += "OK</li>"
     end
 
-    @sync_state = sync_s += "</ul>It is finished!"
+    @sync_state = sync_s += "It is finished!"
     dputs(3){@sync_state}
+    return true
   end
   
   def sync_start

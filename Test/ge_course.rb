@@ -39,7 +39,7 @@ class TC_Course < Test::Unit::TestCase
     @it_101_t = CourseTypes.create( :name => "it-101", :diploma_type => ["accredited"], 
       :output => %w( label ), :filename => %w( label.odg ),
       :contents => "it-101", :description => "windows, word, excel",
-      :central_host => "http://profeda.org/label")
+      :central_host => "http://localhost:3302")
     @it_101 = Courses.create_ctype( @it_101_t, "1203" )
     @it_101.data_set_hash( :responsible => @secretaire, :teacher => @surf,
       :start => "1.11.2012", :end => "1.2.2013", :sign => "10.2.2013")
@@ -429,33 +429,37 @@ class TC_Course < Test::Unit::TestCase
     
     main.kill
     
+    foo_maint = Courses.find_by_name( "^#{cname}" )
     names = Persons.search_by_login_name( "^#{cname}" ).collect{|p|
       p.login_name
     }
     assert_equal ["foo_secretaire", "foo_admin", "foo_surf"], names
-    assert_equal "foo_maint_1210", Courses.find_by_name( "^#{cname}" ).name
+    assert_equal "foo_maint_1210", foo_maint.name
+    
+    dputs(0){"Diploma-dir is #{foo_maint.dir_exas}"}
+    
+    assert File.exists? foo_maint.dir_exas
   end
   
-  # Test taken from an old version - not really know what it's about
-  def tes_responsible_error
-    Entities.delete_all_data()
-    @admin = Persons.create( :login_name => "admin", :password => "super123",
-      :permissions => [ "admin", "teacher" ], :first_name => "Admin", :family_name => "The" )
-    @maint_t = CourseTypes.create( :name => "maint", :duration => 72,
-      :desciption => "maintenance", :contents => "lots of work",
-      :filename => ['base_gestion.odt'])
-    @maint_2 = Courses.create( :name => "maint_1210",
-      :contents => "lots of work", :description => "maintenance",
-      :duration => 72, :ctype => @maint_t )
-    @room = Rooms.create( :name => "base")
-    View.CourseModify.rpc_button_save( nil,
-      {"responsible"=>[1], "duration"=>"20", "name"=>"maint_1210", "classroom"=>[1],
-        "dow"=>["lu-me-ve"], "courses"=>[1], "teacher"=>[1], "contents"=>"USB",
-        "description"=>"Introduction à l'informatique", "hours"=>["9-12"],
-        "ctype"=>{:contents=>"USB", :description=>"Introduction à l'informatique", :tests=>"1",
-          :filename=>["base_gestion.odt"], :duration=>"20", :name=>"maint", :coursetype_id=>1},
-        "assistant"=>0, "students" => []})
-    assert_equal true, false
-  end
+  def test_wrong_password
+    main = Thread.new{
+      QooxView::startWeb
+    }
+    sleep 1
 
+    assert @it_101.sync_do
+    assert_equal "<li>Transferring course</li>" +
+      "<li>Transferring course: OK</li>It is finished!", 
+      @it_101.sync_state
+
+    @center.password = ""
+    
+    assert ! @it_101.sync_do
+    assert_equal "<li>Transferring course</li>" +
+      "<li>Transferring course: Error: authentification", 
+      @it_101.sync_state
+    
+    main.kill
+  end
+  
 end

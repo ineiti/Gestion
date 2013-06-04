@@ -106,17 +106,8 @@ class Grade < Entity
   
   def get_url_label
     init_random
-    if course.ctype.central_host.to_s.length > 0 and
-        course.center
-      ret = "#{course.ctype.central_host}/#{course.center.login_name}/#{random}"
-      if ! ( ret =~ /^https{0,1}:\/\// )
-        ret = "http://#{ret}"
-      end
-      ret
-    else
-      "http://#{get_config( %x[ hostname -f ].chomp + ":3302", 
-      :Courses, :Hostname)}/label/pit/#{random}"
-    end
+    center_id = course.center ? coures.center.login_name : "pit"
+    "#{course.ctype.get_url}/label/#{center_id}/#{random}"
   end
   
   def course
