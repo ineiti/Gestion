@@ -141,9 +141,10 @@ class Courses < Entities
       data_set( :ctype, ctype )
 
     if needs_center
+      ddputs(3){"Got center of #{creator.inspect}"}
       course.center = creator
-      course.responsible = Persons.find_by_login_name( "^#{creator.login_name}_")
-    else
+    elsif creator
+      ddputs(3){"Got responsible of #{creator.class}"}
       course.responsible = creator
     end
     
@@ -247,6 +248,7 @@ end
 
 class Course < Entity
   attr_reader :sync_state
+  attr :thread
   
   def setup_instance
     if not self.students.class == Array
@@ -493,14 +495,7 @@ base_gestion
     end
   end
 
-  def make_pdfs( old, list, format = :certificate )
-    format = format.to_sym
-    FileUtils.rm( old )
-    if list.size == 0
-      dputs(4){"No files here, quitting"}
-      return
-    end
-
+  def make_pdfs( convert )
     if @thread
       dputs( 2 ){ "Thread is here, killing" }
       begin
@@ -513,47 +508,80 @@ base_gestion
         puts e.backtrace
       end
     end
+    
     dputs( 2 ){ "Starting new thread" }
     @thread = Thread.new{
       begin
-        dputs( 2 ){ "Creating #{output} #{list.inspect}" }
-        `date >> /tmp/cp`
-        outfiles = []
-        dir = File::dirname( list.first )
-        list.sort.each{ |p|
-          dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
-          if format == :certificate
-            Docsplit.extract_pdf p, :output => dir
-          else
-            Docsplit.extract_images p, :output => dir, 
-            :density => 300, :format => png
+        digits = students.size.to_s.size
+        counter = 1
+        dputs( 2 ){ "Preparing students: #{students.inspect}" }
+        students.each{ |s|
+          student = Persons.match_by_login_name( s )
+          if student
+            dputs( 2 ){ student.login_name }
+            student_file = "#{dir_diplomas}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
+            dputs( 2 ){ "Doing #{counter}: #{student.login_name} - file: #{student_file}" }
+            FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}", 
+              student_file )
+            update_student_diploma( student_file, student )
           end
-          dputs( 5 ){ "Finished docsplit" }
-          FileUtils.rm( p )
-          dputs( 5 ){ "Finished rm" }
-          outfiles.push p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
+          counter += 1
         }
-        if format == :certificate
-          dputs( 3 ){ "Getting #{outfiles.inspect} out of #{dir}" }
-          all = "#{dir}/000-all.pdf"
-          psn = "#{dir}/000-4pp.pdf"
-          dputs( 3 ){ "Putting it all in one file: pdftk #{outfiles.join( ' ' )} cat output #{all}" }
-          `pdftk #{outfiles.join( ' ' )} cat output #{all}`
-          dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
-          `pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
-          FileUtils.mv( "#{psn}.tmp", psn )
-          dputs( 2 ){ "Finished" }
-        else
-          dputs(3){"Making a zip-file"}
-          Zip::ZipFile.open("#{dir}/all.zip", Zip::ZipFile::CREATE){|z|
-            Dir.glob( "#{dir}/*" ).each{|image|
-              z.get_output_stream(image.sub(".*/", "")) { |f| 
-                File.open(image){|fi|
-                  f.write fi.read
+        
+        dputs( 2 ){ "Convert is #{convert.inspect}" }
+        if convert
+          old = Dir.glob( dir_diplomas + "/content.xml*" )
+          list = Dir.glob( dir_diplomas + "/*odt" )
+          format = ctype.output[0].to_sym
+          
+          ddputs(4){"old is #{old.inspect}"}
+          ddputs(4){"list is #{list.inspect}"}
+
+          FileUtils.rm( old )
+          if list.size == 0
+            dputs(2){"No files here, quitting"}
+            @thread.kill
+          end
+          dputs( 2 ){ "Creating -#{output}-#{list.inspect}-" }
+          `date >> /tmp/cp`
+          %x[ ls -l #{dir_diplomas} >> /tmp/cp ]
+          outfiles = []
+          dir = File::dirname( list.first )
+          list.sort.each{ |p|
+            dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
+            if format == :certificate
+              Docsplit.extract_pdf p, :output => dir
+            else
+              Docsplit.extract_images p, :output => dir, 
+              :density => 300, :format => png
+            end
+            dputs( 5 ){ "Finished docsplit" }
+            FileUtils.rm( p )
+            dputs( 5 ){ "Finished rm" }
+            outfiles.push p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
+          }
+          if format == :certificate
+            dputs( 3 ){ "Getting #{outfiles.inspect} out of #{dir}" }
+            all = "#{dir}/000-all.pdf"
+            psn = "#{dir}/000-4pp.pdf"
+            dputs( 3 ){ "Putting it all in one file: pdftk #{outfiles.join( ' ' )} cat output #{all}" }
+            `pdftk #{outfiles.join( ' ' )} cat output #{all}`
+            dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
+            `pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
+            FileUtils.mv( "#{psn}.tmp", psn )
+            dputs( 2 ){ "Finished" }
+          else
+            dputs(3){"Making a zip-file"}
+            Zip::ZipFile.open("#{dir}/all.zip", Zip::ZipFile::CREATE){|z|
+              Dir.glob( "#{dir}/*" ).each{|image|
+                z.get_output_stream(image.sub(".*/", "")) { |f| 
+                  File.open(image){|fi|
+                    f.write fi.read
+                  }
                 }
               }
             }
-          }
+          end
         end
       rescue Exception => e  
         dputs( 0 ){ "Error in thread: #{e.message}" }
@@ -565,31 +593,13 @@ base_gestion
   end
 
   def prepare_diplomas( convert = true )
-    digits = students.size.to_s.size
-    counter = 1
     dputs( 2 ){ "dir_diplomas is: #{dir_diplomas}" }
     if not File::directory? dir_diplomas
       FileUtils.mkdir( dir_diplomas )
     else
       FileUtils.rm( Dir.glob( dir_diplomas + "/*" ) )
     end
-    dputs( 2 ){ "Students: #{students.inspect}" }
-    students.each{ |s|
-      student = Persons.match_by_login_name( s )
-      if student
-        dputs( 2 ){ student.login_name }
-        student_file = "#{dir_diplomas}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
-        dputs( 2 ){ "Doing #{counter}: #{student.login_name} - file: #{student_file}" }
-        FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}", 
-          student_file )
-        update_student_diploma( student_file, student )
-      end
-      counter += 1
-    }
-    if convert
-      make_pdfs( Dir.glob( dir_diplomas + "/content.xml*" ), 
-        Dir.glob( dir_diplomas + "/*odt" ), ctype.output[0] )
-    end
+    make_pdfs( convert )
   end
   
   # This prepares a zip-file as a skeleton for the center to copy the
@@ -700,7 +710,7 @@ base_gestion
   end
   
   def sync_send_post( field, data )
-    path = URI.parse( "#{ctype.get_url}/label" )
+    path = URI.parse( "#{ctype.get_url}/" )
     post = { :field => field, :data => data }
     dputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
     ret = Net::HTTP.post_form( path, post )

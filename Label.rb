@@ -8,7 +8,7 @@ class Label < RPCQooxdooPath
     if req.request_method == "POST"
       #self.parse( req.request_method, req.path, req.query, req.peeraddr[2] )
       path, query, addr = req.path, req.query.to_sym, req.peeraddr[2]
-      dputs(4){"Got query: #{path} - #{query.inspect} - #{addr}"}
+      ddputs(4){"Got query: #{path} - #{query.inspect} - #{addr}"}
       
       if query._field == "start"
         d = JSON.parse( query._data ).to_sym
@@ -42,7 +42,8 @@ class Label < RPCQooxdooPath
       end
       return "Error: must start or use existing field"
     else
-      path = /\/label\/([^\/]*)\/([^\/]*).*/.match( req.path )
+      path = /.*\/([^\/]*)\/([^\/]*)$/.match( req.path )
+      ddputs(3){"Path is #{path.inspect}"}
       self.get_student( path[1], path[2] )
     end
   end
@@ -75,11 +76,12 @@ class Label < RPCQooxdooPath
           s._login_name = "#{tr._user}_#{s._login_name}"
         end
         %w( person_id permissions groups ).each{|f|
-          s.delete f
+          s.delete f.to_sym
         }
+        dputs(3){"Person is #{s.inspect}"}
         dputs(4){"Looking for #{s._login_name}"}
         if stud = Persons.match_by_login_name( s._login_name )
-          dputs(3){"Updating person"}
+          dputs(3){"Updating person #{stud.login_name} with #{s._login_name}"}
           stud.data_set_hash( s )
         else
           dputs(3){"Creating person #{s.inspect}"}

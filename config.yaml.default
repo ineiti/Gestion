@@ -3,17 +3,27 @@
 
 title: "Gestion avec Profeda"
 
-log: events.log
-
 StorageHandler:
   Replace:
     LDAP: CSV
 
-views:
-  AdminTabs:
-    visible: false
+#version_local: orig
 
-DiplomaDir: Diplomas
+#log: events.log
+
+#autosave: true
+
+OpenPrint:
+#  simulation: true
+#  search_remote: .*
+
+UploadFiles:
+#  path: /tmp
+
+#profiling: profile.txt
+
+webrick:
+#  port: 3302
 
 Accounting:
 #  Lending: Root::Lending
@@ -22,3 +32,21 @@ Accounting:
 
 LibNet:
 #  URI: druby://localhost:9000
+
+Samba:
+  simulation: true
+  config_dir: /etc/samba
+
+AfriCompta:
+#  filename: compta.rb
+
+Courses:
+#  DiplomaDir: Diplomas
+#  ExasDir: Exas
+#  ExasShare: Exas/Share
+#  Hostname: localhost
+
+
+#WelcomeText: |
+#  Here you can have some welcome-text
+#  with <a href="http://profeda.org">Links</a>

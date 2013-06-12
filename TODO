@@ -1,20 +1,23 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - prepare_diplomas takes a long time now -> put this into the thread, too
-        - ne pas afficher dans label quand "pas passé" -> when creating?
-        - missing fields won't work in Entity::to_hash( true ) ??
-
-        - config.yaml.default is really not in a good shape - all different options
-         should be in there
+        - Courses::Grades 4pp doesn't turn the page correctly when switching
+          from landscape to portrait mode
         - empty installation: CourseModify complains about no CourseTypes, even
-          when one was added -> problem in html-display
+          when one was added -> problem in html-display -> why not pop up a
+          dialog that asks everything missing in a very simple way?
+        - If Functions doesn't contain "inventory", one can't add a room for
+          the courses -> add one by default?
 
         - Test if Admin::Backup::restore resets passwords as it should
         - why is Entity::get_value always called three times?
         - When CourseAdd is first tab and course is added, LTab.js:174 can't
           find getActiveForm, as it is not drawn yet...
 	- 10 crashes when not operating "properly"
+
+UNCLEAR BUGS:
+        - ne pas afficher dans label quand "pas passé" -> when creating?
+        - missing fields won't work in Entity::to_hash( true ) ??
 
 HEISENBUGS:
         - when creating labels the URL doesn't show up -> not reproducible
@@ -37,6 +40,13 @@ UI:
         - write a good documentation...
 
 FEATURES:
+        - adding a course:
+          - If course_client, don't make PDF before synched to server
+          - Once synched to server, don't allow for changes, or have a system that
+            prevents abuses like changing the grade afterwards, but allowing to
+            change in case of errors
+          - add m/f recognition to change wording
+
         - receive SMS through LibNet and do actions
           - make connection
           - return stats
@@ -162,6 +172,10 @@ To check:
 
 
 ** FIXED **:
+        - B 130612: Test ge_course doesn't pass
+        - F 130612: prepare_diplomas takes a long time now -> put this into the thread, too
+        - B 130610: config.yaml.default is really not in a good shape - all different options
+         should be in there
         - B 130604: Grades are not updated with sync_do
         - B 130604: Center-person is not updated with sync_do, don't update
          permissions and groups, only address!

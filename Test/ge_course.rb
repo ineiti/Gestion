@@ -39,7 +39,7 @@ class TC_Course < Test::Unit::TestCase
     @it_101_t = CourseTypes.create( :name => "it-101", :diploma_type => ["accredited"], 
       :output => %w( label ), :filename => %w( label.odg ),
       :contents => "it-101", :description => "windows, word, excel",
-      :central_host => "http://localhost:3302")
+      :central_host => "http://localhost:3302/label")
     @it_101 = Courses.create_ctype( @it_101_t, "1203" )
     @it_101.data_set_hash( :responsible => @secretaire, :teacher => @surf,
       :start => "1.11.2012", :end => "1.2.2013", :sign => "10.2.2013",
@@ -109,7 +109,7 @@ class TC_Course < Test::Unit::TestCase
     courses_admin2 = Entities.Courses.search_by_students( "admin2" )
     courses_surf = Entities.Courses.search_by_students( "surf" )
     assert_equal 2, courses_admin2.length
-    assert_equal 2, courses_surf.length
+    assert_equal 3, courses_surf.length
   end
 
   COURSE_STR = "base_gestion\nAdmin The\nLe Secretaire\n72\nCours de base\nWord\nExcel\nLinux\n\n"+
@@ -181,34 +181,40 @@ class TC_Course < Test::Unit::TestCase
     assert_equal "maint_1201-2", nmaint2.name
     
     ConfigBase.add_function( :course_server )
-    it_101 = Courses.create_ctype( @it_101, "1202", @surf )
-    assert_equal( {:ctype=>[2],
-        :course_id=>7,
-        :responsible=>[3],
-        :students=>[],
-        :name=>"it-101_1202"}, it_101.to_hash)
-
-    it_101 = Courses.create_ctype( @it_101, "1202", @center )
+    it_101 = Courses.create_ctype( @it_101_t, "1202", @surf )
     assert_equal( {:ctype=>[2],
         :course_id=>8,
-        :responsible=>[4],
+        :responsible=>[3],
+        :students=>[],
+        :name=>"it-101_1202",
+        :contents => "it-101",
+        :description=>"windows, word, excel"}, it_101.to_hash)
+
+    it_101 = Courses.create_ctype( @it_101_t, "1202", @center )
+    assert_equal( {:ctype=>[2],
+        :course_id=>9,
         :students=>[],
         :center=>[4],
-        :name=>"foo_it-101_1202"}, it_101.to_hash)
+        :name=>"foo_it-101_1202",
+        :contents => "it-101",
+        :description=>"windows, word, excel"}, it_101.to_hash)
   end
 	
   def test_prepare_diplomas
     dputs(0){"Checking for diplomas in #{@maint_2.dir_diplomas}"}
     @maint_2.prepare_diplomas( false )
+    @maint_2.thread.join
     assert_equal 0, Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count
 
     @maint_2.students.push 'secretaire'
     @maint_2.prepare_diplomas( false )
+    @maint_2.thread.join
     assert_equal 0, Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count
 		
     @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
         :course_id => @maint_2.course_id, :means => [9]})
     @maint_2.prepare_diplomas( false )
+    @maint_2.thread.join
     assert_equal 0, Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count
 
 
@@ -217,6 +223,7 @@ class TC_Course < Test::Unit::TestCase
     @secretaire.role_diploma = "Director"
     assert @secretaire, @maint_2.teacher
     @maint_2.prepare_diplomas( false )
+    @maint_2.thread.join
     assert_equal 1, Dir.glob( "#{@maint_2.dir_diplomas}/*odt" ).count
   end
 		
@@ -410,7 +417,7 @@ class TC_Course < Test::Unit::TestCase
     cname = "#{@center.login_name}_"
 
     @maint_t.data_set_hash({:output => ["label"],
-        :central_host => "http://localhost:3302", :filename => ["label.odg"],
+        :central_host => "http://localhost:3302/label", :filename => ["label.odg"],
         :name => "it-101",
         :diploma_type => ["accredited"]})
     students = %w( secretaire admin surf )
@@ -453,14 +460,15 @@ class TC_Course < Test::Unit::TestCase
 
     assert @it_101.sync_do
     assert_equal "<li>Transferring course</li>" +
-      "<li>Transferring course: OK</li>It is finished!", 
+      "<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>" +
+      "<li>Transferring course: OK</li><li>Transferring exams: OK</li>It is finished!", 
       @it_101.sync_state
 
     @center.password_plain = ""
     
     assert ! @it_101.sync_do
     assert_equal "<li>Transferring course</li>" +
-      "<li>Transferring course: Error: authentification", 
+      "<li>Transferring responsibles: Error: authentification", 
       @it_101.sync_state
     
     @center.password = ""
@@ -477,6 +485,8 @@ class TC_Course < Test::Unit::TestCase
 
     grade = Grades.create({:person_id => @surf.person_id,
         :course_id => @it_101.course_id, :means => [11]})
+    assert ! Courses.find_by_name( "foo_" )
+    assert ! Persons.match_by_login_name( "foo_secretaire" )
 
     @it_101.sync_do
     
