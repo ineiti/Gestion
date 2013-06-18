@@ -10,8 +10,21 @@ class CourseTabs < View
     end
     
     gui_window :not_all_elements do
-      show_html :msg, "<h1>Some elements are missing</h1>"
-      show_button :add_elements
+      gui_vbox do
+        gui_vbox :nogroup do
+          show_str :ct_name
+          show_int :ct_duration
+          show_str :ct_desc
+          show_text :ct_contents
+        end
+        gui_vbox :nogroup do
+          show_str :new_room
+        end
+        gui_vbox :nogroup do
+          show_str :new_teacher
+        end
+        show_button :add_missing
+      end
     end
     
     gui_vboxg :nogroup do
@@ -21,15 +34,21 @@ class CourseTabs < View
   end
   
   def rpc_update( session )
-    if CourseTypes.search_all.size == 0
-      reply( :window_show, :not_all_elements ) +
-        reply( :update, :msg => "Please define a coursetype first" )
-    elsif Rooms.search_all.size == 0
-      reply( :window_show, :not_all_elements ) +
-        reply( :update, :msg => "Please define a room first" )
-    elsif Persons.search_by_permissions( "teacher" ).size == 0
-      reply( :window_show, :not_all_elements ) +
-        reply( :update, :msg => "Please define a teacher first" )
+    hide = []
+    if CourseTypes.search_all.size > 0
+      hide.push :ct_name, :ct_duration, :ct_desc, :ct_contents
+    end
+    if Rooms.search_all.size > 0
+      hide.push :new_room
+    end
+    if Persons.search_by_permissions( "teacher" ).size > 0
+      hide.push :new_teacher
+    end
+    if hide.size < 6
+      ( reply( :window_show, :not_all_elements ) +
+          hide.collect{|h| reply( :hide, h ) } ).flatten
+      #      reply( :window_show, :not_all_elements ) +
+      #        reply( :hide, hide )
     else
       rep = reply( :empty, [ :courses ] ) +
         reply( :update, :courses => Entities.Courses.list_courses(session))
@@ -40,20 +59,33 @@ class CourseTabs < View
     end    
   end
   
-  def rpc_button_add_elements( session, args )
-    if CourseTypes.search_all.size == 0
-      reply( :window_hide ) +
-        reply( :switch_tab, :AdminTabs ) +
-        reply( :child, reply( :switch_tab, :AdminCourseType ) )
-    elsif Rooms.search_all.size == 0
-      reply( :window_hide ) +
-        reply( :switch_tab, :InventoryTabs ) +
-        reply( :child, reply( :switch_tab, :InventoryRoom ) )
-    elsif Persons.search_by_permissions( "teacher" ).size == 0
-      reply( :window_hide ) +
-        reply( :switch_tab, :PersonTabs ) +
-        reply( :child, reply( :switch_tab, :PersonModify ) )
+  #      reply( :window_hide ) +
+  #        reply( :switch_tab, :AdminTabs ) +
+  #        reply( :child, reply( :switch_tab, :AdminCourseType ) )
+  def rpc_button_add_missing( session, args )
+    args.to_sym!
+    ddputs(5){args.inspect}
+    if args._ct_name and args._ct_name.size > 0
+      ddputs(3){"Creating CourseType"}
+      ct = CourseTypes.create( :name => args._ct_name, :duration => args._ct_duration,
+        :tests => 1, :description => args._ct_desc, :contents => args._ct_contents,
+        :diploma_type => ["simple"], :output => ["certificate"])
+      ddputs(3){"Ct is #{ct.inspect}"}
     end
+    if args._new_room and args._new_room.size > 0
+      ddputs(3){"Creating Room"}
+      room = Rooms.create( :name => args._new_room )
+      ddputs(3){"Room is #{room.inspect}"}
+    end
+    if args._new_teacher and args._new_teacher.size > 0
+      ddputs(3){"Creating Teacher"}
+      teacher = Persons.create( :complete_name => args._new_teacher )
+      teacher.permissions = [:teacher]
+      ddputs(3){"Teacher #{teacher.inspect}"}
+    end
+    reply( :window_hide ) +
+      rpc_update( session ) +
+      reply( :pass_tabs, [ :update_hook ] )
   end
 
   def rpc_button_delete( session, args )

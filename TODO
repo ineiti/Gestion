@@ -1,13 +1,15 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Possible conflict in random-numbers when created locally and uploading
+          to server -> create random-numbers on server and copy to local, takes
+          also care of being sure it's synched: as long as there is no random-number,
+          don't allow to print diplomas
+        - Courses::center needs work:
+          - it isn't shown in CourseModify, even with center_server
+          - it is by default to responsible (at least installation from 130613)
         - Courses::Grades 4pp doesn't turn the page correctly when switching
           from landscape to portrait mode
-        - empty installation: CourseModify complains about no CourseTypes, even
-          when one was added -> problem in html-display -> why not pop up a
-          dialog that asks everything missing in a very simple way?
-        - If Functions doesn't contain "inventory", one can't add a room for
-          the courses -> add one by default?
 
         - Test if Admin::Backup::restore resets passwords as it should
         - why is Entity::get_value always called three times?
@@ -46,6 +48,8 @@ FEATURES:
             prevents abuses like changing the grade afterwards, but allowing to
             change in case of errors
           - add m/f recognition to change wording
+        - labels
+          - mettre aussi le nom (en petit)
 
         - receive SMS through LibNet and do actions
           - make connection
@@ -172,6 +176,11 @@ To check:
 
 
 ** FIXED **:
+        - B 130618: empty installation: CourseModify complains about no CourseTypes, even
+          when one was added -> problem in html-display -> pops up a
+          dialog that asks everything missing in a very simple way, takes care of
+          - If Functions doesn't contain "inventory", one can't add a room for
+            the courses
         - B 130612: Test ge_course doesn't pass
         - F 130612: prepare_diplomas takes a long time now -> put this into the thread, too
         - B 130610: config.yaml.default is really not in a good shape - all different options

@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 130618: 1.1
+  - views are chosen according to AdminFunction
+
 - 130425: 1.0.3
   - config-vars
     DiplomaDir -> Courses::DiplomaDir

@@ -231,8 +231,11 @@ class CourseModify < View
       reply( :empty, fields ) +
       reply( :update, :assistant => [0, "---"]) +
       fields.collect{|p|
-        reply( :update, p => resps )
+      reply( :update, p => resps )
     }.flatten
   end
-
+  
+  def rpc_update_hook( session, one, two )
+    update_layout( session )
+  end
 end
