@@ -34,6 +34,8 @@ HEISENBUGS:
 Security:
 
 UI:
+        - Cours::Diploma - show better what's happening - perhaps a window
+          with info: name1 - failed, name2 - creating, name3, name4
         - auto_update from a window enables also the background (CourseGrade::sync)
         - extend lists on all the height
         - if only Course-tabs are visible, the basic tab is not shown, so no
@@ -176,6 +178,7 @@ To check:
 
 
 ** FIXED **:
+        - F 130618: Cours::Grade - send files directly without sync
         - B 130618: empty installation: CourseModify complains about no CourseTypes, even
           when one was added -> problem in html-display -> pops up a
           dialog that asks everything missing in a very simple way, takes care of

@@ -19,6 +19,7 @@ class CourseGrade < View
         gui_vbox :nogroup do
           show_list_single :students, :width => 300, :callback => true
           show_str_ro :last_synched
+          show_upload :single_file, :callback => true
           show_button :prepare_files, :fetch_files, :transfer_files, :sync_files
         end
         gui_vbox :nogroup do
@@ -51,7 +52,7 @@ class CourseGrade < View
     super( session ) +
       reply( "empty" ) +
       [ :prepare_files, :fetch_files, :transfer_files, 
-      :last_synched, :sync_files ].collect{|b|
+      :last_synched, :sync_files, :single_file ].collect{|b|
       reply( :hide, b )
     }.flatten
   end
@@ -115,14 +116,16 @@ class CourseGrade < View
         ret += reply( course.ctype.diploma_type[0] == "simple" ? :hide : :unhide, 
           :files_saved)
 
-        show_buttons = [0,0,0]
         if course.ctype.diploma_type[0] != "simple"
-          show_buttons = Shares.match_by_name( "CourseFiles" ) ? [1,1,1] : [0,0,1]
+          buttons = [ :transfer_files, :single_file ]
+          if Shares.match_by_name( "CourseFiles" )
+            buttons.push :prepare_files, :fetch_files
+          end
+          buttons.each{|b|
+            ret += reply( :unhide, b )
+          }
         end
-        buttons = [ :prepare_files, :fetch_files, :transfer_files ]
-        buttons.each{|b|
-          ret += reply( show_buttons.shift == 1 ? :unhide : :hide, b )
-        }
+        
         if course.ctype.diploma_type[0] == "accredited" and
             ConfigBase.has_function?( :course_client )
           ret += reply( :unhide, :sync_files )
@@ -182,6 +185,10 @@ class CourseGrade < View
       ret
   end
   
+  def rpc_button_add_file( session, data )
+    
+  end
+  
   def rpc_button_prepare_files( session, data )
     if course = Courses.match_by_course_id( data['courses'][0])
       course.exas_prepare_files
@@ -227,5 +234,21 @@ class CourseGrade < View
       reply( :window_show, :sync ) +
         reply( :update, :synching => "Please chose a course first")
     end
+  end
+  
+  def rpc_button_single_file( session, data )
+    data.to_sym!
+    course = Courses.match_by_course_id( data._courses[0])
+    student = data._students[0]
+    ddputs(4){"Course is #{course} - filename is #{data._filename} " +
+        "student is #{student}" }
+    if course and student and data._filename
+      src = "/tmp/#{data._filename}"
+      dst = "#{Courses.dir_exas}/#{course.name}/#{student}"
+      ddputs(3){ "Copying #{src} to #{dst}" }
+      %x[ rm #{dst}/* ]
+      %x[ mv #{src} #{dst} ]
+    end
+    reply( :update, :files_saved => course.exam_files( student ).count )
   end
 end
