@@ -4,7 +4,7 @@
 class CourseTypes < Entities
   def setup_data
     value_list_drop :page_format, 
-      "[[0,'normal'],[1,'interchanged'],[2,'landscape'],[3,'seascape']]"
+      "[[1,'normal'],[2,'interchanged'],[3,'landscape'],[4,'seascape']]"
     value_str :filename
 
     value_block :strings

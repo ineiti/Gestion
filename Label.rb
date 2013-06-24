@@ -57,6 +57,15 @@ class Label < RPCQooxdooPath
       if center_person = Persons.match_by_login_name( center_short )
         center = center_person.full_name
       end
+      remark = if grade.remark
+        if grade.remark =~ /^http:\/\//
+          "Site web: <a href='#{grade.remark}'>#{grade.remark}</a>"
+        else
+          "Avec mention: #{grade.remark}"
+        end
+      else
+        ""
+      end
       ERB.new( File.open("Files/label.erb"){|f|f.read}).result(binding)
     else
       ERB.new( File.open("Files/label_notfound.erb"){|f|f.read}).result(binding)
