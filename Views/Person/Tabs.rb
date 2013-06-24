@@ -146,17 +146,18 @@ class PersonTabs < View
     ddputs(3){"login_prop is #{login_prop.inspect}"}
 
     if login_prop
-      data[:login_name] = login_prop
+      new_data = { :login_name => login_prop,
+        :complete_name => data._complete_name }
       perms = ["internet"]
       if session.owner.permissions.index( "center" )
-        data.merge!( {:login_name_prefix => "#{session.owner.login_name}_"} )
+        new_data.merge!( {:login_name_prefix => "#{session.owner.login_name}_"} )
         perms.push( "teacher" )
       end
-      person = Persons.create( data )
+      person = Persons.create( new_data )
       person.permissions = perms
       reply( :window_hide ) +
         #reply( :child, reply( :switch_tab, :PersonModify ) ) +
-        rpc_callback_search( session, "search" => person.login_name)
+      rpc_callback_search( session, "search" => person.login_name)
     end
   end
 

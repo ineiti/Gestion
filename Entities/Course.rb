@@ -494,7 +494,7 @@ base_gestion
         doc.gsub!( /-DATE-/, date_fr( sign ) )
         doc.gsub!( /-COURSE_TYPE-/, ctype.name )
         doc.gsub!( /-URL_LABEL-/, grade.get_url_label )
-        c = center.first || Persons.find_by_permissions( :center )
+        c = center
         doc.gsub!( /-CENTER_NAME-/, c.full_name )
         doc.gsub!( /-CENTER_ADDRESS-/, c.address || "" )
         doc.gsub!( /-CENTER_PLACE-/, c.town || "" )
@@ -882,7 +882,9 @@ base_gestion
   end
   
   def center
-    data_get( :center ) || Persons.find_by_permissions( :center )
+    ret = data_get( :center ) || Persons.find_by_permissions( :center )
+    ddputs(3){"Center is #{ret.login_name}"}
+    ret
   end
   
   def abort_pdfs

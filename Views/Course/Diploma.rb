@@ -81,7 +81,7 @@ class CourseDiploma < View
     state = "<table border='1'><tr><th>Name</th><th>Grade</th><th>State</th></tr>" + 
       course.make_pdfs_state.keys.sort.collect{|s|
       state = course.make_pdfs_state[s]
-      "<tr><td>#{s}</td><td>#{state[0]}</td><td>#{state[1]}</td></tr>"
+      "<tr><td>#{s}</td><td align='right'>#{state[0]}</td><td>#{state[1]}</td></tr>"
     }.join("") + "</table>"
     dputs(0){course.make_pdfs_state.inspect}
     dputs(0){state.inspect}

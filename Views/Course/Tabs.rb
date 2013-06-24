@@ -30,7 +30,7 @@ class CourseTabs < View
     gui_window :add_course do
       gui_hbox :nogroup do
         gui_vbox :nogroup do
-#          show_entity_courseType :new_ctypes, :drop, :name
+          show_entity_courseType :new_ctype, :drop, :name
           show_str :name_date
           show_button :new_course, :close
         end
@@ -115,7 +115,7 @@ class CourseTabs < View
   def rpc_button_new_course( session, data )
     ddputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
     
-    course = Courses.create_ctype( data['new_ctypes'], data['name_date'], session.owner )
+    course = Courses.create_ctype( data['new_ctype'], data['name_date'], session.owner )
 
     reply( :window_hide ) +
       View.CourseTabs.rpc_update( session ) +

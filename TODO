@@ -5,14 +5,12 @@ BUGS:
         - Course::Diploma - can't create for more than one course at the same time
           -> make a @thread for each course, or is it just ruby not really
           multi-threaded?
-        - Course::Tabs if new_ctypes is renamed new_ctype, it breaks...
         - Person::Modify when changing pw for "center", password_plain is not updated
-        - Person::Add also adds the family-name
 
         - Possible conflict in random-numbers when created locally and uploading
           to server -> create random-numbers on server and copy to local, takes
           also care of being sure it's synched: as long as there is no random-number,
-          don't allow to print diplomas
+          don't allow to print diplomas. When changing Grades, delete random-number
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
@@ -182,6 +180,8 @@ To check:
 
 
 ** FIXED **:
+        - B 130624: Course::Tabs if second array is available, it breaks 50%
+        - B 130624: Person::Add also adds the family-name
         - B 130624: Course::Tabs actual course is not used automatically
           - Course::Diplomas shows empty list even if something is there
         - B 130624: Course::Grade breaks if note is empty
