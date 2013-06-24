@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Person.delete: check Courses for teacher, assistant and responsible
         - Course::Diploma - can't create for more than one course at the same time
           -> make a @thread for each course, or is it just ruby not really
           multi-threaded?
@@ -37,6 +38,8 @@ Security:
 
 UI:
         - Course::Add - move to a button in CourseTabs
+        - Person::Add - move to a button in PersonTabs
+        - Admin::CourseType - move to Course::ModifyType
         - Course::Diploma - show better what's happening - perhaps a window
           with info: name1 - failed, name2 - creating, name3, name4
 

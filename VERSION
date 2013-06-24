@@ -11,6 +11,8 @@ Important notices for versions:
   - All config-variables are 
     - CamelCased and start with a capital for the categories
     - start with a lowercase and are seperated with "_" for the values
+  - PersonAdd and CourseAdd have been moved to a button, the views-admins have
+    been moved to FlagAdminPerson (add and delete), FlagAdminCourse (add and delete)
 
 - 130425: 1.0.3
   - config-vars

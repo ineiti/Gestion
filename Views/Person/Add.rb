@@ -5,6 +5,7 @@ class PersonAdd < View
     set_data_class :Persons
     @update = true
     @order = 50
+    @visible = false
     #@auto_update = 1
 
     gui_vbox do

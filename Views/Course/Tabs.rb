@@ -27,9 +27,19 @@ class CourseTabs < View
       end
     end
     
+    gui_window :add_course do
+      gui_hbox do
+        gui_vbox :nogroup do
+          show_entity_courseType :ctype, :drop, :name
+          show_str :name_date
+          show_button :close, :new_course
+        end
+      end
+    end
+    
     gui_vboxg :nogroup do
       show_list_single :courses, :callback => true
-      show_button :delete
+      show_button :delete, :add
     end
   end
   
@@ -52,8 +62,8 @@ class CourseTabs < View
     else
       rep = reply( :empty, [ :courses ] ) +
         reply( :update, :courses => Entities.Courses.list_courses(session))
-      if not session.can_view( 'CourseAdd' )
-        rep += reply( :hide, :delete )
+      if not session.can_view( 'FlagAdminCourse' )
+        rep += reply( :hide, :delete ) + reply( :hide, :add )
       end
       rep
     end    
@@ -89,7 +99,7 @@ class CourseTabs < View
   end
 
   def rpc_button_delete( session, args )
-    if not session.can_view( 'CourseAdd' )
+    if not session.can_view( 'FlagAdminCourse' )
       reply( :window_show, :error )
     end
     dputs( 3 ){ "session, data: #{[session, args.inspect].join(':')}" }
@@ -103,6 +113,25 @@ class CourseTabs < View
     reply( "empty", [:courses] ) +
       reply( "update", { :courses => Courses.list_courses(session) } ) +
       reply( :child, reply(:empty, [:students]) )
+  end
+
+  def rpc_button_new_course( session, data )
+    dputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
+    
+    course = Courses.create_ctype( data['ctype'], data['name_date'], session.owner )
+
+    reply( :window_hide ) +
+      View.CourseTabs.rpc_update( session ) +
+      reply( :update, { :courses => [ course.course_id ] } )
+  end
+    
+  def rpc_button_add( session, data )
+    reply( :window_show, :add_course ) +
+      reply( :update, :name_date => "#{Date.today.strftime('%y%m')}")
+  end
+  
+  def rpc_button_close( session, data )
+    reply( :window_hide )
   end
 
   def rpc_list_choice( session, name, args )

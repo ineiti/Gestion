@@ -6,12 +6,18 @@ class PersonTabs < View
     gui_vboxg :nogroup do
       show_list_single :persons, "[]", :callback => true
       show_str :search #, :callback => :search
-      show_button :start_search, :delete
+      show_button :start_search, :delete, :add
       #show_button :start_test
 			
       gui_window :test do
         show_str :hello
         show_button :close
+      end
+      
+      gui_window :add_person do
+        show_str :complete_name, :width => 150
+        show_str :login_prop
+        show_button :add_person, :close
       end
     end
   end
@@ -42,9 +48,11 @@ class PersonTabs < View
   end
   
   def rpc_update_view( session, args = nil )
+    admin = session.can_view( :FlagAdminPerson ) ? :unhide : :hide
     super( session, args ) +
       reply( :focus, :search ) +
-      reply( session.can_view( :FlagDeletePerson ) ? :unhide : :hide, :delete )
+      reply( admin, :delete ) +
+      reply( admin, :add )
   end
   
   def rpc_list_choice( session, name, args )
@@ -121,4 +129,35 @@ class PersonTabs < View
     end
     ret
   end
+
+  def rpc_button_close( session, data )
+    reply( :window_hide )
+  end
+  
+  def rpc_button_add( session, data )
+    reply( :window_show, :add_person ) +
+      reply( :empty_only, [ :complete_name, :login_prop ] )
+  end
+  
+  def rpc_button_add_person( session, data )
+    data.to_sym!
+    dputs( 3 ){ "Pressed button accept with #{data.inspect}" }
+    login_prop = data._login_prop || Persons.create_login_name( data._complete_name )
+    ddputs(3){"login_prop is #{login_prop.inspect}"}
+
+    if login_prop
+      data[:login_name] = login_prop
+      perms = ["internet"]
+      if session.owner.permissions.index( "center" )
+        data.merge!( {:login_name_prefix => "#{session.owner.login_name}_"} )
+        perms.push( "teacher" )
+      end
+      person = Persons.create( data )
+      person.permissions = perms
+      reply( :window_hide ) +
+        #reply( :child, reply( :switch_tab, :PersonModify ) ) +
+        rpc_callback_search( session, "search" => person.login_name)
+    end
+  end
+
 end

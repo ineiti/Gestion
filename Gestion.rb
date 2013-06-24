@@ -46,14 +46,14 @@ Permission.add( 'internet', 'SelfInternet,SelfChat', 'default' )
 Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
 Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction', 'assistant' )
-Permission.add( 'secretary', 'SelfServices,CourseModify,PersonAdd,' + 
+Permission.add( 'secretary', 'SelfServices,CourseModify,FlagAdminPerson,' + 
     'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
-Permission.add( 'director', 'CourseAdd,FlagDeletePerson', 'secretary' )
+Permission.add( 'director', 'FlagAdminCourse,FlagAdminPerson', 'secretary' )
 Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
 Permission.add( 'maintenance', 'Inventory.*', 'default' )
 Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,SelfServices', '' )
-Permission.add( 'center', 'CourseModify,CourseAdd,CourseDiploma,' +
-    'FlagRemoteCourse,SelfShow,SelfChat,PersonAdd', 'teacher' )
+Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseDiploma,' +
+    'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson', 'teacher' )
 Permission.add( 'admin', '.*', '.*' )
 
 if uri = get_config( false, :LibNet, :URI )

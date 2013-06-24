@@ -3,6 +3,7 @@ class CourseStats < View
     set_data_class :Courses
     @update = true
     @order = 40
+    @visible = false
 
     gui_hbox do
       gui_vbox :nogroup do
