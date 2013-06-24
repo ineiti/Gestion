@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Course::Tabs actual course is not used automatically
+        - Course::Grade breaks if note is empty
+        - Course::Diplomas shows empty list even if something is there
         - Person.delete: check Courses for teacher, assistant and responsible
         - Course::Diploma - can't create for more than one course at the same time
           -> make a @thread for each course, or is it just ruby not really
@@ -37,9 +40,7 @@ HEISENBUGS:
 Security:
 
 UI:
-        - Course::Add - move to a button in CourseTabs
-        - Person::Add - move to a button in PersonTabs
-        - Admin::CourseType - move to Course::ModifyType
+        - Course::Grade shows files_saved, even if counter == 0
         - Course::Diploma - show better what's happening - perhaps a window
           with info: name1 - failed, name2 - creating, name3, name4
 
@@ -181,6 +182,9 @@ To check:
 
 
 ** FIXED **:
+        - B 130624: Course::Tabs new course always gets ctype=1
+        - UI130624: Course::Add - move to a button in CourseTabs
+        - UI130624: Person::Add - move to a button in PersonTabs
         - B 130624: Courses::Grades 4pp doesn't turn the page correctly when switching
           from landscape to portrait mode
         - B 130624: Course:Grade:mean* - accept 15.5 and 15,5

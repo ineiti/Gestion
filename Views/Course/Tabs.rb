@@ -30,7 +30,7 @@ class CourseTabs < View
     gui_window :add_course do
       gui_hbox do
         gui_vbox :nogroup do
-          show_entity_courseType :ctype, :drop, :name
+          show_entity_courseType :new_ctype, :drop, :name
           show_str :name_date
           show_button :close, :new_course
         end
@@ -69,9 +69,6 @@ class CourseTabs < View
     end    
   end
   
-  #      reply( :window_hide ) +
-  #        reply( :switch_tab, :AdminTabs ) +
-  #        reply( :child, reply( :switch_tab, :AdminCourseType ) )
   def rpc_button_add_missing( session, args )
     args.to_sym!
     ddputs(5){args.inspect}
@@ -116,9 +113,9 @@ class CourseTabs < View
   end
 
   def rpc_button_new_course( session, data )
-    dputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
+    ddputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
     
-    course = Courses.create_ctype( data['ctype'], data['name_date'], session.owner )
+    course = Courses.create_ctype( data['new_ctype'], data['name_date'], session.owner )
 
     reply( :window_hide ) +
       View.CourseTabs.rpc_update( session ) +
@@ -135,7 +132,7 @@ class CourseTabs < View
   end
 
   def rpc_list_choice( session, name, args )
-    dputs( 2 ){ "New choice #{name} - #{args.inspect}" }
+    ddputs( 2 ){ "New choice #{name} - #{args.inspect}" }
 
     reply( 'pass_tabs', [ "list_choice", name, args ] )
   end

@@ -19,7 +19,6 @@ class CourseGrade < View
         gui_vbox :nogroup do
           show_list_single :students, :width => 300, :callback => true
           show_str_ro :last_synched
-          show_upload :single_file, :callback => true
           show_button :prepare_files, :fetch_files, :transfer_files, :sync_files
         end
         gui_vbox :nogroup do
@@ -32,7 +31,7 @@ class CourseGrade < View
           show_str :remark
           show_str :first_name, :width => 150
           show_str :family_name
-          show_button :save
+          show_button :save, :upload
         end
       end
       gui_window :transfer do
@@ -45,6 +44,11 @@ class CourseGrade < View
         show_html :synching
         show_button :close
       end
+      
+      gui_window :single_file do
+        show_upload :upload_single_file, :callback => true
+        show_button :close
+      end
     end
   end
 
@@ -52,7 +56,7 @@ class CourseGrade < View
     super( session ) +
       reply( "empty" ) +
       [ :prepare_files, :fetch_files, :transfer_files, 
-      :last_synched, :sync_files, :single_file ].collect{|b|
+      :last_synched, :sync_files, :upload ].collect{|b|
       reply( :hide, b )
     }.flatten
   end
@@ -117,7 +121,7 @@ class CourseGrade < View
           :files_saved)
 
         if course.ctype.diploma_type[0] != "simple"
-          buttons = [ :transfer_files, :single_file ]
+          buttons = [ :transfer_files, :upload ]
           if Shares.match_by_name( "CourseFiles" )
             buttons.push :prepare_files, :fetch_files
           end
@@ -144,9 +148,16 @@ class CourseGrade < View
     course = Courses.match_by_course_id( data['courses'][0])
     student = Entities.Persons.match_by_login_name( data['students'][0])
     if course and student
+      means = to_means_true( course ){|i| 
+        if data.has_key?( "mean#{i}" ) and d = data["mean#{i}"]
+          d.sub(/,/, '.').to_f 
+        else
+          0.0
+        end
+      }
       Entities.Grades.save_data( {:course_id => course.course_id,
           :person_id => student.person_id,
-          :means => to_means_true( course ){|i| data["mean#{i}"].sub(/,/, '.').to_f },
+          :means => means,
           :remark => data['remark']})
       if data['first_name']
         Entities.Persons.save_data({:person_id => student.person_id,
@@ -236,7 +247,11 @@ class CourseGrade < View
     end
   end
   
-  def rpc_button_single_file( session, data )
+  def rpc_button_upload( session, data )
+    reply( :window_show, :single_file )
+  end
+  
+  def rpc_button_upload_single_file( session, data )
     data.to_sym!
     course = Courses.match_by_course_id( data._courses[0])
     student = data._students[0]
@@ -250,6 +265,7 @@ class CourseGrade < View
       %x[ rm #{dst}/* ]
       %x[ mv #{src} #{dst} ]
     end
-    reply( :update, :files_saved => course.exam_files( student ).count )
+    reply( :update, :files_saved => course.exam_files( student ).count ) +
+      reply( :window_hide )
   end
 end

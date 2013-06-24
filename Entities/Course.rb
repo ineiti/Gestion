@@ -247,7 +247,7 @@ end
 
 
 class Course < Entity
-  attr_reader :sync_state
+  attr_reader :sync_state, :make_pdfs_state
   attr :thread
   
   def setup_instance
@@ -258,6 +258,7 @@ class Course < Entity
     [ dir_diplomas, dir_exas, dir_exas_share ].each{|d|
       (! File.exists? d ) and FileUtils.mkdir( d )
     }
+    @make_pdfs_state = {}
   end
   
   def check_students_dir
@@ -443,11 +444,14 @@ base_gestion
 	
   def update_student_diploma( file, student )
     grade = Grades.match_by_course_person( course_id, student.login_name )
-    dputs(0){"Course is #{name} - ctype is #{ctype.inspect}"}
+    dputs(0){"Course is #{name} - ctype is #{ctype.inspect} and grade is " +
+        "#{grade.inspect} - #{grade.to_s}"}
     if grade and grade.to_s != "NP" and 
         ( ( ctype.diploma_type[0] == "simple" ) or
           ( exam_files( student ).count >= ctype.files_needed.to_i ) )
-      dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
+      @make_pdfs_state[student.login_name] = [ grade.mean, "queued" ]
+      
+      ddputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|
         dputs(5){"Cours is #{self.inspect}"}
         doc = z.read("content.xml")
@@ -503,6 +507,14 @@ base_gestion
         z.commit
       }
     else
+      reason = if ( ( ctype.diploma_type[0] != "simple" ) and
+            ( exam_files( student ).count < ctype.files_needed.to_i ) )
+        "incomplete"
+      else
+        "not passed"
+      end
+      @make_pdfs_state[student.login_name] = [ grade.mean, reason ]
+
       FileUtils.rm( file )
     end
   end
@@ -511,8 +523,7 @@ base_gestion
     if @thread
       dputs( 2 ){ "Thread is here, killing" }
       begin
-        @thread.kill
-        @thread.join
+        abort_pdfs
       rescue Exception => e  
         dputs( 0 ){ "Error while killing: #{e.message}" }
         dputs( 0 ){ "#{e.inspect}" }
@@ -571,6 +582,7 @@ base_gestion
             FileUtils.rm( p )
             dputs( 5 ){ "Finished rm" }
             outfiles.push p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
+            @make_pdfs_state[p.sub(/.*-/, '').sub(/\.odt/, '')][1] = "done"
           }
           if format == :certificate
             dputs( 3 ){ "Getting #{outfiles.inspect} out of #{dir}" }
@@ -614,6 +626,7 @@ base_gestion
     else
       FileUtils.rm( Dir.glob( dir_diplomas + "/*" ) )
     end
+    @make_pdfs_state = {}
     make_pdfs( convert )
   end
   
@@ -842,8 +855,7 @@ base_gestion
     if @thread
       dputs( 2 ){ "Thread is here, killing" }
       begin
-        @thread.kill
-        @thread.join
+        abort_pdfs
       rescue Exception => e  
         dputs( 0 ){ "Error while killing: #{e.message}" }
         dputs( 0 ){ "#{e.inspect}" }
@@ -873,11 +885,17 @@ base_gestion
     data_get( :center ) || Persons.find_by_permissions( :center )
   end
   
-  def delete
+  def abort_pdfs
     if @thread
+      ddputs(3){"Killing thread #{@thread}"}
       @thread.kill
       @thread.join
-    end
+      ddputs(3){"Joined thread"}
+    end    
+  end
+  
+  def delete
+    abort_pdfs
     
     [ dir_diplomas, dir_exas, dir_exas_share ].each{|d|
       FileUtils.remove_entry_secure( d, true )      

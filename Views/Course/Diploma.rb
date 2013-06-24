@@ -27,6 +27,10 @@ class CourseDiploma < View
       gui_window :printing do
         show_html :msg_print
         show_button :close
+      end    
+      gui_window :create_diplomas do
+        show_html :state
+        show_button :close, :abort
       end
     end
   end
@@ -38,7 +42,7 @@ class CourseDiploma < View
     when "courses"
       if args['courses'].length > 0
         course = Entities.Courses.match_by_course_id( args['courses'].to_a[0] )
-        course and ret += reply( 'update', :diplomas => course.get_files )
+        course and ret += reply( :update, :diplomas => course.get_files )
       end
     end
     return ret
@@ -49,15 +53,19 @@ class CourseDiploma < View
     course = Courses.match_by_course_id(course_id)
     if not course or course.export_check
       if course
-        return reply( "window_show", :missing_data ) +
-          reply("update", :missing => "The following fields are not filled in:<br>" + 
+        return reply( :window_show, :missing_data ) +
+          reply( :update, :missing => "The following fields are not filled in:<br>" + 
             course.export_check.join("<br>"))
       end
     else
       course.prepare_diplomas
 
-      rpc_list_choice( session, "courses", "courses" => course_id.to_s ) +
-        reply( "auto_update", "-5" )
+      rpc_list_choice( session, :courses, :courses => course_id.to_s ) +
+        reply( :auto_update, "-5" ) +
+        reply( :window_show, :create_diplomas ) +
+        reply( :hide, :close ) +
+        reply( :unhide, :abort ) +
+        reply( :update, :state => "Preparing -<br>Please wait")
     end
   end
   
@@ -66,9 +74,20 @@ class CourseDiploma < View
     ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
     course = Entities.Courses.match_by_course_id( course_id )
     if course.get_files.index{|f| f =~ /(000-4pp.pdf|zip)$/ }
-      ret += reply( :auto_update, 0 )
+      ret += reply( :auto_update, 0 ) +
+        reply( :hide, :abort ) +
+        reply( :unhide, :close )
     end
-    return ret + reply_print( session )
+    state = "<table border='1'><tr><th>Name</th><th>Grade</th><th>State</th></tr>" + 
+      course.make_pdfs_state.keys.sort.collect{|s|
+      state = course.make_pdfs_state[s]
+      "<tr><td>#{s}</td><td>#{state[0]}</td><td>#{state[1]}</td></tr>"
+    }.join("") + "</table>"
+    dputs(0){course.make_pdfs_state.inspect}
+    dputs(0){state.inspect}
+    return ret + 
+      reply_print( session ) +
+      reply( :update, :state => state )
   end
 
   def rpc_button_close( session, args )
@@ -98,5 +117,13 @@ class CourseDiploma < View
       end
     end
     ret
+  end
+  
+  def rpc_button_abort( session, args )
+    course_id = args['courses'][0]
+    course = Entities.Courses.match_by_course_id( course_id )
+    course.abort_pdfs
+    reply( :window_hide ) +
+      reply( :auto_update, 0 )
   end
 end
