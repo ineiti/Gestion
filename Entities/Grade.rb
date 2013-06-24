@@ -72,23 +72,24 @@ class Grade < Entity
   end
   
   def to_s
-    case data_get( :mean ).to_i
-    when 10..11 then "P"
+    value = ( data_get( :mean ).to_f * 2 ).round / 2
+    case value
+    when 10..11.5 then "P"
     when 12..14 then "AB"
-    when 15..16 then "B"
-    when 17..18 then "TB"
+    when 14.5..16.5 then "B"
+    when 17..18.5 then "TB"
     when 19..20 then "E"
     else "NP"
     end
   end
   
   def mention
-    case data_get( :mean ).to_i
-    when 10..11 then "Passable"
-    when 12..14 then "Assez bien"
-    when 15..16 then "Bien"
-    when 17..18 then "Très bien"
-    when 19..20 then "Excellent"
+    case to_s
+    when "P" then "Passable"
+    when "AB" then "Assez bien"
+    when "B" then "Bien"
+    when "TB" then "Très bien"
+    when "E" then "Excellent"
     else "PAS PASSÉ"
     end
   end

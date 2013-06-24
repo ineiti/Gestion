@@ -1,7 +1,16 @@
 Important notices for versions:
 
-- 130618: 1.1
+- 130618: 1.1.10
   - views are chosen according to AdminFunction
+  - Config::OpenPrint:search_remote defaults to "none"
+  - Config::Courses:* are moved to Config::Entities:Courses
+  - Renamed in Config::Courses
+    - diploma_dir -> dir_diplomas
+    - exas_dir -> dir_exas
+    - exas_share -> dir_exas_share
+  - All config-variables are 
+    - CamelCased and start with a capital for the categories
+    - start with a lowercase and are seperated with "_" for the values
 
 - 130425: 1.0.3
   - config-vars

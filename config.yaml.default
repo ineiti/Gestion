@@ -22,13 +22,13 @@ UploadFiles:
 
 #profiling: profile.txt
 
-webrick:
+Webrick:
 #  port: 3302
 
 Accounting:
-#  Lending: Root::Lending
-#  Cash: Root::Cash
-#  Service: Root::Income::Internet
+#  lending: Root::Lending
+#  cash: Root::Cash
+#  service: Root::Income::Internet
 
 LibNet:
 #  URI: druby://localhost:9000
@@ -40,13 +40,16 @@ Samba:
 AfriCompta:
 #  filename: compta.rb
 
-Courses:
-#  DiplomaDir: Diplomas
-#  ExasDir: Exas
-#  ExasShare: Exas/Share
-#  Hostname: localhost
+Entities:
+#  Courses:
+#    diploma_dir: Diplomas
+#    exas_dir: Exas
+#    exas_share: Exas/Share
+#    hostname: localhost
 
 
-#WelcomeText: |
+#welcome_text: |
 #  Here you can have some welcome-text
 #  with <a href="http://profeda.org">Links</a>
+
+#terminal_width: 160

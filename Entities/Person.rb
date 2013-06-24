@@ -18,6 +18,8 @@ end
 
 class Persons < Entities
   attr :print_card
+  self.needs :Courses
+  
   def setup_data
     add_new_storage :LDAP
 
@@ -55,14 +57,13 @@ class Persons < Entities
     value_str :password_plain
     value_int_LDAP :person_id, :ldap_name => "uidnumber"
 
-    if ddir = get_config( "Diplomas", :Courses, :DiplomaDir )
-      cdir = "#{ddir}/cartes"
-      if ! File.exist? cdir
-        FileUtils::mkdir( cdir )
-      end
-      @print_card = OpenPrint.new( 
-        "#{ddir}/carte_etudiant.odg", "#{ddir}/cartes" )
+    ddir = Courses.dir_diplomas
+    cdir = "#{ddir}/cartes"
+    if ! File.exist? cdir
+      FileUtils::mkdir( cdir )
     end
+    @print_card = OpenPrint.new( 
+      "#{ddir}/carte_etudiant.odg", cdir )
   end
 
   # Searches for an empty name starting with "login", adding 2, 3, 4, ...
@@ -347,8 +348,8 @@ class Person < Entity
         acc = ( first_name || login_name ).capitalize 
         data_set( :account_name_due, acc )
       end
-      lending = "#{get_config( 'Root::Lending', :Accounting, :Lending )}::#{acc}"
-      service = get_config( "Root::Income::Services", :Accounting, :Service )
+      lending = "#{get_config( 'Root::Lending', :Accounting, :lending )}::#{acc}"
+      service = get_config( "Root::Income::Services", :Accounting, :service )
       dputs( 2 ){ "Searching accounts for #{full_name} with "+
           "lending: #{lending} - service: #{service}" }
       @account_due = Accounts.get_by_path_or_create( lending, 
@@ -367,7 +368,7 @@ class Person < Entity
       end
       dputs(3){"Getting account #{acc}"}
       cc = get_config( "Root::Cash::#{acc}", 
-        :Accounting, :Cash )
+        :Accounting, :cash )
       @account_cash = ( Accounts.get_by_path( cc ) or 
           Accounts.create_path( cc, cc, false, -1, true ) )
     end

@@ -1,6 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Course::Diploma - can't create for more than one course at the same time
+          -> make a @thread for each course, or is it just ruby not really
+          multi-threaded?
+
         - Possible conflict in random-numbers when created locally and uploading
           to server -> create random-numbers on server and copy to local, takes
           also care of being sure it's synched: as long as there is no random-number,
@@ -8,8 +12,6 @@ BUGS:
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
-        - Courses::Grades 4pp doesn't turn the page correctly when switching
-          from landscape to portrait mode
 
         - Test if Admin::Backup::restore resets passwords as it should
         - why is Entity::get_value always called three times?
@@ -34,8 +36,10 @@ HEISENBUGS:
 Security:
 
 UI:
-        - Cours::Diploma - show better what's happening - perhaps a window
+        - Course::Add - move to a button in CourseTabs
+        - Course::Diploma - show better what's happening - perhaps a window
           with info: name1 - failed, name2 - creating, name3, name4
+
         - auto_update from a window enables also the background (CourseGrade::sync)
         - extend lists on all the height
         - if only Course-tabs are visible, the basic tab is not shown, so no
@@ -50,9 +54,6 @@ FEATURES:
             prevents abuses like changing the grade afterwards, but allowing to
             change in case of errors
           - add m/f recognition to change wording
-        - labels
-          - mettre aussi le nom (en petit)
-
         - receive SMS through LibNet and do actions
           - make connection
           - return stats
@@ -66,7 +67,7 @@ Programming:
           so that network_internet and network_share depend on network
         - Why is a value_list-definition in Entities not able to give a default-
           value for the list? -> it is, but only if it is taken as a show_block
-          in a View
+          in a View, test whether show_field works, too
         - Grade needs to change course_id and person_id with real entities
         - merge two ways of free surfing: group::freesurf and
           permissions::FreeInternet
@@ -80,7 +81,6 @@ Programming:
         -3 change Course::make_pdfs to OpenPrint
 
 Documentation:
-        - make a nice config.yaml.orig which contains all major configurations
 
 > 1.0
 Features:
@@ -178,12 +178,24 @@ To check:
 
 
 ** FIXED **:
+        - B 130624: Courses::Grades 4pp doesn't turn the page correctly when switching
+          from landscape to portrait mode
+        - B 130624: Course:Grade:mean* - accept 15.5 and 15,5
+        - B 130624: when deleting a course, files stay (at least Diplomas and Exas)
+        - B 130624: when deleting a course, make sure there is no @thread for it
+        - B 130624: when uploading, a file get's created instead of a directory
+        - P 130620: clean up config.yaml with uppercase, lowercase, also replaced
+          most of the direct $config-uses with get_config
+        - P 130620: added an Entities.needs for classes so that they can be
+          made to rely on each other -> shudder for dependency-troubles
+        - D 130620: make a nice config.yaml.default which contains all major configurations
         - F 130618: Cours::Grade - send files directly without sync
         - B 130618: empty installation: CourseModify complains about no CourseTypes, even
           when one was added -> problem in html-display -> pops up a
           dialog that asks everything missing in a very simple way, takes care of
           - If Functions doesn't contain "inventory", one can't add a room for
             the courses
+        - F 130612: labels - mettre aussi le nom (en petit)
         - B 130612: Test ge_course doesn't pass
         - F 130612: prepare_diplomas takes a long time now -> put this into the thread, too
         - B 130610: config.yaml.default is really not in a good shape - all different options

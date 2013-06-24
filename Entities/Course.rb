@@ -58,9 +58,9 @@ class Courses < Entities
     value_int :students_finish
     value_int :entry_total
 
-    @dir_diplomas = get_config( "Diplomas", :Courses, :DiplomaDir )
-    @dir_exas = get_config( "Exas", :Courses, :ExasDir )
-    @dir_exas_share = get_config( "Exas/Share", :Courses, :ExasShare )
+    @dir_diplomas ||= "Diplomas"
+    @dir_exas ||= "Exas"
+    @dir_exas_share ||= "Exas/Share"
 
     [ @dir_exas, @dir_exas_share ].each{|d|
       File.exists? d or FileUtils.mkdir d
@@ -254,6 +254,18 @@ class Course < Entity
     if not self.students.class == Array
       self.students = []
     end
+    
+    [ dir_diplomas, dir_exas, dir_exas_share ].each{|d|
+      (! File.exists? d ) and FileUtils.mkdir( d )
+    }
+  end
+  
+  def check_students_dir
+    students.each{|s|
+      [ dir_exas, dir_exas_share ].each{|d|
+        (! File.exists? "#{d}/#{s}") and FileUtils.mkdir("#{d}/#{s}")
+      }
+    }
   end
 
   def dir_diplomas
@@ -567,7 +579,10 @@ base_gestion
             dputs( 3 ){ "Putting it all in one file: pdftk #{outfiles.join( ' ' )} cat output #{all}" }
             `pdftk #{outfiles.join( ' ' )} cat output #{all}`
             dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
-            `pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
+            pf = ctype.data_get(:page_format, true)[0]
+            format = ['', '-f', '-l', '-r'][pf]
+            ddputs(3){"Page-format is #{format}"}
+            `pdftops #{all} - | psnup -4 #{format} | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
             FileUtils.mv( "#{psn}.tmp", psn )
             dputs( 2 ){ "Finished" }
           else
@@ -856,5 +871,17 @@ base_gestion
   
   def center
     data_get( :center ) || Persons.find_by_permissions( :center )
+  end
+  
+  def delete
+    if @thread
+      @thread.kill
+      @thread.join
+    end
+    
+    [ dir_diplomas, dir_exas, dir_exas_share ].each{|d|
+      FileUtils.remove_entry_secure( d, true )      
+    }
+    super
   end
 end

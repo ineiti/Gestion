@@ -26,6 +26,7 @@ class AdminCourseType < View
         end
         gui_vbox :nogroup do
           show_block :long, :width => 200
+          show_field :page_format
           show_list_drop :filename, 'CourseTypes.files'
         end
         show_button :save        

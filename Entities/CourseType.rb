@@ -3,6 +3,8 @@
 
 class CourseTypes < Entities
   def setup_data
+    value_list_drop :page_format, 
+      "[[0,'normal'],[1,'interchanged'],[2,'landscape'],[3,'seascape']]"
     value_str :filename
 
     value_block :strings
@@ -23,7 +25,7 @@ class CourseTypes < Entities
   
   def self.files
     begin
-      ddir = get_config( "Diplomas", :Courses, :DiplomaDir )
+      ddir = Courses.dir_diplomas
       ( Dir.glob( ddir + "/*odt" ) +
           Dir.glob( ddir + "/*odg" ) ).
         collect{|f| f.sub( /^.*\//, '' ) }
@@ -58,6 +60,10 @@ class CourseTypes < Entities
   def migration_2(ct)
     ct.diploma_type = ["simple"]
   end
+  
+  def migration_3(ct)
+    ct.page_format = ["interchanged"]
+  end
 end
 
 
@@ -70,7 +76,7 @@ class CourseType < Entity
     if central_host.to_s.length > 0
       ret = "#{central_host}"
     else
-      ret = "#{get_config( %x[ hostname -f ].chomp + ":3302", :Courses, :Hostname)}"
+      ret = "#{get_config( %x[ hostname -f ].chomp + ":3302", :Courses, :hostname)}"
     end
     if ! ( ret =~ /^https{0,1}:\/\// )
       ret = "http://#{ret}"

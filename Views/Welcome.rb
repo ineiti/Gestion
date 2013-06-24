@@ -6,8 +6,8 @@ class Welcome < View
 
   # Overwrite the standard rpc_show to speed up testing...
   def rpc_show( session )
-    if $config[:autologin]
-      person = Entities.Persons.match_by_login_name( $config[:autologin] )
+    if get_config( false, :autologin )
+      person = Entities.Persons.match_by_login_name( get_config( false, :autologin ) )
       person and dputs( 3 ){ "Found login #{person.data.inspect}" }
       if person then
         session = Sessions.create( person )
@@ -22,7 +22,7 @@ class Welcome < View
       end
       super +
         reply( :update, :version => VERSION_GESTION + version_local ) +
-        reply( :update, :links => get_config("", :WelcomeText ) )
+        reply( :update, :links => get_config("", :welcome_text ) )
     end
   end
 

@@ -146,7 +146,7 @@ class CourseGrade < View
     if course and student
       Entities.Grades.save_data( {:course_id => course.course_id,
           :person_id => student.person_id,
-          :means => to_means_true( course ){|i| data["mean#{i}"].to_i},
+          :means => to_means_true( course ){|i| data["mean#{i}"].sub(/,/, '.').to_f },
           :remark => data['remark']})
       if data['first_name']
         Entities.Persons.save_data({:person_id => student.person_id,
@@ -243,6 +243,7 @@ class CourseGrade < View
     ddputs(4){"Course is #{course} - filename is #{data._filename} " +
         "student is #{student}" }
     if course and student and data._filename
+      course.check_students_dir
       src = "/tmp/#{data._filename}"
       dst = "#{Courses.dir_exas}/#{course.name}/#{student}"
       ddputs(3){ "Copying #{src} to #{dst}" }
