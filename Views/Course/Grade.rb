@@ -259,11 +259,11 @@ class CourseGrade < View
         "student is #{student}" }
     if course and student and data._filename
       course.check_students_dir
-      src = "/tmp/#{data._filename}"
+      src = "/tmp/#{UploadFiles.escape_chars( data._filename )}"
       dst = "#{Courses.dir_exas}/#{course.name}/#{student}"
-      ddputs(3){ "Copying #{src} to #{dst}" }
-      %x[ rm #{dst}/* ]
-      %x[ mv #{src} #{dst} ]
+      ddputs(3){ "Moving #{src} to #{dst}" }
+      FileUtils.rm Dir.glob( "#{dst}/*" )
+      FileUtils.mv src, dst
     end
     reply( :update, :files_saved => course.exam_files( student ).count ) +
       reply( :window_hide )

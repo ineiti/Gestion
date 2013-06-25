@@ -73,13 +73,14 @@ class CourseDiploma < View
     course_id = args['courses'][0]
     ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
     course = Entities.Courses.match_by_course_id( course_id )
-    if course.get_files.index{|f| f =~ /(000-4pp.pdf|zip)$/ }
+    #if course.get_files.index{|f| f =~ /(000-4pp.pdf|zip)$/ }
+    if course.make_pdfs_state["0"] == "done"
       ret += reply( :auto_update, 0 ) +
         reply( :hide, :abort ) +
         reply( :unhide, :close )
     end
     state = "<table border='1'><tr><th>Name</th><th>Grade</th><th>State</th></tr>" + 
-      course.make_pdfs_state.keys.sort.collect{|s|
+      course.make_pdfs_state.keys.reject{|k| k == "0"}.sort.collect{|s|
       state = course.make_pdfs_state[s]
       "<tr><td>#{s}</td><td align='right'>#{state[0]}</td><td>#{state[1]}</td></tr>"
     }.join("") + "</table>"

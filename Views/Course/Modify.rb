@@ -191,8 +191,8 @@ class CourseModify < View
       reply("empty", [:students]) +
         update_form_data( course ) +
         reply("update", {:courses => [course_id] } )
-    else
-      reply("empty", [:students])
+      #else
+      #  reply("empty", [:students])
     end
   end
   

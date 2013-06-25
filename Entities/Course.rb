@@ -255,13 +255,19 @@ class Course < Entity
       self.students = []
     end
     
+    check_students_dir
+    @make_pdfs_state = {"0" => 'idle'}
+    @only_psnup = true
+  end
+  
+  def check_dir
     [ dir_diplomas, dir_exas, dir_exas_share ].each{|d|
       (! File.exists? d ) and FileUtils.mkdir( d )
-    }
-    @make_pdfs_state = {}
+    }    
   end
   
   def check_students_dir
+    check_dir
     students.each{|s|
       [ dir_exas, dir_exas_share ].each{|d|
         (! File.exists? "#{d}/#{s}") and FileUtils.mkdir("#{d}/#{s}")
@@ -513,7 +519,12 @@ base_gestion
       else
         "not passed"
       end
-      @make_pdfs_state[student.login_name] = [ grade.mean, reason ]
+      mean = if grade and grade.mean
+        grade.mean
+      else
+        "-"
+      end
+      @make_pdfs_state[student.login_name] = [ mean, reason ]
 
       FileUtils.rm( file )
     end
@@ -538,18 +549,20 @@ base_gestion
         digits = students.size.to_s.size
         counter = 1
         dputs( 2 ){ "Preparing students: #{students.inspect}" }
-        students.each{ |s|
-          student = Persons.match_by_login_name( s )
-          if student
-            dputs( 2 ){ student.login_name }
-            student_file = "#{dir_diplomas}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
-            dputs( 2 ){ "Doing #{counter}: #{student.login_name} - file: #{student_file}" }
-            FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}", 
-              student_file )
-            update_student_diploma( student_file, student )
-          end
-          counter += 1
-        }
+        if ! @only_psnup
+          students.each{ |s|
+            student = Persons.match_by_login_name( s )
+            if student
+              dputs( 2 ){ student.login_name }
+              student_file = "#{dir_diplomas}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
+              dputs( 2 ){ "Doing #{counter}: #{student.login_name} - file: #{student_file}" }
+              FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}", 
+                student_file )
+              update_student_diploma( student_file, student )
+            end
+            counter += 1
+          }
+        end
         
         dputs( 2 ){ "Convert is #{convert.inspect}" }
         if convert
@@ -563,6 +576,7 @@ base_gestion
           FileUtils.rm( old )
           if list.size == 0
             dputs(2){"No files here, quitting"}
+            @make_pdfs_state["0"] = "done"
             @thread.kill
           end
           dputs( 2 ){ "Creating -#{output}-#{list.inspect}-" }
@@ -570,6 +584,7 @@ base_gestion
           %x[ ls -l #{dir_diplomas} >> /tmp/cp ]
           outfiles = []
           dir = File::dirname( list.first )
+          @only_psnup and list = []
           list.sort.each{ |p|
             dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
             if format == :certificate
@@ -616,6 +631,7 @@ base_gestion
         dputs( 0 ){ "#{e.to_s}" }
         puts e.backtrace
       end
+      @make_pdfs_state["0"] = "done"
     }
   end
 
@@ -624,9 +640,12 @@ base_gestion
     if not File::directory? dir_diplomas
       FileUtils.mkdir( dir_diplomas )
     else
-      FileUtils.rm( Dir.glob( dir_diplomas + "/*" ) )
+      if ! @only_psnup
+        FileUtils.rm( Dir.glob( dir_diplomas + "/*" ) )
+      end
     end
-    @make_pdfs_state = {}
+    @make_pdfs_state = {"0" => 'working'}
+    #@make_pdfs_state = {}
     make_pdfs( convert )
   end
   

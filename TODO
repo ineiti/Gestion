@@ -6,7 +6,6 @@ BUGS:
           -> make a @thread for each course, or is it just ruby not really
           multi-threaded?
         - Person::Modify when changing pw for "center", password_plain is not updated
-
         - Possible conflict in random-numbers when created locally and uploading
           to server -> create random-numbers on server and copy to local, takes
           also care of being sure it's synched: as long as there is no random-number,
@@ -14,7 +13,6 @@ BUGS:
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
-
         - Test if Admin::Backup::restore resets passwords as it should
         - why is Entity::get_value always called three times?
         - When CourseAdd is first tab and course is added, LTab.js:174 can't
@@ -38,6 +36,8 @@ HEISENBUGS:
 Security:
 
 UI:
+        - *Tabs: inactivate if nothing selected
+        - Mettre le nom "Profeda" sur l'étiquette, make A4 and "mpage -8"
         - Course::Grade shows files_saved, even if counter == 0
         - Course::Diploma - show better what's happening - perhaps a window
           with info: name1 - failed, name2 - creating, name3, name4
@@ -180,6 +180,11 @@ To check:
 
 
 ** FIXED **:
+        - B 130625: Course::Grade - can't upload files with accents or spaces
+        - B 130625: CourseGrade: deleted files in mho - then couldn't re-create directory
+        - B 130625: CourseDiploma: if all students are incomplete or failed, stop autoupdate
+        - B 130625: Still not OK with Tabs and multiple arrays
+        - B 130625: Still error if second array is available
         - B 130624: Course::Tabs if second array is available, it breaks 50%
         - B 130624: Person::Add also adds the family-name
         - B 130624: Course::Tabs actual course is not used automatically
