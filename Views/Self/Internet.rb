@@ -5,7 +5,7 @@ class SelfInternet < View
     @update = true
     @auto_update = 10
     @auto_update_send_values = false
-    @functions_need = [:network]
+    @functions_need = [:internet]
     @isp = JSON.parse( $lib_net.call( :isp_params ) )
 
     gui_vbox do

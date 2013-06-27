@@ -1,0 +1,42 @@
+# Uncomment to automatically login admin
+#autologin: foo
+autologin: admin
+#autologin: man
+
+
+title: "Gestion avec Profeda"
+
+log: events.log
+
+StorageHandler:
+  Replace:
+    LDAP: CSV
+
+views:
+#  AdminTabs:
+  CourseTabs:
+#  PersonTabs:
+    order: 0
+  PersonAdd:
+    order: 0
+  AdminFunction:
+    order: 0
+#    visible: false
+
+Accounting:
+#  Lending: Root::Lending
+#  Cash: Root::Cash
+#  Service: Root::Income::Internet
+
+LibNet:
+#  URI: druby://localhost:9000
+
+Samba:
+  simulation: true
+
+WelcomeText: |
+  Hello there<br>
+  how are you<br>
+  some multi-line text
+
+#autologin: admin

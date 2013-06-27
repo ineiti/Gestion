@@ -50,11 +50,11 @@ class CourseGrade < View
         show_upload :upload_file_1, :callback => true
         show_html :name_file_2
         show_upload :upload_file_2, :callback => true
-        show_info :name_file_3
+        show_html :name_file_3
         show_upload :upload_file_3, :callback => true
-        show_info :name_file_4
+        show_html :name_file_4
         show_upload :upload_file_4, :callback => true
-        show_info :name_file_5
+        show_html :name_file_5
         show_upload :upload_file_5, :callback => true
         show_button :close
       end
@@ -294,6 +294,9 @@ class CourseGrade < View
       ddputs(4){"Course is #{course} - filename is #{data._filename} " +
           "student is #{student}" }
       if course and student and data._filename
+        files_needed = course.ctype.files_needed.to_i
+        close_window = files_needed == ( course.exam_files( student ).count + 1 )
+
         course.check_students_dir
         filename = UploadFiles.escape_chars( data._filename )
         src = "/tmp/#{filename}"
@@ -301,14 +304,15 @@ class CourseGrade < View
         ddputs(3){ "Moving #{src} to #{dst}" }
         FileUtils.rm Dir.glob( "#{dst}/#{number}-*" )
         FileUtils.mv src, "#{dst}/#{number}-#{filename}"
+
+        ret = rpc_button_upload( session, data, false ) +
+          update_files_saved( course, student )
+        if close_window and ( files_needed == course.exam_files( student ).count )
+          ret += reply( :window_hide )
+        end
+        ddputs(3){"Return is #{ret.inspect}"}
+        return ret
       end
-      ret = rpc_button_upload( session, data, false ) +
-        update_files_saved( course, student )
-      if course.ctype.files_needed.to_i == 1
-        ret += reply( :window_hide )
-      end
-      ddputs(3){"Return is #{ret.inspect}"}
-      return ret
     end
   else
     return super( session, name, data )

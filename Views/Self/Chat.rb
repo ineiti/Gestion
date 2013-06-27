@@ -9,6 +9,7 @@ class SelfChat < View
     @update = true
     @auto_update = 10
     @auto_update_send_values = false
+    @functions_need = [:network]
 
     gui_vbox do
       show_text :discussion, :width => 400
