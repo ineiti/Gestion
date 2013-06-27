@@ -7,7 +7,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="1.1.9"
+VERSION_GESTION="1.1.11"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -138,7 +138,7 @@ trap("SIGINT") {
 $profiling = get_config( nil, :profiling )
 catch :ctrl_c do
   begin
-    webrick_port = get_config( 3302, :webrick, :port )
+    webrick_port = get_config( 3302, :Webrick, :port )
     dputs(2){"Starting at port #{webrick_port}" }
     if $profiling
       require 'rubygems'

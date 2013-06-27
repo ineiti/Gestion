@@ -62,8 +62,9 @@ class Persons < Entities
     if ! File.exist? cdir
       FileUtils::mkdir( cdir )
     end
+    @student_card ||= "student_card.odg"
     @print_card = OpenPrint.new( 
-      "#{ddir}/carte_etudiant.odg", cdir )
+      "#{ddir}/#{@student_card}", cdir )
   end
 
   # Searches for an empty name starting with "login", adding 2, 3, 4, ...

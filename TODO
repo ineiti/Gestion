@@ -1,19 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Person.delete: check Courses for teacher, assistant and responsible
-        - Course::Diploma - can't create for more than one course at the same time
-          -> make a @thread for each course, or is it just ruby not really
-          multi-threaded?
         - Person::Modify when changing pw for "center", password_plain is not updated
-        - Possible conflict in random-numbers when created locally and uploading
-          to server -> create random-numbers on server and copy to local, takes
-          also care of being sure it's synched: as long as there is no random-number,
-          don't allow to print diplomas. When changing Grades, delete random-number
-        - Courses::center needs work:
-          - it isn't shown in CourseModify, even with center_server
-          - it is by default to responsible (at least installation from 130613)
-        - Test if Admin::Backup::restore resets passwords as it should
+        - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
+        - ldapscripts.conf is not readable when not in directory - should search
+        - Person.delete: check Courses for teacher, assistant and responsible
         - why is Entity::get_value always called three times?
         - When CourseAdd is first tab and course is added, LTab.js:174 can't
           find getActiveForm, as it is not drawn yet...
@@ -24,7 +15,6 @@ UNCLEAR BUGS:
         - missing fields won't work in Entity::to_hash( true ) ??
 
 HEISENBUGS:
-        - when creating labels the URL doesn't show up -> not reproducible
         - Confirmed: NetworkPermissions: sometimes when saving, the chosen entry shows up
           as a number in the list. Seems to be somewhere in the Javascript where
           things don't get updated in the correct way. Not reproducible in a
@@ -32,15 +22,25 @@ HEISENBUGS:
         - Confirmed: PersonAdmin sometimes doesn't show permissions and groups when
           added new stuff
 
+UNCONFIRMED:
+        - Course::Diploma - can't create for more than one course at the same time
+          -> make a @thread for each course, or is it just ruby not really
+          multi-threaded?
+        - Test if Admin::Backup::restore resets passwords as it should in samba-module
+
 [5', 15', 30', 1h, 4h]
 Security:
 
 UI:
+        - resetting uploadWidget when reopening window
+        - when searching a person, put login_name matches first
+        - CourseTabs still very slow for startup
         - *Tabs: inactivate if nothing selected
-        - Mettre le nom "Profeda" sur l'étiquette, make A4 and "mpage -8"
-        - Course::Grade shows files_saved, even if counter == 0
-        - Course::Diploma - show better what's happening - perhaps a window
-          with info: name1 - failed, name2 - creating, name3, name4
+        - CourseDiploma::do_attestation - add a column after 10 students
+        - Courses::center needs work:
+          - it isn't shown in CourseModify, even with center_server
+          - it is by default to responsible (at least installation from 130613)
+        - printing: add option to reduce pages to printable surface
 
         - auto_update from a window enables also the background (CourseGrade::sync)
         - extend lists on all the height
@@ -56,6 +56,13 @@ FEATURES:
             prevents abuses like changing the grade afterwards, but allowing to
             change in case of errors
           - add m/f recognition to change wording
+          - Possible conflict in random-numbers when created locally and uploading
+            to server -> create random-numbers on server and copy to local, takes
+            also care of being sure it's synched: as long as there is no random-number,
+            don't allow to print diplomas. When changing Grades, delete random-number
+        - when adding a student to a course, check whether he already exists.
+          for example: if same username exists, propose to take over the other
+          name
         - receive SMS through LibNet and do actions
           - make connection
           - return stats
@@ -76,7 +83,7 @@ Programming:
         - Lots of stuff in View/* should go into Entities/*
         - configure also LibNet through Gestion
           - 130400 can set cost_* now
-          - 130400 also change the connection
+          - 130400 also change permanent or 
         - replace gsm-ussd with something Debian
         -2 verify if Person::data_set and Person::data_set_log are really
           necessary
@@ -180,6 +187,14 @@ To check:
 
 
 ** FIXED **:
+        - CL130626: Cleaned up Diplomas/* files and references in tree
+        - F 130626: Mettre le nom "Profeda" sur l'étiquette, make A4 and "mpage -8"
+        - UI130626: add "zipping/putting together"-something to CourseDiploma::do_attestations
+        - UI130626: Course::Diploma - show better what's happening - perhaps a window
+          with info: name1 - failed, name2 - creating, name3, name4
+        - F 130626: adding more than one file to courses
+        - UI130626: Course::Grade shows files_saved, even if counter == 0, also
+          other buttons are shown when not needed
         - B 130625: Course::Grade - can't upload files with accents or spaces
         - B 130625: CourseGrade: deleted files in mho - then couldn't re-create directory
         - B 130625: CourseDiploma: if all students are incomplete or failed, stop autoupdate

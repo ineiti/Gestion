@@ -67,8 +67,10 @@ class Courses < Entities
     }
 
     @thread = nil
-    @print_presence = OpenPrint.new( "#{@dir_diplomas}/fiche_presence.ods" )
-    @print_presence_small = OpenPrint.new( "#{@dir_diplomas}/fiche_presence_small.ods" )
+    @presence_sheet ||= "presence_sheet.ods"
+    @presence_sheet_small ||= "presence_sheet_small.ods"
+    @print_presence = OpenPrint.new( "#{@dir_diplomas}/#{@presence_sheet}" )
+    @print_presence_small = OpenPrint.new( "#{@dir_diplomas}/#{@presence_sheet_small}" )
   end
   
   def set_entry( id, field, value )
@@ -257,7 +259,7 @@ class Course < Entity
     
     check_students_dir
     @make_pdfs_state = {"0" => 'idle'}
-    @only_psnup = true
+    @only_psnup = false
   end
   
   def check_dir
@@ -496,7 +498,7 @@ base_gestion
         doc.gsub!( /-FROM-/, date_fr( start, show_year ) )
         doc.gsub!( /-TO-/, date_fr( self.end ) )
         doc.gsub!( /-SPECIAL-/, grade.remark || "" )
-        doc.gsub!( /-MENTION-/, grade.mention )
+        doc.gsub!( /-GRADE-/, grade.mention )
         doc.gsub!( /-DATE-/, date_fr( sign ) )
         doc.gsub!( /-COURSE_TYPE-/, ctype.name )
         doc.gsub!( /-URL_LABEL-/, grade.get_url_label )
@@ -566,6 +568,7 @@ base_gestion
         
         dputs( 2 ){ "Convert is #{convert.inspect}" }
         if convert
+          @make_pdfs_state["0"] = "converting"
           old = Dir.glob( dir_diplomas + "/content.xml*" )
           list = Dir.glob( dir_diplomas + "/*odt" )
           format = ctype.output[0].to_sym
@@ -599,6 +602,7 @@ base_gestion
             outfiles.push p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
             @make_pdfs_state[p.sub(/.*-/, '').sub(/\.odt/, '')][1] = "done"
           }
+          @make_pdfs_state["0"] = "collecting"
           if format == :certificate
             dputs( 3 ){ "Getting #{outfiles.inspect} out of #{dir}" }
             all = "#{dir}/000-all.pdf"
@@ -644,7 +648,7 @@ base_gestion
         FileUtils.rm( Dir.glob( dir_diplomas + "/*" ) )
       end
     end
-    @make_pdfs_state = {"0" => 'working'}
+    @make_pdfs_state = {"0" => 'collecting'}
     #@make_pdfs_state = {}
     make_pdfs( convert )
   end

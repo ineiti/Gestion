@@ -1,6 +1,9 @@
 Important notices for versions:
 
-- 130618: 1.1.10
+- 130618: 1.1.11
+  - fiche_presence.ods is defined now in Config::Entities:Courses:presence_sheet and
+    presence_sheet_small
+  - carte_etudiant.odg is defined now in Config::Entities:Persons:student_card
   - views are chosen according to AdminFunction
   - Config::OpenPrint:search_remote defaults to "none"
   - Config::Courses:* are moved to Config::Entities:Courses

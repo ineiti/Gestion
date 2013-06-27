@@ -49,7 +49,7 @@ class CourseTypes < Entities
   def listp_name
     self.search_by_profeda_code( "^$" ).collect{|ct|
       [ ct.coursetype_id, ct.name ]
-    }
+    }.sort{|a,b| a[1].downcase <=> b[1].downcase }
   end
   
   def migration_1(ct)

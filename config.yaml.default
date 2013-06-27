@@ -41,11 +41,15 @@ AfriCompta:
 #  filename: compta.rb
 
 Entities:
-#  Courses:
+  Courses:
 #    diploma_dir: Diplomas
 #    exas_dir: Exas
 #    exas_share: Exas/Share
 #    hostname: localhost
+#    presence_sheet: presence_sheet.ods
+#    presence_sheet_small: presence_sheet_small.ods
+  Persons:
+#    student_card: student_card.odg
 
 
 #welcome_text: |

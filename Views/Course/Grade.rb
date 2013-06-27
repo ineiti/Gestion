@@ -46,7 +46,16 @@ class CourseGrade < View
       end
       
       gui_window :single_file do
-        show_upload :upload_single_file, :callback => true
+        show_html :name_file_1
+        show_upload :upload_file_1, :callback => true
+        show_html :name_file_2
+        show_upload :upload_file_2, :callback => true
+        show_info :name_file_3
+        show_upload :upload_file_3, :callback => true
+        show_info :name_file_4
+        show_upload :upload_file_4, :callback => true
+        show_info :name_file_5
+        show_upload :upload_file_5, :callback => true
         show_button :close
       end
     end
@@ -54,11 +63,16 @@ class CourseGrade < View
 
   def rpc_update( session )
     super( session ) +
-      reply( "empty" ) +
+      reply( :empty, [:students] ) +
       [ :prepare_files, :fetch_files, :transfer_files, 
-      :last_synched, :sync_files, :upload ].collect{|b|
+      :last_synched, :sync_files, :upload, :files_saved ].collect{|b|
       reply( :hide, b )
     }.flatten
+  end
+  
+  def update_files_saved( course, student )
+    reply( :update, :files_saved => 
+        "#{course.exam_files( student ).count}/#{course.ctype.files_needed}" )
   end
 
   def update_grade( d )
@@ -77,7 +91,7 @@ class CourseGrade < View
         ret = reply( :empty )
       end
       ret += update_form_data( person ) +
-        reply( :update, :files_saved => course.exam_files( p_name ).count )
+        update_files_saved( course, p_name )
     end
     ret
   end
@@ -96,19 +110,20 @@ class CourseGrade < View
 
   def rpc_list_choice( session, name, args )
     dputs( 3 ){ "rpc_list_choice with #{name} - #{args.inspect}" }
-    ret = reply('empty')
+    ret = reply( :empty )
     case name
     when "courses"
       course_id = args['courses'][0]
       course = Courses.match_by_course_id(course_id)
       if course
         dputs( 3 ){ "replying" }
-        ret = reply("empty", [:students]) +
-          update_form_data( course ) +
-          reply("update", {:courses => [course_id]}) +
-          reply("focus", :mean1 )
+        ret = rpc_update( session ) +
+          #reply(:empty, [:students]) +
+        update_form_data( course ) +
+          reply(:update, {:courses => [course_id]}) +
+          reply(:focus, :mean1 )
         if course.students.size > 0
-          ret += reply("update", {:students => [course.students[0]]} ) +
+          ret += reply(:update, {:students => [course.students[0]]} ) +
             update_grade( {"courses" => [course.course_id],
               "students" => [course.students[0]]})
         end
@@ -117,22 +132,23 @@ class CourseGrade < View
           s ? reply( :unhide, "mean#{i}" ) : reply( :hide, "mean#{i}")
         }.flatten
 
-        ret += reply( course.ctype.diploma_type[0] == "simple" ? :hide : :unhide, 
-          :files_saved)
-
-        if course.ctype.diploma_type[0] != "simple"
-          buttons = [ :transfer_files, :upload ]
+        ddputs(3){"CType is #{course.ctype.inspect} - #{course.ctype.files_needed.inspect}"}
+        if (course.ctype.diploma_type[0] != "simple") and
+            (course.ctype.files_needed.to_i > 0)
+          ddputs(3){"Putting buttons"}
+        
+          buttons = [ :transfer_files, :upload, :files_saved ]
           if Shares.match_by_name( "CourseFiles" )
             buttons.push :prepare_files, :fetch_files
           end
+          if course.ctype.diploma_type[0] == "accredited" and
+              ConfigBase.has_function?( :course_client )
+            buttons.push :sync_files
+          end
+
           buttons.each{|b|
             ret += reply( :unhide, b )
           }
-        end
-        
-        if course.ctype.diploma_type[0] == "accredited" and
-            ConfigBase.has_function?( :course_client )
-          ret += reply( :unhide, :sync_files )
         end
         
         ddputs(4){"Course is #{course} - ret is #{ret.inspect}"}
@@ -196,10 +212,6 @@ class CourseGrade < View
       ret
   end
   
-  def rpc_button_add_file( session, data )
-    
-  end
-  
   def rpc_button_prepare_files( session, data )
     if course = Courses.match_by_course_id( data['courses'][0])
       course.exas_prepare_files
@@ -247,25 +259,58 @@ class CourseGrade < View
     end
   end
   
-  def rpc_button_upload( session, data )
-    reply( :window_show, :single_file )
-  end
-  
-  def rpc_button_upload_single_file( session, data )
+  def rpc_button_upload( session, data, window_show = true )
     data.to_sym!
     course = Courses.match_by_course_id( data._courses[0])
-    student = data._students[0]
-    ddputs(4){"Course is #{course} - filename is #{data._filename} " +
-        "student is #{student}" }
-    if course and student and data._filename
-      course.check_students_dir
-      src = "/tmp/#{UploadFiles.escape_chars( data._filename )}"
-      dst = "#{Courses.dir_exas}/#{course.name}/#{student}"
-      ddputs(3){ "Moving #{src} to #{dst}" }
-      FileUtils.rm Dir.glob( "#{dst}/*" )
-      FileUtils.mv src, dst
+    student = Entities.Persons.match_by_login_name( data._students[0])
+    files_needed = course.ctype.files_needed.to_i
+    exam_files = course.exam_files( student )
+    ddputs(3){"Exam-files = #{exam_files.inspect}"}
+    ret = window_show ? reply( :window_show, :single_file ) : []
+    ret + (1..5).collect{|i|
+      show = :hide
+      ret = []
+      if i <= files_needed
+        show = :unhide
+        file_nb = exam_files.index{|f| f =~ /^#{i}-/ }
+        file = file_nb ? exam_files[file_nb] : ""
+        ret += reply( :update, "name_file_#{i}" =>
+            "file ##{i}: #{file}" )
+      end
+      ddputs(3){"Return is #{ret.inspect}"}
+      ret +
+        reply( show, "name_file_#{i}" ) +
+        reply( show, "upload_file_#{i}" )
+    }.flatten
+  end
+  
+  def rpc_button( session, name, data )
+    if name =~ /^upload_file_/
+      number = name.sub( /.*_/, '' )
+      
+      data.to_sym!
+      course = Courses.match_by_course_id( data._courses[0])
+      student = data._students[0]
+      ddputs(4){"Course is #{course} - filename is #{data._filename} " +
+          "student is #{student}" }
+      if course and student and data._filename
+        course.check_students_dir
+        filename = UploadFiles.escape_chars( data._filename )
+        src = "/tmp/#{filename}"
+        dst = "#{Courses.dir_exas}/#{course.name}/#{student}"
+        ddputs(3){ "Moving #{src} to #{dst}" }
+        FileUtils.rm Dir.glob( "#{dst}/#{number}-*" )
+        FileUtils.mv src, "#{dst}/#{number}-#{filename}"
+      end
+      ret = rpc_button_upload( session, data, false ) +
+        update_files_saved( course, student )
+      if course.ctype.files_needed.to_i == 1
+        ret += reply( :window_hide )
+      end
+      ddputs(3){"Return is #{ret.inspect}"}
+      return ret
     end
-    reply( :update, :files_saved => course.exam_files( student ).count ) +
-      reply( :window_hide )
+  else
+    return super( session, name, data )
   end
 end

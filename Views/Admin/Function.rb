@@ -1,13 +1,11 @@
 class AdminFunction < View
   def layout
-    @order = 10
+    @order = 400
     @update = true
     set_data_class( :ConfigBases )
 
     gui_hbox do
       show_block :default
-      #show_list :functions, "ConfigBases.list_functions"
-      #show_value :isp
       show_button :save
     end
   end
