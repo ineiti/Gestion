@@ -21,7 +21,6 @@ class Grades < Entities
         dputs( 4 ){ "Checking grade #{g}" }
         if g.person_id.to_i == student.person_id.to_i
           dputs( 2 ){ "Found grade #{g}" }
-          g.set_course_student( course, student )
           return g
         end
       }
@@ -65,8 +64,6 @@ class Grades < Entities
 end
 
 class Grade < Entity
-  attr_reader :course, :student
-  
   def setup_instance
     init_random
   end
@@ -93,10 +90,6 @@ class Grade < Entity
     else "PAS PASSÉ"
     end
   end
-
-  def set_course_student( c, s )
-    @course, @student = c, s
-  end
   
   def init_random
     while not self.random
@@ -119,5 +112,9 @@ class Grade < Entity
   
   def person
     Persons.match_by_person_id( person_id )
+  end
+  
+  def student
+    person
   end
 end

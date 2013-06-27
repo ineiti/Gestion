@@ -313,8 +313,8 @@ class CourseGrade < View
         ddputs(3){"Return is #{ret.inspect}"}
         return ret
       end
+    else
+      return super( session, name, data )
     end
-  else
-    return super( session, name, data )
   end
 end

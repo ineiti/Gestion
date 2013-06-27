@@ -32,6 +32,7 @@ UNCONFIRMED:
 Security:
 
 UI:
+        - can't set up cybermanager anymore - permissions vanish !?
         - resetting uploadWidget when reopening window
         - when searching a person, put login_name matches first
         - CourseTabs still very slow for startup

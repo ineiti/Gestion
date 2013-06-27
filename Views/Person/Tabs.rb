@@ -7,13 +7,7 @@ class PersonTabs < View
       show_list_single :persons, "[]", :callback => true
       show_str :search #, :callback => :search
       show_button :start_search, :delete, :add
-      #show_button :start_test
 			
-      gui_window :test do
-        show_str :hello
-        show_button :close
-      end
-      
       gui_window :add_person do
         show_str :complete_name, :width => 150
         show_str :login_prop
@@ -22,16 +16,6 @@ class PersonTabs < View
     end
   end
 	
-  def rpc_button_start_test( session, args )
-    sleep 2
-    reply( :window_show, :test )
-  end
-	
-  def rpc_button_close( session, args )
-    sleep 2
-    reply( :window_hide )
-  end
-  
   def rpc_button_start_search( session, args )
     rpc_callback_search( session, args )
   end

@@ -37,9 +37,10 @@ class CourseDiploma < View
 
   def rpc_list_choice( session, name, args )
     dputs( 3 ){ "rpc_list_choice with #{name} - #{args.inspect}" }
-    ret = reply('empty', ['diplomas'])
+    ret = []
     case name
     when "courses"
+      ret = reply('empty', ['diplomas'])
       if args['courses'].length > 0
         course = Entities.Courses.match_by_course_id( args['courses'].to_a[0] )
         course and ret += reply( :update, :diplomas => course.get_files )

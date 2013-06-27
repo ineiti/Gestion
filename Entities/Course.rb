@@ -590,6 +590,9 @@ base_gestion
           @only_psnup and list = []
           list.sort.each{ |p|
             dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
+            student_name = p.sub(/.*-/, '').sub(/\.odt/, '')
+            @make_pdfs_state[student_name][1] = "working"
+
             if format == :certificate
               Docsplit.extract_pdf p, :output => dir
             else
@@ -600,7 +603,7 @@ base_gestion
             FileUtils.rm( p )
             dputs( 5 ){ "Finished rm" }
             outfiles.push p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
-            @make_pdfs_state[p.sub(/.*-/, '').sub(/\.odt/, '')][1] = "done"
+            @make_pdfs_state[student_name][1] = "done"
           }
           @make_pdfs_state["0"] = "collecting"
           if format == :certificate
