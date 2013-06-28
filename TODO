@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - can't set up cybermanager anymore - permissions vanish !?
         - Person::Modify when changing pw for "center", password_plain is not updated
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
         - ldapscripts.conf is not readable when not in directory - should search
@@ -32,7 +33,6 @@ UNCONFIRMED:
 Security:
 
 UI:
-        - can't set up cybermanager anymore - permissions vanish !?
         - resetting uploadWidget when reopening window
         - when searching a person, put login_name matches first
         - CourseTabs still very slow for startup
@@ -61,6 +61,7 @@ FEATURES:
             to server -> create random-numbers on server and copy to local, takes
             also care of being sure it's synched: as long as there is no random-number,
             don't allow to print diplomas. When changing Grades, delete random-number
+          - Implement better handling of course-days
         - when adding a student to a course, check whether he already exists.
           for example: if same username exists, propose to take over the other
           name
@@ -188,6 +189,9 @@ To check:
 
 
 ** FIXED **:
+        - B 130627: CoursDiplomas - change button "attestation" to "create attestations"
+        - B 130627: CoursDiplomas - not updated correctly with list_changed
+        - UI130627: Updated French translations
         - CL130626: Cleaned up Diplomas/* files and references in tree
         - F 130626: Mettre le nom "Profeda" sur l'étiquette, make A4 and "mpage -8"
         - UI130626: add "zipping/putting together"-something to CourseDiploma::do_attestations
