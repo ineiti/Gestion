@@ -86,13 +86,14 @@ class PersonTabs < View
     not result and result = []
 
     # Check if we have an exact match on the login_name
+    dputs(3){"Searching for exact match #{s}"}
     if exact = Persons.match_by_login_name( s )
       dputs( 3 ){"Found exact match"}
       if pos = result.index( exact )
         dputs( 3 ){"Found exact match at position #{pos}"}
         result.delete( pos )
         result.unshift( exact )
-        ddputs(3){"result is now #{result.inspect}"}
+        dputs(3){"result is now #{result.inspect}"}
       end
     end
 

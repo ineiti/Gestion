@@ -19,9 +19,10 @@ HEISENBUGS:
         - Confirmed: NetworkPermissions: sometimes when saving, the chosen entry shows up
           as a number in the list. Seems to be somewhere in the Javascript where
           things don't get updated in the correct way. Not reproducible in a
-          reliable manner.
+          reliable manner. Perhaps linked with more than one field as array like
+          130625?
         - Confirmed: PersonAdmin sometimes doesn't show permissions and groups when
-          added new stuff
+          added new stuff -> also array-problem of 130625?
 
 UNCONFIRMED:
         - Course::Diploma - can't create for more than one course at the same time
@@ -33,7 +34,6 @@ UNCONFIRMED:
 Security:
 
 UI:
-        - when searching a person, put login_name matches first
         - CourseTabs still very slow for startup
         - *Tabs: inactivate if nothing selected
         - CourseDiploma::do_attestation - add a column after 10 students
@@ -189,6 +189,7 @@ To check:
 
 
 ** FIXED **:
+        - B 130701: when searching a person, put login_name matches first
         - B 130701: resetting uploadWidget when reopening window
         - B 130701: Person::Modify when changing pw for "center", password_plain is not updated
         - B 130701: Person.delete: check Courses for teacher, assistant and responsible
