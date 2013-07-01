@@ -43,6 +43,8 @@ class PersonModify < View
       when "change_password"
         if session.owner.has_all_rights_of( person )
           person.password = data['new_password']
+          rep = reply( :empty_only, [:new_password] ) +
+            reply( :update, :password_plain => person.password_plain )
         end
       when "save"
         rep = reply( 'update', Persons.save_data( data ) )

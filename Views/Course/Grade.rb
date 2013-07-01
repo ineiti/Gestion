@@ -275,7 +275,8 @@ class CourseGrade < View
         file_nb = exam_files.index{|f| f =~ /^#{i}-/ }
         file = file_nb ? exam_files[file_nb] : ""
         ret += reply( :update, "name_file_#{i}" =>
-            "file ##{i}: #{file}" )
+            "file ##{i}: #{file}" ) +
+          reply( :update, "upload_file_#{i}" => "0" )
       end
       ddputs(3){"Return is #{ret.inspect}"}
       ret +

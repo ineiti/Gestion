@@ -42,9 +42,9 @@ AfriCompta:
 
 Entities:
   Courses:
-#    diploma_dir: Diplomas
-#    exas_dir: Exas
-#    exas_share: Exas/Share
+#    dir_diplomas: Diplomas
+#    dir_exas: Exas
+#    dir_exas_share: Exas/Share
 #    hostname: localhost
 #    presence_sheet: presence_sheet.ods
 #    presence_sheet_small: presence_sheet_small.ods

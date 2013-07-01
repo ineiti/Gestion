@@ -14,6 +14,13 @@ class String
   end
 end
 
+class IsNecessary < Exception
+  attr :for_course
+  
+  def initialize( course )
+    @for_course = course
+  end
+end
 
 
 class Persons < Entities
@@ -602,10 +609,18 @@ class Person < Entity
   end
   
   def delete
-    Courses.data.values.select{|d|
-      d[:students] and d[:students].index( login_name )
-    }.each{|c|
-      c[:students] -= [login_name]
+    Courses.search_all.each{|course|
+      [ :teacher, :assistant, :responsible, :center ].each{|role|
+        if r = course.data_get(role) and r.login_name == login_name
+          raise IsNecessary.new( course )
+        end
+      }
+    }
+    
+    Courses.data.values.each{|d|
+      if d[:students] and d[:students].index( login_name )
+        d[:students] -= [login_name]
+      end
     }
     Shares.search_all.each{|s|
       s.acl.delete login_name

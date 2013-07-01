@@ -50,6 +50,7 @@ class TC_Person < Test::Unit::TestCase
       :permissions => ["secretary"] )
     @teacher = Entities.Persons.create( :login_name => "teacher",
       :permissions => ["professor"] )
+
     Entities.Services.create( :name => "surf", :price => 1000, :duration => 20 )
     Entities.Services.create( :name => "solar", :price => 1000, :duration => 20 )
     Entities.Services.create( :name => "club", :price => 1000, :duration => 0 )
@@ -254,5 +255,15 @@ class TC_Person < Test::Unit::TestCase
     @surf.delete
   
     assert_equal 0, Grades.search_by_person_id( @surf.person_id ).length
+  end
+  
+  def test_delete_needed
+    @maint = Courses.create( :name => "maint_1201", :teacher => @admin )
+
+    begin
+      @admin.delete
+    rescue IsNecessary => who
+      assert_equal "maint_1201", who.for_course.name
+    end
   end
 end

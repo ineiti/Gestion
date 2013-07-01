@@ -2,10 +2,10 @@
 
 BUGS:
         - can't set up cybermanager anymore - permissions vanish !?
-        - Person::Modify when changing pw for "center", password_plain is not updated
-        - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
         - ldapscripts.conf is not readable when not in directory - should search
-        - Person.delete: check Courses for teacher, assistant and responsible
+
+        - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
+        - creation of diplomas breaks if argument "-p" is given
         - why is Entity::get_value always called three times?
         - When CourseAdd is first tab and course is added, LTab.js:174 can't
           find getActiveForm, as it is not drawn yet...
@@ -33,7 +33,6 @@ UNCONFIRMED:
 Security:
 
 UI:
-        - resetting uploadWidget when reopening window
         - when searching a person, put login_name matches first
         - CourseTabs still very slow for startup
         - *Tabs: inactivate if nothing selected
@@ -51,6 +50,7 @@ UI:
         - write a good documentation...
 
 FEATURES:
+        - label. : show a form if no student found
         - adding a course:
           - If course_client, don't make PDF before synched to server
           - Once synched to server, don't allow for changes, or have a system that
@@ -189,6 +189,9 @@ To check:
 
 
 ** FIXED **:
+        - B 130701: resetting uploadWidget when reopening window
+        - B 130701: Person::Modify when changing pw for "center", password_plain is not updated
+        - B 130701: Person.delete: check Courses for teacher, assistant and responsible
         - B 130627: CoursDiplomas - change button "attestation" to "create attestations"
         - B 130627: CoursDiplomas - not updated correctly with list_changed
         - UI130627: Updated French translations

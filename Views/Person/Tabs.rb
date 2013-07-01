@@ -13,6 +13,11 @@ class PersonTabs < View
         show_str :login_prop
         show_button :add_person, :close
       end
+      
+      gui_window :error do
+        show_html :info
+        show_button :close
+      end
     end
   end
 	
@@ -25,7 +30,13 @@ class PersonTabs < View
       if ( p_login = args["persons"] ) and 
           ( p = Persons.match_by_login_name( p_login[0] ) )
         ddputs(3){"Found person #{p.inspect} - #{p.class.name}"}
-        p.delete
+        begin
+          p.delete
+        rescue IsNecessary => who
+          return reply( :window_show, :error ) +
+            reply( :update, :info => "Course #{who.for_course.name} " +
+              "still needs #{p.login_name}")
+        end
         rpc_callback_search( session, args )
       end
     end
@@ -73,18 +84,22 @@ class PersonTabs < View
     }
     dputs( 3 ){ "Result is: #{result.collect{|r| r.login_name}}" }
     not result and result = []
-    if result.length > 20
-      result = result[0..19]
-    end
 
     # Check if we have an exact match on the login_name
     if exact = Persons.match_by_login_name( s )
       dputs( 3 ){"Found exact match"}
       if pos = result.index( exact )
         dputs( 3 ){"Found exact match at position #{pos}"}
-        result[0], result[pos] = result[pos], result[0]
+        result.delete( pos )
+        result.unshift( exact )
+        ddputs(3){"result is now #{result.inspect}"}
       end
     end
+
+    if result.length > 20
+      result = result[0..19]
+    end
+
     ret = reply( :empty, [:persons] ) +
       reply( :update, { :persons => result.collect{|p|
           p.to_list
