@@ -188,10 +188,11 @@ To check:
 
 
 ** FIXED **:
-        - B 130704: Entity::data_set and data_get have to check for value() and value=()
-        - B 130704: Add a testcase for ConfigBase::values_need
-        - B 130702: *Tabs: inactivate if nothing selected
-        - B 130702: CourseDiploma::do_attestation - add a column after 10 students
+        - P 130704: Use value_entity in Grades
+        - P 130704: Entity::data_set and data_get have to check for value() and value=()
+        - P 130704: Add a testcase for ConfigBase::values_need
+        - UI130702: *Tabs: inactivate if nothing selected
+        - UI130702: CourseDiploma::do_attestation - add a column after 10 students
         - B 130702: printing: add option to reduce pages to printable surface
         - B 130702: name shows twice in Person::Tabs when both in full_name and login_name
         - B 130702: ldapscripts.conf is not readable when not in directory - should search

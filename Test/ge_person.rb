@@ -248,14 +248,14 @@ class TC_Person < Test::Unit::TestCase
   
   def test_delete
     @maint = Courses.create( :name => "maint_1201")
-    @grade = Grades.save_data( :course_id => @maint.course_id,
-    :person_id => @surf.person_id, :means => [12])
+    @grade = Grades.save_data( :course => @maint,
+      :student => @surf, :means => [12])
   
-    assert_equal 1, Grades.search_by_person_id( @surf.person_id ).length
+    assert_equal 1, Grades.search_by_student( @surf ).length
     
     @surf.delete
   
-    assert_equal 0, Grades.search_by_person_id( @surf.person_id ).length
+    assert_equal 0, Grades.search_by_student( @surf ).length
   end
   
   def test_delete_needed

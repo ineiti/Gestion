@@ -138,9 +138,8 @@ class Courses < Entities
     end
     name += suffix
   
-    course = self.create( :name => name ).
-      data_set_hash( ctype.to_hash.except(:name), true ).
-      data_set( :ctype, ctype )
+    course = self.create( :name => name )
+    course.data_set_hash( ctype.to_hash.except(:name), true ).ctype = ctype
 
     if needs_center
       ddputs(3){"Got center of #{creator.inspect}"}
@@ -150,6 +149,7 @@ class Courses < Entities
       course.responsible = creator
     end
     
+    ddputs(4){"Course is #{course.class}"}
     return course
   end
 
@@ -198,11 +198,11 @@ class Courses < Entities
         grade, name = lines.shift.split( ' ', 2 )
         student = Entities.Persons.find_name_or_create( name )
         course.students.push( student.login_name )
-        g = Entities.Grades.match_by_course_person( course.course_id, student.login_name )
+        g = Grades.match_by_course_person( course, student )
         if g then
-          g.mean, g.remark = Entities.Grades.grade_to_mean( grade ), lines.shift
+          g.mean, g.remark = Grades.grade_to_mean( grade ), lines.shift
         else
-          Entities.Grades.create( :course_id => course.course_id, :person_id => student.person_id,
+          Grades.create( :course => course, :student => student,
             :mean => Grades.grade_to_mean( grade ), :remark => lines.shift )
         end
       end
@@ -214,7 +214,7 @@ class Courses < Entities
   end
   
   def migration_1(c)
-    name = c.data_get( :classroom, true )
+    name = c.classroom
     if name.class == Array
       name = name.join
     end
@@ -223,7 +223,7 @@ class Courses < Entities
     if ( not r ) and ( not r = Rooms.match_by_name( "" ) )
       r = nil
     end
-    c.data_set( :classroom, r )
+    c.classroom = r
     dputs(4){"New room is #{c.classroom.inspect}"}
   end
   
@@ -264,7 +264,7 @@ class Course < Entity
   
   def check_dir
     [ dir_diplomas, dir_exas, dir_exas_share ].each{|d|
-      (! File.exists? d ) and FileUtils.mkdir( d )
+      (! File.exists? d ) and FileUtils.mkdir_p( d )
     }    
   end
   
@@ -313,7 +313,7 @@ class Course < Entity
     missing_data = []
     %w( start end sign duration teacher responsible description contents ).each{ |s|
       d = data_get s
-      if not d or d.size == 0
+      if not d
         dputs( 1 ){ "Failed checking #{s}: #{d}" }
         missing_data.push s
       end
@@ -350,18 +350,18 @@ class Course < Entity
     }
     txt = <<-END
 base_gestion
-#{Entities.Persons.match_by_login_name( data_get :teacher ).full_name}
-#{Entities.Persons.match_by_login_name( data_get :responsible ).full_name}
-#{data_get :duration}
-#{data_get :description}
-#{data_get :contents}
+#{teacher.full_name}
+#{responsible.full_name}
+#{duration}
+#{description}
+#{contents}
 
 #{date_fr(d_start, same_year)}
 #{date_fr(d_end, same_year)}
 #{date_fr(d_sign)}
     END
-    data_get( :students ).each{|s|
-      grade = Entities.Grades.match_by_course_person( data_get( :course_id ), s )
+    students.each{|s|
+      grade = Grades.match_by_course_person( course_id, s )
       if grade
         txt += "#{grade} #{grade.student.full_name}\n" +
           "#{grade.remark}\n"
@@ -451,14 +451,37 @@ base_gestion
 	
 	
   def update_student_diploma( file, student )
-    grade = Grades.match_by_course_person( course_id, student.login_name )
-    dputs(0){"Course is #{name} - ctype is #{ctype.inspect} and grade is " +
+    grade = Grades.match_by_course_person( course_id, student )
+    dputs(0){"Course is #{name} - student is #{student} - ctype is #{ctype.inspect} and grade is " +
         "#{grade.inspect} - #{grade.to_s}"}
-    if grade and grade.to_s != "NP" and 
-        ( ( ctype.diploma_type[0] == "simple" ) or
-          ( exam_files( student ).count >= ctype.files_needed.to_i ) )
-      @make_pdfs_state[student.login_name] = [ grade.mean, "queued" ]
-      
+
+    state = if ( ctype.diploma_type[0] == "accredited" ) and grade and
+        ( not grade.random )
+      "not synched"
+    elsif ( ( ctype.diploma_type[0] != "simple" ) and
+          ( exam_files( student ).count < ctype.files_needed.to_i ) )
+      "incomplete"
+    elsif ( not grade ) or ( grade.to_s == "NP" )
+      "not passed"
+    else
+      "queued"
+    end
+    mean = if grade and grade.mean
+      grade.mean
+    else
+      "-"
+    end
+    ddputs(4){"State is #{state}"}
+    @make_pdfs_state[student.login_name] = [ mean, state ]
+
+    #if grade and grade.to_s != "NP" and 
+    #    ( ( ctype.diploma_type[0] == "simple" ) or
+    #      ( exam_files( student ).count >= ctype.files_needed.to_i ) ) and
+    #    ( ( ctype.diploma_type[0] == "accredited" ) and grade.random )
+    #  @make_pdfs_state[student.login_name] = [ grade.mean, "queued" ]
+    if state != "queued"
+      FileUtils.rm( file )
+    else
       ddputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|
         dputs(5){"Cours is #{self.inspect}"}
@@ -514,21 +537,6 @@ base_gestion
         }
         z.commit
       }
-    else
-      reason = if ( ( ctype.diploma_type[0] != "simple" ) and
-            ( exam_files( student ).count < ctype.files_needed.to_i ) )
-        "incomplete"
-      else
-        "not passed"
-      end
-      mean = if grade and grade.mean
-        grade.mean
-      else
-        "-"
-      end
-      @make_pdfs_state[student.login_name] = [ mean, reason ]
-
-      FileUtils.rm( file )
     end
   end
 
@@ -844,19 +852,31 @@ base_gestion
     end
     @sync_state = sync_s += "OK</li>"
 
-    if ( grades = Grades.search_by_course_id( course_id ) ).length > 0
+    if ( grades = Grades.matches_by_course( self.course_id ) ).length > 0
       @sync_state = sync_s += "<li>Transferring grades: "
       ret = sync_transfer( :grades, grades.select{|g|
-          g.course and g.person
+          g.course and g.student
         }.collect{|g| 
-          dputs(4){"Found grade with #{g.course.inspect} and #{g.person.inspect}"}
+          dputs(4){"Found grade with #{g.course.inspect} and #{g.student.inspect}"}
           g.to_hash( true ).merge( :course => g.course.name, 
-            :person => g.person.login_name )
+            :person => g.student.login_name )
         }.to_json, slow )
       @sync_state += ret
       if ret =~ /^Error: /
         return false
       end
+      grades = JSON.parse( ret.sub(/^OK: /, '') )
+      ddputs(3){"Return is #{grades.inspect}"}
+      grades.each{|g|
+        course_name, student, random = g
+        course = Courses.match_by_name( course_name )
+        if grade = Grades.match_by_course_person( course, student )
+          ddputs(4){"Setting grade-random of #{grade.grade_id} to #{random}"}
+          grade.random = random
+        else
+          dputs(0){"Can't find grade for #{course}-#{student}!"}
+        end
+      }
       @sync_state = sync_s += "OK</li>"
     end
 

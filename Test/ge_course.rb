@@ -3,6 +3,7 @@ require 'ftools'
 
 
 class TC_Course < Test::Unit::TestCase
+
   def setup
     #    Permission.add( 'default', '.*' )
     Permission.add( 'student', '.*' )
@@ -48,19 +49,18 @@ class TC_Course < Test::Unit::TestCase
       :address => "B.P. 1234", :town => "Sansibar",
       :phone => "+23599999999", :email => "profeda@gmail.com")
     @center.password = @center.password_plain = "1234"
-
+    
     Sessions.create( @admin, "default" )
-    dputs(0){@maint_2.inspect}
   end
   
   def teardown
     permissions_init
-    Entities.delete_all_data()
+    #Entities.delete_all_data()
 
-    dputs(0){"Resetting SQLite"}
-    SQLite.dbs_close_all
-    FileUtils.cp( "db.testGestion", "data/compta.db" )
-    SQLite.dbs_open_load_migrate
+    #dputs(0){"Resetting SQLite"}
+    #SQLite.dbs_close_all
+    #FileUtils.cp( "db.testGestion", "data/compta.db" )
+    #SQLite.dbs_open_load_migrate
     #Entities.Persons.save
     #Entities.LogActions.save
   end
@@ -95,14 +95,14 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_grade
-    @grade0 = Entities.Grades.save_data({:person_id => @secretaire.person_id,
-        :course_id => @net.course_id, :means => [11]})
+    @grade0 = Grades.save_data({:student => @secretaire,
+        :course => @net, :means => [11]})
     assert_equal 11, @grade0[:mean]
-    @grade1 = Entities.Grades.save_data({:person_id => @surf.person_id,
-        :course_id => @net.course_id, :means => [12]})
+    @grade1 = Grades.save_data({:student => @surf,
+        :course => @net, :means => [12]})
     assert_equal 12, @grade1[:mean]
-    @grade2 = Entities.Grades.save_data({:person_id => @surf.person_id,
-        :course_id => @net.course_id, :means => [13]})
+    @grade2 = Grades.save_data({:student => @surf,
+        :course => @net, :means => [13]})
     assert_equal 13, @grade2[:mean]
     assert_equal @grade1[:grade_id], @grade2[:grade_id]
   end
@@ -144,10 +144,10 @@ class TC_Course < Test::Unit::TestCase
     
     @net.students = %w( admin surf )
     
-    Entities.Grades.save_data({:person_id => @admin.person_id,
-        :course_id => @net.course_id, :means => [11]})
-    Entities.Grades.save_data({:person_id => @surf.person_id,
-        :course_id => @net.course_id, :means => [9], :remark => "http://ndjair.net"})
+    Entities.Grades.save_data({:student => @admin,
+        :course => @net, :means => [11]})
+    Entities.Grades.save_data({:student => @surf,
+        :course => @net, :means => [9], :remark => "http://ndjair.net"})
     
     assert_equal COURSE_STR, @net.export_diploma
   end
@@ -157,7 +157,7 @@ class TC_Course < Test::Unit::TestCase
     # As soon as value_entity are known to work OK, one has to replace
     # Course.teacher and Course.responsible with value_entity_person
     course = Courses.from_diploma( "net_1001", COURSE_STR )
-    @grade_admin = Entities.Grades.match_by_course_person( @net.course_id, @admin.login_name )
+    @grade_admin = Entities.Grades.match_by_course_person( @net, @admin )
     assert_not_nil @grade_admin
     assert_equal 10, @grade_admin.mean
     assert_equal %w( 01.02.2003 04.05.2003 04.06.2003 72 admin secretaire ),
@@ -217,15 +217,15 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.thread.join
     assert_equal 0, Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count
 		
-    @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
-        :course_id => @maint_2.course_id, :means => [9]})
+    @grade0 = Grades.save_data({:student => @secretaire,
+        :course => @maint_2, :means => [9]})
     @maint_2.prepare_diplomas( false )
     @maint_2.thread.join
     assert_equal 0, Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count
 
 
-    @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
-        :course_id => @maint_2.course_id, :means => [11]})
+    @grade0 = Grades.save_data({:student => @secretaire,
+        :course => @maint_2, :means => [11]})
     @secretaire.role_diploma = "Director"
     assert @secretaire, @maint_2.teacher
     @maint_2.prepare_diplomas( false )
@@ -234,9 +234,14 @@ class TC_Course < Test::Unit::TestCase
   end
 		
   def test_print_diplomas
+    ConfigBase.add_function :course_server
+
     @maint_2.students.push 'secretaire'
-    @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
-        :course_id => @maint_2.course_id, :means => [11]})
+    @grade0 = Grades.save_data({:student => @secretaire,
+        :course => @maint_2, :means => [11]})
+    Grades.search_all.each{|g|
+      dputs(0){"Grade #{g.grade_id}: #{g.course.name} - #{g.student.login_name}"}
+    }
     @maint_2.prepare_diplomas
 
     while Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count < 3 do
@@ -349,10 +354,13 @@ class TC_Course < Test::Unit::TestCase
   end
   
   def test_label
+    ConfigBase.add_function :course_server
+
     @it_101_t.diploma_type = %w( accredited )
+    dputs(0){"it_101 is #{@it_101.class}"}
     @it_101.students.push 'secretaire'
-    @grade0 = Grades.save_data({:person_id => @secretaire.person_id,
-        :course_id => @it_101.course_id, :mean => 11, :means => [11]})
+    @grade0 = Grades.save_data({:student => @secretaire,
+        :course => @it_101, :mean => 11, :means => [11]})
     @it_101.prepare_diplomas( false )
     
     while ( files = Dir.glob( "#{@it_101.dir_diplomas}/*" ) ).count < 3 do
@@ -362,8 +370,10 @@ class TC_Course < Test::Unit::TestCase
   end
   
   def test_get_url_label
-    @grade0 = Grades.create({:person_id => @secretaire.person_id,
-        :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
+    ConfigBase.add_function :course_server
+
+    @grade0 = Grades.create({:student => @secretaire,
+        :course => @maint_2, :mean => 11, :means => [11]})
 
     dputs(0){"grade0 is #{@grade0.inspect}"}
     assert @grade0.random
@@ -373,12 +383,16 @@ class TC_Course < Test::Unit::TestCase
   end
   
   def test_print_label
-    @grade0 = Grades.create({:person_id => @secretaire.person_id,
-        :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
+    ConfigBase.add_function :course_server
+    @grade0 = Grades.create({:student => @secretaire,
+        :course => @maint_2, :mean => 11, :means => [11]})
     @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
         :central_host => "label.profeda.org", :filename => ["label.odg"],
         :diploma_type => ["simple"]})
     @maint_2.students.push 'secretaire'
+    Grades.search_all.each{|g|
+      dputs(0){"Grade #{g.grade_id}: #{g.course.name} - #{g.student.login_name}"}
+    }
     @maint_2.prepare_diplomas
 
     while ( files = Dir.glob( "#{@maint_2.dir_diplomas}/*" ) ).count < 3 do
@@ -417,21 +431,23 @@ class TC_Course < Test::Unit::TestCase
   end
   
   def test_sync
+    @port = 3302
     main = Thread.new{
-      QooxView::startWeb
+      QooxView::startWeb( @port )
     }
+    dputs(0){"Starting at port #{@port}"}
     sleep 1
     cname = "#{@center.login_name}_"
     
     @maint_t.data_set_hash({:output => ["label"],
-        :central_host => "http://localhost:3302/label", :filename => ["label.odg"],
+        :central_host => "http://localhost:#{@port}/label", :filename => ["label.odg"],
         :name => "it-101",
         :diploma_type => ["accredited"]})
 
     students = %w( secretaire admin surf )
     @maint_2.students.concat students
-    @grade0 = Grades.create({:person_id => @secretaire.person_id,
-        :course_id => @maint_2.course_id, :mean => 11, :means => [11]})
+    @grade0 = Grades.create({:student => @secretaire,
+        :course => @maint_2, :mean => 11, :means => [11]})
     
     @maint_2.exas_prepare_files
     @maint_2.exas_fetch_files
@@ -460,12 +476,90 @@ class TC_Course < Test::Unit::TestCase
     assert File.exists? foo_maint.dir_exas
   end
   
-  def test_wrong_password
+  def test_random_id
+    @port = 3303
     main = Thread.new{
-      QooxView::startWeb
+      QooxView::startWeb( @port )
     }
+    dputs(0){"Starting at port #{@port}"}
+    sleep 1
+    cname = "#{@center.login_name}_"
+    
+    @maint_t.data_set_hash({:output => ["label"],
+        :central_host => "http://localhost:#{@port}/label", :filename => ["label.odg"],
+        :name => "it-101",
+        :diploma_type => ["accredited"]})
+
+    students = %w( secretaire admin surf )
+    @maint_2.students.concat students
+    @grade0 = Grades.create({:student => @secretaire,
+        :course => @maint_2, :mean => 11, :means => [11]})
+    @grade1 = Grades.create({:student => @admin,
+        :course => @maint_2, :mean => 15, :means => [15]})
+    
+    @maint_2.exas_prepare_files
+    @maint_2.exas_fetch_files
+    students[0..1].each{|s|
+      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      FileUtils.touch( "#{student_dir}/exa.doc" )
+    }
+
+    assert_equal nil, @grade0.random    
+    assert_equal [], Persons.search_by_login_name( "^#{cname}" )
+    assert_equal nil, Courses.find_by_name( "^#{cname}")
+
+    ConfigBase.add_function :course_server
+    @maint_2.sync_do
+    
+    foo_maint = Courses.find_by_name( "^#{cname}" )
+    foo_grade = Grades.match_by_course( foo_maint.course_id )
+    names = Persons.search_by_login_name( "^#{cname}" ).collect{|p|
+      p.login_name
+    }
+    assert_equal ["foo_secretaire", "foo_admin", "foo_surf"], names
+    assert_equal "foo_maint_1210", foo_maint.name
+    assert_equal "foo", foo_maint._center.login_name
+    Grades.search_all.each{|g|
+      dputs(0){"Grade #{g.grade_id}: #{g.course.name}-#{g.student.login_name}-#{g.random}"}
+    }
+    assert foo_grade.random
+    assert @grade0.random
+    assert_equal foo_grade.random, @grade0.random
+    
+    random = foo_grade.random
+    
+    ConfigBase.add_function :course_client
+    @grade0.means = [14]
+    assert_equal nil, @grade0.random
+    
+    ConfigBase.add_function :course_server
+    dputs(0){"ConfigBase has #{ConfigBase.get_functions.inspect}"}
+    @maint_2.sync_do
+    assert_equal random, @grade0.random
+    
+    @grade0.remark = "foo"
+    assert_equal random, @grade0.random
+    ConfigBase.add_function :course_client
+    @grade0.remark = "foo"
+    assert_equal nil, @grade0.random
+    
+    ConfigBase.add_function :course_server
+    dputs(0){"ConfigBase has #{ConfigBase.get_functions.inspect}"}
+    @maint_2.sync_do
+    assert_equal random, @grade0.random
+    
+    main.kill
+  end
+  
+  def test_wrong_password
+    @port = 3304
+    main = Thread.new{
+      QooxView::startWeb(@port)
+    }
+    dputs(0){"Starting at port #{@port}"}
     sleep 1
 
+    @it_101.ctype.central_host = "http://localhost:#{@port}/label"
     assert @it_101.sync_do
     assert_equal "<li>Transferring course</li>" +
       "<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>" +
@@ -486,13 +580,17 @@ class TC_Course < Test::Unit::TestCase
   end
   
   def test_update_grade
+    @port = 3305
     main = Thread.new{
-      QooxView::startWeb
+      QooxView::startWeb(@port)
     }
+    dputs(0){"Starting at port #{@port}"}
     sleep 1
 
-    grade = Grades.create({:person_id => @surf.person_id,
-        :course_id => @it_101.course_id, :means => [11]})
+    @it_101.ctype.central_host = "http://localhost:#{@port}/label"
+
+    grade = Grades.create({:student => @surf,
+        :course => @it_101, :means => [11]})
     assert ! Courses.find_by_name( "foo_" )
     assert ! Persons.match_by_login_name( "foo_secretaire" )
 
@@ -500,7 +598,7 @@ class TC_Course < Test::Unit::TestCase
     
     foo = Courses.find_by_name( "foo_" )
     foo_surf = Persons.match_by_login_name( "foo_surf" )
-    foo_grade = Grades.match_by_course_person( foo.course_id, foo_surf.login_name )
+    foo_grade = Grades.match_by_course_person( foo, foo_surf )
     
     assert_equal [11], foo_grade.means
     grade.means = [12]

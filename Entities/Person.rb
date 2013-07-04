@@ -593,11 +593,11 @@ class Person < Entity
   end
 	
   def first_name=(v)
-    self._first_name = v.capitalize_all
+    self._first_name = v.to_s.capitalize_all
   end
 	
   def family_name=(v)
-    self._family_name = v.capitalize_all
+    self._family_name = v.to_s.capitalize_all
   end
   
   def get_cash( person, amount )
@@ -664,7 +664,7 @@ class Person < Entity
     AccessGroups.search_all.each{|ag|
       ag.members and ag.members.delete login_name
     }
-    Grades.search_by_person_id( person_id ).each{|g|
+    Grades.search_by_student( self ).each{|g|
       g.delete
     }
 

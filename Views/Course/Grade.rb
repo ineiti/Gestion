@@ -171,8 +171,8 @@ class CourseGrade < View
           0.0
         end
       }
-      Entities.Grades.save_data( {:course_id => course.course_id,
-          :person_id => student.person_id,
+      Entities.Grades.save_data( {:course => course,
+          :student => student,
           :means => means,
           :remark => data['remark']})
       if data['first_name']

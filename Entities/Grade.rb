@@ -1,8 +1,8 @@
 class Grades < Entities
   
   def setup_data
-    value_int :course_id
-    value_int :person_id
+    value_entity_course :course
+    value_entity_person :student
     value_int :random
     
     value_block :info
@@ -11,16 +11,20 @@ class Grades < Entities
     value_str :remark
   end
   
-  def match_by_course_person( course_id, person_login_name )
-    course = Entities.Courses.match_by_course_id( course_id )
-    student = Entities.Persons.match_by_login_name( person_login_name )
+  def match_by_course_person( course, student )
+    if course.class != Course
+      course = Courses.match_by_course_id( course )
+    end
+    if student.class != Person
+      student = Persons.match_by_login_name( student )
+    end
     if course and student
-      dputs( 3 ){ "Found #{course} and #{student}" }
-      grades = Entities.Grades.search_by_course_id( course.course_id )
+      dputs(4){"Found #{course.name} - #{student.login_name}"}
+      grades = Grades.matches_by_course( course.course_id )
       grades.each{|g|
         dputs( 4 ){ "Checking grade #{g}" }
-        if g.person_id.to_i == student.person_id.to_i
-          dputs( 2 ){ "Found grade #{g}" }
+        if g.student == student
+          dputs( 2 ){ "Found grade #{g} for #{student.login_name} in #{course.name}" }
           return g
         end
       }
@@ -30,8 +34,8 @@ class Grades < Entities
   
   def save_data( d )
     if not d.has_key? :grade_id
-      id = search_by_course_id( d[:course_id]).select{|g|
-        g.person_id == d[:person_id]
+      id = matches_by_course( d[:course].course_id).select{|g|
+        g.student == d[:student]
       }
       if id.length > 0
         dputs( 2 ){ "Saving grade with existing id of #{id}" }
@@ -66,11 +70,18 @@ class Grades < Entities
       exit
     end
   end
+  
+  def migration_2(g)
+    g.course = Courses.match_by_course_id( g.course_id )
+    g.person = Persons.match_by_person_id( g.person_id )
+  end
 end
 
 class Grade < Entity
   def setup_instance
-    init_random
+    if ConfigBase.has_function? :course_server
+      init_random
+    end
   end
   
   def to_s
@@ -111,15 +122,24 @@ class Grade < Entity
     "#{course.ctype.get_url}/#{center_id}/#{random}"
   end
   
-  def course
-    Courses.match_by_course_id( course_id )
-  end
-  
   def person
-    Persons.match_by_person_id( person_id )
+    dputs(0){"Deprecated - use student"}
+    student
   end
   
-  def student
-    person
+  def means=(m)
+    self._means = m
+    self._mean = m.reduce(:+) / m.count
+
+    if ConfigBase.has_function? :course_client
+      self.random = nil
+    end
+  end
+  
+  def remark=(r)
+    self._remark = r
+    if ConfigBase.has_function? :course_client
+      self.random = nil
+    end
   end
 end

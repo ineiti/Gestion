@@ -40,7 +40,6 @@ class Welcome < View
       dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
       dputs( 2 ){ "Authenticated person #{person.login_name}" }
       session = Sessions.create( person )
-      person.update_credit
       return reply( "session_id", person.session_id ) +
         reply( "list", View.list( session ) )
     else

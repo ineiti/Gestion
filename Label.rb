@@ -28,8 +28,7 @@ class Label < RPCQooxdooPath
         if ( tr._chunks -= 1 ) == 0
           if Digest::MD5.hexdigest( tr._data ) == tr._md5
             dputs(2){"Successfully received field #{tr._field}"}
-            self.field_save( tr )
-            ret = "OK: field received"
+            ret = "OK: #{self.field_save( tr )}"
           else
             dputs(2){"Field #{tr._field} transmitted with errors"}
             ret = "Error: wrong MD5"
@@ -118,25 +117,28 @@ class Label < RPCQooxdooPath
         Courses.create( course )
       end
     when /grades/
-      JSON.parse( tr._data ).each{|grade|
+      JSON.parse( tr._data ).collect{|grade|
         grade.to_sym!
+        ret = [ grade._course, grade._student ]
         dputs(3){"Grades is #{grade.inspect}"}
-        grade._course_id = 
-          Courses.match_by_name( "#{tr._user}_#{grade._course}" ).course_id
-        grade._person_id = 
-          Persons.match_by_login_name( "#{tr._user}_#{grade._person}" ).person_id
+        grade._course = 
+          Courses.match_by_name( "#{tr._user}_#{grade._course}" )
+        grade._student = 
+          Persons.match_by_login_name( "#{tr._user}_#{grade._student}" )
         grade.delete :grade_id
-        if g = Grades.match_by_course_person( grade._course_id, 
-            "#{tr._user}_#{grade._person}" )
-          ddputs(3){"Updating grade #{g.inspect}"}
+        grade.delete :random
+        if g = Grades.match_by_course_person( grade._course, 
+            grade._student )
+          ddputs(3){"Updating grade #{g.inspect} with #{grade.inspect}"}
           g.data_set_hash( grade )
         else
           g = Grades.create( grade )
-          ddputs(3){"Creating grade #{g.inspect}"}
+          ddputs(3){"Creating grade #{g.inspect} with #{grade.inspect}"}
         end
-        dputs(3){Grades.match_by_course_person( grade._course_id, 
-            "#{tr._user}_#{grade._person}" ).inspect }
-      }
+        dputs(3){Grades.match_by_course_person( grade._course, 
+            grade._student ).inspect }
+        ret.push g.random
+      }.to_json
     when /exams/
       file = "/tmp/#{tr._tid}.zip"
       File.open(file, "w"){|f| f.write tr._data }
