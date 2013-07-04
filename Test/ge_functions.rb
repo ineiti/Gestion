@@ -1,7 +1,7 @@
 require 'test/unit'
 
 
-class TC_Course < Test::Unit::TestCase
+class TC_Functions < Test::Unit::TestCase
   def setup
   end
   

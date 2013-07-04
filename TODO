@@ -1,8 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - can't set up cybermanager anymore - permissions vanish !?
-        - ldapscripts.conf is not readable when not in directory - should search
+        - Fresh install with Course::add_missing doesn't work because of missing
+          file in CourseType
 
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
         - creation of diplomas breaks if argument "-p" is given
@@ -16,6 +16,8 @@ UNCLEAR BUGS:
         - missing fields won't work in Entity::to_hash( true ) ??
 
 HEISENBUGS:
+        - can't set up cybermanager anymore - permissions vanish !? - or was it
+          unclear setup of get_config::Accounting?
         - Confirmed: NetworkPermissions: sometimes when saving, the chosen entry shows up
           as a number in the list. Seems to be somewhere in the Javascript where
           things don't get updated in the correct way. Not reproducible in a
@@ -35,12 +37,9 @@ Security:
 
 UI:
         - CourseTabs still very slow for startup
-        - *Tabs: inactivate if nothing selected
-        - CourseDiploma::do_attestation - add a column after 10 students
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
-        - printing: add option to reduce pages to printable surface
 
         - auto_update from a window enables also the background (CourseGrade::sync)
         - extend lists on all the height
@@ -50,18 +49,18 @@ UI:
         - write a good documentation...
 
 FEATURES:
-        - label. : show a form if no student found
         - adding a course:
+          - Possible conflict in random-numbers when created locally and uploading
+            to server -> create random-numbers on server and copy to local, takes
+            also care of being sure it's synched: as long as there is no random-number,
+            don't allow to print diplomas. When changing Grades, delete random-number
           - If course_client, don't make PDF before synched to server
           - Once synched to server, don't allow for changes, or have a system that
             prevents abuses like changing the grade afterwards, but allowing to
             change in case of errors
           - add m/f recognition to change wording
-          - Possible conflict in random-numbers when created locally and uploading
-            to server -> create random-numbers on server and copy to local, takes
-            also care of being sure it's synched: as long as there is no random-number,
-            don't allow to print diplomas. When changing Grades, delete random-number
           - Implement better handling of course-days
+        - label. : show a form if no student found
         - when adding a student to a course, check whether he already exists.
           for example: if same username exists, propose to take over the other
           name
@@ -189,6 +188,13 @@ To check:
 
 
 ** FIXED **:
+        - B 130704: Entity::data_set and data_get have to check for value() and value=()
+        - B 130704: Add a testcase for ConfigBase::values_need
+        - B 130702: *Tabs: inactivate if nothing selected
+        - B 130702: CourseDiploma::do_attestation - add a column after 10 students
+        - B 130702: printing: add option to reduce pages to printable surface
+        - B 130702: name shows twice in Person::Tabs when both in full_name and login_name
+        - B 130702: ldapscripts.conf is not readable when not in directory - should search
         - B 130701: when searching a person, put login_name matches first
         - B 130701: resetting uploadWidget when reopening window
         - B 130701: Person::Modify when changing pw for "center", password_plain is not updated

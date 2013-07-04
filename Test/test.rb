@@ -24,11 +24,13 @@ def permissions_init
 end
 permissions_init
 
+%x[ rm -rf data* ]
+
 QooxView.init( '../Entities', '../Views' )
 
 tests = %w( login view tasks internet info course person )
 #tests = %w( course )
-tests = %w( person )
+#tests = %w( person )
 tests.each{|t|
   require "ge_#{t}"
 }

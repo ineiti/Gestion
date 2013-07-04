@@ -20,6 +20,10 @@ class PersonTabs < View
       end
     end
   end
+  
+  def rpc_update( session )
+    super( session )
+  end
 	
   def rpc_button_start_search( session, args )
     rpc_callback_search( session, args )
@@ -47,7 +51,8 @@ class PersonTabs < View
     super( session, args ) +
       reply( :focus, :search ) +
       reply( admin, :delete ) +
-      reply( admin, :add )
+      reply( admin, :add ) +
+      reply( :fade_in, :parent )
   end
   
   def rpc_list_choice( session, name, args )
@@ -55,7 +60,8 @@ class PersonTabs < View
     dputs( 2 ){ "New choice #{name} - #{args['persons']}" }
 
     if name == 'persons' and args and args['persons']
-      reply( :pass_tabs, [ "list_choice", name, { :persons => [ args['persons'] ] } ] )
+      reply( :pass_tabs, [ "list_choice", name, { :persons => [ args['persons'] ] } ] ) +
+        reply( :fade_in, :parent_child )
     else
       []
     end
@@ -82,18 +88,18 @@ class PersonTabs < View
     }.flatten.uniq.sort{|a,b|
       a.login_name <=> b.login_name
     }
-    dputs( 3 ){ "Result is: #{result.collect{|r| r.login_name}}" }
+    ddputs( 3 ){ "Result is: #{result.collect{|r| r.login_name}}" }
     not result and result = []
 
     # Check if we have an exact match on the login_name
-    dputs(3){"Searching for exact match #{s}"}
+    ddputs(3){"Searching for exact match #{s}"}
     if exact = Persons.match_by_login_name( s )
-      dputs( 3 ){"Found exact match"}
+      ddputs( 3 ){"Found exact match"}
       if pos = result.index( exact )
-        dputs( 3 ){"Found exact match at position #{pos}"}
-        result.delete( pos )
+        ddputs( 3 ){"Found exact match at position #{pos}"}
+        result.delete_at( pos )
         result.unshift( exact )
-        dputs(3){"result is now #{result.inspect}"}
+        ddputs(3){"result is now #{result.inspect}"}
       end
     end
 
@@ -106,8 +112,13 @@ class PersonTabs < View
           p.to_list
         }, :search => s })
 
-    if result.length > 0 and do_list_choice
-      ret += reply( :update, :persons => [ result[0].login_name ])
+    if result.length > 0 
+      if do_list_choice
+        ret += reply( :update, :persons => [ result[0].login_name ])
+      end
+    else
+      ret += reply( :fade_in, :parent ) +
+        reply( :child, reply( :empty ))
     end
 
     ret + reply( :focus, :search )

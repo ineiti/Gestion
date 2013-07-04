@@ -58,8 +58,13 @@ class Grades < Entities
   
   def migration_1(g)
     course = Courses.match_by_course_id( g.course_id )
-    g.means = [ g.mean || 0 ] * course.ctype.tests.to_i
-    dputs(4){"means is #{g.means.inspect} - tests are #{course.ctype.tests.inspect}"}
+    if course.ctype
+      g.means = [ g.mean || 0 ] * course.ctype.tests.to_i
+      dputs(4){"means is #{g.means.inspect} - tests are #{course.ctype.tests.inspect}"}
+    else
+      dputs(0){"Migrating without ctype for #{g.inspect}..."}
+      exit
+    end
   end
 end
 

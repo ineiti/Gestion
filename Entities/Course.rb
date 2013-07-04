@@ -417,7 +417,7 @@ base_gestion
   end
 
   def print_presence( lp_cmd = nil )
-    return false if not teacher or teacher.count == 0
+    return false if not teacher
     return false if not start or not data_get( :end ) or students.count == 0
     stud_nr = 1
     studs = students.collect{|s|
@@ -582,7 +582,7 @@ base_gestion
             @make_pdfs_state["0"] = "done"
             @thread.kill
           end
-          dputs( 2 ){ "Creating -#{output}-#{list.inspect}-" }
+          dputs( 2 ){ "Creating -#{format.inspect}-#{list.inspect}-" }
           `date >> /tmp/cp`
           %x[ ls -l #{dir_diplomas} >> /tmp/cp ]
           outfiles = []
@@ -597,7 +597,7 @@ base_gestion
               Docsplit.extract_pdf p, :output => dir
             else
               Docsplit.extract_images p, :output => dir, 
-              :density => 300, :format => png
+              :density => 300, :format => :png
             end
             dputs( 5 ){ "Finished docsplit" }
             FileUtils.rm( p )
@@ -908,7 +908,7 @@ base_gestion
   end
   
   def center
-    ret = data_get( :center ) || Persons.find_by_permissions( :center )
+    ret = _center || Persons.find_by_permissions( :center )
     ddputs(3){"Center is #{ret.login_name}"}
     ret
   end

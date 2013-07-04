@@ -15,8 +15,8 @@ Test/run
 .hg*
 .settings*
 Diplomas/*/*
-Diplomas_Profeda*
-Diplomas_Man
+Diplomas.Profeda*
+Diplomas.Man
 .idea*
 old/*
 Exas

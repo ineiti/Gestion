@@ -307,9 +307,12 @@ class Persons < Entities
   end
   
   def migration_2( p )
-    p.internet_credit = p.credit
-    p.account_total_due = p.credit_due
-    p.account_name_due = p.account_due
+    dputs(0){"p is #{p.class}"}
+    if p.respond_to?( :credit )
+      p.internet_credit = p.credit
+      p.account_total_due = p.credit_due
+      p.account_name_due = p.account_due
+    end
   end
 
   def migration_3(p)
@@ -334,7 +337,8 @@ class Person < Entity
   def setup_instance
     dputs(3){"Data is #{@proxy.data[@id].inspect}"}
 
-    data_set( :internet_credit, data_get( :internet_credit ).to_i )
+    self.internet_credit = internet_credit.to_i
+    #data_set( :internet_credit, data_get( :internet_credit ).to_i )
     @account_service = @account_due = @account_cash = nil
 
     update_account_due
@@ -345,16 +349,18 @@ class Person < Entity
   def disable_africompta
     internet_credit = internet_credit
     internet_credit = 0 if not internet_credit
-    data_set( :account_total_due, internet_credit )
+    self.account_total_due = internet_credit
     @account_due = nil
   end
 
   def update_account_due
     if can_view :FlagAddInternet and login_name != "admin"
-      acc = data_get( :account_name_due )
+      #acc = data_get( :account_name_due )
+      acc = account_name_due
       if acc.to_s.length == 0
         acc = ( first_name || login_name ).capitalize 
-        data_set( :account_name_due, acc )
+        #data_set( :account_name_due, acc )
+        self.account_name_due = acc
       end
       lending = "#{get_config( 'Root::Lending', :Accounting, :lending )}::#{acc}"
       service = get_config( "Root::Income::Services", :Accounting, :service )
@@ -369,10 +375,12 @@ class Person < Entity
   
   def update_account_cash
     if can_view :FlagAccounting and login_name != "admin"
-      acc = data_get( :account_name_cash )
+      #acc = data_get( :account_name_cash )
+      acc = account_name_cash
       if acc.to_s.length == 0
         acc = ( first_name || login_name ).capitalize 
-        data_set( :account_name_cash, acc )
+        #data_set( :account_name_cash, acc )
+        self.account_name_cash = acc
       end
       dputs(3){"Getting account #{acc}"}
       cc = get_config( "Root::Cash::#{acc}", 
@@ -390,7 +398,7 @@ class Person < Entity
     end
   end
 
-  def data_set(field, value, msg = nil, undo = true, logging = true )
+  def data_set_old(field, value, msg = nil, undo = true, logging = true )
     old_value = data_get(field)
     if old_value != value
       dputs( 4 ){ "Saving #{field} = #{value}" }
@@ -418,6 +426,27 @@ class Person < Entity
     return ret
   end
   
+  def groups=(g)
+    self._groups = g
+    update_smb_passwd
+  end
+  
+  def permissions=(p)
+    self._permissions = p
+    update_account_cash
+    update_account_due
+  end
+  
+  def account_name_due=(a)
+    self._account_name_due = a
+    update_account_due
+  end
+  
+  def account_name_cash=(a)
+    self._account_name_cash = a
+    update_account_cash
+  end
+  
   def update_smb_passwd( pass = password )
     if ConfigBase.has_function?( :share ) and ( groups and groups.index( "share" ) )
       if not @proxy.has_storage? :LDAP
@@ -429,16 +458,17 @@ class Person < Entity
     end
   end
 
-  def data_set_log(field, value, msg = nil, undo = true, logging = true )
-    data_set( field, value, msg, undo, logging )
-  end
+  #def data_set_log(field, value, msg = nil, undo = true, logging = true )
+  #  data_set( field, value, msg, undo, logging )
+  #end
 
   def account_total_due
     if @account_due
       dputs( 2 ){ "internet_credit is #{@account_due.total.inspect}" }
       ( @account_due.total.to_f * 1000.0 + 0.5 ).to_i
     else
-      data_get( :account_total_due )
+      #data_get( :account_total_due, false, true )
+      _account_total_due
     end    
   end
 
@@ -448,23 +478,25 @@ class Person < Entity
     if internet_credit.to_i < 0 and internet_credit.to_i.abs > client.internet_credit.to_i
       internet_credit = -client.internet_credit.to_i
     end
-    client.data_set_log( :internet_credit, ( client.internet_credit.to_i + internet_credit.to_i ).to_s,
+    client.data_set_log( :_internet_credit, ( client.internet_credit.to_i + internet_credit.to_i ).to_s,
       "#{self.person_id}:#{internet_credit}" )
     pay_service( internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
     log_msg( "AddCash", "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
         "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}" )
-    log_msg( "AddCash", "Total due: #{data_get :account_total_due}")
+    #log_msg( "AddCash", "Total due: #{data_get :account_total_due}")
+    log_msg( "AddCash", "Total due: #{account_total_due}")
   end
 
   def pay_service( credit, msg )
-    account_total_due = 0
+    self.account_total_due = 0
     if @account_due
       Movements.create( "Automatic from Gestion: #{msg}", Time.now.strftime("%Y-%m-%d"), 
         credit.to_i / 1000.0, @account_due, @account_service )
-      account_total_due = ( @account_due.total.to_f * 1000.0 + 0.5 ).to_i
+      self.account_total_due = ( @account_due.total.to_f * 1000.0 + 0.5 ).to_i
     else
-      account_total_due = data_get( :account_total_due ).to_i + credit.to_i
-      data_set_log( :account_total_due, account_total_due, msg )
+      #account_total_due = data_get( :account_total_due ).to_i + credit.to_i
+      total = self.account_total_due.to_i + credit.to_i
+      data_set_log( :_account_total_due, total, msg )
     end
   end
 
@@ -472,10 +504,13 @@ class Person < Entity
     if @proxy.has_storage? :LDAP
       # We have to try to bind to the LDAP
       dputs( 0 ){ "Trying LDAP" }
-      return @proxy.storage[:LDAP].check_login( data_get(:login_name), pass )
+      #return @proxy.storage[:LDAP].check_login( data_get(:login_name), pass )
+      return @proxy.storage[:LDAP].check_login( login_name, pass )
     else
-      dputs( 0 ){ "is #{pass} equal to #{data_get( :password ) }" }
-      return pass == data_get( :password )
+      #dputs( 0 ){ "is #{pass} equal to #{data_get( :password ) }" }
+      dputs( 0 ){ "is #{pass} equal to #{password}" }
+      #return pass == data_get( :password )
+      return pass == password
     end
   end
 
@@ -509,9 +544,9 @@ class Person < Entity
     end
     update_smb_passwd( pass )
     dputs( 1 ){ "Setting password for #{self.login_name} to #{p}" }
-    data_set( :password, p )
+    self._password = p
     if permissions and permissions.index( "center" )
-      data_set( :password_plain, pass )
+      self.password_plain = pass
     end
   end
 
@@ -558,11 +593,11 @@ class Person < Entity
   end
 	
   def first_name=(v)
-    data_set( :first_name, v.capitalize_all )
+    self._first_name = v.capitalize_all
   end
 	
   def family_name=(v)
-    data_set( :family_name, v.capitalize_all )
+    self._family_name = v.capitalize_all
   end
   
   def get_cash( person, amount )
@@ -589,7 +624,8 @@ class Person < Entity
   end
   
   def can_view( v )
-    Permission.can_view( data_get(:permissions), v )
+    #Permission.can_view( data_get(:permissions), v )
+    Permission.can_view( permissions, v )
   end
   
   def has_all_rights_of( person )
@@ -611,7 +647,7 @@ class Person < Entity
   def delete
     Courses.search_all.each{|course|
       [ :teacher, :assistant, :responsible, :center ].each{|role|
-        if r = course.data_get(role) and r.login_name == login_name
+        if r = course.data_get("_#{role}") and r.login_name == login_name
           raise IsNecessary.new( course )
         end
       }
@@ -635,7 +671,7 @@ class Person < Entity
     if not @proxy.has_storage? :LDAP
       %x[ deluser #{self.login_name} ]
     end
-    if ConfigBase.has_functions?( :share )
+    if ConfigBase.has_function?( :share )
       %x[ smbpasswd -x #{self.login_name} ]
     end
     super

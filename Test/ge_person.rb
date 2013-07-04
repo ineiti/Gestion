@@ -50,6 +50,7 @@ class TC_Person < Test::Unit::TestCase
       :permissions => ["secretary"] )
     @teacher = Entities.Persons.create( :login_name => "teacher",
       :permissions => ["professor"] )
+    @center = Persons.create( :login_name => "foo", :permissions => ["center"] )
 
     Entities.Services.create( :name => "surf", :price => 1000, :duration => 20 )
     Entities.Services.create( :name => "solar", :price => 1000, :duration => 20 )

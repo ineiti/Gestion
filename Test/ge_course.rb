@@ -55,6 +55,12 @@ class TC_Course < Test::Unit::TestCase
   
   def teardown
     permissions_init
+    Entities.delete_all_data()
+
+    dputs(0){"Resetting SQLite"}
+    SQLite.dbs_close_all
+    FileUtils.cp( "db.testGestion", "data/compta.db" )
+    SQLite.dbs_open_load_migrate
     #Entities.Persons.save
     #Entities.LogActions.save
   end
@@ -160,7 +166,7 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_print_presence
-    assert_equal "/tmp/0-fiche_presence_small.pdf", @maint.print_presence
+    assert_equal "/tmp/0-presence_sheet_small.pdf", @maint.print_presence
   end
   
   def test_person_courses
@@ -414,12 +420,14 @@ class TC_Course < Test::Unit::TestCase
     main = Thread.new{
       QooxView::startWeb
     }
+    sleep 1
     cname = "#{@center.login_name}_"
-
+    
     @maint_t.data_set_hash({:output => ["label"],
         :central_host => "http://localhost:3302/label", :filename => ["label.odg"],
         :name => "it-101",
         :diploma_type => ["accredited"]})
+
     students = %w( secretaire admin surf )
     @maint_2.students.concat students
     @grade0 = Grades.create({:person_id => @secretaire.person_id,
@@ -445,7 +453,7 @@ class TC_Course < Test::Unit::TestCase
     }
     assert_equal ["foo_secretaire", "foo_admin", "foo_surf"], names
     assert_equal "foo_maint_1210", foo_maint.name
-    assert_equal "foo", foo_maint.data_get( :center ).login_name
+    assert_equal "foo", foo_maint._center.login_name
     
     dputs(0){"Diploma-dir is #{foo_maint.dir_exas}"}
     
@@ -501,5 +509,5 @@ class TC_Course < Test::Unit::TestCase
     assert_equal [12], foo_grade.means
 
     main.kill
-  end  
+  end
 end

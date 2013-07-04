@@ -134,6 +134,12 @@ class CourseTabs < View
   def rpc_list_choice( session, name, args )
     ddputs( 2 ){ "New choice #{name} - #{args.inspect}" }
 
-    reply( 'pass_tabs', [ "list_choice", name, args ] )
+    reply( 'pass_tabs', [ "list_choice", name, args ] ) +
+      reply( :fade_in, :parent_child )
+  end
+
+  def rpc_update_view( session, args = nil )
+    super( session, args ) +
+      reply( :fade_in, :parent )
   end
 end

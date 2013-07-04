@@ -1,4 +1,5 @@
 #!/usr/bin/ruby -I../QooxView -I../AfriCompta -wKU
+# ! /usr/local/opt/ruby/bin/ruby -I../QooxView -I../AfriCompta -w
 # ! /opt/local/bin/ruby1.9 -I../QooxView -I. -wKU
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour

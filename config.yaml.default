@@ -51,6 +51,12 @@ Entities:
   Persons:
 #    student_card: student_card.odg
 
+LDAPConfig:
+#  array: host, base, root, group_users, password
+#  ldapscripts: /etc/ldapscripts/ldapscripts.conf
+#  ldapsecret: /etc/ldap.secret
+
+
 
 #welcome_text: |
 #  Here you can have some welcome-text

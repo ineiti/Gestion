@@ -81,12 +81,21 @@ class CourseDiploma < View
         reply( :hide, :abort ) +
         reply( :unhide, :close )
     end
-    state = "<table border='1'><tr><th>Name</th><th>Grade</th><th>State</th></tr>" + 
-      course.make_pdfs_state.keys.reject{|k| k == "0"}.sort.collect{|s|
+    header = "<table border='1'><tr><th>Name</th><th>Grade</th><th>State</th></tr>"
+    footer = "</table>"
+    keys = course.make_pdfs_state.keys.reject{|k| k == "0"}
+    index = 0
+    state = "<table><tr><td>#{header}" + 
+      keys.sort.collect{|s|
       state = course.make_pdfs_state[s]
-      "<tr><td>#{s}</td><td align='right'>#{state[0]}</td><td>#{state[1]}</td></tr>"
-    }.join("") + "</table><br>" +
-      "Progress: #{overall_state}"
+      str = "<tr><td>#{s}</td><td align='right'>#{state[0]}</td><td>#{state[1]}</td></tr>"
+      index += 1
+      if ( keys.length > 10 ) and ( index == ( ( keys.length + 1 ) / 2 ) )
+        str += "#{footer}</td><td>#{header}"
+      end
+      str
+    }.join("") + footer + "</td></tr></table>" +
+      "<br>Progress: #{overall_state}"
     dputs(0){course.make_pdfs_state.inspect}
     dputs(0){state.inspect}
     return ret + 
