@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.5\n"
-"POT-Creation-Date: 2013-06-27 21:40+0100\n"
-"PO-Revision-Date: 2013-06-27 21:47+0100\n"
+"POT-Creation-Date: 2013-07-04 23:53+0100\n"
+"PO-Revision-Date: 2013-07-04 23:54+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: French <fr@profeda.org>\n"
 "Language: \n"
@@ -282,16 +282,15 @@ msgstr "Nombre fichiers"
 msgid "output"
 msgstr "Sortie"
 
-#. Comes from file Entities/Grade.rb and line is     value_int :course_id
+#. Comes from file Entities/Grade.rb and line is     value_entity_course :course
 #: Entities/Grade.rb:4
-msgid "course_id"
-msgstr "ID du cours"
+msgid "course"
+msgstr "Cours"
 
-#. Comes from file Entities/Grade.rb and line is     value_int :person_id
-#. Comes from file Views/Person/Admin.rb and line is               show_str_ro :person_id
-#: Entities/Grade.rb:5Views/Person/Admin.rb:15
-msgid "person_id"
-msgstr "# utilisateur"
+#. Comes from file Entities/Grade.rb and line is     value_entity_person :student
+#: Entities/Grade.rb:5
+msgid "student"
+msgstr "Étudiant"
 
 #. Comes from file Entities/Grade.rb and line is     value_int :random
 #: Entities/Grade.rb:6
@@ -331,101 +330,107 @@ msgstr "Date"
 
 #. Comes from file Entities/Person.rb and line is     value_str_LDAP :first_name, :ldap_name => "sn"
 #. Comes from file Views/Course/Grade.rb and line is           show_str :first_name, :width => 150
-#: Entities/Person.rb:27Views/Course/Grade.rb:32
+#: Entities/Person.rb:34Views/Course/Grade.rb:32
 msgid "first_name"
 msgstr "Premier nom"
 
 #. Comes from file Entities/Person.rb and line is     value_str_LDAP :family_name, :ldap_name => "givenname"
 #. Comes from file Views/Course/Grade.rb and line is           show_str :family_name
-#: Entities/Person.rb:28Views/Course/Grade.rb:33
+#: Entities/Person.rb:35Views/Course/Grade.rb:33
 msgid "family_name"
 msgstr "Nom de famille"
 
 #. Comes from file Entities/Person.rb and line is     value_date :birthday
-#: Entities/Person.rb:29
+#: Entities/Person.rb:36
 msgid "birthday"
 msgstr "Date de naissance"
 
 #. Comes from file Entities/Person.rb and line is     value_str :address
-#: Entities/Person.rb:30
+#: Entities/Person.rb:37
 msgid "address"
 msgstr "Adresse"
 
 #. Comes from file Entities/Person.rb and line is     value_str_LDAP :town, :ldap_name => "l"
-#: Entities/Person.rb:33
+#: Entities/Person.rb:40
 msgid "town"
 msgstr "Ville"
 
 #. Comes from file Entities/Person.rb and line is     value_list_drop :gender, "%w( male female n/a )"
-#: Entities/Person.rb:35
+#: Entities/Person.rb:42
 msgid "gender"
 msgstr "Sexe"
 
 #. Comes from file Entities/Person.rb and line is     value_str :account_name_due
-#: Entities/Person.rb:38
+#: Entities/Person.rb:45
 msgid "account_name_due"
 msgstr "Compte débit"
 
 #. Comes from file Entities/Person.rb and line is     value_str :account_name_cash
-#: Entities/Person.rb:39
+#: Entities/Person.rb:46
 msgid "account_name_cash"
 msgstr "Compte caisse"
 
 #. Comes from file Entities/Person.rb and line is     value_str :role_diploma
-#: Entities/Person.rb:40
+#: Entities/Person.rb:47
 msgid "role_diploma"
 msgstr "Fonction sur attestation"
 
 #. Comes from file Entities/Person.rb and line is     value_list :permissions, "Permission.list.sort"
-#: Entities/Person.rb:41
+#: Entities/Person.rb:48
 msgid "permissions"
 msgstr "Permissions"
 
 #. Comes from file Entities/Person.rb and line is     value_list :groups, "%w( freesurf sudo print localonly share ).sort"
 #. Comes from file Views/Network/Access.rb and line is         vtlp_list :groups, :name
-#: Entities/Person.rb:44Views/Network/Access.rb:12
+#: Entities/Person.rb:51Views/Network/Access.rb:12
 msgid "groups"
 msgstr "Groupes"
 
 #. Comes from file Entities/Person.rb and line is     value_list_single :internet_none, "[]"
 #. Comes from file Views/Person/Admin.rb and line is               show_field :internet_none
-#: Entities/Person.rb:45Views/Person/Admin.rb:25
+#: Entities/Person.rb:52Views/Person/Admin.rb:25
 msgid "internet_none"
 msgstr "Sans internet"
 
 #. Comes from file Entities/Person.rb and line is     value_str_ro_LDAP :login_name, :ldap_name => "uid"
 #. Comes from file Views/Network/Access.rb and line is         show_str :login_name
-#: Entities/Person.rb:48Views/Network/Access.rb:26
+#: Entities/Person.rb:55Views/Network/Access.rb:26
 msgid "login_name"
 msgstr "Nom du compte"
 
 #. Comes from file Entities/Person.rb and line is     value_int_ro :internet_credit
 #. Comes from file Views/Person/Credit.rb and line is       show_int_ro :internet_credit
-#: Entities/Person.rb:51Views/Person/Credit.rb:11
+#: Entities/Person.rb:58Views/Person/Credit.rb:11
 msgid "internet_credit"
 msgstr "Crédit internet"
 
 #. Comes from file Entities/Person.rb and line is     value_int_ro :account_total_due
 #. Comes from file Views/Self/Cash.rb and line is         show_int_ro :account_total_due, :width => 100
-#: Entities/Person.rb:52Views/Self/Cash.rb:11
+#: Entities/Person.rb:59Views/Self/Cash.rb:11
 msgid "account_total_due"
 msgstr "Doit à la comptabilité"
 
 #. Comes from file Entities/Person.rb and line is     value_str :session_id
-#: Entities/Person.rb:55
+#: Entities/Person.rb:62
 msgid "session_id"
 msgstr "ID de session"
 
 #. Comes from file Entities/Person.rb and line is     value_str_LDAP :password, :ldap_name => "userPassword"
-#: Entities/Person.rb:56
+#: Entities/Person.rb:63
 msgid "password"
 msgstr "Mot de passe"
 
 #. Comes from file Entities/Person.rb and line is     value_str :password_plain
 #. Comes from file Views/Person/Modify.rb and line is         show_str_ro :password_plain
-#: Entities/Person.rb:57Views/Person/Modify.rb:24
+#: Entities/Person.rb:64Views/Person/Modify.rb:24
 msgid "password_plain"
 msgstr "Mot de passe initial"
+
+#. Comes from file Entities/Person.rb and line is     value_int_LDAP :person_id, :ldap_name => "uidnumber"
+#. Comes from file Views/Person/Admin.rb and line is               show_str_ro :person_id
+#: Entities/Person.rb:65Views/Person/Admin.rb:15
+msgid "person_id"
+msgstr "# utilisateur"
 
 #. Comes from file Entities/Quiz.rb and line is     value_str :full_name
 #. Comes from file Views/Self/Concours.rb and line is         show_str :full_name, :width => 300
@@ -939,25 +944,25 @@ msgstr "Noter"
 msgid "last_synched"
 msgstr "Dernières synchronisation"
 
-#. Comes from file Views/Course/Grade.rb and line is           show_button :prepare_files, :fetch_files, :transfer_files, :sync_files
+#. Comes from file Views/Course/Grade.rb and line is           show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
 #: Views/Course/Grade.rb:22
 msgid "prepare_files"
 msgstr "Préparation partage"
 
-#. Comes from file Views/Course/Grade.rb and line is           show_button :prepare_files, :fetch_files, :transfer_files, :sync_files
+#. Comes from file Views/Course/Grade.rb and line is           show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
 #: Views/Course/Grade.rb:22
 msgid "fetch_files"
-msgstr "Chercher partage"
+msgstr "Transfert partage"
 
-#. Comes from file Views/Course/Grade.rb and line is           show_button :prepare_files, :fetch_files, :transfer_files, :sync_files
+#. Comes from file Views/Course/Grade.rb and line is           show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
 #: Views/Course/Grade.rb:22
 msgid "transfer_files"
-msgstr "Transfert"
+msgstr "Multi-transfert"
 
-#. Comes from file Views/Course/Grade.rb and line is           show_button :prepare_files, :fetch_files, :transfer_files, :sync_files
+#. Comes from file Views/Course/Grade.rb and line is           show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
 #: Views/Course/Grade.rb:22
-msgid "sync_files"
-msgstr "Synchronisation fichiers"
+msgid "sync_server"
+msgstr "Synchronisation serveur"
 
 #. Comes from file Views/Course/Grade.rb and line is           show_int :mean1
 #: Views/Course/Grade.rb:25
@@ -992,7 +997,7 @@ msgstr "Fichiers enregistrés"
 #. Comes from file Views/Course/Grade.rb and line is           show_button :save, :upload
 #: Views/Course/Grade.rb:34
 msgid "upload"
-msgstr "Envoyer"
+msgstr "Transfert fichier"
 
 #. Comes from file Views/Course/Grade.rb and line is         show_upload :files
 #: Views/Course/Grade.rb:39
@@ -1539,25 +1544,25 @@ msgstr "Chercher"
 msgid "start_search"
 msgstr "Chercher"
 
-#. Comes from file Views/Person/Tabs.rb and line is         show_str :hello
-#: Views/Person/Tabs.rb:13
-msgid "hello"
-msgstr "Hi"
-
 #. Comes from file Views/Person/Tabs.rb and line is         show_str :complete_name, :width => 150
-#: Views/Person/Tabs.rb:18
+#: Views/Person/Tabs.rb:12
 msgid "complete_name"
 msgstr "Nom complet"
 
 #. Comes from file Views/Person/Tabs.rb and line is         show_str :login_prop
-#: Views/Person/Tabs.rb:19
+#: Views/Person/Tabs.rb:13
 msgid "login_prop"
 msgstr "Proposition"
 
 #. Comes from file Views/Person/Tabs.rb and line is         show_button :add_person, :close
-#: Views/Person/Tabs.rb:20
+#: Views/Person/Tabs.rb:14
 msgid "add_person"
 msgstr "Ajouter"
+
+#. Comes from file Views/Person/Tabs.rb and line is         show_html :info
+#: Views/Person/Tabs.rb:18
+msgid "info"
+msgstr ""
 
 #. Comes from file Views/Self/Cash.rb and line is class SelfCash < View
 #: Views/Self/Cash.rb:1
@@ -1882,6 +1887,15 @@ msgstr "Travailleurs"
 #: Views/Task/Worker.rb:9
 msgid "workers"
 msgstr "Travailleurs"
+
+#~ msgid "course_id"
+#~ msgstr "ID du cours"
+
+#~ msgid "sync_files"
+#~ msgstr "Synchronisation fichiers"
+
+#~ msgid "hello"
+#~ msgstr "Hi"
 
 #~ msgid "profeda_code"
 #~ msgstr "Code Profeda"

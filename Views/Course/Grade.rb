@@ -19,7 +19,7 @@ class CourseGrade < View
         gui_vbox :nogroup do
           show_list_single :students, :width => 300, :callback => true
           show_str_ro :last_synched
-          show_button :prepare_files, :fetch_files, :transfer_files, :sync_files
+          show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
         end
         gui_vbox :nogroup do
           show_int :mean1
@@ -65,7 +65,7 @@ class CourseGrade < View
     super( session ) +
       reply( :empty, [:students] ) +
       [ :prepare_files, :fetch_files, :transfer_files, 
-      :last_synched, :sync_files, :upload, :files_saved ].collect{|b|
+      :last_synched, :sync_server, :upload, :files_saved ].collect{|b|
       reply( :hide, b )
     }.flatten
   end
@@ -132,26 +132,26 @@ class CourseGrade < View
           s ? reply( :unhide, "mean#{i}" ) : reply( :hide, "mean#{i}")
         }.flatten
 
-        ddputs(3){"CType is #{course.ctype.inspect} - #{course.ctype.files_needed.inspect}"}
+        dputs(3){"CType is #{course.ctype.inspect} - #{course.ctype.files_needed.inspect}"}
+        buttons = []
         if (course.ctype.diploma_type[0] != "simple") and
             (course.ctype.files_needed.to_i > 0)
-          ddputs(3){"Putting buttons"}
+          dputs(3){"Putting buttons"}
         
-          buttons = [ :transfer_files, :upload, :files_saved ]
+          buttons.push :transfer_files, :upload, :files_saved
           if Shares.match_by_name( "CourseFiles" )
             buttons.push :prepare_files, :fetch_files
           end
-          if course.ctype.diploma_type[0] == "accredited" and
-              ConfigBase.has_function?( :course_client )
-            buttons.push :sync_files
-          end
-
-          buttons.each{|b|
-            ret += reply( :unhide, b )
-          }
         end
+        if course.ctype.diploma_type[0] == "accredited" and
+            ConfigBase.has_function?( :course_client )
+          buttons.push :sync_server
+        end
+        buttons.each{|b|
+          ret += reply( :unhide, b )
+        }
         
-        ddputs(4){"Course is #{course} - ret is #{ret.inspect}"}
+        dputs(4){"Course is #{course} - ret is #{ret.inspect}"}
       end
     when "students"
       ret += update_grade( args )
@@ -246,7 +246,7 @@ class CourseGrade < View
     ret
   end
 
-  def rpc_button_sync_files( session, data )
+  def rpc_button_sync_server( session, data )
     if course = Courses.match_by_course_id( data['courses'][0])
       course.sync_start
 
@@ -265,7 +265,7 @@ class CourseGrade < View
     student = Entities.Persons.match_by_login_name( data._students[0])
     files_needed = course.ctype.files_needed.to_i
     exam_files = course.exam_files( student )
-    ddputs(3){"Exam-files = #{exam_files.inspect}"}
+    dputs(3){"Exam-files = #{exam_files.inspect}"}
     ret = window_show ? reply( :window_show, :single_file ) : []
     ret + (1..5).collect{|i|
       show = :hide
@@ -278,7 +278,7 @@ class CourseGrade < View
             "file ##{i}: #{file}" ) +
           reply( :update, "upload_file_#{i}" => "0" )
       end
-      ddputs(3){"Return is #{ret.inspect}"}
+      dputs(3){"Return is #{ret.inspect}"}
       ret +
         reply( show, "name_file_#{i}" ) +
         reply( show, "upload_file_#{i}" )
@@ -292,7 +292,7 @@ class CourseGrade < View
       data.to_sym!
       course = Courses.match_by_course_id( data._courses[0])
       student = data._students[0]
-      ddputs(4){"Course is #{course} - filename is #{data._filename} " +
+      dputs(4){"Course is #{course} - filename is #{data._filename} " +
           "student is #{student}" }
       if course and student and data._filename
         files_needed = course.ctype.files_needed.to_i
@@ -302,7 +302,7 @@ class CourseGrade < View
         filename = UploadFiles.escape_chars( data._filename )
         src = "/tmp/#{filename}"
         dst = "#{Courses.dir_exas}/#{course.name}/#{student}"
-        ddputs(3){ "Moving #{src} to #{dst}" }
+        dputs(3){ "Moving #{src} to #{dst}" }
         FileUtils.rm Dir.glob( "#{dst}/#{number}-*" )
         FileUtils.mv src, "#{dst}/#{number}-#{filename}"
 
@@ -311,7 +311,7 @@ class CourseGrade < View
         if close_window and ( files_needed == course.exam_files( student ).count )
           ret += reply( :window_hide )
         end
-        ddputs(3){"Return is #{ret.inspect}"}
+        dputs(3){"Return is #{ret.inspect}"}
         return ret
       end
     else

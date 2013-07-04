@@ -142,14 +142,14 @@ class Courses < Entities
     course.data_set_hash( ctype.to_hash.except(:name), true ).ctype = ctype
 
     if needs_center
-      ddputs(3){"Got center of #{creator.inspect}"}
+      dputs(3){"Got center of #{creator.inspect}"}
       course.center = creator
     elsif creator
-      ddputs(3){"Got responsible of #{creator.class}"}
+      dputs(3){"Got responsible of #{creator.class}"}
       course.responsible = creator
     end
     
-    ddputs(4){"Course is #{course.class}"}
+    dputs(4){"Course is #{course.class}"}
     return course
   end
 
@@ -471,7 +471,7 @@ base_gestion
     else
       "-"
     end
-    ddputs(4){"State is #{state}"}
+    dputs(4){"State is #{state}"}
     @make_pdfs_state[student.login_name] = [ mean, state ]
 
     #if grade and grade.to_s != "NP" and 
@@ -482,7 +482,7 @@ base_gestion
     if state != "queued"
       FileUtils.rm( file )
     else
-      ddputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
+      dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       ZipFile.open(file){ |z|
         dputs(5){"Cours is #{self.inspect}"}
         doc = z.read("content.xml")
@@ -574,15 +574,15 @@ base_gestion
           }
         end
         
-        dputs( 2 ){ "Convert is #{convert.inspect}" }
+        dputs( 3 ){ "Convert is #{convert.inspect}" }
         if convert
           @make_pdfs_state["0"] = "converting"
           old = Dir.glob( dir_diplomas + "/content.xml*" )
           list = Dir.glob( dir_diplomas + "/*odt" )
           format = ctype.output[0].to_sym
           
-          ddputs(4){"old is #{old.inspect}"}
-          ddputs(4){"list is #{list.inspect}"}
+          dputs(4){"old is #{old.inspect}"}
+          dputs(4){"list is #{list.inspect}"}
 
           FileUtils.rm( old )
           if list.size == 0
@@ -623,7 +623,7 @@ base_gestion
             dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
             pf = ctype.data_get(:page_format, true)[0]
             format = ['', '-f', '-l', '-r'][pf]
-            ddputs(3){"Page-format is #{format}"}
+            dputs(3){"Page-format is #{format}"}
             `pdftops #{all} - | psnup -4 #{format} | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
             FileUtils.mv( "#{psn}.tmp", psn )
             dputs( 2 ){ "Finished" }
@@ -818,6 +818,7 @@ base_gestion
     dputs(3){@sync_state}
     slow and sleep 3
 
+    ddputs(4){"Responsibles"}
     @sync_state = sync_s += "<li>Transferring responsibles: "
     users = [ teacher.login_name, responsible.login_name, center.login_name ]
     ret = sync_transfer( :users, users.collect{|s|
@@ -829,7 +830,9 @@ base_gestion
     end
     @sync_state = sync_s += "OK</li>"
 
+    ddputs(4){"Students"}
     if students.length > 0
+      ddputs(4){"Students - go"}
       @sync_state = sync_s += "<li>Transferring users: "
       users = students + [ teacher.login_name, responsible.login_name ]
       ret = sync_transfer( :users, users.collect{|s|
@@ -842,6 +845,7 @@ base_gestion
       @sync_state = sync_s += "OK</li>"
     end
 
+    ddputs(4){"Courses"}
     @sync_state = sync_s += "<li>Transferring course: "
     myself = self.to_hash( true )
     myself._students = students
@@ -852,7 +856,9 @@ base_gestion
     end
     @sync_state = sync_s += "OK</li>"
 
+    ddputs(4){"Grades"}
     if ( grades = Grades.matches_by_course( self.course_id ) ).length > 0
+      ddputs(4){"Grades - go"}      
       @sync_state = sync_s += "<li>Transferring grades: "
       ret = sync_transfer( :grades, grades.select{|g|
           g.course and g.student
@@ -866,12 +872,12 @@ base_gestion
         return false
       end
       grades = JSON.parse( ret.sub(/^OK: /, '') )
-      ddputs(3){"Return is #{grades.inspect}"}
+      dputs(3){"Return is #{grades.inspect}"}
       grades.each{|g|
         course_name, student, random = g
         course = Courses.match_by_name( course_name )
         if grade = Grades.match_by_course_person( course, student )
-          ddputs(4){"Setting grade-random of #{grade.grade_id} to #{random}"}
+          dputs(4){"Setting grade-random of #{grade.grade_id} to #{random}"}
           grade.random = random
         else
           dputs(0){"Can't find grade for #{course}-#{student}!"}
@@ -880,7 +886,9 @@ base_gestion
       @sync_state = sync_s += "OK</li>"
     end
 
+    ddputs(4){"Exams"}
     if file = zip_create( true )
+      ddputs(4){"Exams - go"}
       @sync_state = sync_s += "<li>Transferring exams: "
       file = "/tmp/#{file}"
       dputs(3){"Exa-file is #{file}"}
@@ -929,16 +937,16 @@ base_gestion
   
   def center
     ret = _center || Persons.find_by_permissions( :center )
-    ddputs(3){"Center is #{ret.login_name}"}
+    dputs(4){"Center is #{ret.login_name}"}
     ret
   end
   
   def abort_pdfs
     if @thread
-      ddputs(3){"Killing thread #{@thread}"}
+      dputs(3){"Killing thread #{@thread}"}
       @thread.kill
       @thread.join
-      ddputs(3){"Joined thread"}
+      dputs(3){"Joined thread"}
     end    
   end
   

@@ -529,6 +529,8 @@ class TC_Course < Test::Unit::TestCase
     random = foo_grade.random
     
     ConfigBase.add_function :course_client
+    @grade0.means = [11]
+    assert_equal random, @grade0.random
     @grade0.means = [14]
     assert_equal nil, @grade0.random
     
@@ -541,6 +543,8 @@ class TC_Course < Test::Unit::TestCase
     assert_equal random, @grade0.random
     ConfigBase.add_function :course_client
     @grade0.remark = "foo"
+    assert_equal random, @grade0.random
+    @grade0.remark = "foo bar"
     assert_equal nil, @grade0.random
     
     ConfigBase.add_function :course_server

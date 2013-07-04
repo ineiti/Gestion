@@ -24,7 +24,7 @@ class Grades < Entities
       grades.each{|g|
         dputs( 4 ){ "Checking grade #{g}" }
         if g.student == student
-          dputs( 2 ){ "Found grade #{g} for #{student.login_name} in #{course.name}" }
+          dputs( 4 ){ "Found grade #{g} for #{student.login_name} in #{course.name}" }
           return g
         end
       }
@@ -128,18 +128,22 @@ class Grade < Entity
   end
   
   def means=(m)
-    self._means = m
-    self._mean = m.reduce(:+) / m.count
+    if _means != m
+      self._means = m
+      self._mean = m.reduce(:+) / m.count
 
-    if ConfigBase.has_function? :course_client
-      self.random = nil
+      if ConfigBase.has_function? :course_client
+        self.random = nil
+      end
     end
   end
   
   def remark=(r)
-    self._remark = r
-    if ConfigBase.has_function? :course_client
-      self.random = nil
+    if _remark != r
+      self._remark = r
+      if ConfigBase.has_function? :course_client
+        self.random = nil
+      end
     end
   end
 end
