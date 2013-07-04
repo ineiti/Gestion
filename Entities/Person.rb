@@ -306,13 +306,11 @@ class Persons < Entities
     end
   end
   
-  def migration_2( p )
+  def migration_2_raw( p )
     dputs(0){"p is #{p.class}"}
-    if p.respond_to?( :credit )
-      p.internet_credit = p.credit
-      p.account_total_due = p.credit_due
-      p.account_name_due = p.account_due
-    end
+    p._internet_credit = p._credit
+    p._account_total_due = p._credit_due
+    p._account_name_due = p._account_due
   end
 
   def migration_3(p)

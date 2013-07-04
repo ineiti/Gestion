@@ -71,9 +71,9 @@ class Grades < Entities
     end
   end
   
-  def migration_2(g)
-    g.course = Courses.match_by_course_id( g.course_id )
-    g.person = Persons.match_by_person_id( g.person_id )
+  def migration_2_raw(g)
+    g._course = Courses.match_by_course_id( g._course_id )
+    g._person = Persons.match_by_person_id( g._person_id )
   end
 end
 
