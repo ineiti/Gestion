@@ -44,6 +44,11 @@ class CourseModify < View
           show_text :names
           show_button :bulk_students, :close
         end
+        gui_window :ask_double do
+          show_str :double_name
+          show_entity_person_lazy :double_proposition, :drop, :full_name
+          show_button :accept, :create_new
+        end
         gui_window :missing_data do
           show_html :missing
           show_button :close
@@ -146,7 +151,7 @@ class CourseModify < View
   end
 
   # This will add a whole lot of students to the list, creating them and setting
-  # the permissions to "student", but without generating a password
+  # the permissions to "student" and setting a simple, 4-digit password
   # As the creation of a student can take quite some time (10s of seconds),
   # only one student is created, then the list updated, and a new request is
   # automatically generated.
@@ -154,27 +159,82 @@ class CourseModify < View
     dputs( 3 ){ data.inspect }
     course = Courses.match_by_name( data['name'] )
     users = []
+    session.s_data[:perhaps_double] ||= []
     if data['names'] and users = data['names'].split("\n")
       prefix = ConfigBase.has_function?( :course_server ) ?
         "#{session.owner.login_name}_" : ""
       name = users.shift
+      login_name = Persons.create_login_name( name )
       if not ( person = Persons.match_by_login_name( prefix + name ) )
-        person = Entities.Persons.create( {:first_name => name,
-            :login_name_prefix => prefix,
-            :permissions => %w( student ), :town => @town, :country => @country })
+        if Persons.search_by_login_name( "^#{prefix}#{login_name}[0-9]*$").length > 0
+          session.s_data[:perhaps_double].push name
+        else
+          person = Persons.create( {:first_name => name,
+              :login_name_prefix => prefix,
+              :permissions => %w( student ), :town => @town, :country => @country })
+        end
       end
       #person.email = "#{person.login_name}@ndjair.net"
-      course.students.push( person.login_name )
+      person and course.students.push( person.login_name )
     end
     if users.length > 0
       reply( "update", { :names => users.join("\n") } ) +
         update_students( course ) +
-        reply( "callback_button", "bulk_students" )
+        reply( :callback_button, :bulk_students )
     else
       update_students( course ) +
         reply( :update, {:names => ""} ) +
-        reply( "window_hide" )
+        reply( :window_hide ) +
+        present_doubles( session, course )
     end
+  end
+  
+  def present_doubles( session, course )
+    doubles = session.s_data[:perhaps_double]
+    ddputs(4){"Doubles are #{doubles.inspect}"}
+    if doubles.length > 0
+      prefix = ConfigBase.has_function?( :course_server ) ?
+        "#{session.owner.login_name}_" : ""
+      name = doubles.pop
+      login_name = Persons.create_login_name( name )
+      prop = Persons.search_by_login_name( "^#{prefix}#{login_name}[0-9]*$").
+        collect{|p|
+        courses = Courses.matches_by_students( p.login_name ).collect{|c| c.name }.
+          join("-")
+        [p.person_id, "#{p.full_name}:#{p.login_name}:#{courses}"]
+      }
+      ddputs(4){"Proposition is #{prop.inspect}"}
+      reply( :window_show, :ask_double ) +
+        reply( :update, :double_name => name ) +
+        reply( :empty_only, [:double_proposition ]) +
+        reply( :update, :double_proposition => prop )
+    else
+      reply( :window_hide )
+    end +
+      update_students( course )
+  end
+  
+  def rpc_button_accept( session, data )
+    course = Courses.match_by_name( data['name'] )
+    student = data['double_proposition']
+    ddputs(5){"Data is #{data.inspect} - #{course.students.inspect}"}
+    if not course.students.index( student.login_name )
+      course.students.push(
+        student.login_name )
+    end
+    present_doubles( session, course )
+  end
+  
+  def rpc_button_create_new( session, data )
+    course = Courses.match_by_name( data['name'] )
+    prefix = ConfigBase.has_function?( :course_server ) ?
+      "#{session.owner.login_name}_" : ""
+    name = data['double_name']
+    course.students.push Persons.create( {:first_name => name,
+        :login_name_prefix => prefix,
+        :permissions => %w( student ), :town => @town, :country => @country }).
+      login_name
+    present_doubles( session, course )
   end
 
   def rpc_button_close( session, data )

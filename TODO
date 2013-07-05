@@ -36,6 +36,7 @@ Security:
 
 UI:
         - CourseTabs still very slow for startup
+        - CourseDiploma: replace diploma-list with content of pop-up window
 
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
@@ -48,9 +49,8 @@ UI:
         - write a good documentation...
 
 FEATURES:
-        - when adding a student to a course, check whether he already exists.
-          for example: if same username exists, propose to take over the other
-          name
+        - when a student logins remotely to a course_sever, don't allow to change
+          his name, only address, phone-#, password and e-mail
 
         - adding a course:
           - add m/f recognition to change wording
@@ -180,6 +180,9 @@ To check:
 
 
 ** FIXED **:
+        - F 130705: when adding a student to a course, check whether he already exists.
+          for example: if same username exists, propose to take over the other
+          name
         - UI130704: Confusing labels in CourseGrade (MultiTransfert, sync serveur, Enr., transf)
         - B 130704: can't upload files anymore in CourseGrade
         - B 130704: auto_update doesn't work anymore in CourseGrade::sync_state
