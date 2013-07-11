@@ -82,6 +82,8 @@ class Label < RPCQooxdooPath
         s.to_sym!
         if s._login_name != tr._user
           s._login_name = "#{tr._user}_#{s._login_name}"
+        else
+          s.delete :password
         end
         %w( person_id permissions groups ).each{|f|
           s.delete f.to_sym

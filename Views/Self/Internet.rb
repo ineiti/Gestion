@@ -123,6 +123,7 @@ class SelfInternet < View
       update_button( session, nobutton ) +
       update_connection_status( session ) +
       update_isp( session ) +
+      reply( :update, :internet_credit => session.owner.internet_credit.to_i ) +
       reply( :update, :users_connected => 
         "#{users.split.count}: #{users_str}" )
     if @isp['has_promo'] == 'true'

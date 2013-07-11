@@ -814,7 +814,7 @@ base_gestion
   end
   
   def sync_do( slow = false )
-    @sync_state = sync_s = "<li>Transferring course</li>"
+    @sync_state = sync_s = ""
     dputs(3){@sync_state}
     slow and sleep 3
 

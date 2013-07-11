@@ -60,11 +60,11 @@ class Grades < Entities
     end
   end
   
-  def migration_1(g)
-    course = Courses.match_by_course_id( g.course_id )
+  def migration_1_raw(g)
+    course = Courses.match_by_course_id( g._course_id )
     if course.ctype
-      g.means = [ g.mean || 0 ] * course.ctype.tests.to_i
-      dputs(4){"means is #{g.means.inspect} - tests are #{course.ctype.tests.inspect}"}
+      g._means = [ g._mean || 0 ] * course.ctype.tests.to_i
+      ddputs(4){"means is #{g._means.inspect} - tests are #{course.ctype.tests.inspect}"}
     else
       dputs(0){"Migrating without ctype for #{g.inspect}..."}
       exit
@@ -72,8 +72,8 @@ class Grades < Entities
   end
   
   def migration_2_raw(g)
-    g._course = Courses.match_by_course_id( g._course_id )
-    g._person = Persons.match_by_person_id( g._person_id )
+    g._course = g._course_id
+    g._student = g._person_id
   end
 end
 
@@ -123,14 +123,14 @@ class Grade < Entity
   end
   
   def person
-    dputs(0){"Deprecated - use student"}
+    dputs(0){"Deprecated - use student  in #{caller.inspect}"}
     student
   end
   
   def means=(m)
     if _means != m
-      self._means = m
-      self._mean = m.reduce(:+) / m.count
+      self._means = m.collect{|v| v.to_f}
+      self._mean = means.reduce(:+) / m.count
 
       if ConfigBase.has_function? :course_client
         self.random = nil

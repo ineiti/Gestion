@@ -62,7 +62,7 @@ class CourseTypes < Entities
   end
   
   def migration_3(ct)
-    ct.page_format = ["interchanged"]
+    ct.page_format = [2]
   end
 end
 

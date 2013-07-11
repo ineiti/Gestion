@@ -1,6 +1,12 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Install mercurial repository on D-server
+        - Form is still active, even if shaded out
+        - PersonAdmin: when deleting person that is shown, there is an error
+        - after migration, solar-system hangs when saving Grades
+        - when migrating with old value-names, it gives an error - how to keep
+          old names during migration?
         - Fresh install with Course::add_missing doesn't work because of missing
           file in CourseType
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
@@ -37,6 +43,8 @@ Security:
 UI:
         - CourseTabs still very slow for startup
         - CourseDiploma: replace diploma-list with content of pop-up window
+          - display random-id if available
+        - CourseGrade::sync - catch timeouts on requests
 
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
@@ -64,6 +72,7 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - Do something with CSV that don't load
         - Change ConfigBase functions_base: all functions are evaluated with
           base_dependencies, like network, network_share and network_internet,
           so that network_internet and network_share depend on network

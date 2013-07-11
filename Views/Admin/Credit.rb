@@ -1,4 +1,4 @@
-# Presents a simple interface to allow for backup and restore
+# Unused function to import credits from another LDAP-file
 
 class AdminCredit < View
   def layout

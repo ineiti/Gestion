@@ -11,6 +11,7 @@ class CourseDiploma < View
     set_data_class :Courses
     @order = 30
     @thread = nil
+    @update = true
 
     gui_hbox do
       gui_vbox :nogroup do
@@ -33,6 +34,11 @@ class CourseDiploma < View
         show_button :close, :abort
       end
     end
+  end
+  
+  def rpc_update( session )
+    super( session ) +
+      reply_print( session )
   end
 
   def rpc_list_choice( session, name, args )
@@ -96,8 +102,8 @@ class CourseDiploma < View
       str
     }.join("") + footer + "</td></tr></table>" +
       "<br>Progress: #{overall_state}"
-    dputs(0){course.make_pdfs_state.inspect}
-    dputs(0){state.inspect}
+    dputs(3){course.make_pdfs_state.inspect}
+    dputs(3){state.inspect}
     return ret + 
       reply_print( session ) +
       reply( :update, :state => state )

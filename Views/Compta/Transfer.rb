@@ -28,11 +28,11 @@ class ComptaTransfer < View
     amount = ( other.account_due.total.to_f * 1000 ).to_i
     session.owner.get_cash( other, amount )
     
-    vtlp_update_list( session )
+    vtlp_update_list( session ) + rpc_update( session )
   end
   
   def rpc_update( session )
     dputs(3){"rpc_update with #{session.inspect}"}
-    reply( :update, :account_cash => session.owner.total_cash )
+    reply( :update, :account_cash => session.owner.account_total_due )
   end
 end
