@@ -258,8 +258,20 @@ class Course < Entity
     end
     
     check_students_dir
-    @make_pdfs_state = {"0" => 'idle'}
+    @make_pdfs_state = {"0" => 'undefined'}
     @only_psnup = false
+  end
+  
+  def update_state
+    if @make_pdfs_state["0"] == "undefined"
+      @make_pdfs_state = {}
+      students.each{|s|
+        dputs(0){"Working on #{s}"}
+        student = Persons.match_by_login_name( s )
+        get_grade_args( student, true )
+      }
+      @make_pdfs_state["0"] = 'done'
+    end
   end
   
   def check_dir
@@ -448,9 +460,8 @@ base_gestion
         [ /321/, duration ],
       ] )
   end
-	
-	
-  def update_student_diploma( file, student )
+  
+  def get_grade_args( student, update = false )
     grade = Grades.match_by_course_person( course_id, student )
     dputs(0){"Course is #{name} - student is #{student} - ctype is #{ctype.inspect} and grade is " +
         "#{grade.inspect} - #{grade.to_s}"}
@@ -463,6 +474,8 @@ base_gestion
       "incomplete"
     elsif ( not grade ) or ( grade.to_s == "NP" )
       "not passed"
+    elsif update
+      "done"
     else
       "queued"
     end
@@ -473,6 +486,12 @@ base_gestion
     end
     dputs(4){"State is #{state}"}
     @make_pdfs_state[student.login_name] = [ mean, state ]
+    
+    [ grade, state ]
+  end
+	
+  def update_student_diploma( file, student )
+    grade, state = get_grade_args( student )
 
     #if grade and grade.to_s != "NP" and 
     #    ( ( ctype.diploma_type[0] == "simple" ) or

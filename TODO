@@ -4,7 +4,7 @@ BUGS:
         - Install mercurial repository on D-server
         - Form is still active, even if shaded out
         - PersonAdmin: when deleting person that is shown, there is an error
-        - after migration, solar-system hangs when saving Grades
+
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
         - Fresh install with Course::add_missing doesn't work because of missing
@@ -41,9 +41,11 @@ UNCONFIRMED:
 Security:
 
 UI:
-        - CourseTabs still very slow for startup
         - CourseDiploma: replace diploma-list with content of pop-up window
           - display random-id if available
+          - put everything into a "real" table to select and do proper printing
+          - show if file exists yet or not
+        - CourseTabs still very slow for startup
         - CourseGrade::sync - catch timeouts on requests
 
         - Courses::center needs work:
@@ -57,6 +59,7 @@ UI:
         - write a good documentation...
 
 FEATURES:
+        - logrotate gestion.log, and send daily error-reports to info@profeda.org
         - when a student logins remotely to a course_sever, don't allow to change
           his name, only address, phone-#, password and e-mail
 
@@ -121,6 +124,9 @@ Features:
 	- CourseHistory - what should go in there?
 
 Programming:
+        - Calling rpc_calls
+          - Convert all "args" to_sym!
+          - take out last [0]-arrays needed in args
 	-2 Allow subdirectories in Entities-directory
 	-3 Remove QooxView/Storages/AfriCompta.rb and adjust
 	 Gestion/Entities/Person.rb

@@ -38,13 +38,13 @@ class Welcome < View
       return reply( :focus, :password )
     elsif person and person.check_pass( password ) then
       dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
-      dputs( 2 ){ "Authenticated person #{person.login_name}" }
+      dputs( 0 ){ "Authenticated person #{person.login_name} from #{session.web_req.peeraddr[3]}" }
       session = Sessions.create( person )
-      return reply( "session_id", person.session_id ) +
-        reply( "list", View.list( session ) )
+      return reply( :session_id, person.session_id ) +
+        reply( :list, View.list( session ) )
     else
-      reply( "window_show", "login_failed" ) +
-        reply( "update", {:reason => person ? "Password wrong" : "User doesn't exist" })
+      reply( :window_show, :login_failed ) +
+        reply( :update, :reason => person ? "Password wrong" : "User doesn't exist" )
     end
   end
 
