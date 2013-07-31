@@ -15,13 +15,14 @@ class CourseDiploma < View
 
     gui_hbox do
       gui_vbox :nogroup do
-        #show_list :diplomas
-        show_html :diplomas
-        show_table :diplomas_t, :headings => [:name, :state, :grade]
+        show_table :diplomas_t, :headings => [:name, :grade, :state]
       end
       gui_vbox :nogroup do
-        show_button :do_diplomas, :abort
-        show_button :prepare_print
+        gui_fields do
+          show_info :status
+          show_button :do_diplomas, :abort
+        end
+        show_print :print
       end
       gui_window :missing_data do
         show_html :missing
@@ -31,17 +32,12 @@ class CourseDiploma < View
         show_html :msg_print
         show_button :close
       end
-      gui_window :prepare_print do
-        show_list :diplomas_files
-        show_print :print
-      end
     end
   end
   
   def rpc_show( session )
     super( session ) +
-      reply( :hide, :abort ) +
-      reply( :update, :diplomas_t => [[1,2,3],[4,5,6]])
+      reply( :hide, [ :abort, :status ] )
   end
   
   def rpc_update( session )
@@ -55,7 +51,7 @@ class CourseDiploma < View
     ret = []
     case name.to_s
     when "courses"
-      ret = reply( :empty, [:diplomas])
+      ret = reply( :empty, [:diplomas_t1, :diplomas_t2])
       if args._courses.length > 0
         if course = Entities.Courses.match_by_course_id( args._courses.to_a[0] )
           course.update_state
@@ -89,37 +85,37 @@ class CourseDiploma < View
     #ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
     ret = []
     ( course = Entities.Courses.match_by_course_id( course_id ) ) or return []
-    #if course.get_files.index{|f| f =~ /(000-4pp.pdf|zip)$/ }
+
     overall_state = course.make_pdfs_state["0"]
     if overall_state == "done"
       ret += reply( :auto_update, 0 ) +
-        reply( :hide, :abort ) +
+        reply( :hide, [:abort,:status] ) +
         reply( :unhide, :do_diplomas )
     else
-      ret += reply( :auto_update, -1 ) +
-        reply( :unhide, :abort ) +
-        reply( :hide, :do_diplomas )
+      ret += reply( :auto_update, -5 ) +
+        reply( :unhide, [:abort,:status] ) +
+        reply( :hide, :do_diplomas ) +
+        reply( :update, :status => overall_state )
     end
-    header = "<table border='1'><tr><th>Name</th><th>Grade</th><th>State</th></tr>"
-    footer = "</table>"
-    keys = course.make_pdfs_state.keys.reject{|k| k == "0"}
-    index = 0
-    state = "<table><tr><td>#{header}" + 
-      keys.sort.collect{|s|
-      state = course.make_pdfs_state[s]
-      str = "<tr><td>#{s}</td><td align='right'>#{state[0]}</td><td>#{state[1]}</td></tr>"
-      index += 1
-      if ( keys.length > 10 ) and ( index == ( ( keys.length + 1 ) / 2 ) )
-        str += "#{footer}</td><td>#{header}"
+    
+    states = if course.get_files.index{|f| f =~ /(000-4pp.pdf|zip)$/ }
+      if $1 =~ /zip$/
+        [["all.zip"]]
+      else
+        [["000-4pp.pdf"], ["000-all.pdf"]]
       end
-      str
-    }.join("") + footer + "</td></tr></table>" +
-      "<br>Progress: #{overall_state}"
-    dputs(3){course.make_pdfs_state.inspect}
-    dputs(3){state.inspect}
+    else
+      []
+    end
+    states += course.make_pdfs_state.keys.reject{|k| k == "0"}.sort.
+      collect{|s|
+      st = course.make_pdfs_state[s]
+      [s, st[0], st[1]]
+    }
+    
     return ret + 
       reply_print( session ) +
-      reply( :update, :diplomas => state )
+      reply( :update, :diplomas_t => states )
   end
 
   def rpc_button_close( session, args )
