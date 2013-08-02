@@ -15,7 +15,8 @@ class CourseDiploma < View
 
     gui_hbox do
       gui_vbox :nogroup do
-        show_table :diplomas_t, :headings => [:name, :grade, :state]
+        show_table :diplomas_t, :headings => [:Name, :Grade, :State],
+          :widths => [200, 50, 100], :height => 500
       end
       gui_vbox :nogroup do
         gui_fields do
@@ -106,10 +107,12 @@ class CourseDiploma < View
     else
       []
     end
-    states += course.make_pdfs_state.keys.reject{|k| k == "0"}.sort.
+    states += course.make_pdfs_state.keys.reject{|k| k == "0"}.
       collect{|s|
       st = course.make_pdfs_state[s]
       [s, [Persons.find_by_login_name(s).full_name, st[0], st[1]]]
+    }.sort{|a,b|
+      a[1][0] <=> b[1][0]
     }
     
     return ret + 

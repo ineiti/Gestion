@@ -119,7 +119,7 @@ class CourseGrade < View
         dputs( 3 ){ "replying" }
         ret = rpc_update( session ) +
           #reply(:empty, [:students]) +
-        update_form_data( course ) +
+          update_form_data( course ) +
           reply(:update, {:courses => [course_id]}) +
           reply(:focus, :mean1 )
         if course.students.size > 0
@@ -189,11 +189,11 @@ class CourseGrade < View
       data['students'] = course[:students][( saved + 1 ) % course[:students].size]
       dputs( 2 ){ "Next student is #{data['students'].inspect}" }
 
-      reply( "empty", [:students] ) +
+      reply( :empty, :students ) +
         update_grade( data ) +
-        reply( 'update', {:students => course[:students]} ) +
-        reply( 'update', {:students => [data['students'][0]] } ) +
-        reply( 'focus', :mean1 )
+        reply( :update, :students => course[:students] ) +
+        reply( :update, :students => [data['students'][0]] ) +
+        reply( :focus, :mean1 )
     end
   end
   

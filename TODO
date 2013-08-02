@@ -1,7 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Install mercurial repository on D-server
         - Form is still active, even if shaded out
         - PersonAdmin: when deleting person that is shown, there is an error
 
@@ -16,36 +15,14 @@ BUGS:
           find getActiveForm, as it is not drawn yet...
 	- 10 crashes when not operating "properly"
 
-UNCLEAR BUGS:
-        - ne pas afficher dans label quand "pas passé" -> when creating?
-        - missing fields won't work in Entity::to_hash( true ) ??
-
-HEISENBUGS:
-        - can't set up cybermanager anymore - permissions vanish !? - or was it
-          unclear setup of get_config::Accounting?
-        - Confirmed: NetworkPermissions: sometimes when saving, the chosen entry shows up
-          as a number in the list. Seems to be somewhere in the Javascript where
-          things don't get updated in the correct way. Not reproducible in a
-          reliable manner. Perhaps linked with more than one field as array like
-          130625?
-        - Confirmed: PersonAdmin sometimes doesn't show permissions and groups when
-          added new stuff -> also array-problem of 130625?
-
-UNCONFIRMED:
-        - Course::Diploma - can't create for more than one course at the same time
-          -> make a @thread for each course, or is it just ruby not really
-          multi-threaded?
-        - Test if Admin::Backup::restore resets passwords as it should in samba-module
-
 [5', 15', 30', 1h, 4h]
 Security:
 
 UI:
-        - CourseDiplomas: display random-id if available
-        - CourseModify and CourseGrade sort students-list
         - CourseTabs still very slow for startup
         - CourseGrade::sync - catch timeouts on requests
 
+        - CourseDiplomas: display random-id if available
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
@@ -186,6 +163,25 @@ Unconfirmed bugs:
 		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
 			-> where is that a problem?
 	- TaskList: sometimes when pressing "list", it takes twice to show everything
+        - Course::Diploma - can't create for more than one course at the same time
+          -> make a @thread for each course, or is it just ruby not really
+          multi-threaded?
+        - Test if Admin::Backup::restore resets passwords as it should in samba-module
+
+UNCLEAR BUGS:
+        - ne pas afficher dans label quand "pas passé" -> when creating?
+        - missing fields won't work in Entity::to_hash( true ) ??
+
+HEISENBUGS:
+        - can't set up cybermanager anymore - permissions vanish !? - or was it
+          unclear setup of get_config::Accounting?
+        - Confirmed: NetworkPermissions: sometimes when saving, the chosen entry shows up
+          as a number in the list. Seems to be somewhere in the Javascript where
+          things don't get updated in the correct way. Not reproducible in a
+          reliable manner. Perhaps linked with more than one field as array like
+          130625?
+        - Confirmed: PersonAdmin sometimes doesn't show permissions and groups when
+          added new stuff -> also array-problem of 130625?
 
 To check:
         - printing of student-card with accent in name fails (probably due to
@@ -193,6 +189,9 @@ To check:
 
 
 ** FIXED **:
+        - UI130802: Course* sort students-list
+        - B 130720: Install mercurial repository on D-server
+        - UI130802: CourseDiplomas: make name-column wider
         - UI130802: CourseDiploma: replace diploma-list with a real table
           - put everything into a "real" table to select and do proper printing
           - show if file exists yet or not

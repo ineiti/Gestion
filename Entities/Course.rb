@@ -266,7 +266,7 @@ class Course < Entity
     if @make_pdfs_state["0"] == "undefined"
       @make_pdfs_state = {}
       students.each{|s|
-        dputs(0){"Working on #{s}"}
+        dputs(3){"Working on #{s}"}
         student = Persons.match_by_login_name( s )
         get_grade_args( student, true )
       }
@@ -309,7 +309,7 @@ class Course < Entity
         if person = Entities.Persons.match_by_login_name( s )
           [ s, "#{person.full_name} - #{person.login_name}:#{person.password_plain}" ]
         end
-      }
+      }.sort{|a,b| a[1] <=> b[1] }
     end
     ret
   end
@@ -463,7 +463,7 @@ base_gestion
   
   def get_grade_args( student, update = false )
     grade = Grades.match_by_course_person( course_id, student )
-    dputs(0){"Course is #{name} - student is #{student} - ctype is #{ctype.inspect} and grade is " +
+    dputs(3){"Course is #{name} - student is #{student} - ctype is #{ctype.inspect} and grade is " +
         "#{grade.inspect} - #{grade.to_s}"}
 
     state = if ( ctype.diploma_type[0] == "accredited" ) and grade and
