@@ -256,9 +256,9 @@ class CourseModify < View
     end
   end
   
-  def center?( session )
+  def hide_if_center( session )
     if session.owner.permissions.index( "center" )
-      %w( print_presence print_student duration dow hours
+      %w( print_student duration dow hours
       classroom ).collect{|e|
         reply( :hide, e )        
       }.flatten
@@ -271,7 +271,7 @@ class CourseModify < View
     reply( 'empty', [:students] ) +
       super( session ) +
       reply_print( session ) +
-      center?( session )
+      hide_if_center( session )
   end
   
   def update_layout( session )
