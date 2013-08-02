@@ -12,7 +12,7 @@ class NetworkShare < View
 
     @samba = Entities.Statics.get( :NetworkSamba )
     if @samba.data_str.class != Hash
-      ddputs(4){"Oups - samba is #{@samba.data_str.inspect}"}
+      dputs(4){"Oups - samba is #{@samba.data_str.inspect}"}
       @samba.data_str = {}
     end
 
@@ -79,14 +79,14 @@ class NetworkShare < View
     dputs( 3 ){ "rpc_list_choice with #{name} - #{args.inspect}" }
     if name == @vtlp_field
       session.s_data[:share] = args[0][name][0]
-      ddputs(4){"session.s_data is #{session.s_data.inspect}"}
+      dputs(4){"session.s_data is #{session.s_data.inspect}"}
     end
     rpc_list_choice_old( session, name, args[0] )
   end
 
 
   def rpc_update( session )
-    ddputs(4){"Updating samba: #{users_update( session )}"}
+    dputs(4){"Updating samba: #{users_update( session )}"}
     show_users = reply( :hide, :users )
     begin
       if ( share_id = session.s_data[:share] ) and
@@ -117,7 +117,7 @@ class NetworkShare < View
         when /read_only/
           share.acl[user.login_name] = "ro"
         end
-        ddputs(4){"Share.acl is #{share.acl.inspect}"}
+        dputs(4){"Share.acl is #{share.acl.inspect}"}
         session.s_data[:share] = data['shares'][0]
       else
         return reply(:window_show, :msg ) +
@@ -144,11 +144,11 @@ class NetworkShare < View
   
   def rpc_button_samba_save( session, data )
     %w( domain hostname ).each{|d|
-      ddputs(4){"Saving -#{d}- for -#{@samba.data_str.inspect}-"}
+      dputs(4){"Saving -#{d}- for -#{@samba.data_str.inspect}-"}
       store = data[d] ? data[d] : d
       @samba.data_str[d] = store
     }
-    ddputs(4){"@samba is now -#{@samba.data_str.inspect}-"}
+    dputs(4){"@samba is now -#{@samba.data_str.inspect}-"}
 
     a = Command::run( "cat Files/smb.conf" )
     a.gsub!( /WORKGROUP/, @samba.data_str['domain'] )

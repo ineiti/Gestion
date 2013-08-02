@@ -191,7 +191,7 @@ class CourseModify < View
   
   def present_doubles( session, course )
     doubles = session.s_data[:perhaps_double]
-    ddputs(4){"Doubles are #{doubles.inspect}"}
+    dputs(4){"Doubles are #{doubles.inspect}"}
     if doubles.length > 0
       prefix = ConfigBase.has_function?( :course_server ) ?
         "#{session.owner.login_name}_" : ""
@@ -203,7 +203,7 @@ class CourseModify < View
           join("-")
         [p.person_id, "#{p.full_name}:#{p.login_name}:#{courses}"]
       }
-      ddputs(4){"Proposition is #{prop.inspect}"}
+      dputs(4){"Proposition is #{prop.inspect}"}
       reply( :window_show, :ask_double ) +
         reply( :update, :double_name => name ) +
         reply( :empty_only, [:double_proposition ]) +
@@ -217,7 +217,7 @@ class CourseModify < View
   def rpc_button_accept( session, data )
     course = Courses.match_by_name( data['name'] )
     student = data['double_proposition']
-    ddputs(5){"Data is #{data.inspect} - #{course.students.inspect}"}
+    dputs(5){"Data is #{data.inspect} - #{course.students.inspect}"}
     if not course.students.index( student.login_name )
       course.students.push(
         student.login_name )

@@ -17,7 +17,7 @@ class AdminFunction < View
   
   def rpc_button_save( session, data )
     ConfigBase.store( data.to_sym )
-    ddputs(3){"Configuration is now #{ConfigBase.get_functions.inspect}"}
+    dputs(3){"Configuration is now #{ConfigBase.get_functions.inspect}"}
     
     rpc_update( session )
   end

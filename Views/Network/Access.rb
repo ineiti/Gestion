@@ -91,7 +91,7 @@ class NetworkAccess < View
   def rpc_button_add_member( session, data )
     if (person = Persons.match_by_login_name( data['login_name'] )) and
         (group = AccessGroups.match_by_accessgroup_id( data['groups'][0]))
-      ddputs(3){"Found person #{person.inspect} and group #{group.inspect}"}
+      dputs(3){"Found person #{person.inspect} and group #{group.inspect}"}
       if not group.members
         group.members = []
       end

@@ -70,7 +70,7 @@ class TC_Course < Test::Unit::TestCase
     names = [ "Dmin A","Zero","One Two","Ten Eleven Twelve","A B C D",
       "Hélène Méyère","Äeri Soustroup" ]
     while names.length > 0
-      ddputs(4){"Doing #{names.inspect}"}
+      dputs(4){"Doing #{names.inspect}"}
       reply = RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "bulk_students",
             {"name" => "net_1001", "names" => names.join("\n") }]])
       assert_not_nil reply
@@ -82,7 +82,7 @@ class TC_Course < Test::Unit::TestCase
       login, first, family = b
       dputs( 0 ){ "Doing #{b.inspect}" }
       p = Entities.Persons.match_by_login_name( login )
-      ddputs( 5 ){"p is #{p.inspect} - login is #{login.inspect}"}
+      dputs( 5 ){"p is #{p.inspect} - login is #{login.inspect}"}
       assert_not_nil p, login.inspect
       assert_equal login, p.login_name
       assert_equal first, p.first_name

@@ -49,16 +49,16 @@ class NetworkTigo < View
   end
 
   def lib_net( func, r = nil )
-    ddputs( 3 ){ "Calling lib_net #{func} - #{r}" }
+    dputs( 3 ){ "Calling lib_net #{func} - #{r}" }
     ret = $lib_net.call( func, r )
-    ddputs( 3 ){ "returning from lib_net #{func}" }
+    dputs( 3 ){ "returning from lib_net #{func}" }
     ret
   end
 
   def lib_net_args( func, *args )
-    ddputs( 3 ){ "Calling lib_net_args #{func}" }
+    dputs( 3 ){ "Calling lib_net_args #{func}" }
     ret = $lib_net.call_args( func, args.join(' ') )
-    ddputs( 3 ){ "returning from lib_net #{func}" }
+    dputs( 3 ){ "returning from lib_net #{func}" }
     ret
   end
 

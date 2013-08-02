@@ -40,6 +40,10 @@ Samba:
 AfriCompta:
 #  filename: compta.rb
 
+Views:
+#  CourseTabs:
+#    order: 0
+
 Entities:
   Courses:
 #    dir_diplomas: Diplomas

@@ -33,7 +33,7 @@ class PersonTabs < View
     if session.can_view( :FlagDeletePerson )
       if ( p_login = args["persons"] ) and 
           ( p = Persons.match_by_login_name( p_login[0] ) )
-        ddputs(3){"Found person #{p.inspect} - #{p.class.name}"}
+        dputs(3){"Found person #{p.inspect} - #{p.class.name}"}
         begin
           p.delete
         rescue IsNecessary => who
@@ -88,18 +88,18 @@ class PersonTabs < View
     }.flatten.uniq.sort{|a,b|
       a.login_name <=> b.login_name
     }
-    ddputs( 3 ){ "Result is: #{result.collect{|r| r.login_name}}" }
+    dputs( 3 ){ "Result is: #{result.collect{|r| r.login_name}}" }
     not result and result = []
 
     # Check if we have an exact match on the login_name
-    ddputs(3){"Searching for exact match #{s}"}
+    dputs(3){"Searching for exact match #{s}"}
     if exact = Persons.match_by_login_name( s )
-      ddputs( 3 ){"Found exact match"}
+      dputs( 3 ){"Found exact match"}
       if pos = result.index( exact )
-        ddputs( 3 ){"Found exact match at position #{pos}"}
+        dputs( 3 ){"Found exact match at position #{pos}"}
         result.delete_at( pos )
         result.unshift( exact )
-        ddputs(3){"result is now #{result.inspect}"}
+        dputs(3){"result is now #{result.inspect}"}
       end
     end
 
@@ -154,7 +154,7 @@ class PersonTabs < View
     data.to_sym!
     dputs( 3 ){ "Pressed button accept with #{data.inspect}" }
     login_prop = data._login_prop || Persons.create_login_name( data._complete_name )
-    ddputs(3){"login_prop is #{login_prop.inspect}"}
+    dputs(3){"login_prop is #{login_prop.inspect}"}
 
     if login_prop
       new_data = { :login_name => login_prop,

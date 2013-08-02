@@ -62,7 +62,7 @@ module Internet
     end
     if user.class != Person
       user = Persons.match_by_login_name( user )
-      ddputs( 4 ){"Found user #{user.login_name}"}
+      dputs( 4 ){"Found user #{user.login_name}"}
     end
     if user
       # We want an exact match, so we put the name between ^ and $

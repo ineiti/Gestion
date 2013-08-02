@@ -8,7 +8,7 @@ class Label < RPCQooxdooPath
     if req.request_method == "POST"
       #self.parse( req.request_method, req.path, req.query, req.peeraddr[2] )
       path, query, addr = req.path, req.query.to_sym, req.peeraddr[2]
-      ddputs(4){"Got query: #{path} - #{query.inspect} - #{addr}"}
+      dputs(4){"Got query: #{path} - #{query.inspect} - #{addr}"}
       
       if query._field == "start"
         d = JSON.parse( query._data ).to_sym
@@ -42,7 +42,7 @@ class Label < RPCQooxdooPath
       return "Error: must start or use existing field"
     else
       path = /.*\/([^\/]*)\/([^\/]*)$/.match( req.path )
-      ddputs(3){"Path is #{path.inspect}"}
+      dputs(3){"Path is #{path.inspect}"}
       self.get_student( path[1], path[2] )
     end
   end
@@ -131,11 +131,11 @@ class Label < RPCQooxdooPath
         grade.delete :random
         if g = Grades.match_by_course_person( grade._course, 
             grade._student )
-          ddputs(3){"Updating grade #{g.inspect} with #{grade.inspect}"}
+          dputs(3){"Updating grade #{g.inspect} with #{grade.inspect}"}
           g.data_set_hash( grade )
         else
           g = Grades.create( grade )
-          ddputs(3){"Creating grade #{g.inspect} with #{grade.inspect}"}
+          dputs(3){"Creating grade #{g.inspect} with #{grade.inspect}"}
         end
         dputs(3){Grades.match_by_course_person( grade._course, 
             grade._student ).inspect }

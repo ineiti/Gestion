@@ -20,7 +20,7 @@ class CourseResponsible < View
   
   def rpc_button_save( session, data )
     field = vtlp_get_entity( data )
-    ddputs( 2 ){ "Field is #{field.inspect}, setting data #{data.inspect}" }
+    dputs( 2 ){ "Field is #{field.inspect}, setting data #{data.inspect}" }
     selection = data[@vtlp_field][0]
     if field
       field.data_set_hash( data.to_sym )
@@ -32,7 +32,7 @@ class CourseResponsible < View
         selection = resp.id
       end
     end
-    ddputs(3){"vtlp_method is #{@vtlp_method} - selection is #{selection.inspect}"}
+    dputs(3){"vtlp_method is #{@vtlp_method} - selection is #{selection.inspect}"}
     vtlp_update_list( session, selection )
     #      [data[@vtlp_field][0], field.data_get(@vtlp_method)] )
   end

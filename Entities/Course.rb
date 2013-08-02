@@ -558,6 +558,12 @@ base_gestion
       }
     end
   end
+  
+  def get_diploma_filename( student, ext = "odt" )
+    digits = students.size.to_s.size
+    counter = students.index( student ) + 1
+    "#{dir_diplomas}/#{counter.to_s.rjust(digits, '0')}-#{student}.#{ext}"
+  end
 
   def make_pdfs( convert )
     if @thread
@@ -575,16 +581,15 @@ base_gestion
     dputs( 2 ){ "Starting new thread" }
     @thread = Thread.new{
       begin
-        digits = students.size.to_s.size
         counter = 1
         dputs( 2 ){ "Preparing students: #{students.inspect}" }
         if ! @only_psnup
-          students.each{ |s|
+          students.sort.each{ |s|
             student = Persons.match_by_login_name( s )
             if student
-              dputs( 2 ){ student.login_name }
-              student_file = "#{dir_diplomas}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
-              dputs( 2 ){ "Doing #{counter}: #{student.login_name} - file: #{student_file}" }
+              ddputs( 4 ){"Is #{s} == #{student.login_name}?"}
+              student_file = get_diploma_filename( s )
+              dputs( 2 ){ "Doing #{counter}: #{s} - file: #{student_file}" }
               FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}", 
                 student_file )
               update_student_diploma( student_file, student )
@@ -837,7 +842,7 @@ base_gestion
     dputs(3){@sync_state}
     slow and sleep 3
 
-    ddputs(4){"Responsibles"}
+    dputs(4){"Responsibles"}
     @sync_state = sync_s += "<li>Transferring responsibles: "
     users = [ teacher.login_name, responsible.login_name, center.login_name ]
     ret = sync_transfer( :users, users.collect{|s|
@@ -849,9 +854,9 @@ base_gestion
     end
     @sync_state = sync_s += "OK</li>"
 
-    ddputs(4){"Students"}
+    dputs(4){"Students"}
     if students.length > 0
-      ddputs(4){"Students - go"}
+      dputs(4){"Students - go"}
       @sync_state = sync_s += "<li>Transferring users: "
       users = students + [ teacher.login_name, responsible.login_name ]
       ret = sync_transfer( :users, users.collect{|s|
@@ -864,7 +869,7 @@ base_gestion
       @sync_state = sync_s += "OK</li>"
     end
 
-    ddputs(4){"Courses"}
+    dputs(4){"Courses"}
     @sync_state = sync_s += "<li>Transferring course: "
     myself = self.to_hash( true )
     myself._students = students
@@ -875,9 +880,9 @@ base_gestion
     end
     @sync_state = sync_s += "OK</li>"
 
-    ddputs(4){"Grades"}
+    dputs(4){"Grades"}
     if ( grades = Grades.matches_by_course( self.course_id ) ).length > 0
-      ddputs(4){"Grades - go"}      
+      dputs(4){"Grades - go"}      
       @sync_state = sync_s += "<li>Transferring grades: "
       ret = sync_transfer( :grades, grades.select{|g|
           g.course and g.student
@@ -905,9 +910,9 @@ base_gestion
       @sync_state = sync_s += "OK</li>"
     end
 
-    ddputs(4){"Exams"}
+    dputs(4){"Exams"}
     if file = zip_create( true )
-      ddputs(4){"Exams - go"}
+      dputs(4){"Exams - go"}
       @sync_state = sync_s += "<li>Transferring exams: "
       file = "/tmp/#{file}"
       dputs(3){"Exa-file is #{file}"}

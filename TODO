@@ -41,10 +41,8 @@ UNCONFIRMED:
 Security:
 
 UI:
-        - CourseDiploma: replace diploma-list with content of pop-up window
-          - display random-id if available
-          - put everything into a "real" table to select and do proper printing
-          - show if file exists yet or not
+        - CourseDiplomas: display random-id if available
+        - CourseModify and CourseGrade sort students-list
         - CourseTabs still very slow for startup
         - CourseGrade::sync - catch timeouts on requests
 
@@ -195,6 +193,9 @@ To check:
 
 
 ** FIXED **:
+        - UI130802: CourseDiploma: replace diploma-list with a real table
+          - put everything into a "real" table to select and do proper printing
+          - show if file exists yet or not
         - F 130705: when adding a student to a course, check whether he already exists.
           for example: if same username exists, propose to take over the other
           name

@@ -37,9 +37,12 @@ class Welcome < View
     if password.to_s.length == 0 then
       return reply( :focus, :password )
     elsif person and person.check_pass( password ) then
-      dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
-      dputs( 0 ){ "Authenticated person #{person.login_name} from #{session.web_req.peeraddr[3]}" }
+      web_req = session.web_req
       session = Sessions.create( person )
+      session.web_req = web_req
+      dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
+      dputs( 0 ){ "Session is #{session.inspect}" }
+      dputs( 0 ){ "Authenticated person #{person.login_name} from #{session.web_req.peeraddr[3]}" }
       return reply( :session_id, person.session_id ) +
         reply( :list, View.list( session ) )
     else

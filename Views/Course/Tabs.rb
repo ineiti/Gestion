@@ -71,24 +71,24 @@ class CourseTabs < View
   
   def rpc_button_add_missing( session, args )
     args.to_sym!
-    ddputs(5){args.inspect}
+    dputs(5){args.inspect}
     if args._ct_name and args._ct_name.size > 0
-      ddputs(3){"Creating CourseType"}
+      dputs(3){"Creating CourseType"}
       ct = CourseTypes.create( :name => args._ct_name, :duration => args._ct_duration,
         :tests => 1, :description => args._ct_desc, :contents => args._ct_contents,
         :diploma_type => ["simple"], :output => ["certificate"])
-      ddputs(3){"Ct is #{ct.inspect}"}
+      dputs(3){"Ct is #{ct.inspect}"}
     end
     if args._new_room and args._new_room.size > 0
-      ddputs(3){"Creating Room"}
+      dputs(3){"Creating Room"}
       room = Rooms.create( :name => args._new_room )
-      ddputs(3){"Room is #{room.inspect}"}
+      dputs(3){"Room is #{room.inspect}"}
     end
     if args._new_teacher and args._new_teacher.size > 0
-      ddputs(3){"Creating Teacher"}
+      dputs(3){"Creating Teacher"}
       teacher = Persons.create( :complete_name => args._new_teacher )
       teacher.permissions = [:teacher]
-      ddputs(3){"Teacher #{teacher.inspect}"}
+      dputs(3){"Teacher #{teacher.inspect}"}
     end
     reply( :window_hide ) +
       rpc_update( session ) +
@@ -113,7 +113,7 @@ class CourseTabs < View
   end
 
   def rpc_button_new_course( session, data )
-    ddputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
+    dputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
     
     course = Courses.create_ctype( data['new_ctype'], data['name_date'], session.owner )
 
@@ -132,7 +132,7 @@ class CourseTabs < View
   end
 
   def rpc_list_choice( session, name, args )
-    ddputs( 2 ){ "New choice #{name} - #{args.inspect}" }
+    dputs( 2 ){ "New choice #{name} - #{args.inspect}" }
 
     reply( 'pass_tabs', [ "list_choice", name, args ] ) +
       reply( :fade_in, :parent_child )
