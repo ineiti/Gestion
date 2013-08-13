@@ -73,7 +73,7 @@ class SelfInternet < View
       if connected == "yes"
         dputs(4){"Showing disconnect because we're connected"}
         show_button = :disconnect
-      elsif $lib_net.call( nil, :PROMOTION_LEFT ).to_i == 0 and 
+      elsif $lib_net.print( :PROMOTION_LEFT ).to_i == 0 and 
           @isp['has_promo'] == 'true'
         dputs(4){"Showing disconnect because there is no promotion left"}
         show_button = :disconnect
@@ -127,7 +127,7 @@ class SelfInternet < View
       reply( :update, :users_connected => 
         "#{users.split.count}: #{users_str}" )
     if @isp['has_promo'] == 'true'
-      ret += reply( :update, :bytes_left => $lib_net.call( nil, :PROMOTION_LEFT ) )
+      ret += reply( :update, :bytes_left => $lib_net.print( :PROMOTION_LEFT ) )
     end
     return ret
   end

@@ -35,8 +35,8 @@ class AdminInternet < View
 
   def update( session )
     emails = %x[ tail -n 1 /var/log/copy_email.log ]
-    { :credit_left => $lib_net.call( nil, :CREDIT_LEFT ),
-      :promotion_left => $lib_net.call( nil, :PROMOTION_LEFT ),
+    { :credit_left => $lib_net.print( :CREDIT_LEFT ),
+      :promotion_left => $lib_net.print( :PROMOTION_LEFT ),
       :mails => "<pre>#{ $lib_net.call( :mail_get_queue )}</pre>",
       :transfer => "<pre>#{ emails } </pre>",
       :auto_disconnect => [auto_disconnect_get] }

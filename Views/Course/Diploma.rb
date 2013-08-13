@@ -134,11 +134,12 @@ class CourseDiploma < View
 
       files = names.collect{|f|
         file = "#{course.dir_diplomas}/#{f}"
+        exts = %w( pdf png )
+        while ( ! File.exists? file ) and ( exts.length > 0 )
+          file = "#{course.get_diploma_filename(f, exts.pop)}"
+        end
         if ! File.exists? file
-          file = "#{course.get_diploma_filename(f, 'pdf')}"
-          if ! File.exists? file
-            file = "Not found"
-          end
+          file = "Not found"
         end
         ddputs(3){"Filename is #{file}"}
         name = ( ( p = Persons.find_by_login_name( f ) ) and p.full_name ) ||

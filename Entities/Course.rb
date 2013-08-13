@@ -621,15 +621,16 @@ base_gestion
           dir = File::dirname( list.first )
           @only_psnup and list = []
           list.sort.each{ |p|
-            dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
+            ddputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
             student_name = p.sub(/.*-/, '').sub(/\.odt/, '')
             @make_pdfs_state[student_name][1] = "working"
 
             if format == :certificate
               Docsplit.extract_pdf p, :output => dir
             else
-              Docsplit.extract_images p, :output => dir, 
+              Docsplit.extract_images p, :output => dir,
               :density => 300, :format => :png
+              FileUtils.mv( p.sub(/.odt$/, '_1.png'), p.sub( /.odt$/, '.png'))
             end
             dputs( 5 ){ "Finished docsplit" }
             FileUtils.rm( p )

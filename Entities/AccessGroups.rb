@@ -35,7 +35,7 @@ class AccessGroups < Entities
       match_time = ag.time_in_atimes( time )
       limit_ok = true
       if ( limit = ag.limit_day_mo.to_i ) > 0
-        limit_ok = $lib_net.call( nil, :USAGE_DAILY ).to_i / 1e6 <= limit
+        limit_ok = $lib_net.print( :USAGE_DAILY ).to_i / 1e6 <= limit
       end
       dputs(4){"Checking #{ag.name}, u,t = #{match_user},#{match_time}"}
       dputs(4){"Action is #{ag.action[0].inspect}, members = #{ag.members.inspect}"}

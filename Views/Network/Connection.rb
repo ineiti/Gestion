@@ -18,9 +18,9 @@ class NetworkConnection < View
   end
 
   def update( session )
-    { :connection => $lib_net.call( nil, :ISP ),
-      :allow_free => [$lib_net.call( nil, :ALLOW_FREE )],
-      :cost_base => $lib_net.call( nil, :COST_BASE ),
-      :cost_shared => $lib_net.call( nil, :COST_SHARED ) }
+    { :connection => $lib_net.print( :ISP ),
+      :allow_free => [$lib_net.print( :ALLOW_FREE )],
+      :cost_base => $lib_net.print( :COST_BASE ),
+      :cost_shared => $lib_net.print( :COST_SHARED ) }
   end
 end

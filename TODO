@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+	- in Binaries/start_gestion <ctrl-c> doesn't restart Gestion
+        - can't show PNGs
+        - Label: "Pas passé" is not "passé avec succès"
         - Form is still active, even if shaded out
         - PersonAdmin: when deleting person that is shown, there is an error
 
@@ -19,6 +22,8 @@ BUGS:
 Security:
 
 UI:
+	- CourseDiplomas: take away "print to PDF" and insert direct links in the table
+        - Delete selection of a table upon "empty"
         - CourseTabs still very slow for startup
         - CourseGrade::sync - catch timeouts on requests
 
@@ -34,6 +39,7 @@ UI:
         - write a good documentation...
 
 FEATURES:
+	- import courses from server
         - logrotate gestion.log, and send daily error-reports to info@profeda.org
         - when a student logins remotely to a course_sever, don't allow to change
           his name, only address, phone-#, password and e-mail
@@ -57,7 +63,6 @@ Programming:
         - Why is a value_list-definition in Entities not able to give a default-
           value for the list? -> it is, but only if it is taken as a show_block
           in a View, test whether show_field works, too
-        - Grade needs to change course_id and person_id with real entities
         - merge two ways of free surfing: group::freesurf and
           permissions::FreeInternet
         - Lots of stuff in View/* should go into Entities/*

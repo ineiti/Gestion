@@ -48,17 +48,24 @@ class NetworkTigo < View
 
   end
 
-  def lib_net( func, r = nil )
-    dputs( 3 ){ "Calling lib_net #{func} - #{r}" }
-    ret = $lib_net.call( func, r )
-    dputs( 3 ){ "returning from lib_net #{func}" }
+  def lib_net( func )
+    dputs( 3 ){ "Calling lib_net #{func}" }
+    ret = $lib_net.call( func )
+    dputs( 3 ){ "returning from lib_net #{ret}" }
+    ret
+  end
+
+  def lib_net_print( var )
+    dputs( 3 ){ "Calling lib_net_print #{var}" }
+    ret = $lib_net.print( var )
+    dputs( 3 ){ "returning from lib_net_print #{ret}" }
     ret
   end
 
   def lib_net_args( func, *args )
-    dputs( 3 ){ "Calling lib_net_args #{func}" }
+    dputs( 3 ){ "Calling lib_net_args #{func} with #{args.inspect}" }
     ret = $lib_net.call_args( func, args.join(' ') )
-    dputs( 3 ){ "returning from lib_net #{func}" }
+    dputs( 3 ){ "returning from lib_net_args #{ret}" }
     ret
   end
 
@@ -173,9 +180,9 @@ class NetworkTigo < View
   end
 
   def update( session )
-    { :credit_left => lib_net( nil, :CREDIT_LEFT ),
-      :promotion_left => lib_net( nil, :PROMOTION_LEFT ),
-      :usage_day_mo => lib_net( nil, :USAGE_DAILY ).to_i / 1_000,
+    { :credit_left => lib_net_print( :CREDIT_LEFT ),
+      :promotion_left => lib_net_print( :PROMOTION_LEFT ),
+      :usage_day_mo => lib_net_print( :USAGE_DAILY ).to_i / 1_000,
       :tigo_number => @tigo_number.data_str,
       :tigo_recharge => "*190*1234*235#{@tigo_number.data_str.gsub(/ /,'')}*800#",
       :status => "<pre>#{read_status}</pre>",
