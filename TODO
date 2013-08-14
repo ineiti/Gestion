@@ -22,6 +22,7 @@ BUGS:
 Security:
 
 UI:
+        - sort student-names in presence-sheet
 	- CourseDiplomas: take away "print to PDF" and insert direct links in the table
         - Delete selection of a table upon "empty"
         - CourseTabs still very slow for startup
