@@ -13,8 +13,8 @@ class NetworkConnection < View
   end
 
   def rpc_button_save_costs( session, data )
-    $lib_net.call_args( :isp_cost_set, "#{data['cost_base']} #{data['cost_shared']}" )
-    $lib_net.call_args( :isp_free_set, data['allow_free'][0] )
+    $lib_net.call( :isp_cost_set, "#{data['cost_base']} #{data['cost_shared']}" )
+    $lib_net.call( :isp_free_set, data['allow_free'][0] )
   end
 
   def update( session )

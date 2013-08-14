@@ -77,7 +77,7 @@ class Info < RPCQooxdooPath
     user = Persons.match_by_login_name( args[:user] )
     if user 
       cu = self.clientUse( args )
-      cost_max = $lib_net.call( :user_cost_max ).to_i
+      cost_max = $lib_net.print( :USER_COST_MAX ).to_i
       dputs(4){ "clientUse is #{cu.inspect} - cost_max is #{cost_max.inspect}" }
       case cu
       when /nopay/

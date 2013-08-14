@@ -48,27 +48,6 @@ class NetworkTigo < View
 
   end
 
-  def lib_net( func )
-    dputs( 3 ){ "Calling lib_net #{func}" }
-    ret = $lib_net.call( func )
-    dputs( 3 ){ "returning from lib_net #{ret}" }
-    ret
-  end
-
-  def lib_net_print( var )
-    dputs( 3 ){ "Calling lib_net_print #{var}" }
-    ret = $lib_net.print( var )
-    dputs( 3 ){ "returning from lib_net_print #{ret}" }
-    ret
-  end
-
-  def lib_net_args( func, *args )
-    dputs( 3 ){ "Calling lib_net_args #{func} with #{args.inspect}" }
-    ret = $lib_net.call_args( func, args.join(' ') )
-    dputs( 3 ){ "returning from lib_net_args #{ret}" }
-    ret
-  end
-
   def rpc_update( session )
     reply( :update, update( session ) )
   end
@@ -79,13 +58,13 @@ class NetworkTigo < View
   end
 
   def rpc_button_connect( session, data )
-    lib_net :isp_connect
+    $lib_net.async :isp_connect
     reply( :hide, :connect ) +
       reply( :unhide, :disconnect )
   end
 
   def rpc_button_disconnect( session, data )
-    lib_net :isp_disconnect
+    $lib_net.async :isp_disconnect
     reply( :hide, :disconnect ) +
       reply( :unhide, :connect ) +
       rpc_update( session )
@@ -95,27 +74,30 @@ class NetworkTigo < View
     begin
       code = data['code'].gsub( /[^0-9]/, '' )
       dputs( 0 ){ "Code is #{code}" }
-      lib_net_args :isp_tigo_credit_add, code
+      $lib_net.async :isp_tigo_credit_add, code
     rescue NoMethodError
     end
     rpc_update( session ) + reply( :empty_only, [:code])
   end
 
   def rpc_button_add_promotion( session, data )
-    lib_net_args :isp_tigo_promotion_add, data["size"], session.owner.login_name
+    $lib_net.async :isp_tigo_promotion_add, data["size"], session.owner.login_name
     rpc_update( session )
   end
 
   def rpc_button_update_params( session, data )
+    $lib_net.async :isp_update_vars, :force
+    return reply( :update, update( session ) )
+
     if `ifconfig` =~ /ppp0/
       dputs( 3 ){ "ppp0-link is up, can't update" }
       return reply( :update, { :msg => "Can't update while connected to Tigo!"}  ) +
         reply( :window_show, :error )
     else
       dputs( 3 ){ "No link, updating" }
-      lib_net :isp_tigo_credit_update
+      $lib_net.call :isp_tigo_credit_update
       dputs( 3 ){ "Updating promotion" }
-      lib_net :isp_tigo_promotion_update
+      $lib_net.call :isp_tigo_promotion_update
       dputs( 3 ){ "Replying for update" }
       reply( :update, update( session ) )
     end
@@ -135,7 +117,7 @@ class NetworkTigo < View
   end
 
   def read_status
-    str = case lib_net( :isp_connection_status ) 
+    str = case $lib_net.call( :isp_connection_status ) 
     when /0/
       "0/4 - Not connected"
     when /1/
@@ -146,9 +128,11 @@ class NetworkTigo < View
       "3/4 - Got IP"
     when /4/
       "4/4 - Secured connection"
+    else
+      ""
     end
-    mode, stat, lac, ci = lib_net( :isp_tigo_get_cell ).split(",")
-    rssi, ber = lib_net( :isp_tigo_get_signal ).split(",")
+    mode, stat, lac, ci = $lib_net.print( :ISP_TIGO_CELL ).split(",")
+    rssi, ber = $lib_net.print( :ISP_TIGO_SIGNAL ).split(",")
     if stat == "1"
       antenna = case ci
       when /F29/
@@ -170,7 +154,7 @@ class NetworkTigo < View
   end
 
   def get_successful_promotions( show_all = false )
-    proms = lib_net( :isp_tigo_promotion_list ).split("\n").reverse
+    proms = [] #$lib_net.call( :isp_tigo_promotion_list ).split("\n").reverse
     if not show_all
       proms = proms[0..5]
     end
@@ -180,9 +164,9 @@ class NetworkTigo < View
   end
 
   def update( session )
-    { :credit_left => lib_net_print( :CREDIT_LEFT ),
-      :promotion_left => lib_net_print( :PROMOTION_LEFT ),
-      :usage_day_mo => lib_net_print( :USAGE_DAILY ).to_i / 1_000,
+    { :credit_left => $lib_net.print( :CREDIT_LEFT ),
+      :promotion_left => $lib_net.print( :PROMOTION_LEFT ),
+      :usage_day_mo => $lib_net.print( :USAGE_DAILY ).to_i / 1_000,
       :tigo_number => @tigo_number.data_str,
       :tigo_recharge => "*190*1234*235#{@tigo_number.data_str.gsub(/ /,'')}*800#",
       :status => "<pre>#{read_status}</pre>",

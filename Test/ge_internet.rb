@@ -25,7 +25,7 @@ class LibNet
     end
   end
 	
-  def call_args( f, *a )
+  def call_to_be_replaced_args( f, *a )
     ip, name = a[0].split()
     dputs(2){"users is #{$users_connected.inspect} and function " + 
         "is #{f} with args #{a.inspect}"}
@@ -81,23 +81,23 @@ class TC_Internet < Test::Unit::TestCase
 
     $connection_status = 5
 	
-    $lib_net.call_args( :user_connect, "10 test")
+    $lib_net.call_to_be_replaced_args( :user_connect, "10 test")
     Internet.take_money
     assert_equal 35, @test.internet_credit
 
-    $lib_net.call_args( :user_connect, "11 test2")
+    $lib_net.call_to_be_replaced_args( :user_connect, "11 test2")
     Internet.take_money
     assert_equal 25, @test.internet_credit
     assert_equal 40, @test2.internet_credit
 
-    $lib_net.call_args( :user_connect, "12 free")
+    $lib_net.call_to_be_replaced_args( :user_connect, "12 free")
     Internet.take_money
     assert_equal 17, @test.internet_credit
     assert_equal 32, @test2.internet_credit
     assert_equal 42, @free.internet_credit
 
-    $lib_net.call_args( :user_disconnect, "12 free")
-    $lib_net.call_args( :user_disconnect, "11 test2")
+    $lib_net.call_to_be_replaced_args( :user_disconnect, "12 free")
+    $lib_net.call_to_be_replaced_args( :user_disconnect, "11 test2")
     Internet.take_money
     assert_equal 2, @test.internet_credit
     Internet.take_money
@@ -115,24 +115,24 @@ class TC_Internet < Test::Unit::TestCase
 
     $connection_status = 5
 	
-    $lib_net.call_args( :user_connect, "10 test")
+    $lib_net.call_to_be_replaced_args( :user_connect, "10 test")
     Internet.take_money
     assert_equal 35, @test.internet_credit
 
-    $lib_net.call_args( :user_connect, "11 test2")
+    $lib_net.call_to_be_replaced_args( :user_connect, "11 test2")
     Internet.take_money
     assert_equal 25, @test.internet_credit
     assert_equal 40, @test2.internet_credit
 
     assert_equal 50, @free.internet_credit
-    $lib_net.call_args( :user_connect, "12 free")
+    $lib_net.call_to_be_replaced_args( :user_connect, "12 free")
     Internet.take_money
     assert_equal 17, @test.internet_credit
     assert_equal 32, @test2.internet_credit
     assert_equal 50, @free.internet_credit
 
-    $lib_net.call_args( :user_disconnect, "12 free")
-    $lib_net.call_args( :user_disconnect, "11 test2")
+    $lib_net.call_to_be_replaced_args( :user_disconnect, "12 free")
+    $lib_net.call_to_be_replaced_args( :user_disconnect, "11 test2")
     Internet.take_money
     assert_equal 2, @test.internet_credit
     Internet.take_money

@@ -799,15 +799,24 @@ base_gestion
   def sync_send_post( field, data )
     path = URI.parse( "#{ctype.get_url}/" )
     post = { :field => field, :data => data }
-    dputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
-    ret = Net::HTTP.post_form( path, post )
-    dputs(4){"Return-value is #{ret.inspect}, body is #{ret.body}"}
-    return ret.body
+    ddputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
+    err = ""
+    (1..4).each{|i|
+      begin
+        ret = Net::HTTP.post_form( path, post )
+        ddputs(4){"Return-value is #{ret.inspect}, body is #{ret.body}"}
+        return ret.body
+      rescue Timeout::Error
+        ddputs(2){"Timeout occured"}
+        err = "Error Timeout occured"
+      end
+    }
+    return err
   end
   
   def sync_transfer( field, transfer, slow = false )
     ss = @sync_state
-    block_size = 1024
+    block_size = 4096
     transfer_md5 = Digest::MD5.hexdigest( transfer )
     t_array = []
     while t_array.length * block_size < transfer.length
@@ -850,7 +859,7 @@ base_gestion
         Persons.match_by_login_name( s ) 
       }.to_json, slow )
     @sync_state += ret
-    if ret =~ /^Error: /
+    if ret =~ /^Error /
       return false
     end
     @sync_state = sync_s += "OK</li>"
@@ -864,7 +873,7 @@ base_gestion
           Persons.match_by_login_name( s ) 
         }.to_json, slow )
       @sync_state += ret
-      if ret =~ /^Error: /
+      if ret =~ /^Error /
         return false
       end
       @sync_state = sync_s += "OK</li>"
@@ -876,7 +885,7 @@ base_gestion
     myself._students = students
     ret = sync_transfer( :course, myself.to_json, slow )
     @sync_state += ret
-    if ret =~ /^Error: /
+    if ret =~ /^Error /
       return false
     end
     @sync_state = sync_s += "OK</li>"
@@ -893,7 +902,7 @@ base_gestion
             :person => g.student.login_name )
         }.to_json, slow )
       @sync_state += ret
-      if ret =~ /^Error: /
+      if ret =~ /^Error /
         return false
       end
       grades = JSON.parse( ret.sub(/^OK: /, '') )
@@ -919,7 +928,7 @@ base_gestion
       dputs(3){"Exa-file is #{file}"}
       ret = sync_transfer( :exams, File.open(file){|f| f.read }, slow )
       @sync_state += ret
-      if ret =~ /^Error: /
+      if ret =~ /^Error /
         return false
       end
       @sync_state = sync_s += "OK</li>"

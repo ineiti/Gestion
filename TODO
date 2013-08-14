@@ -22,6 +22,7 @@ BUGS:
 Security:
 
 UI:
+        - CourseGrade - list is sorted, but selected student is not on top
         - sort student-names in presence-sheet
 	- CourseDiplomas: take away "print to PDF" and insert direct links in the table
         - Delete selection of a table upon "empty"

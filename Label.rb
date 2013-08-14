@@ -98,6 +98,7 @@ class Label < RPCQooxdooPath
           Persons.create( s )
         end
       }
+      "Got users #{users.collect{|u| u._login_name}.join(':')}"
     when /course/
       course = JSON.parse( tr._data ).to_sym
       dputs(3){"Course is #{course.inspect}"}
@@ -107,6 +108,8 @@ class Label < RPCQooxdooPath
         "#{tr._user}_#{course._responsible}" )
       course._teacher = Persons.match_by_login_name( 
         "#{tr._user}_#{course._teacher}" )
+      course._assistant = Persons.match_by_login_name( 
+        "#{tr._user}_#{course._assistant}" )
       course._students = course._students.collect{|s| "#{tr._user}_#{s}"}
       course._ctype = CourseTypes.match_by_name( course._ctype )
       course._center = Persons.match_by_login_name( tr._user )
@@ -118,6 +121,7 @@ class Label < RPCQooxdooPath
         dputs(3){"Creating course #{course._name}"}
         Courses.create( course )
       end
+      "Updated course #{course._name}"
     when /grades/
       JSON.parse( tr._data ).collect{|grade|
         grade.to_sym!
@@ -148,6 +152,7 @@ class Label < RPCQooxdooPath
         dputs(3){"Updating exams"}
         course.zip_read( file )
       end
+      "Read file #{file}"
     end
   end
 end

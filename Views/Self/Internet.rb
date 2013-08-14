@@ -6,7 +6,7 @@ class SelfInternet < View
     @auto_update = 10
     @auto_update_send_values = false
     @functions_need = [:internet]
-    @isp = JSON.parse( $lib_net.call( :isp_params ) )
+    @isp = $lib_net.isp_params
 
     gui_vbox do
       show_html :connection_status
@@ -24,12 +24,12 @@ class SelfInternet < View
   def can_connect( session )
     if not ( ag = AccessGroups.allow_user_now( session.owner ) )[0]
       return ag[1]
-    elsif $lib_net.call( :captive_restriction_get ).length > 0
+    elsif $lib_net.get_var_file( :RESTRICTED ).join.length > 0
       return 2
     elsif Internet.free( session.owner )
       return 0
     else
-      return session.owner.internet_credit.to_i >= $lib_net.call( :user_cost_max ).to_i ? 
+      return session.owner.internet_credit.to_i >= $lib_net.print( :USER_COST_MAX ).to_i ? 
         0 : 1
     end
   end
@@ -66,7 +66,7 @@ class SelfInternet < View
         reply( :hide, :disconnect )
     end
     show_button = :connect
-    connected = $lib_net.call_args( :user_connected, session.owner.login_name )
+    connected = $lib_net.call( :user_connected, session.owner.login_name )
     if can_connect( session ) == 0
       dputs( 3 ){ "User_connected #{session.owner.login_name}: #{connected.inspect}" +
           " - #{@isp.inspect}" }
@@ -92,7 +92,7 @@ class SelfInternet < View
   end
   
   def update_isp( session )
-    @isp = JSON.parse( $lib_net.call( :isp_params ) )
+    @isp = $lib_net.isp_params
     show_status = true
     #show_status = ( ( @isp['conn_type'] == 'ondemand' ) or 
     #    ( can_connect(session) == 0 ) )
@@ -140,7 +140,7 @@ class SelfInternet < View
   def rpc_button_connect( session, data )
     if session.web_req
       ip = session.web_req.peeraddr[3]
-      $lib_net.call_args( :user_connect, "#{ip} #{session.owner.login_name}" )
+      $lib_net.async( :user_connect, "#{ip} #{session.owner.login_name}" )
       rpc_update( session, true )
     end
   end
@@ -148,7 +148,7 @@ class SelfInternet < View
   def rpc_button_disconnect( session, data )
     if session.web_req
       #ip = session.web_req.peeraddr[3]
-      $lib_net.call_args( :user_disconnect_name, "#{session.owner.login_name}" )
+      $lib_net.async( :user_disconnect_name, "#{session.owner.login_name}" )
       rpc_update( session, true )
     end
   end

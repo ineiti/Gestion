@@ -8,14 +8,14 @@ module Internet
       dputs(3){"User is #{u}"}
       cost = $lib_net.call( :user_cost_now ).to_i
 
-      isp = JSON.parse( $lib_net.call( :isp_params ) ).to_sym
+      isp = $lib_net.isp_params.to_sym
       dputs(3){"ISP-params is #{isp.inspect} and conn_type is #{isp._conn_type}"}
       user = Persons.match_by_login_name( u )
       if user
         dputs(3){"Found user #{u}: #{user.full_name}"}
         if not ( ag = AccessGroups.allow_user_now( u ) )[0]
           dputs(2){"Kicking user #{u} because of accessgroups: #{ag[1]}"}
-          $lib_net.call_args( :user_disconnect_name, 
+          $lib_net.call( :user_disconnect_name, 
             "#{user.login_name}")
         elsif self.free( user )
           dputs(2){"User #{u} goes free"}
@@ -26,7 +26,7 @@ module Internet
             user.internet_credit = user.internet_credit.to_i - cost
           else
             dputs(2){"User #{u} has not enough money left - kicking"}
-            $lib_net.call_args( :user_disconnect_name, 
+            $lib_net.call( :user_disconnect_name, 
               "#{user.login_name}")
           end
         end
@@ -56,7 +56,7 @@ module Internet
   end
   
   def self.free( user )
-    isp = JSON.parse( $lib_net.call( :isp_params ) ).to_sym
+    isp = $lib_net.isp_params.to_sym
     if isp._allow_free != "true"
       return false
     end
@@ -101,7 +101,7 @@ module Internet
   end
 
   def self.connect_user( ip, name )
-    $lib_net.call_args( :user_connect, "#{ip} #{name} " +
+    $lib_net.call( :user_connect, "#{ip} #{name} " +
         "#{self.free(name) ? 'yes' : 'no'}" )
   end
 end

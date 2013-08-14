@@ -289,7 +289,7 @@ class CourseModify < View
     
     super( session ) +
       reply( :empty, fields ) +
-      reply( :update, :assistant => [0, "---"]) +
+      reply( :update, :assistant => [[0, "---"]]) +
       fields.collect{|p|
       reply( :update, p => resps )
     }.flatten

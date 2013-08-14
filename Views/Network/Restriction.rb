@@ -20,17 +20,17 @@ class NetworkRestriction < View
   end
 
   def rpc_button_remove_restriction( session, args )
-    $lib_net.call_args( :captive_restriction_set, "" )
+    $lib_net.call( :captive_restriction_set, "" )
     rpc_update( session )
   end
 
   def rpc_button_restrict_info1( session, args )
-    $lib_net.call_args( :captive_restriction_set, "info1" )
+    $lib_net.call( :captive_restriction_set, "info1" )
     rpc_update( session )
   end
 
   def rpc_button_restrict_info2( session, args )
-    $lib_net.call_args( :captive_restriction_set, "info2" )
+    $lib_net.call( :captive_restriction_set, "info2" )
     rpc_update( session )
   end
 end
