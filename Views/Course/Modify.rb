@@ -122,7 +122,7 @@ class CourseModify < View
       if rep[0].class == String
         ret = reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Click on one of the links:<ul>" +
-            rep.collect{|r| "<li><a href=\"#{r}\">#{r}</a></li>" }.join('') +
+            rep.collect{|r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
             "</ul>" )
       elsif rep.length > 0
         ret = reply( :window_show, :printing ) +
@@ -145,7 +145,7 @@ class CourseModify < View
           reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
       else
         ret + reply( "window_show", "missing_data" ) +
-          reply( "update", :missing => "Click on the link: <a href=\"#{rep}\">PDF</a>" )
+          reply( "update", :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>" )
       end
     end
   end

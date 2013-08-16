@@ -55,7 +55,7 @@ class PersonModify < View
         if file.class == String
           rep += reply( :window_show, :printing ) +
             reply( :update, :msg_print => "Click to download:<ul>" +
-              "<li><a href=\"#{file}\">#{file}</a></li></ul>" )
+              "<li><a target='other' href=\"#{file}\">#{file}</a></li></ul>" )
         end
       when "close"
         rep = reply( :window_hide )

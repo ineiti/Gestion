@@ -204,7 +204,7 @@ class CourseGrade < View
       if file = course.zip_create
         @files.data_str.push file
         ret = reply( :update, :txt => "Download skeleton: " +
-            "<a href='/tmp/#{file}'>#{file}</a>" ) +
+            "<a target='other' href='/tmp/#{file}'>#{file}</a>" ) +
           reply( :unhide, :upload )
       end
     end
@@ -251,7 +251,7 @@ class CourseGrade < View
       course.sync_start
 
       reply( :window_show, :sync ) +
-        reply( :auto_update, -10 ) +
+        reply( :auto_update, -5 ) +
         rpc_update_with_values( session, data )
     else
       reply( :window_show, :sync ) +

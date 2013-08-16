@@ -165,7 +165,7 @@ class CourseDiploma < View
             files.collect{|name,file|
             if File.exists? file
               %x[ cp #{file} /tmp ] 
-              "<li><a href=\"/tmp/#{File.basename(file)}\">#{name}</a></li>"
+              "<li><a target='other' href=\"/tmp/#{File.basename(file)}\">#{name}</a></li>"
             else
               "<li>#{name} - not found</li>"
             end
