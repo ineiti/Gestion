@@ -73,7 +73,7 @@ else
   begin
     require "../LibNet/LibNet.rb"
     dputs(0){ "Loading Libnet" }
-    $lib_net = LibNet.new
+    $lib_net = LibNet.new( get_config( false, :LibNet, :simul ) )
     dputs(0){ "Loaded Libnet" }
   rescue LoadError
     dputs(0){ "Couldn't load LibNet!" }

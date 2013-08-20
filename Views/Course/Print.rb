@@ -11,12 +11,9 @@ class CoursePrint < View
     gui_vbox do
       gui_vbox do
         show_print :print_presence
-        gui_hbox :nogroup do
-          show_print :print_exa_1
-          show_print :print_exa_2
-          show_print :print_exa_3
-        end
-        #show_print :print_report
+        show_print :print_exa_1
+        show_print :print_exa_2
+        show_print :print_exa_3
       end
       gui_window :missing_data do
         show_html :missing

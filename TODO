@@ -1,22 +1,5 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
-today:
-- printing
-  - print out
-    - diploma-example for Mahamat Djimet
-    - documents for Moussa
-- fetch all things through mercurial
-- add "save as user" to Network::Share
-- no inactivation of fields when pressing a button in Frontend
-
-done:
-- update rest of promotion
-- fix bug with error in readline
-  - add printing-page specific to profeda-courses
-
-not possible:
-  - install printer on debian
-
 BUGS:
         - LibNet should perhaps move to Gestion or QooxView/Helpers, so that it
           can depend on configuration
@@ -47,6 +30,7 @@ BUGS:
 Security:
 
 UI:
+        - Network::Share - add "save as user" to 
         - CoursePrint - add "presence_sheet" and other sheets like exams and stuff
         - CourseGrade - add comment to file-uploads, so people know what to
           upload
@@ -224,6 +208,9 @@ To check:
 
 
 ** FIXED **:
+        - B 130820: update rest of promotion
+        - B 130820: fix bug with error in readline
+        - F 130820: add printing-page specific to profeda-courses
         - UI130802: Course* sort students-list
         - B 130720: Install mercurial repository on D-server
         - UI130802: CourseDiplomas: make name-column wider
