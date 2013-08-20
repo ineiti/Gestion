@@ -1,5 +1,9 @@
 Important notices for versions:
 
+- 130819: 1.1.15
+  - changes in LibNet: now you need to compile a small tool "msgtool", so that
+   the ruby-part and the bash-part can communicate
+
 - 130627: 1.1.11
   - changes of names in templates for diplomas:
     - MENTION -> GRADE

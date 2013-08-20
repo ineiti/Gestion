@@ -14,7 +14,7 @@ require 'net/http'
 
 class Courses < Entities
   attr_reader :dir_diplomas, :dir_exas, :dir_exas_share,
-    :print_presence, :print_presence_small
+    :print_presence, :print_presence_small, :print_exa, :print_exa_long
   
   def setup_data
 
@@ -71,6 +71,12 @@ class Courses < Entities
     @presence_sheet_small ||= "presence_sheet_small.ods"
     @print_presence = OpenPrint.new( "#{@dir_diplomas}/#{@presence_sheet}" )
     @print_presence_small = OpenPrint.new( "#{@dir_diplomas}/#{@presence_sheet_small}" )
+    @print_exa = (1..3).collect{|i|
+      OpenPrint.new( "#{@dir_diplomas}/exa_#{i}.ods" )
+    }
+    @print_exa_long = (1..3).collect{|i|
+      OpenPrint.new( "#{@dir_diplomas}/exa_#{i}_long.ods" )
+    }
   end
   
   def set_entry( id, field, value )
@@ -452,6 +458,41 @@ base_gestion
     pp.print( studs.flatten(1) + dow_adds + [
         [ /Teacher/, teacher.full_name ],
         [ /Course_name/, name ],
+        [ /2010-08-20/, dstart.to_s ],
+        [ /20.08.10/, dstart.strftime("%d/%m/%y") ],
+        [ /2010-10-20/, dend.to_s ],
+        [ /20.10.10/, dend.strftime("%d/%m/%y") ],
+        [ /123/, students.count ],
+        [ /321/, duration ],
+      ] )
+  end
+  
+  def print_exa( lp_cmd, number )
+    stud_nr = 1
+    studs = students.sort.collect{|s|
+      stud = Entities.Persons.match_by_login_name( s )
+      stud_str = stud_nr.to_s.rjust( 2, '0' )
+      stud_nr += 1
+      [ [ /Nom#{stud_str}/, stud.full_name ],
+        [ /Login#{stud_str}/, stud.login_name ],
+        [ /Passe#{stud_str}/, stud.password_plain ] ]
+    }
+    (stud_nr..30).each{|s|
+      studs.push [[/Nom#{s.to_s.rjust(2,'0')}/, ""]]
+    }
+    dputs( 3 ){ "Students are: #{studs.inspect}" }
+
+    pp = if stud_nr <= 12
+      @proxy.print_exa[ number - 1 ]
+    else
+      @proxy.print_exa_long[ number - 1 ]
+    end
+
+    lp_cmd and pp.lp_cmd = lp_cmd
+    pp.print( studs.flatten(1) + [
+        [ /Teacher/, teacher.full_name ],
+        [ /Course_name/, name ],
+        [ /Center_name/, center.full_name ],
         [ /2010-08-20/, dstart.to_s ],
         [ /20.08.10/, dstart.strftime("%d/%m/%y") ],
         [ /2010-10-20/, dend.to_s ],
@@ -854,7 +895,8 @@ base_gestion
 
     dputs(4){"Responsibles"}
     @sync_state = sync_s += "<li>Transferring responsibles: "
-    users = [ teacher.login_name, responsible.login_name, assistant.login_name, center.login_name ]
+    users = [ teacher.login_name, responsible.login_name, center.login_name ]
+    assistant and users.push assistant.login_name
     ret = sync_transfer( :users, users.collect{|s|
         Persons.match_by_login_name( s ) 
       }.to_json, slow )

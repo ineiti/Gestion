@@ -81,12 +81,12 @@ class NetworkTigo < View
   end
 
   def rpc_button_add_promotion( session, data )
-    $lib_net.async :isp_tigo_promotion_add, data["size"], session.owner.login_name
+    $lib_net.call :isp_tigo_promotion_add, data["size"], session.owner.login_name
     rpc_update( session )
   end
 
   def rpc_button_update_params( session, data )
-    $lib_net.async :isp_update_vars, :force
+    $lib_net.call :isp_update_vars, :force
     return reply( :update, update( session ) )
 
     if `ifconfig` =~ /ppp0/
@@ -135,11 +135,11 @@ class NetworkTigo < View
     rssi, ber = $lib_net.print( :ISP_TIGO_SIGNAL ).split(",")
     if stat == "1"
       antenna = case ci
-      when /F29/
+      when /29/
         ":Bitkine1"
-      when /F2A/
+      when /2A/
         ":Bitkine2"
-      when /F2B/
+      when /2B/
         ":Bitkine3"
       when /AB7/
         ":Route Bitkine"

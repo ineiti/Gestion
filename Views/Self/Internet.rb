@@ -37,7 +37,9 @@ class SelfInternet < View
   def update_connection_status( session )
     case (cc = can_connect( session ))
     when 0
-      status = $lib_net.call( :isp_connection_status ).to_i
+      status = $lib_net.call( :isp_connection_status )
+      ddputs(3){"Connection-status is #{status.inspect}"}
+      status = status.to_i
       status_str = %w( None PPP PAP IP VPN )
       status_color = %w( ff0000 ff2200 ff5500 ffff88 88ff88 )
       status_width = %w( 25 30 35 100 150 )

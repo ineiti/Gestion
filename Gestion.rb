@@ -8,7 +8,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="1.1.14"
+VERSION_GESTION="1.1.15"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -46,7 +46,7 @@ Permission.add( 'default', ',Welcome,SelfShow' )
 Permission.add( 'internet', 'SelfInternet,SelfChat', 'default' )
 Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
-Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction', 'assistant' )
+Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint', 'assistant' )
 Permission.add( 'secretary', 'SelfServices,CourseModify,FlagAdminPerson,' + 
     'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
 Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
@@ -72,6 +72,7 @@ if uri = get_config( false, :LibNet, :URI )
 else
   begin
     require "../LibNet/LibNet.rb"
+    dputs(0){ "Loading Libnet" }
     $lib_net = LibNet.new
     dputs(0){ "Loaded Libnet" }
   rescue LoadError

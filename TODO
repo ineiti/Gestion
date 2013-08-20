@@ -1,7 +1,32 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
+today:
+- printing
+  - print out
+    - diploma-example for Mahamat Djimet
+    - documents for Moussa
+- fetch all things through mercurial
+- add "save as user" to Network::Share
+- no inactivation of fields when pressing a button in Frontend
+
+done:
+- update rest of promotion
+- fix bug with error in readline
+  - add printing-page specific to profeda-courses
+
+not possible:
+  - install printer on debian
+
 BUGS:
+        - LibNet should perhaps move to Gestion or QooxView/Helpers, so that it
+          can depend on configuration
+        - LibNet:: readlines somewhere in env where file does just not exist..
+        - accredited_profeda: QRcode trop petit -> mettre à droite et plus grand?
+        - CourseDiplomas: very slow when enqueuing files - qrcode?
+        - CourseDiplomas: when nothing converted yet, it's like it's already
+          done
 	- in Binaries/start_gestion <ctrl-c> doesn't restart Gestion
+          can't restart Gestion anymore with a new call to start_gestion
         - can't show PNGs
         - Label: "Pas passé" is not "passé avec succès"
         - Form is still active, even if shaded out
@@ -22,6 +47,9 @@ BUGS:
 Security:
 
 UI:
+        - CoursePrint - add "presence_sheet" and other sheets like exams and stuff
+        - CourseGrade - add comment to file-uploads, so people know what to
+          upload
         - CourseGrade - list is sorted, but selected student is not on top
         - sort student-names in presence-sheet
 	- CourseDiplomas: take away "print to PDF" and insert direct links in the table
