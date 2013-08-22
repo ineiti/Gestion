@@ -150,50 +150,7 @@ class NetworkShare < View
     }
     dputs(4){"@samba is now -#{@samba.data_str.inspect}-"}
 
-    a = Command::run( "cat Files/smb.conf" )
-    a.gsub!( /WORKGROUP/, @samba.data_str['domain'] )
-    a.gsub!( /SERVER/, "Profeda-server on #{@samba.data_str['domain']}" )
-    a += "\n"
-    Shares.search_all.each{|sh|
-      a += "\n\n[#{sh.name}]\n  path = #{sh.path}\n  comment = #{sh.comment}\n"
-      if sh.public == ["Yes"]
-        a += "  guest ok = yes\n  writeable = yes\n"
-      else
-        read = []
-        write = []
-        dputs(4){"sh is #{sh.class}"}
-        sh.acl.class == Hash and sh.acl.each{|k,v|
-          dputs(4){"Found #{k}: #{v}"}
-          case v
-          when /rw/
-            write.push k
-          when /ro/
-            read.push k
-          end
-        }
-        a += "  read list = #{read.join(',')}\n  write list = #{write.join(',')}\n" +
-          "  valid users = #{ ( read + write ).uniq.join(',')}\n"
-      end
-      #a += "  hide files = /~$*/*.tmp/\n   blocking locks = no\n"
-      #a += "  create mask = 741\n  map archive = yes\n  map system = yes\n" +
-      #  "  map hidden = yes\n"
-    }
-    if not get_config( false, :Samba, :simulation )
-      file_smb = "#{get_config( '/etc/samba', :Samba, :config_dir )}/smb.conf"
-      File.open( file_smb, 'w' ){|f|
-        f.write( a )
-      }
-
-      if File.exists? "/etc/init.d/samba"
-        Command::run( "/etc/init.d/samba restart")
-      elsif File.exists? "/etc/init.d/smb"
-        Command::run( "/etc/init.d/smb restart")
-        Command::run( "/etc/init.d/nmb restart")
-      else
-        dputs(0){"Couldn't restart samba as there was no init.d-file"}
-      end
-    end
-
+    Shares.save_config( @samba.data_str['domain'] )
     return []
   end
 

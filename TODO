@@ -1,9 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - CourseDiplomas: very slow when enqueuing files - qrcode?
 	- in Binaries/start_gestion <ctrl-c> doesn't restart Gestion
           can't restart Gestion anymore with a new call to start_gestion
+        - CourseDiplomas: very slow when enqueuing files - qrcode?
         - PersonAdmin: when deleting person that is shown, there is an error
 
         - when migrating with old value-names, it gives an error - how to keep
@@ -21,14 +21,13 @@ BUGS:
 Security:
 
 UI:
-        - Network::Share - add "save as user" to 
+        - CourseGrade::sync - catch timeouts on requests
         - CourseGrade - add comment to file-uploads, so people know what to
           upload
-        - sort student-names in presence-sheet
-	- CourseDiplomas: take away "print to PDF" and insert direct links in the table
-        - Delete selection of a table upon "empty"
+	- CourseDiplomas: take away "print to PDF" and insert direct links 
+          in the table -> take care about security-risk if only adding a
+          simple manager for diplomas
         - CourseTabs still very slow for startup
-        - CourseGrade::sync - catch timeouts on requests
 
         - CourseDiplomas: display random-id if available
         - Courses::center needs work:
@@ -197,6 +196,9 @@ To check:
 
 
 ** FIXED **:
+        - F 130822: Network::Share - add "force (user|group)" to smb.conf
+        - UI130822: Delete selection of a table upon "empty"
+        - UI130822: sort student-names in presence-sheet
         - B 130822: Form is still active, even if shaded out
         - UI130822: CourseGrade - list is sorted, but selected student is not on top
         - B 130822: Label: "Pas passé" is not "passé avec succès"

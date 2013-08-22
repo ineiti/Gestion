@@ -438,7 +438,9 @@ base_gestion
     return false if not teacher
     return false if not start or not data_get( :end ) or students.count == 0
     stud_nr = 1
-    studs = students.collect{|s|
+    studs = students.sort{|a,b|
+      Persons.match_by_login_name( a ).full_name <=>
+      Persons.match_by_login_name( b ).full_name }.collect{|s|
       stud = Entities.Persons.match_by_login_name( s )
       stud_str = stud_nr.to_s.rjust( 2, '0' )
       stud_nr += 1
