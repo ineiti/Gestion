@@ -516,7 +516,11 @@ base_gestion
     elsif ( not grade ) or ( grade.to_s == "NP" )
       "not passed"
     elsif update
-      "done"
+      if get_files.find{|f| f =~ /^[0-9]+-#{student.login_name}\./}
+        "done"
+      else
+        "not created"
+      end
     else
       "queued"
     end

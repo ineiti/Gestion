@@ -123,9 +123,10 @@ class CourseGrade < View
           reply(:update, {:courses => [course_id]}) +
           reply(:focus, :mean1 )
         if course.students.size > 0
-          ret += reply(:update, {:students => [course.students[0]]} ) +
+          first = course.list_students[0][0]
+          ret += reply(:update, {:students => [first]} ) +
             update_grade( {"courses" => [course.course_id],
-              "students" => [course.students[0]]})
+              "students" => [first]})
         end
 
         ret += to_means( course ){|s, i| 

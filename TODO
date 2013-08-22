@@ -1,18 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - LibNet should perhaps move to Gestion or QooxView/Helpers, so that it
-          can depend on configuration
-        - LibNet:: readlines somewhere in env where file does just not exist..
-        - accredited_profeda: QRcode trop petit -> mettre à droite et plus grand?
         - CourseDiplomas: very slow when enqueuing files - qrcode?
-        - CourseDiplomas: when nothing converted yet, it's like it's already
-          done
 	- in Binaries/start_gestion <ctrl-c> doesn't restart Gestion
           can't restart Gestion anymore with a new call to start_gestion
-        - can't show PNGs
-        - Label: "Pas passé" is not "passé avec succès"
-        - Form is still active, even if shaded out
         - PersonAdmin: when deleting person that is shown, there is an error
 
         - when migrating with old value-names, it gives an error - how to keep
@@ -31,10 +22,8 @@ Security:
 
 UI:
         - Network::Share - add "save as user" to 
-        - CoursePrint - add "presence_sheet" and other sheets like exams and stuff
         - CourseGrade - add comment to file-uploads, so people know what to
           upload
-        - CourseGrade - list is sorted, but selected student is not on top
         - sort student-names in presence-sheet
 	- CourseDiplomas: take away "print to PDF" and insert direct links in the table
         - Delete selection of a table upon "empty"
@@ -208,9 +197,18 @@ To check:
 
 
 ** FIXED **:
+        - B 130822: Form is still active, even if shaded out
+        - UI130822: CourseGrade - list is sorted, but selected student is not on top
+        - B 130822: Label: "Pas passé" is not "passé avec succès"
+        - B 130822: CourseDiplomas: when nothing converted yet, it's like it's already
+          done
+        - B 130820: Config:LibNet:simul whether we do the forking or not
+        - B 130820: LibNet:: readlines somewhere in env where file does just not exist..
+        - B 130820: CoursePrint - add "presence_sheet" and other sheets like exams and stuff
         - B 130820: update rest of promotion
         - B 130820: fix bug with error in readline
         - F 130820: add printing-page specific to profeda-courses
+        - UI130819: accredited_profeda: QRcode trop petit -> mettre à droite et plus grand?
         - UI130802: Course* sort students-list
         - B 130720: Install mercurial repository on D-server
         - UI130802: CourseDiplomas: make name-column wider

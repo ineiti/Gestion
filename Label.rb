@@ -65,7 +65,11 @@ class Label < RPCQooxdooPath
       else
         ""
       end
-      ERB.new( File.open("Files/label.erb"){|f|f.read}).result(binding)
+      if grade.mean >= 10
+        ERB.new( File.open("Files/label.erb"){|f|f.read}).result(binding)
+      else
+        ERB.new( File.open("Files/label_notpassed.erb"){|f|f.read}).result(binding)
+      end
     else
       ERB.new( File.open("Files/label_notfound.erb"){|f|f.read}).result(binding)
     end
