@@ -8,7 +8,7 @@
 require 'zip/zipfilesystem'; include Zip
 require 'docsplit'
 require 'rqrcode_png'
-require 'ftools'
+#require 'ftools'
 require 'net/http'
 
 

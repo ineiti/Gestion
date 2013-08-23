@@ -33,6 +33,8 @@ else
       if grep -q 6 /etc/issue; then
         OOFFICE=openoffice.org
       fi
+    elif [ -f /etc/os-release ]; then
+      . /etc/os-release
     fi
     if [ "$DISTRIB_ID" = "Ubuntu" -o "$DISTRIB_ID" = "Debian" ]; then
       echo -n "Shall I install all dependencies? [Y/n] "
@@ -52,6 +54,19 @@ else
       else
         echo OK, wont run Gestion then
       fi
+    elif [ "$ID" = "archarm" ]; then
+      echo -n "Shall I install all dependencies? [Y/n] "
+      read a
+      if [ "$a" != "n" -a "$a" != "N" ]; then
+        pacman -S sqlite3 gammu bc ruby sudo ruby-rack ruby-iconv
+        echo -n "Do you also want ldap?"
+        read a
+        if [ "$a" = "y" -o "$a" = "Y" ]; then
+          Binaries/install_ldap
+        fi
+        echo $( cd ../QooxView; ./update_sqlite3 )
+        ./Gestion.rb -p $@
+       fi
     else
       echo Sorry, dont know how to install on $DISTRIB_ID
     fi

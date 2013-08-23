@@ -8,6 +8,7 @@ class NetworkBlock < View
     @functions_need = [:internet]
     @order = 100
     @blocking = Entities.Statics.get( :NetworkBlock )
+    @blocking.data_str == "" and @blocking.data_str = []
     update_block( @blocking.data_str )
 
     gui_hbox do

@@ -5,6 +5,8 @@ BUGS:
           can't restart Gestion anymore with a new call to start_gestion
         - CourseDiplomas: very slow when enqueuing files - qrcode?
         - PersonAdmin: when deleting person that is shown, there is an error
+        - configure better print, libnet, uploadwidget, so that it get's correctly
+          addressed with a configuration
 
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
@@ -21,6 +23,8 @@ BUGS:
 Security:
 
 UI:
+        - PersonTabs - put search on top of results and stretch results all
+          the way down - perhaps add a gui-option of "stretch"
         - CourseGrade::sync - catch timeouts on requests
         - CourseGrade - add comment to file-uploads, so people know what to
           upload

@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -I../QooxView -I../AfriCompta -wKU
+#!/usr/bin/ruby -I../QooxView -I../AfriCompta  -wKU
 # ! /usr/local/opt/ruby/bin/ruby -I../QooxView -I../AfriCompta -w
 # ! /opt/local/bin/ruby1.9 -I../QooxView -I. -wKU
 
@@ -73,9 +73,7 @@ if uri = get_config( false, :LibNet, :URI )
 else
   begin
     require "../LibNet/LibNet.rb"
-    dputs(0){ "Loading Libnet" }
     $lib_net = LibNet.new( get_config( false, :LibNet, :simulation ) )
-    dputs(0){ "Loaded Libnet" }
   rescue LoadError
     dputs(0){ "Couldn't load LibNet!" }
     $lib_net = nil
