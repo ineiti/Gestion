@@ -27,6 +27,7 @@ begin
   require 'Info'
   require 'Label'
   require 'ACQooxView'
+  ACQooxView.load_entities
 rescue Exception => e
   dputs( 0 ){ "#{e.inspect}" }
   dputs( 0 ){ "#{e.to_s}" }
@@ -73,7 +74,7 @@ else
   begin
     require "../LibNet/LibNet.rb"
     dputs(0){ "Loading Libnet" }
-    $lib_net = LibNet.new( get_config( false, :LibNet, :simul ) )
+    $lib_net = LibNet.new( get_config( false, :LibNet, :simulation ) )
     dputs(0){ "Loaded Libnet" }
   rescue LoadError
     dputs(0){ "Couldn't load LibNet!" }
