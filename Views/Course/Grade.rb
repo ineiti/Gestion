@@ -14,25 +14,24 @@ class CourseGrade < View
       @files.data_str = []
     end
 
+    #    gui_vboxgl do
     gui_hbox do
-      gui_hbox :nogroup do
-        gui_vbox :nogroup do
-          show_list_single :students, :width => 300, :callback => true
-          show_str_ro :last_synched
-          show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
-        end
-        gui_vbox :nogroup do
-          show_int :mean1
-          show_int :mean2
-          show_int :mean3
-          show_int :mean4
-          show_int :mean5
-          show_int_ro :files_saved
-          show_str :remark
-          show_str :first_name, :width => 150
-          show_str :family_name
-          show_button :save, :upload
-        end
+      gui_vbox :nogroup do
+        show_list_single :students, :width => 300, :callback => true, :flexheight => 1
+        show_str_ro :last_synched
+        show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
+      end
+      gui_vbox :nogroup do
+        show_int :mean1
+        show_int :mean2
+        show_int :mean3
+        show_int :mean4
+        show_int :mean5
+        show_int_ro :files_saved
+        show_str :remark
+        show_str :first_name, :width => 150
+        show_str :family_name
+        show_button :save, :upload
       end
       gui_window :transfer do
         show_html :txt
@@ -119,7 +118,7 @@ class CourseGrade < View
         dputs( 3 ){ "replying" }
         ret = rpc_update( session ) +
           #reply(:empty, [:students]) +
-          update_form_data( course ) +
+        update_form_data( course ) +
           reply(:update, {:courses => [course_id]}) +
           reply(:focus, :mean1 )
         if course.students.size > 0

@@ -76,7 +76,7 @@ else
     $lib_net = LibNet.new( get_config( false, :LibNet, :simulation ) )
   rescue LoadError
     dputs(0){ "Couldn't load LibNet!" }
-    $lib_net = nil
+    exit
   end
 end
 

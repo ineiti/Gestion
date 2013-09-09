@@ -3,11 +3,14 @@ class PersonTabs < View
     @order = 10
     @update = true
 
-    gui_vboxg :nogroup do
-      show_list_single :persons, "[]", :callback => true
+    gui_vbox :nogroup do
+      #gui_fields do
       show_str :search #, :callback => :search
+      show_list_single :persons, "[]", :callback => true
+      show_arg :persons, :flexheight => 1
       show_button :start_search, :delete, :add
-			
+      #end
+
       gui_window :add_person do
         show_str :complete_name, :width => 150
         show_str :login_prop

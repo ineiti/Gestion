@@ -89,9 +89,10 @@ class Label < RPCQooxdooPath
         else
           s.delete :password
         end
-        %w( person_id permissions groups ).each{|f|
+        %w( person_id groups ).each{|f|
           s.delete f.to_sym
         }
+        s._permissions = s._permissions.index( "teacher" ) ? [ "teacher" ] : []
         dputs(3){"Person is #{s.inspect}"}
         dputs(4){"Looking for #{s._login_name}"}
         if stud = Persons.match_by_login_name( s._login_name )

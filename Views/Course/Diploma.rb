@@ -110,7 +110,7 @@ class CourseDiploma < View
     states += course.make_pdfs_state.keys.reject{|k| k == "0"}.
       collect{|s|
       st = course.make_pdfs_state[s]
-      [s, [Persons.find_by_login_name(s).full_name, st[0], st[1]]]
+      [s, [Persons.match_by_login_name(s).full_name, st[0], st[1]]]
     }.sort{|a,b|
       a[1][0] <=> b[1][0]
     }
@@ -142,7 +142,7 @@ class CourseDiploma < View
           file = "Not found"
         end
         ddputs(3){"Filename is #{file}"}
-        name = ( ( p = Persons.find_by_login_name( f ) ) and p.full_name ) ||
+        name = ( ( p = Persons.match_by_login_name( f ) ) and p.full_name ) ||
           {"all.zip"=>"All files", "000-4pp.pdf"=>"4 on 1 page",
           "000-all.pdf"=>"All diplomas"}[f] || "Unknown"
         [ name, file ]

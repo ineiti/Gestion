@@ -34,7 +34,7 @@ class CourseModify < View
           show_print :print_presence
           gui_vbox do
             gui_fields do
-              show_list :students
+              show_list :students, :flexheight => 1
               show_button :bulk_add, :del_student, :edit_student
             end
             show_print :print_student

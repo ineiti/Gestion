@@ -3,6 +3,11 @@ class CourseTabs < View
     @order = 20
     @update = true
     @functions_need = [:courses]
+    
+    gui_vbox :nogroup do
+      show_list_single :courses, :flexheight => 1, :callback => true
+      show_button :delete, :add
+    end
 
     gui_window :error do
       show_html "<h1>You're not allowed to do that</h1>"
@@ -35,11 +40,6 @@ class CourseTabs < View
           show_button :new_course, :close
         end
       end
-    end
-    
-    gui_vboxg :nogroup do
-      show_list_single :courses, :callback => true
-      show_button :delete, :add
     end
   end
   
