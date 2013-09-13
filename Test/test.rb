@@ -8,6 +8,7 @@ require 'QooxView'
 require 'ACQooxView'
 require 'LibNet'
 require 'Label'
+ACQooxView.load_entities
 
 $lib_net = LibNet.new
 
@@ -29,7 +30,7 @@ permissions_init
 QooxView.init( '../Entities', '../Views' )
 
 tests = %w( login view tasks internet info course person )
-tests = %w( course )
+tests = %w( share )
 #tests = %w( person )
 tests.each{|t|
   require "ge_#{t}"

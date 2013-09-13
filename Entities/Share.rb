@@ -68,6 +68,8 @@ class Shares < Entities
       elsif File.exists? "/etc/init.d/smb"
         Command::run( "/etc/init.d/smb restart")
         Command::run( "/etc/init.d/nmb restart")
+      elsif File.exists? "/etc/systemd"
+        Command::run( "systemctl restart smbd nmbd" )
       else
         dputs(0){"Couldn't restart samba as there was no init.d-file"}
       end
@@ -79,6 +81,30 @@ class Share < Entity
   def setup_instance
     if not self.acl
       self.acl = {}
+    end
+  end
+  
+  def add_htaccess
+    if File.exists? path
+      File.open( "#{path}/.htaccess", "w" ){|f|
+        f << "AuthType Basic
+AuthName 'Restricted Access'
+AuthUserFile '#{path}/.htpasswd'
+Require valid-user"
+      }
+      File.exists? passfile = "#{path}/.htpasswd" and
+        FileUtils.rm passfile
+      if acl.class == Hash 
+        acl.each{|k,v|
+          ddputs(4){"Adding #{k} to htpasswd"}
+          case v
+          when /rw|ro/
+            ddputs(4){"Really adding #{k} to #{passfile}"}
+            user = Persons.find_by_login_name( k )
+            %x[ htpasswd -nbd #{user.login_name} "#{user.password_plain }" >> #{passfile} ]
+          end
+        }
+      end
     end
   end
 end

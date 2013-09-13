@@ -448,7 +448,8 @@ class Person < Entity
   def update_smb_passwd( pass = password )
     if ConfigBase.has_function?( :share ) and ( groups and groups.index( "share" ) )
       if not @proxy.has_storage? :LDAP
-        %x[ adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name} ]
+        %x[ if which adduser; then adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name};
+            else useradd #{self.login_name}; fi ]
       end
       dputs(1){"Changing password in Samba to #{pass}"}
       dputs(3){"( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name}"}
@@ -667,7 +668,8 @@ class Person < Entity
     }
 
     if not @proxy.has_storage? :LDAP
-      %x[ deluser #{self.login_name} ]
+      %x[ if which deluser; then deluser #{self.login_name}; else
+          userdel #{self.login_name}; fi ]
     end
     if ConfigBase.has_function?( :share )
       %x[ smbpasswd -x #{self.login_name} ]

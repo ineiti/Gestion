@@ -1,4 +1,5 @@
 #!/bin/bash
 
-DIR=$( dirname $0 )
-BACKUP_DIR=/var/www/Backups
+WDIR=$( dirname ${BASH_SOURCE[0]} )/..
+BACKUP_DIR=$WDIR/Backups
+test -d $BACKUP_DIR || mkdir -p $BACKUP_DIR

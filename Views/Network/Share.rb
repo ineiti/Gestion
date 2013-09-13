@@ -24,7 +24,7 @@ class NetworkShare < View
         end
         gui_vbox :nogroup do
           show_block :config, :width => 200
-          show_button :share_save, :change_path
+          show_button :share_save, :change_path, :add_htaccess
         end
         gui_vbox :nogroup do
           show_list_single :users, :width => 200
@@ -152,6 +152,13 @@ class NetworkShare < View
 
     Shares.save_config( @samba.data_str['domain'] )
     return []
+  end
+  
+  def rpc_button_add_htaccess( session, data )
+    share = Shares.find_by_share_id( data["shares"][0] )
+    ddputs(3){"Working with #{share}"}
+    
+    share.add_htaccess
   end
 
 end

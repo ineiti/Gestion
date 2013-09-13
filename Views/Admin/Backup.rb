@@ -25,8 +25,8 @@ class AdminBackup < View
 	
   def rpc_button_do_restore( session, data )
     file = data["backups"][0]
-    if File::exists? "/var/www/Backups/#{file}"
-      dputs( 0 ){ "Going to call backup for #{file}" }
+    if File::exists? "Backups/#{file}"
+      dputs( 0 ){ "Going to call restore for #{file}" }
       Thread.new{
         `nohup #{GESTION_DIR}/Binaries/restore #{file}`
       }
@@ -36,6 +36,6 @@ class AdminBackup < View
   end
 	
   def list_backups
-    `ls /var/www/Backups`.split( "\n" ).sort{|a,b| b <=> a}
+    `ls Backups`.split( "\n" ).sort{|a,b| b <=> a}
   end
 end

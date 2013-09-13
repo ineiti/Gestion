@@ -4,8 +4,9 @@
 DATE=$1
 
 sleep 2
-pkill -f -s 9 "ruby.*Gestion"
+touch /tmp/stop_gestion
+$WDIR/Binaries/kill_gestion
+sleep 2
 echo Going to restore $BACKUP_DIR/$DATE > /tmp/restore
-tar Pxzf $BACKUP_DIR/$DATE -C /
-nohup /usr/local/bin/newstuff &
-$DIR/start_gestion
+tar -C $WDIR -Pxzf $BACKUP_DIR/$DATE
+$WDIR/Binaries/start_gestion
