@@ -1,6 +1,5 @@
-#
-# This module gives the possibilities to have payements for courses
-#
+# Allow for courses to be paid
+# Can search by courses or by students
 
 class ComptaCourse < View
   def layout

@@ -1,12 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - When synching courses, "teacher"-attribute doesn't get transferred
-	- in Binaries/start_gestion <ctrl-c> doesn't restart Gestion
-          can't restart Gestion anymore with a new call to start_gestion
-        - CourseDiplomas: very slow when enqueuing files - qrcode?
-        - PersonAdmin: when deleting person that is shown, there is an error
 
+        - CourseDiplomas: very slow when enqueuing files - qrcode?
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
         - Fresh install with Course::add_missing doesn't work because of missing
@@ -29,26 +25,28 @@ UI:
           in the table -> take care about security-risk if only adding a
           simple manager for diplomas
         - CourseTabs still very slow for startup
+        - SelfChat: if on multilogin, propose a "name"-field
 
         - CourseDiplomas: display random-id if available
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
         - auto_update from a window enables also the background (CourseGrade::sync)
-        - extend lists on all the height
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
 
 FEATURES:
+        - make an accounting-module
+
+        - use multilogin as flag for users
         - configure better print, libnet, uploadwidget, so that it get's correctly
           addressed with a configuration
 	- import courses from server
         - logrotate gestion.log, and send daily error-reports to info@profeda.org
         - when a student logins remotely to a course_sever, don't allow to change
           his name, only address, phone-#, password and e-mail
-
         - adding a course:
           - add m/f recognition to change wording
           - Implement better handling of course-days
@@ -61,8 +59,6 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
-        - Do something with CSV that don't load - first store in .sav, then
-          move over
         - Change ConfigBase functions_base: all functions are evaluated with
           base_dependencies, like network, network_share and network_internet,
           so that network_internet and network_share depend on network
@@ -200,6 +196,15 @@ To check:
 
 
 ** FIXED **:
+        - B 130919: PersonAdmin: when deleting person that is shown, there is an error,
+          in fact, it is only in the case when a course has a wrong attribute...
+        - B 130917: When synching courses, "teacher"-attribute of users 
+          doesn't get transferred
+        - UI130917: extend lists on all the height
+        - P 130917: Do something with CSV that don't load - first store in .sav, then
+          move over
+	- B 130917: in Binaries/start_gestion <ctrl-c> doesn't restart Gestion
+          can't restart Gestion anymore with a new call to start_gestion
         - UI130909: PersonTabs - put search on top of results and stretch results all
           the way down - added a gui-option of "flexheight"
         - F 130822: Network::Share - add "force (user|group)" to smb.conf

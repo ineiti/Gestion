@@ -57,8 +57,7 @@
       prints receit
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 </node>
 <node TEXT="Move PersonCash" ID="ID_1926602512" CREATED="1375461086039" MODIFIED="1375461091096"/>
 <node TEXT="Move SelfServices" ID="ID_1990164522" CREATED="1375461091662" MODIFIED="1375461096490"/>
@@ -80,8 +79,7 @@
       Allow for printing of days, weeks
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 </node>
 <node TEXT="Course-lists" ID="ID_1102569461" CREATED="1375461145242" MODIFIED="1375461154495">
 <richcontent TYPE="NOTE">
@@ -94,8 +92,7 @@
       only print changed courses
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 </node>
 <node TEXT="Library-lists" ID="ID_313754190" CREATED="1375461154489" MODIFIED="1375461169062">
 <richcontent TYPE="NOTE">
@@ -108,11 +105,14 @@
       only print last sheet
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 </node>
 <node TEXT="Move SelfCash" ID="ID_604769849" CREATED="1375461169233" MODIFIED="1375461180348"/>
 </node>
+</node>
+<node TEXT="ComptaAdmin" ID="ID_1188322166" CREATED="1379581289830" MODIFIED="1379581291833">
+<node TEXT="Print manual sheets" ID="ID_397624358" CREATED="1379581365278" MODIFIED="1379581381208"/>
+<node TEXT="Manage lost sheets" ID="ID_999379367" CREATED="1379581381862" MODIFIED="1379581387728"/>
 </node>
 <node TEXT="CourseCompta" ID="ID_892736667" CREATED="1375461216487" MODIFIED="1375461220346">
 <node TEXT="Change money per course" ID="ID_1386173998" CREATED="1375461220855" MODIFIED="1375461224200"/>
@@ -131,12 +131,17 @@
       Have once (special fee), multiple (CDs, print, ...), daily, weekly services
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 </node>
+</node>
+<node TEXT="AdminAccounts" ID="ID_260369204" CREATED="1379588717973" MODIFIED="1379588721280">
+<node TEXT="Edit different accounts for different services" ID="ID_657135979" CREATED="1379588721741" MODIFIED="1379588733240"/>
 </node>
 <node TEXT="CourseDiploma" ID="ID_1841349214" CREATED="1375461311313" MODIFIED="1375461315545">
 <node TEXT="Add column &quot;paid&quot;" ID="ID_686128343" CREATED="1375461315960" MODIFIED="1375461323562"/>
+</node>
+<node TEXT="CourseTabs" ID="ID_1657862182" CREATED="1379583222647" MODIFIED="1379583227978">
+<node TEXT="When adding, add also the corresponding account" ID="ID_1585632095" CREATED="1379583228559" MODIFIED="1379583241997"/>
 </node>
 </node>
 <node TEXT="Payments" POSITION="left" ID="ID_1876632421" CREATED="1375461332330" MODIFIED="1375461333920">
@@ -152,8 +157,7 @@
       One for the archives, one for the student
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 </node>
 <node TEXT="Fields" ID="ID_1523419689" CREATED="1375461355652" MODIFIED="1375461360982">
 <node TEXT="Name of student" ID="ID_1076775739" CREATED="1375461361500" MODIFIED="1375461365278"/>

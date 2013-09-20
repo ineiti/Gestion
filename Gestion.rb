@@ -1,4 +1,5 @@
-#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta
+#!/usr/local/bin/ruby -I../QooxView -I. -I../AfriCompta
+#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta -wKU
 # ! /usr/bin/ruby -I../QooxView -I../AfriCompta  -wKU
 # ! /usr/local/opt/ruby/bin/ruby -I../QooxView -I../AfriCompta -w
 
@@ -45,11 +46,11 @@ begin
   require 'Label'
   require 'ACQooxView'
   ACQooxView.load_entities
-rescue CSVLoadError
-  cleanup_data
+#rescue StorageLoadError
+#  cleanup_data
 rescue Exception => e
-  dputs( 0 ){ "#{e.inspect}" }
-  dputs( 0 ){ "#{e.to_s}" }
+  puts "#{e.inspect}"
+  puts "#{e.to_s}"
   puts e.backtrace
 
   puts "Couldn't start QooxView - perhaps missing libraries?"
@@ -119,7 +120,7 @@ end
   end
   dputs(0){"Finished with services"}
 
-rescue CSVLoadError
+rescue StorageLoadError
   cleanup_data
 rescue DRb::DRbConnError
   dputs(0){ "Connection has been refused!" }

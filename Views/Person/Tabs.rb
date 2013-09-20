@@ -2,10 +2,11 @@ class PersonTabs < View
   def layout
     @order = 10
     @update = true
+    @persons_total = Persons.search_all.count
 
     gui_vbox :nogroup do
       #gui_fields do
-      show_str :search #, :callback => :search
+      show_str :search
       show_list_single :persons, "[]", :callback => true
       show_arg :persons, :flexheight => 1
       show_button :start_search, :delete, :add

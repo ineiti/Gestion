@@ -544,8 +544,12 @@ class Person < Entity
     update_smb_passwd( pass )
     dputs( 1 ){ "Setting password for #{self.login_name} to #{p}" }
     self._password = p
-    if permissions and permissions.index( "center" )
+    if ( permissions and permissions.index( "center" ) ) or
+      ( groups and groups.index( "share" ) ) or
+      ( not self.password_plain or self.password_plain == "" )
       self.password_plain = pass
+    elsif not self.password_plain or self.password_plain == ""
+      self.password_plain = "****"
     end
   end
 
@@ -645,8 +649,18 @@ class Person < Entity
   
   def delete
     Courses.search_all.each{|course|
+      ddputs(3){"Checking course #{course.name}"}
       [ :teacher, :assistant, :responsible, :center ].each{|role|
-        if r = course.data_get("_#{role}") and r.login_name == login_name
+        begin
+          r = course.data_get( "_#{role}" )
+        rescue Exception => e
+          if e.message == "WrongIndex"
+            dputs(0){"Role :#{role} is not well defined - resetting to nil"}
+            course.data_set( "_#{role}", nil )
+          end
+        end
+        ddputs(3){"Role #{role} is #{r.inspect}"}
+        if r and r.login_name == login_name
           raise IsNecessary.new( course )
         end
       }

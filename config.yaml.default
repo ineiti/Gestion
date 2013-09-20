@@ -9,6 +9,8 @@ StorageHandler:
 
 #version_local: orig
 
+#locale_force: fr
+
 #log: events.log
 
 #autosave: true
@@ -29,6 +31,7 @@ Accounting:
 #  lending: Root::Lending
 #  cash: Root::Cash
 #  service: Root::Income::Internet
+#  course: Root::Income::IT-Courses
 
 LibNet:
 #  URI: druby://localhost:9000

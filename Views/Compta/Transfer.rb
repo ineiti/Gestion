@@ -4,7 +4,6 @@
 class ComptaTransfer < View
   include VTListPane
   def layout
-    #@visible = Module.constants.index :ACQooxView
     @update = true
     @order = 50
     

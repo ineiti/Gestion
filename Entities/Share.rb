@@ -90,7 +90,8 @@ class Share < Entity
         f << "AuthType Basic
 AuthName 'Restricted Access'
 AuthUserFile '#{path}/.htpasswd'
-Require valid-user"
+Require valid-user
+"
       }
       File.exists? passfile = "#{path}/.htpasswd" and
         FileUtils.rm passfile
@@ -101,7 +102,7 @@ Require valid-user"
           when /rw|ro/
             ddputs(4){"Really adding #{k} to #{passfile}"}
             user = Persons.find_by_login_name( k )
-            %x[ htpasswd -nbd #{user.login_name} "#{user.password_plain }" >> #{passfile} ]
+            %x[ htpasswd -bnd #{user.login_name} "#{user.password_plain }" >> #{passfile} ]
           end
         }
       end

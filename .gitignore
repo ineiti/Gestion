@@ -1,6 +1,6 @@
 *csv
 config.yaml
-data*/*
+*data*/*
 ldap*
 *\.log
 Test/data/*
@@ -20,3 +20,5 @@ Diplomas.Man
 .idea*
 old/*
 Exas
+Test/share_test
+Doc/.backup
