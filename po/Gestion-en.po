@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-14 00:21+0100\n"
-"PO-Revision-Date: 2013-09-14 00:21+0100\n"
+"POT-Creation-Date: 2013-09-13 22:31+0100\n"
+"PO-Revision-Date: 2013-09-13 22:31+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -409,7 +409,7 @@ msgstr ""
 #. Comes from file Entities/Person.rb and line is     value_str_LDAP :password, :ldap_name => "userPassword"
 #: ../Entities/Person.rb:63
 msgid "password"
-msgstr ""
+msgstr "Password"
 
 #. Comes from file Entities/Person.rb and line is     value_str :password_plain
 #.
@@ -851,7 +851,7 @@ msgstr ""
 #. Comes from file Views/Welcome.rb and line is     show_str :username
 #: ../Views/Welcome.rb:3
 msgid "username"
-msgstr ""
+msgstr "Username"
 
 #. Comes from file Views/Welcome.rb and line is     show_str :version
 #: ../Views/Welcome.rb:4
@@ -1023,9 +1023,9 @@ msgstr ""
 msgid "PersonTabs"
 msgstr ""
 
-#. Comes from file Views/Person/Tabs.rb and line is       show_str :search
+#. Comes from file Views/Person/Tabs.rb and line is       show_str :search #, :callback => :search
 #: ../Views/Person/Tabs.rb:9
-msgid "search"
+msgid "search #"
 msgstr ""
 
 #. Comes from file Views/Person/Tabs.rb and line is       show_list_single :persons, "[]", :callback => true
@@ -1340,7 +1340,7 @@ msgstr ""
 #. Comes from file Views/Self/Tabs.rb and line is class SelfTabs < View
 #: ../Views/Self/Tabs.rb:1
 msgid "SelfTabs"
-msgstr ""
+msgstr "My account"
 
 #. Comes from file Views/Network/Tigo.rb and line is class NetworkTigo < View
 #: ../Views/Network/Tigo.rb:1
