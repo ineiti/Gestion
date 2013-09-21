@@ -5,9 +5,12 @@
 # - Classroom
 
 #require 'rubygems'
-require 'zip/zipfilesystem'; include Zip
+#require 'zip/zipfilesystem'; include Zip
+require 'zip'
 require 'docsplit'
-require 'rqrcode_png'
+require 'rqrcode'
+require 'rqrcode/export/png'
+#require 'rqrcode_png'
 #require 'ftools'
 require 'net/http'
 
@@ -549,18 +552,25 @@ base_gestion
       FileUtils.rm( file )
     else
       dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
-      ZipFile.open(file){ |z|
+      Zip::File.open(file){ |z|
         dputs(5){"Cours is #{self.inspect}"}
         doc = z.read("content.xml")
+        dputs(5){ doc.inspect }
+# =begin        
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match( doc )
-          dputs( 2 ){"QRcode-image is #{qrcode[1]}"}
+          ddputs( 2 ){"QRcode-image is #{qrcode[1]}"}
           qr = RQRCode::QRCode.new( grade.get_url_label )
-          png = qr.to_img
-          png.resample_nearest_neighbor!(900, 900)
-          z.file.open(qrcode[1], "w"){ |f|
+          png = qr.as_png
+          #png = qr.to_img
+          #png.resample_nearest_neighbor!(900, 900)
+          z.get_output_stream(qrcode[1]){ |f|
             png.write( f )
           }
+#          File.open(qrcode[1], "w"){ |f|
+#            png.write( f )
+#          }
+#          exit
         end
         if desc_p_match = /-DESC1-(.*)-DESC2-/.match( doc )
           desc_p = desc_p_match[1]
@@ -597,10 +607,12 @@ base_gestion
         doc.gsub!( /-CENTER_PLACE-/, c.town || "" )
         doc.gsub!( /-CENTER_PHONE-/, c.phone || "" )
         doc.gsub!( /-CENTER_EMAIL-/, c.email || "" )
-
-        z.file.open("content.xml", "w"){ |f|
+# =end
+        z.get_output_stream("content.xml"){ |f|
           f.write( doc )
         }
+#        doc2 = z.read("content.xml")
+#        ddputs(5){ doc2.inspect }
         z.commit
       }
     end

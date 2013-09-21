@@ -1,6 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Can't create diplomas anymore! Some problem with zip...
+          added new zip-library, now replace all ZipFile with Zip::File
 
         - CourseDiplomas: very slow when enqueuing files - qrcode?
         - when migrating with old value-names, it gives an error - how to keep
@@ -31,7 +33,6 @@ UI:
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
-        - auto_update from a window enables also the background (CourseGrade::sync)
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
         - clean up the interface, mostly the tabs and sub-tabs
@@ -208,6 +209,7 @@ To check:
         - UI130909: PersonTabs - put search on top of results and stretch results all
           the way down - added a gui-option of "flexheight"
         - F 130822: Network::Share - add "force (user|group)" to smb.conf
+        - UI130822: auto_update from a window enables also the background (CourseGrade::sync)
         - UI130822: Delete selection of a table upon "empty"
         - UI130822: sort student-names in presence-sheet
         - B 130822: Form is still active, even if shaded out
