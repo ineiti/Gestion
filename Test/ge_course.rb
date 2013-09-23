@@ -1,5 +1,5 @@
 require 'test/unit'
-require 'ftools'
+#require 'ftools'
 
 
 class TC_Course < Test::Unit::TestCase
@@ -325,14 +325,14 @@ class TC_Course < Test::Unit::TestCase
     file_exa_tmp = "/tmp/exa-#{file}"
     assert_not_nil file
     
-    File.copy( file_tmp, file_exa_tmp )
+    FileUtils.copy( file_tmp, file_exa_tmp )
     @maint_2.zip_read
     
     assert File.exists?( "Exas/#{@maint_2.name}" )
     assert( ! File.exists?( "Exas/#{@maint_2.name}/#{center}-admin" ) )
     
-    File.copy( file_tmp, file_exa_tmp )
-    Zip::ZipFile.open( file_exa_tmp ){|z|
+    FileUtils.copy( file_tmp, file_exa_tmp )
+    Zip::File.open( file_exa_tmp ){|z|
       %w( admin surf ).each{|s|
         p = "exa-#{@maint_2.name}/#{s}"
         z.file.open("#{p}/first.doc", "w") { |f| f.puts "Hello world" }
@@ -349,8 +349,8 @@ class TC_Course < Test::Unit::TestCase
     assert ! File.exists?( dir )
     assert ! File.exists?( "#{dir}/first.doc" )
     
-    assert ["first.doc"], @maint_2.exam_files( "admin" )
-    assert [], @maint_2.exam_files( "secretaire" )
+    assert ["first.doc"], @maint_2.exam_files( "admin" ).join(":")
+    assert [], @maint_2.exam_files( "secretaire" ).join(":")
   end
   
   def test_label
@@ -564,6 +564,8 @@ class TC_Course < Test::Unit::TestCase
     sleep 1
 
     @it_101.ctype.central_host = "http://localhost:#{@port}/label"
+    dputs(0){@center.inspect}
+    dputs(0){Persons.find_by_permissions(:center).inspect}
     assert @it_101.sync_do
     assert_equal "<li>Transferring course</li>" +
       "<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>" +
