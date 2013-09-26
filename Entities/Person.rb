@@ -502,12 +502,12 @@ class Person < Entity
   def check_pass( pass )
     if @proxy.has_storage? :LDAP
       # We have to try to bind to the LDAP
-      dputs( 0 ){ "Trying LDAP" }
+      dputs( 2 ){ "Trying LDAP" }
       #return @proxy.storage[:LDAP].check_login( data_get(:login_name), pass )
       return @proxy.storage[:LDAP].check_login( login_name, pass )
     else
       #dputs( 0 ){ "is #{pass} equal to #{data_get( :password ) }" }
-      dputs( 0 ){ "is #{pass} equal to #{password}" }
+      dputs( 2 ){ "is #{pass} equal to #{password}" }
       #return pass == data_get( :password )
       return pass == password
     end

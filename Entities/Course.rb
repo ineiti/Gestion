@@ -555,7 +555,7 @@ base_gestion
         dputs(5){ doc.inspect }
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match( doc )
-          ddputs( 2 ){"QRcode-image is #{qrcode[1]}"}
+          dputs( 2 ){"QRcode-image is #{qrcode[1]}"}
           qr = RQRCode::QRCode.new( grade.get_url_label )
           png = qr.as_png
           z.get_output_stream(qrcode[1]){ |f|
@@ -633,7 +633,7 @@ base_gestion
           students.sort.each{ |s|
             student = Persons.match_by_login_name( s )
             if student
-              ddputs( 4 ){"Is #{s} == #{student.login_name}?"}
+              dputs( 4 ){"Is #{s} == #{student.login_name}?"}
               student_file = get_diploma_filename( s )
               dputs( 2 ){ "Doing #{counter}: #{s} - file: #{student_file}" }
               FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}", 
@@ -667,7 +667,7 @@ base_gestion
           dir = File::dirname( list.first )
           @only_psnup and list = []
           list.sort.each{ |p|
-            ddputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
+            dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
             student_name = p.sub(/.*-/, '').sub(/\.odt/, '')
             @make_pdfs_state[student_name][1] = "working"
 
@@ -746,7 +746,7 @@ base_gestion
     tmp_file = "/tmp/#{file}"
       
     if students and students.size > 0
-      File.exists?( tmp_file ) and File.unlink( tmp_file )
+      File.exists?( tmp_file ) and FileUtils.rm( tmp_file )
       Zip::File.open(tmp_file, Zip::File::CREATE){|z|
         z.mkdir dir
         students.each{|s|
@@ -793,7 +793,7 @@ base_gestion
           end
         }
       }
-      File.unlink file
+      FileUtils.rm file
     end
   end
   
@@ -816,7 +816,7 @@ base_gestion
     students.each{|s|
       dir_s_exas = "#{dir_exas}/#{s}"
       if File.exists? dir_s_exas
-        File.move dir_s_exas, dir_exas_share
+        FileUtils.mv dir_s_exas, dir_exas_share
       else
         FileUtils.mkdir "#{dir_exas_share}/#{s}"
       end
@@ -835,7 +835,7 @@ base_gestion
         dir_student = "#{dir_exas_share}/#{s}"
         if File.exists? dir_student
           dputs(3){"Moving student-dir of #{s}"}
-          File.move dir_student, "#{dir_exas}"
+          FileUtils.move dir_student, "#{dir_exas}"
         end
       }
     end
@@ -845,15 +845,15 @@ base_gestion
   def sync_send_post( field, data )
     path = URI.parse( "#{ctype.get_url}/" )
     post = { :field => field, :data => data }
-    ddputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
+    dputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
     err = ""
     (1..4).each{|i|
       begin
         ret = Net::HTTP.post_form( path, post )
-        ddputs(4){"Return-value is #{ret.inspect}, body is #{ret.body}"}
+        dputs(4){"Return-value is #{ret.inspect}, body is #{ret.body}"}
         return ret.body
       rescue Timeout::Error
-        ddputs(2){"Timeout occured"}
+        dputs(2){"Timeout occured"}
         err = "Error Timeout occured"
       end
     }
@@ -906,7 +906,7 @@ base_gestion
         Persons.match_by_login_name( s ) 
       }.to_json, slow )
     @sync_state += ret
-    if ret =~ /^Error /
+    if ret =~ /^Error:/
       return false
     end
     @sync_state = sync_s += "OK</li>"
@@ -920,7 +920,7 @@ base_gestion
           Persons.match_by_login_name( s ) 
         }.to_json, slow )
       @sync_state += ret
-      if ret =~ /^Error /
+      if ret =~ /^Error:/
         return false
       end
       @sync_state = sync_s += "OK</li>"
@@ -932,7 +932,7 @@ base_gestion
     myself._students = students
     ret = sync_transfer( :course, myself.to_json, slow )
     @sync_state += ret
-    if ret =~ /^Error /
+    if ret =~ /^Error:/
       return false
     end
     @sync_state = sync_s += "OK</li>"
@@ -949,7 +949,7 @@ base_gestion
             :person => g.student.login_name )
         }.to_json, slow )
       @sync_state += ret
-      if ret =~ /^Error /
+      if ret =~ /^Error:/
         return false
       end
       grades = JSON.parse( ret.sub(/^OK: /, '') )
@@ -975,7 +975,7 @@ base_gestion
       dputs(3){"Exa-file is #{file}"}
       ret = sync_transfer( :exams, File.open(file){|f| f.read }, slow )
       @sync_state += ret
-      if ret =~ /^Error /
+      if ret =~ /^Error:/
         return false
       end
       @sync_state = sync_s += "OK</li>"
@@ -1017,10 +1017,10 @@ base_gestion
   end
   
   def center
-    ddputs(4){".center is #{_center.inspect}"}
-    ddputs(4){"Persons.center is #{Persons.find_by_permissions(:center).inspect}"}
+    dputs(4){".center is #{_center.inspect}"}
+    dputs(4){"Persons.center is #{Persons.find_by_permissions(:center).inspect}"}
     ret = _center || Persons.find_by_permissions( :center )
-    ddputs(4){"Center is #{ret.login_name}"}
+    dputs(4){"Center is #{ret.login_name}"}
     ret
   end
   

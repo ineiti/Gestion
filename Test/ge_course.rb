@@ -10,7 +10,7 @@ class TC_Course < Test::Unit::TestCase
     Permission.add( 'teacher', '.*' )
     Entities.delete_all_data()
 
-    dputs(0){"Resetting SQLite"}
+    dputs(3){"Resetting SQLite"}
     SQLite.dbs_close_all
     FileUtils.cp( "db.testGestion", "data/compta.db" )
     SQLite.dbs_open_load_migrate
@@ -57,7 +57,7 @@ class TC_Course < Test::Unit::TestCase
     permissions_init
     #Entities.delete_all_data()
 
-    #dputs(0){"Resetting SQLite"}
+    #dputs(1){"Resetting SQLite"}
     #SQLite.dbs_close_all
     #FileUtils.cp( "db.testGestion", "data/compta.db" )
     #SQLite.dbs_open_load_migrate
@@ -65,10 +65,11 @@ class TC_Course < Test::Unit::TestCase
     #Entities.LogActions.save
   end
   
-  def test_bulk
+  def tes_bulk
     ConfigBase.set_functions([])
     names = [ "Dmin A","Zero","One Two","Ten Eleven Twelve","A B C D",
       "Hélène Méyère","Äeri Soustroup" ]
+    reply = ""
     while names.length > 0
       dputs(4){"Doing #{names.inspect}"}
       reply = RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "bulk_students",
@@ -77,10 +78,10 @@ class TC_Course < Test::Unit::TestCase
       names.shift
     end
     bulk = [ [ "zero", "Zero", "" ], %w( tone One Two ), [ "eten", "Ten", "Eleven Twelve" ],
-      ["ca", "A B", "C D"], %w( admin2 Dmin A ), %w( mhelene Hélène Méyère ) ]
+      ["ca", "A B", "C D"], %w( mhelene Hélène Méyère ) ]
     bulk.each{|b|
       login, first, family = b
-      dputs( 0 ){ "Doing #{b.inspect}" }
+      dputs( 1 ){ "Doing #{b.inspect}" }
       p = Entities.Persons.match_by_login_name( login )
       dputs( 5 ){"p is #{p.inspect} - login is #{login.inspect}"}
       assert_not_nil p, login.inspect
@@ -91,10 +92,19 @@ class TC_Course < Test::Unit::TestCase
     }
     
     students = Entities.Courses.match_by_name( 'net_1001' ).students
-    assert_equal %w( admin2 ca eten mhelene s_eri tone zero ), students.sort
+    assert_equal %w( ca eten mhelene s_eri tone zero ), students.sort
   end
 
-  def test_grade
+  def tes_add_double
+    RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "create_new",
+        {"name" => "net_1001", "double_name" => "Dmin A"}]])
+    RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "accept",
+        {"name" => "net_1001", "double_proposition" => [@admin.person_id] }]] )
+  
+    assert_equal %w( admin admin2 ), @net.students.sort
+  end
+
+  def tes_grade
     @grade0 = Grades.save_data({:student => @secretaire,
         :course => @net, :means => [11]})
     assert_equal 11, @grade0[:mean]
@@ -110,8 +120,10 @@ class TC_Course < Test::Unit::TestCase
   def test_search
     courses_admin2 = Entities.Courses.search_by_students( "admin2" )
     assert_equal 1, courses_admin2.length
-    reply = RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "bulk_students",
+    RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "bulk_students",
           {"name" => "net_1001", "names" => "Dmin A" }]])
+    RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "create_new",
+        {"name" => "net_1001", "double_name" => "Dmin A"}]])
     courses_admin2 = Entities.Courses.search_by_students( "admin2" )
     courses_surf = Entities.Courses.search_by_students( "surf" )
     assert_equal 2, courses_admin2.length
@@ -207,7 +219,9 @@ class TC_Course < Test::Unit::TestCase
   end
 	
   def test_prepare_diplomas
-    dputs(0){"Checking for diplomas in #{@maint_2.dir_diplomas}"}
+    dputs(1){"Checking for diplomas in #{@maint_2.dir_diplomas}"}
+    dputs(5){@maint_2.inspect}
+    dputs(5){Grades.search_all.inspect}
     @maint_2.prepare_diplomas( false )
     @maint_2.thread.join
     assert_equal 0, Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count
@@ -227,7 +241,7 @@ class TC_Course < Test::Unit::TestCase
     @grade0 = Grades.save_data({:student => @secretaire,
         :course => @maint_2, :means => [11]})
     @secretaire.role_diploma = "Director"
-    assert @secretaire, @maint_2.teacher
+    assert @secretaire, @maint_2.teacher.inspect
     @maint_2.prepare_diplomas( false )
     @maint_2.thread.join
     assert_equal 1, Dir.glob( "#{@maint_2.dir_diplomas}/*odt" ).count
@@ -237,15 +251,19 @@ class TC_Course < Test::Unit::TestCase
     ConfigBase.add_function :course_server
 
     @maint_2.students.push 'secretaire'
+    Grades.search_all.each{|g|
+      dputs(1){g.inspect}
+    }
     @grade0 = Grades.save_data({:student => @secretaire,
         :course => @maint_2, :means => [11]})
     Grades.search_all.each{|g|
-      dputs(0){"Grade #{g.grade_id}: #{g.course.name} - #{g.student.login_name}"}
+      dputs(1){g.inspect}
+      dputs(1){"Grade #{g.grade_id}: #{g.course.name} - #{g.student.login_name}"}
     }
     @maint_2.prepare_diplomas
 
     while Dir.glob( "#{@maint_2.dir_diplomas}/*" ).count < 3 do
-      dputs(0){"Waiting for diplomas"}
+      dputs(1){"Waiting for diplomas"}
       sleep 1
     end
   end
@@ -253,7 +271,7 @@ class TC_Course < Test::Unit::TestCase
   def test_migration_2
     Entities.delete_all_data()
 
-    dputs(0){"Resetting SQLite"}
+    dputs(1){"Resetting SQLite"}
     SQLite.dbs_close_all
     FileUtils.cp( "db.testGestion", "data/compta.db" )
     SQLite.dbs_open_load_migrate
@@ -268,13 +286,10 @@ class TC_Course < Test::Unit::TestCase
     @maint2 = Entities.Courses.create( :name => "maint_1208", :start => "19.01.2012", :end => "18.02.2012",
       :teacher => @admin, :assistant => @linus,
       :responsible => @linus )
-    
-    dputs(0){"Courses are #{Courses.search_all.inspect}"}
-    
-    RPCQooxdooService.add_new_service( Courses,
-      "Entities.Courses" )
-      
-    dputs(0){"Courses are #{Courses.search_all.inspect}"}
+
+    dputs(1){"Courses are #{Courses.search_all.inspect}"}    
+    RPCQooxdooService.migrate( "Entities.Courses" )
+    dputs(1){"Courses are #{Courses.search_all.inspect}"}
 
     @maint = Courses.match_by_name("maint_1204")
     assert_equal @admin, @maint.teacher
@@ -295,8 +310,8 @@ class TC_Course < Test::Unit::TestCase
     assert_equal "base_arabe_1201", @c1.name
   end
   
-  def test_duration_adds
-    dputs(0){"@maint is #{@maint.inspect}"}
+  def tes_duration_adds
+    dputs(1){"@maint is #{@maint.inspect}"}
     @maint.dow = ["lu-me-ve"]
     @maint.end = "30.01.2012"
     assert_equal [6, [[/1001/, 0],  [/1002/, 2],  [/1003/, 4],  [/1004/, 7],
@@ -357,28 +372,28 @@ class TC_Course < Test::Unit::TestCase
     ConfigBase.add_function :course_server
 
     @it_101_t.diploma_type = %w( accredited )
-    dputs(0){"it_101 is #{@it_101.class}"}
+    dputs(1){"it_101 is #{@it_101.class}"}
     @it_101.students.push 'secretaire'
     @grade0 = Grades.save_data({:student => @secretaire,
         :course => @it_101, :mean => 11, :means => [11]})
     @it_101.prepare_diplomas( false )
     
     while ( files = Dir.glob( "#{@it_101.dir_diplomas}/*" ) ).count < 3 do
-      dputs(0){"Waiting for diplomas - #{files.inspect}"}
+      dputs(1){"Waiting for diplomas - #{files.inspect}"}
       sleep 1
     end
   end
   
-  def test_get_url_label
+  def tes_get_url_label
     ConfigBase.add_function :course_server
 
     @grade0 = Grades.create({:student => @secretaire,
         :course => @maint_2, :mean => 11, :means => [11]})
 
-    dputs(0){"grade0 is #{@grade0.inspect}"}
+    dputs(1){"grade0 is #{@grade0.inspect}"}
     assert @grade0.random
     assert @grade0.get_url_label =~ /^http:\/\//
-    dputs(0){"URL-label is #{@grade0.get_url_label}"}
+    dputs(1){"URL-label is #{@grade0.get_url_label}"}
     assert @grade0.random
   end
   
@@ -391,17 +406,17 @@ class TC_Course < Test::Unit::TestCase
         :diploma_type => ["simple"]})
     @maint_2.students.push 'secretaire'
     Grades.search_all.each{|g|
-      dputs(0){"Grade #{g.grade_id}: #{g.course.name} - #{g.student.login_name}"}
+      dputs(1){"Grade #{g.grade_id}: #{g.course.name} - #{g.student.login_name}"}
     }
     @maint_2.prepare_diplomas
 
     while ( files = Dir.glob( "#{@maint_2.dir_diplomas}/*" ) ).count < 3 do
-      dputs(0){"Waiting for diplomas - #{files.inspect}"}
+      dputs(1){"Waiting for diplomas - #{files.inspect}"}
       sleep 1
     end
   end
   
-  def test_files_move
+  def tes_files_move
     @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
         :central_host => "label.profeda.org", :filename => ["label.odg"],
         :diploma_type => ["simple"]})
@@ -435,7 +450,7 @@ class TC_Course < Test::Unit::TestCase
     main = Thread.new{
       QooxView::startWeb( @port )
     }
-    dputs(0){"Starting at port #{@port}"}
+    dputs(1){"Starting at port #{@port}"}
     sleep 1
     cname = "#{@center.login_name}_"
     
@@ -471,7 +486,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal "foo_maint_1210", foo_maint.name
     assert_equal "foo", foo_maint._center.login_name
     
-    dputs(0){"Diploma-dir is #{foo_maint.dir_exas}"}
+    dputs(1){"Diploma-dir is #{foo_maint.dir_exas}"}
     
     assert File.exists? foo_maint.dir_exas
   end
@@ -481,7 +496,7 @@ class TC_Course < Test::Unit::TestCase
     main = Thread.new{
       QooxView::startWeb( @port )
     }
-    dputs(0){"Starting at port #{@port}"}
+    dputs(1){"Starting at port #{@port}"}
     sleep 1
     cname = "#{@center.login_name}_"
     
@@ -520,7 +535,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal "foo_maint_1210", foo_maint.name
     assert_equal "foo", foo_maint._center.login_name
     Grades.search_all.each{|g|
-      dputs(0){"Grade #{g.grade_id}: #{g.course.name}-#{g.student.login_name}-#{g.random}"}
+      dputs(1){"Grade #{g.grade_id}: #{g.course.name}-#{g.student.login_name}-#{g.random}"}
     }
     assert foo_grade.random
     assert @grade0.random
@@ -535,7 +550,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal nil, @grade0.random
     
     ConfigBase.add_function :course_server
-    dputs(0){"ConfigBase has #{ConfigBase.get_functions.inspect}"}
+    dputs(1){"ConfigBase has #{ConfigBase.get_functions.inspect}"}
     @maint_2.sync_do
     assert_equal random, @grade0.random
     
@@ -548,7 +563,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal nil, @grade0.random
     
     ConfigBase.add_function :course_server
-    dputs(0){"ConfigBase has #{ConfigBase.get_functions.inspect}"}
+    dputs(1){"ConfigBase has #{ConfigBase.get_functions.inspect}"}
     @maint_2.sync_do
     assert_equal random, @grade0.random
     
@@ -560,27 +575,31 @@ class TC_Course < Test::Unit::TestCase
     main = Thread.new{
       QooxView::startWeb(@port)
     }
-    dputs(0){"Starting at port #{@port}"}
+    dputs(1){"Starting at port #{@port}"}
     sleep 1
 
     @it_101.ctype.central_host = "http://localhost:#{@port}/label"
-    dputs(0){@center.inspect}
-    dputs(0){Persons.find_by_permissions(:center).inspect}
+    dputs(1){@center.inspect}
+    dputs(1){Persons.find_by_permissions(:center).inspect}
     assert @it_101.sync_do
-    assert_equal "<li>Transferring course</li>" +
+    assert_equal(
       "<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>" +
       "<li>Transferring course: OK</li><li>Transferring exams: OK</li>It is finished!", 
-      @it_101.sync_state
+      @it_101.sync_state )
 
     @center.password_plain = ""
     
     assert ! @it_101.sync_do
-    assert_equal "<li>Transferring course</li>" +
+    assert_equal(
       "<li>Transferring responsibles: Error: authentification", 
-      @it_101.sync_state
+      @it_101.sync_state )
     
     @center.password = ""
     assert @it_101.sync_do
+    assert_equal(
+      "<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>" +
+      "<li>Transferring course: OK</li><li>Transferring exams: OK</li>It is finished!", 
+      @it_101.sync_state )
     
     main.kill
   end
@@ -590,7 +609,7 @@ class TC_Course < Test::Unit::TestCase
     main = Thread.new{
       QooxView::startWeb(@port)
     }
-    dputs(0){"Starting at port #{@port}"}
+    dputs(1){"Starting at port #{@port}"}
     sleep 1
 
     @it_101.ctype.central_host = "http://localhost:#{@port}/label"

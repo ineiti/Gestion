@@ -192,7 +192,7 @@ class CourseModify < View
   def present_doubles( session, course )
     doubles = session.s_data[:perhaps_double]
     dputs(4){"Doubles are #{doubles.inspect}"}
-    if doubles.length > 0
+    if doubles and doubles.length > 0
       prefix = ConfigBase.has_function?( :course_server ) ?
         "#{session.owner.login_name}_" : ""
       name = doubles.pop
@@ -217,7 +217,8 @@ class CourseModify < View
   def rpc_button_accept( session, data )
     course = Courses.match_by_name( data['name'] )
     student = data['double_proposition']
-    dputs(5){"Data is #{data.inspect} - #{course.students.inspect}"}
+    dputs(5){"Data is #{data.inspect} - #{course.students.inspect} " + 
+        "- #{student.inspect}"}
     if not course.students.index( student.login_name )
       course.students.push(
         student.login_name )
