@@ -548,7 +548,7 @@ class Person < Entity
       ( groups and groups.index( "share" ) ) or
       ( not self.password_plain or self.password_plain == "" )
       self.password_plain = pass
-    elsif not self.password_plain or self.password_plain == ""
+    else
       self.password_plain = "****"
     end
   end

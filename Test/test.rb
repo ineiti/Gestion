@@ -1,5 +1,5 @@
 #!/usr/local/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I.
-#!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -wKU
+#!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I. -wKU
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"

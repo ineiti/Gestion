@@ -7,10 +7,15 @@ class Quizs < Entities
   end
 
   def create( a )
-    dputs 4, "Creating Quiz with #{a.inspect}"
+    dputs( 4 ){ "Creating Quiz with #{a.inspect}" }
     q = super( a )
     q.score = q.evaluate
     q
+  end
+
+  def self.results
+    self.search_all.collect{|q| [ q.score, q.full_name ] }.
+      sort{ |a,b| b[0] <=> a[0] }.collect{|q| q.join( ":" ) }
   end
 end
 

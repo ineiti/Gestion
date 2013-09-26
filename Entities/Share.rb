@@ -26,6 +26,15 @@ class Shares < Entities
     a += "\n"
     Shares.search_all.each{|sh|
       a += "\n\n[#{sh.name}]\n  path = #{sh.path}\n  comment = #{sh.comment}\n"
+      valid_users = []
+      if sh.force_user.to_s.length > 0
+        a += "  force user = #{sh.force_user}\n"
+        valid_users.push sh.force_user
+      end
+      if sh.force_group.to_s.length > 0
+        a += "  force group = #{sh.force_group}\n"
+        valid_users.push sh.force_group
+      end
       case sh.public.first
       when "Read"
         a += "  guest ok = yes\n  writeable = no\n"
@@ -45,13 +54,7 @@ class Shares < Entities
           end
         }
         a += "  read list = #{read.join(',')}\n  write list = #{write.join(',')}\n" +
-          "  valid users = #{ ( read + write ).uniq.join(',')}\n"
-      end
-      if sh.force_user.to_s.length > 0
-        a += "  force user = #{sh.force_user}\n"
-      end
-      if sh.force_group.to_s.length > 0
-        a += "  force group = #{sh.force_group}\n"
+          "  valid users = #{ ( read + write + valid_users ).uniq.join(',')}\n"
       end
       #a += "  hide files = /~$*/*.tmp/\n   blocking locks = no\n"
       #a += "  create mask = 741\n  map archive = yes\n  map system = yes\n" +

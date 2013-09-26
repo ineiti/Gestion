@@ -1,3 +1,4 @@
+#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta
 #!/usr/local/bin/ruby -I../QooxView -I. -I../AfriCompta
 #!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta -wKU
 # ! /usr/bin/ruby -I../QooxView -I../AfriCompta  -wKU
@@ -65,6 +66,7 @@ end
 begin
 # Our default-permission is to only login!
 Permission.add( 'default', ',Welcome,SelfShow' )
+Permission.add( 'quiz', 'SelfChat,SelfConcours,SelfResults', '' )
 Permission.add( 'internet', 'SelfInternet,SelfChat', 'default' )
 Permission.add( 'student', '', 'internet' )
 Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )

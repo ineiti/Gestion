@@ -10,7 +10,9 @@ class Welcome < View
       person = Entities.Persons.match_by_login_name( get_config( false, :autologin ) )
       person and dputs( 3 ){ "Found login #{person.data.inspect}" }
       if person then
-        session = Sessions.create( person )
+        session = get_config( false, :multilogin ) ? Sessions.find_by_owner( person.person_id ) : nil
+        session ||= Sessions.create( person )
+        dputs(1){"Session is #{session.inspect}"}
         return reply( :session_id, person.session_id ) +
           View.rpc_list( session )
       else

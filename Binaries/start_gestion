@@ -8,8 +8,9 @@ set >> /var/log/start_gestion
 logger -s "Starting Gestion"
 sleep 2
 cd $( dirname $0 )/..
+pwd >> /var/log/start_gestion
 if pgrep -f ruby.*Gestion; then
   Binaries/kill_gestion
 fi
 logger -s "Starting new Gestion"
-screen -S Gestion -d -m Binaries/loop_gestion
+sudo -i screen -S Gestion -d -s /usr/bin/bash -m $( pwd )/Binaries/loop_gestion
