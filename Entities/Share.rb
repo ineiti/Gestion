@@ -100,10 +100,10 @@ Require valid-user
         FileUtils.rm passfile
       if acl.class == Hash 
         acl.each{|k,v|
-          ddputs(4){"Adding #{k} to htpasswd"}
+          dputs(4){"Adding #{k} to htpasswd"}
           case v
           when /rw|ro/
-            ddputs(4){"Really adding #{k} to #{passfile}"}
+            dputs(4){"Really adding #{k} to #{passfile}"}
             user = Persons.find_by_login_name( k )
             %x[ htpasswd -bnd #{user.login_name} "#{user.password_plain }" >> #{passfile} ]
           end

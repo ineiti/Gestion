@@ -141,7 +141,7 @@ class CourseDiploma < View
         if ! File.exists? file
           file = "Not found"
         end
-        ddputs(3){"Filename is #{file}"}
+        dputs(3){"Filename is #{file}"}
         name = ( ( p = Persons.match_by_login_name( f ) ) and p.full_name ) ||
           {"all.zip"=>"All files", "000-4pp.pdf"=>"4 on 1 page",
           "000-all.pdf"=>"All diplomas"}[f] || "Unknown"

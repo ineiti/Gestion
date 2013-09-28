@@ -156,7 +156,7 @@ class NetworkShare < View
   
   def rpc_button_add_htaccess( session, data )
     share = Shares.find_by_share_id( data["shares"][0] )
-    ddputs(3){"Working with #{share}"}
+    dputs(3){"Working with #{share}"}
     
     share.add_htaccess
   end

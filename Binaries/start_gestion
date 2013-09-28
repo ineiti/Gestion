@@ -14,3 +14,4 @@ if pgrep -f ruby.*Gestion; then
 fi
 logger -s "Starting new Gestion"
 sudo -i screen -S Gestion -d -s /usr/bin/bash -m $( pwd )/Binaries/loop_gestion
+echo $! > /var/run/gestion.pid

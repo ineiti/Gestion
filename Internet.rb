@@ -57,7 +57,7 @@ module Internet
   
   def self.free( user )
     isp = $lib_net.isp_params.to_sym
-    ddputs(3){"isp is #{isp.inspect}"}
+    dputs(3){"isp is #{isp.inspect}"}
     if isp._allow_free != "true"
       return false
     end

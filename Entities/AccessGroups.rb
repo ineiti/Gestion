@@ -43,11 +43,11 @@ class AccessGroups < Entities
       when /allow_else_block/
         dputs(4){"allow_else_block"}
         return [true, "#{ag.name}"] if ( match_time and match_user and limit_ok )
-        return [false, "Over limit of #{ag.limit_day_mo}Mo in #{ag.name}"] if not limit_ok
-        return [false, "Blocked by #{ag.name}"] if match_time
+        return [false, "Over limit of #{ag.limit_day_mo}Mo in rule **#{ag.name}**"] if not limit_ok
+        return [false, "Blocked by rule **#{ag.name}**"] if match_user
       when /block/
         dputs(4){"block"}
-        return [false, "Blocked by #{ag.name}"] if (match_time and match_user)
+        return [false, "Blocked by rule **#{ag.name}**"] if (match_time and match_user)
       when /allow/
         dputs(4){"allow"}
         return [true, "#{ag.name}"] if (match_time and match_user and limit_ok)
@@ -106,7 +106,7 @@ class AccessGroup < Entity
   def time_in_atimes( t )
     if access_times
       ret = false
-      access_times and access_times.each{|a|
+      access_times.each{|a|
         ret = ( ret or AccessGroup.time_in_atime( t, a ) )
       }
       return ret

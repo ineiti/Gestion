@@ -35,10 +35,11 @@ class SelfInternet < View
   end
 	
   def update_connection_status( session )
+    ret = reply( Internet.free( session.owner ) ? :hide : :unhide, :internet_credit )
     case (cc = can_connect( session ))
     when 0
       status = $lib_net.call( :isp_connection_status )
-      ddputs(3){"Connection-status is #{status.inspect}"}
+      dputs(3){"Connection-status is #{status.inspect}"}
       status = status.to_i
       status_str = %w( None PPP PAP IP VPN )
       status_color = %w( ff0000 ff2200 ff5500 ffff88 88ff88 )
@@ -48,18 +49,19 @@ class SelfInternet < View
         status_color[status] + "'>" + 
         status_str[status] + "</td><td bgcolor='ffffff'></td>"
 
-      reply( :update, :connection_status => 
+      ret += reply( :update, :connection_status => 
           "Etat de la connexion:<br>" + 
           "<table width='150px'><tr>" + 
           connection_status +
           "</tr></table>" )
     when 1
-      reply( :update, :connection_status => "Not enough money in account" )
+      ret += reply( :update, :connection_status => "Not enough money in account" )
     when 2
-      reply( :update, :connection_status => "Restricted access due to teaching" )
+      ret += reply( :update, :connection_status => "Restricted access due to teaching" )
     else
-      reply( :update, :connection_status => cc )
+      ret += reply( :update, :connection_status => cc )
     end
+    return ret
   end
 	
   def update_button( session, nobutton = false )
@@ -98,7 +100,7 @@ class SelfInternet < View
     show_status = true
     #show_status = ( ( @isp['conn_type'] == 'ondemand' ) or 
     #    ( can_connect(session) == 0 ) )
-    dputs(2){"isp-params is: #{@isp.inspect}, " +
+    dputs(3){"isp-params is: #{@isp.inspect}, " +
         "show_status is #{show_status.inspect}"}
     reply( @isp['has_promo'] == 'true' ? :unhide : :hide, :bytes_left ) +
       reply( show_status ? :unhide : :hide, :connection_status )

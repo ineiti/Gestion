@@ -649,7 +649,7 @@ class Person < Entity
   
   def delete
     Courses.search_all.each{|course|
-      ddputs(3){"Checking course #{course.name}"}
+      dputs(3){"Checking course #{course.name}"}
       [ :teacher, :assistant, :responsible, :center ].each{|role|
         begin
           r = course.data_get( "_#{role}" )
@@ -659,7 +659,7 @@ class Person < Entity
             course.data_set( "_#{role}", nil )
           end
         end
-        ddputs(3){"Role #{role} is #{r.inspect}"}
+        dputs(3){"Role #{role} is #{r.inspect}"}
         if r and r.login_name == login_name
           raise IsNecessary.new( course )
         end

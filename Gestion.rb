@@ -10,7 +10,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="1.1.16"
+VERSION_GESTION="1.2.0"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -32,7 +32,7 @@ def cleanup_data
   end
   puts "Making new backup and deleting everything in data/*"
   %x[ Binaries/backup ]
-  exec "nohup Binaries/restart_gestion #{youngest}"
+  exec "nohup Binaries/swipe_gestion #{youngest}"
   #FileUtils.rm_rf( "data" )
   #youngest and exec "nohup Binaries/restore #{ youngest } &"
   #%x[ echo Binaries/start_gestion | at now+1min ]
