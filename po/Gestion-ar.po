@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-09-25 16:43+0100\n"
-"PO-Revision-Date: 2013-09-25 18:03+0100\n"
+"PO-Revision-Date: 2013-09-29 08:27+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -2092,92 +2092,92 @@ msgstr "متي اسست جمعة الانترنت التشادية"
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q03_internet_sat, "%w( répondez vrai faux )"
 #: ../Views/Self/Concours.rb:18
 msgid "q03_internet_sat"
-msgstr "هل الانترنت يستخدم عبر الاقمار الصناعية فقط ؟#نعم#لا"
+msgstr "هل الانترنت يستخدم عبر الاقمار الصناعية فقط ؟"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q04_internet_like, "%w( répondez route avion eau )"
 #: ../Views/Self/Concours.rb:19
 msgid "q04_internet_like"
-msgstr "الانترنت مثل ماذا ؟#طريق#طائرة #الماء"
+msgstr "الانترنت مثل ماذا ؟"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q05_internet_needs, "%w( répondez portable fai disque_dur )"
 #: ../Views/Self/Concours.rb:20
 msgid "q05_internet_needs"
-msgstr "لاستعمال الانترنت ماذا نحتاج ؟#كمبيوتر محمول#موزع شبكة الانترنت#القرص الصلب"
+msgstr "لاستعمال الانترنت ماذا نحتاج ؟"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q06_fai_only_one, "%w( répondez vrai faux )"
 #: ../Views/Self/Concours.rb:21
 msgid "q06_fai_only_one"
-msgstr "هناك شركة واحدة فقط للاتصال بشبكة الانترنت#نعم#لا"
+msgstr "هناك شركة واحدة فقط للاتصال بشبكة الانترنت"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q07_price_free, "%w( répondez vrai faux )"
 #: ../Views/Self/Concours.rb:22
 msgid "q07_price_free"
-msgstr "الاتصال بالانترنت مجانا#نعم #لا"
+msgstr "الاتصال بالانترنت مجانا"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q08_email_generic, "%w( répondez courriel yahoo gmail )"
 #: ../Views/Self/Concours.rb:23
 msgid "q08_email_generic"
-msgstr "ماذا تعني  E-mail بالعربية#بريد #ياهو #قوقول ميل"
+msgstr "ماذا تعني  E-mail بالعربية"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q09_service_surf, "%w( répondez ftp www e-mail )"
 #: ../Views/Self/Concours.rb:24
 msgid "q09_service_surf"
-msgstr "ما هي خدمات التصفح في الانترنت#ftp#www#e-mail"
+msgstr "ما هي خدمات التصفح في الانترنت"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q10_is_central, "%w( répondez vrai faux )"
 #: ../Views/Self/Concours.rb:25
 msgid "q10_is_central"
-msgstr "الانترنت خاص للبعض #نعم# لا"
+msgstr "الانترنت خاص للبعض "
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q11_internet_start, "%w( répondez recherche commercial )"
 #: ../Views/Self/Concours.rb:28
 msgid "q11_internet_start"
-msgstr "الانترنت بدأ في مجال ...#الأبحاث #التجارة"
+msgstr "الانترنت بدأ في مجال ..."
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q12_what_standards, "%w( répondez ouvert payants )"
 #: ../Views/Self/Concours.rb:29
 msgid "q12_what_standards"
-msgstr "الانترنت يستخدم في المجالات# المفتوحة #التجارية"
+msgstr "الانترنت يستخدم في المجالات"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q13_chapters_count, "%w( répondez 80 90 100 )"
 #: ../Views/Self/Concours.rb:30
 msgid "q13_chapters_count"
-msgstr "كم عدد فروع الجمعية في نهاية ٢٠١٢م#٨٠#٩٠#١٠٠"
+msgstr "كم عدد فروع الجمعية في نهاية ٢٠١٢م"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q14_isoc_members, "%w( répondez 57000 60000 55000 )"
 #: ../Views/Self/Concours.rb:31
 msgid "q14_isoc_members"
-msgstr "كم عدد اعضاء الجمعية نهاية ٢٠١٢ # ٥٧٠٠٠#٦٠٠٠٠#٥٥٠٠٠"
+msgstr "كم عدد اعضاء الجمعية نهاية ٢٠١٢ "
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q15_domain_names, "%w( répondez IANA IAB ICANN )"
 #: ../Views/Self/Concours.rb:32
 msgid "q15_domain_names"
-msgstr "من المسؤول من اسم الملكية في الانترنت #اي يا نا# اي أ بي#أي كان"
+msgstr "من المسؤول من اسم الملكية في الانترنت "
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q16_gives_ips, "%w( répondez IANA IAB ICANN )"
 #: ../Views/Self/Concours.rb:33
 msgid "q16_gives_ips"
-msgstr "من المسؤول من الالكترونيات#إي يا نا# إي أبي#أي كان"
+msgstr "من المسؤول من الالكترونيات"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q17_does_standards, "%w( répondez IANA IAB ICANN )"
 #: ../Views/Self/Concours.rb:34
 msgid "q17_does_standards"
-msgstr "من المسؤول من الارقام التلقائية#إي يا نا #إي أ بي #أي كان"
+msgstr "من المسؤول من الارقام التلقائية"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q18_we_work_with, "%w( répondez NTIC NPIC IPNT )"
 #: ../Views/Self/Concours.rb:35
 msgid "q18_we_work_with"
-msgstr "نحن نشتغل في مجال ؟#أن تيك #أن بيك #أن بي أن تي"
+msgstr "نحن نشتغل في مجال ؟"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q19_website_chad, "%w( répondez isoc-tchad.org isoc-chad.org isoc.td )"
 #: ../Views/Self/Concours.rb:36
 msgid "q19_website_chad"
-msgstr "ما هو عنوان موقع جمعية الانترنت التشادية#isoc-tchad.org#isoc-chad.org"
+msgstr "ما هو عنوان موقع جمعية الانترنت التشادية"
 
 #. Comes from file Views/Self/Concours.rb and line is           show_list_drop :q20_best_fai, "%w( répondez tigo airtel sotel prestabist tawali vsat )"
 #: ../Views/Self/Concours.rb:37
 msgid "q20_best_fai"
-msgstr "ما هو أفضل موزع شبكة الأنترنت في تشاد ؟#تيقو #ارتيل#سوتل #بريستابيس#توالي#في سات"
+msgstr "ما هو أفضل موزع شبكة الأنترنت في تشاد ؟"
 
 #. Comes from file Views/Self/Concours.rb and line is         show_button :send_replies
 #: ../Views/Self/Concours.rb:41

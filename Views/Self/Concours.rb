@@ -57,16 +57,19 @@ class SelfConcours < View
 
   def rpc_show( session )
     super( session ) +
-      reply( :update, :welcome => "<h1>ISOC-concours</h1>" )
+      reply( :update, :welcome => "<h1>مسابقة جمعية الانترنت التشادية</h1>" )
+      #reply( :update, :welcome => "<h1>ISOC-concours</h1>" )
   end
 
   def rpc_button_send_replies( session, data )
     if not data['email'] or not data['full_name'] then
       return reply( :window_show, :error ) +
-        reply( :update, :txt_error => "Vous n'avez pas entré un nom<br>ou un courriel" )
+        reply( :update, :txt_error => "لم تدخل اسمك<br>أو البريدك الالكتروني" )
+        #reply( :update, :txt_error => "Vous n'avez pas entré un nom<br>ou un courriel" )
     end
     reply( :window_show, :finish ) +
-      reply( :update, :txt_finish => "Voulez vous terminer votre essai?<br>Vous ne pourriez plus rien changer" )
+      reply( :update, :txt_finish => "هل تريد انهاء المسابقة<br>لو انهيتها لا تستطيع التعديل" )
+      #reply( :update, :txt_finish => "Voulez vous terminer votre essai?<br>Vous ne pourriez plus rien changer" )
   end
 
   def rpc_button_ok( session, data )
