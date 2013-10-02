@@ -576,14 +576,21 @@ class Person < Entity
       ctype = Courses.match_by_course_id( courses[0][0] ).description
     end
     fname = "#{person_id.to_s.rjust(6,'0')}-#{full_name.gsub(/ /,'_')}"
+    courses = ["",""]
+    Courses.list_courses_for_person( self ).each{|c|
+      courses.unshift( Courses.match_by_course_id( c.first ).ctype.description )
+    }
     @proxy.print_card.print( [ [ /--NOM--/, first_name ],
         [ /--NOM2--/, family_name ],
         [ /--BDAY--/, birthday ],
         [ /--TDAY--/, `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"` ],
+        [ /--TOWN--/, town ],
         [ /--TEL--/, phone ],
         [ /--UNAME--/, login_name ],
         [ /--EMAIL--/, email ],
         [ /--CTYPE--/, ctype ],
+        [ /--COURSE1--/, courses[0] ],
+        [ /--COURSE2--/, courses[1] ],
         [ /--PASS--/, password_plain ] ], nil, fname )
   end
 

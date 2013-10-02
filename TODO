@@ -3,6 +3,7 @@
 BUGS:
         - Can't create diplomas anymore! Some problem with zip...
           added new zip-library, now replace all ZipFile with Zip::File
+        - presence-sheet can't be printed as PDF??
 
         - CourseDiplomas: very slow when enqueuing files - qrcode?
         - when migrating with old value-names, it gives an error - how to keep
