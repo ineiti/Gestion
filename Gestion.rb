@@ -9,7 +9,7 @@
 # - Login: - for payable laptop web-access
 #          - for students
 
-DEBUG_LVL=2
+DEBUG_LVL=3
 VERSION_GESTION="1.2.0"
 require 'fileutils'
 
@@ -47,8 +47,8 @@ begin
   require 'Label'
   require 'ACQooxView'
   ACQooxView.load_entities
-#rescue StorageLoadError
-#  cleanup_data
+  #rescue StorageLoadError
+  #  cleanup_data
 rescue Exception => e
   puts "#{e.inspect}"
   puts "#{e.to_s}"
@@ -64,33 +64,33 @@ rescue Exception => e
 end
 
 begin
-# Our default-permission is to only login!
-Permission.add( 'default', ',Welcome,SelfShow' )
-Permission.add( 'quiz', 'SelfChat,SelfConcours,SelfResults', '' )
-Permission.add( 'internet', 'SelfInternet,SelfChat', 'default' )
-Permission.add( 'student', '', 'internet' )
-Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
-Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint', 'assistant' )
-Permission.add( 'secretary', 'SelfServices,CourseModify,FlagAdminPerson,' + 
-    'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
-Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
-Permission.add( 'maintenance', 'Inventory.*', 'default' )
-Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,SelfServices', '' )
-Permission.add( 'director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
-               'PersonAdmin,PersonCourse,NetworkConnection', 'secretary,cybermanager,teacher' )
-Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseDiploma,' +
-    'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson', 'teacher' )
-Permission.add( 'admin', '.*', '.*' )
+  # Our default-permission is to only login!
+  Permission.add( 'default', ',Welcome,SelfShow' )
+  Permission.add( 'quiz', 'SelfChat,SelfConcours,SelfResults', '' )
+  Permission.add( 'internet', 'SelfInternet,SelfChat', 'default' )
+  Permission.add( 'student', '', 'internet' )
+  Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
+  Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint', 'assistant' )
+  Permission.add( 'secretary', 'SelfServices,CourseModify,FlagAdminPerson,' + 
+      'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
+  Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
+  Permission.add( 'maintenance', 'Inventory.*', 'default' )
+  Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,SelfServices', '' )
+  Permission.add( 'director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
+      'PersonAdmin,PersonCourse,NetworkConnection', 'secretary,cybermanager,teacher' )
+  Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseDiploma,' +
+      'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson', 'teacher' )
+  Permission.add( 'admin', '.*', '.*' )
 
-if uri = get_config( false, :LibNet, :URI )
-  dputs(1){ "Making DRB-connection with #{uri}" }
-  require 'drb'
-  $lib_net = DRbObject.new nil, uri
-  dputs(1){ "Connection is #{$lib_net.status}" }
-else
-  require "../LibNet/LibNet.rb"
-  $lib_net = LibNet.new( get_config( false, :LibNet, :simulation ) )
-end
+  if uri = get_config( false, :LibNet, :URI )
+    dputs(1){ "Making DRB-connection with #{uri}" }
+    require 'drb'
+    $lib_net = DRbObject.new nil, uri
+    dputs(1){ "Connection is #{$lib_net.status}" }
+  else
+    require "../LibNet/LibNet.rb"
+    $lib_net = LibNet.new( get_config( false, :LibNet, :simulation ) )
+  end
 
   QooxView::init( 'Entities', 'Views' )
 
@@ -108,7 +108,7 @@ end
 
   dputs( 0 ){ "Loading database" }
   ACQooxView::check_db
-
+  
   if not Entities.Services.match_by_name( "Free solar" )
     dputs( 0 ){ "Creating services" }
     Entities.Services.create( :name => "CCC", :group => "ccc", 
@@ -181,9 +181,9 @@ catch :ctrl_c do
       QooxView::startWeb webrick_port
     end
   rescue Exception => e
-  dputs( 0 ){ "#{e.inspect}" }
-  dputs( 0 ){ "#{e.to_s}" }
-  puts e.backtrace
+    dputs( 0 ){ "#{e.inspect}" }
+    dputs( 0 ){ "#{e.to_s}" }
+    puts e.backtrace
     dputs( 0 ){ "Saving all" }
     Entities.save_all
   end
@@ -199,5 +199,5 @@ if $profiling
 pprof.rb --pdf /tmp/#{$profiling} > /tmp/#{$profiling}.pdf
 open /tmp/#{$profiling}.pdf
 CPUPROFILE_FREQUENCY=500
-    "
+  "
 end

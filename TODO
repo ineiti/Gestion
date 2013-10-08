@@ -4,6 +4,10 @@ BUGS:
         - Can't create diplomas anymore! Some problem with zip...
           added new zip-library, now replace all ZipFile with Zip::File
         - presence-sheet can't be printed as PDF??
+        - passwords are not used correctly with regard to replacement with ***
+        - if Person::Tabs::add::
+        - take away "login_prop"
+        - troubles with "login_prop" when entered a number with LDAP
 
         - CourseDiplomas: very slow when enqueuing files - qrcode?
         - when migrating with old value-names, it gives an error - how to keep
