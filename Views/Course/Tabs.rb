@@ -28,7 +28,7 @@ class CourseTabs < View
         gui_vbox :nogroup do
           show_str :new_teacher
         end
-        show_button :add_missing
+        show_button :add_missing, :close
       end
     end
     
@@ -92,6 +92,7 @@ class CourseTabs < View
     end
     reply( :window_hide ) +
       rpc_update( session ) +
+      rpc_update_view( session ) +
       reply( :pass_tabs, [ :update_hook ] )
   end
 
@@ -140,6 +141,6 @@ class CourseTabs < View
 
   def rpc_update_view( session, args = nil )
     super( session, args ) +
-      reply( :fade_in, :parent )
+      reply( :fade_in, "parent,windows" )
   end
 end

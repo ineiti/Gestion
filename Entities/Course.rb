@@ -532,7 +532,8 @@ base_gestion
       "-"
     end
     dputs(4){"State is #{state}"}
-    @make_pdfs_state[student.login_name] = [ mean, state ]
+    ln = student.login_name
+    @make_pdfs_state[ln] = [ mean, state, get_diploma_filename( ln, "pdf", false ) ]
     
     [ grade, state ]
   end
@@ -552,6 +553,7 @@ base_gestion
       Zip::File.open(file){ |z|
         dputs(5){"Cours is #{self.inspect}"}
         doc = z.read("content.xml")
+        doc.force_encoding( Encoding::UTF_8 )
         dputs(5){ doc.inspect }
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match( doc )
@@ -605,10 +607,11 @@ base_gestion
     end
   end
   
-  def get_diploma_filename( student, ext = "odt" )
+  def get_diploma_filename( student, ext = "odt", diplomadir = true )
     digits = students.size.to_s.size
     counter = students.index( student ) + 1
-    "#{dir_diplomas}/#{counter.to_s.rjust(digits, '0')}-#{student}.#{ext}"
+    str = diplomadir ? dir_diplomas : name
+    "#{str}/#{counter.to_s.rjust(digits, '0')}-#{student}.#{ext}"
   end
 
   def make_pdfs( convert )
@@ -681,8 +684,10 @@ base_gestion
             dputs( 5 ){ "Finished docsplit" }
             FileUtils.rm( p )
             dputs( 5 ){ "Finished rm" }
-            outfiles.push p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
+            outfile = p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
+            outfiles.push outfile
             @make_pdfs_state[student_name][1] = "done"
+            @make_pdfs_state[student_name][2] = outfile
           }
           @make_pdfs_state["0"] = "collecting"
           if format == :certificate

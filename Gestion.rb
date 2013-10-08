@@ -45,6 +45,7 @@ begin
   require 'Internet'
   require 'Info'
   require 'Label'
+  require 'GetDiplomas'
   require 'ACQooxView'
   ACQooxView.load_entities
   #rescue StorageLoadError

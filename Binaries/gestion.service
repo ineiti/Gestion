@@ -1,0 +1,10 @@
+[Unit]
+Description=Gestion of cultural centers
+
+[Service]
+Type=forking
+ExecStart=/var/profeda/Gestion/Binaries/start_gestion
+ExecStop=/var/profeda/Gestion/Binaries/kill_gestion
+
+[Install]
+WantedBy=multi-user.target

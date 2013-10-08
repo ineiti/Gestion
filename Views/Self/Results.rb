@@ -2,6 +2,7 @@ class SelfResults < View
   def layout
     @order = 10
     @visible = true
+    @functions_need = [:quiz]
 
     gui_vbox do
       show_list :results, 'Quizs.results', :flexheight => 1

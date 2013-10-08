@@ -1,7 +1,7 @@
 class ConfigBases < Entities
   @@functions = %w( network internet share 
     courses course_server course_client 
-    inventory accounting ).sort.to_sym
+    inventory accounting quiz ).sort.to_sym
   @@functions_base = { :network => [ :internet, :share ],
     :courses => [ :course_server, :course_client ]
   }

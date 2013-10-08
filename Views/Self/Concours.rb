@@ -2,6 +2,7 @@ class SelfConcours < View
   def layout
     @order = 10
     @visible = true
+    @functions_need = [:quiz]
 
     gui_vbox do
       gui_vbox :nogroup do

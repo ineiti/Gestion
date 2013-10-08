@@ -15,8 +15,8 @@ class CourseDiploma < View
 
     gui_hbox do
       gui_vbox :nogroup do
-        show_table :diplomas_t, :headings => [:Name, :Grade, :State],
-          :widths => [200, 50, 100], :height => 500
+        show_table :diplomas_t, :headings => [:Name, :Grade, :State, :PDF ],
+          :widths => [200, 50, 100], :height => 500, :render_html => [3]
       end
       gui_vbox :nogroup do
         gui_fields do
@@ -79,6 +79,10 @@ class CourseDiploma < View
     end
   end
   
+  def pdf_link( path )
+    "<a target='other' href=\"/getdiplomas/#{path}\">#{File.basename(path)}</a>"
+  end
+  
   def rpc_update_with_values( session, args )
     args.to_sym!
     ( course_id = args._courses[0] ) or return []
@@ -100,9 +104,12 @@ class CourseDiploma < View
     
     states = if course.get_files.index{|f| f =~ /(000-4pp.pdf|zip)$/ }
       if $1 =~ /zip$/
-        [["all.zip",["All files"]]]
+        [["all.zip",["All files", "", "", pdf_link("#{course.name}/all.zip")]]]
       else
-        [["000-4pp.pdf",["4 on 1 page"]], ["000-all.pdf",["All diplomas"]]]
+        [["000-4pp.pdf",["4 on 1 page", "", "", 
+              pdf_link("#{course.name}/000-4pp.pdf") ]], 
+          ["000-all.pdf",["All diplomas", "", "", 
+              pdf_link("#{course.name}/000-all.pdf")]]]
       end
     else
       []
@@ -110,7 +117,8 @@ class CourseDiploma < View
     states += course.make_pdfs_state.keys.reject{|k| k == "0"}.
       collect{|s|
       st = course.make_pdfs_state[s]
-      [s, [Persons.match_by_login_name(s).full_name, st[0], st[1]]]
+      p = Persons.match_by_login_name(s)
+      [s, [p.full_name, st[0], st[1], pdf_link( st[2] ) ]]
     }.sort{|a,b|
       a[1][0] <=> b[1][0]
     }

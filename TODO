@@ -1,15 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Can't create diplomas anymore! Some problem with zip...
-          added new zip-library, now replace all ZipFile with Zip::File
-        - presence-sheet can't be printed as PDF??
+        - on smileplug, problem with docsplit and libreoffice
         - passwords are not used correctly with regard to replacement with ***
-        - if Person::Tabs::add::
-        - take away "login_prop"
-        - troubles with "login_prop" when entered a number with LDAP
 
-        - CourseDiplomas: very slow when enqueuing files - qrcode?
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
         - Fresh install with Course::add_missing doesn't work because of missing
@@ -28,9 +22,6 @@ UI:
         - CourseGrade::sync - catch timeouts on requests
         - CourseGrade - add comment to file-uploads, so people know what to
           upload
-	- CourseDiplomas: take away "print to PDF" and insert direct links 
-          in the table -> take care about security-risk if only adding a
-          simple manager for diplomas
         - CourseTabs still very slow for startup
         - SelfChat: if on multilogin, propose a "name"-field
 
@@ -202,6 +193,14 @@ To check:
 
 
 ** FIXED **:
+        - B 131008: CourseDiplomas: very slow when enqueuing files - qrcode?
+        - B 131008: Can't create diplomas anymore! Some problem with zip...
+          added new zip-library, now replace all ZipFile with Zip::File
+	- UI131008: CourseDiplomas: take away "print to PDF" and insert direct links 
+          in the table -> take care about security-risk if only adding a
+          simple manager for diplomas
+        - B 131008: when courses not initialized, pop-up window is faded and can't be used
+        - B 131008: take away "login_prop"
         - B 130919: PersonAdmin: when deleting person that is shown, there is an error,
           in fact, it is only in the case when a course has a wrong attribute...
         - B 130917: When synching courses, "teacher"-attribute of users 
