@@ -2,7 +2,6 @@
 
 BUGS:
         - on smileplug, problem with docsplit and libreoffice
-        - passwords are not used correctly with regard to replacement with ***
 
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
@@ -19,16 +18,16 @@ BUGS:
 Security:
 
 UI:
+        - Courses::center needs work:
+          - it isn't shown in CourseModify, even with center_server
+          - it is by default to responsible (at least installation from 130613)
         - CourseGrade::sync - catch timeouts on requests
         - CourseGrade - add comment to file-uploads, so people know what to
           upload
         - CourseTabs still very slow for startup
-        - SelfChat: if on multilogin, propose a "name"-field
 
+        - SelfChat: if on multilogin, propose a "name"-field
         - CourseDiplomas: display random-id if available
-        - Courses::center needs work:
-          - it isn't shown in CourseModify, even with center_server
-          - it is by default to responsible (at least installation from 130613)
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
         - clean up the interface, mostly the tabs and sub-tabs
@@ -193,6 +192,7 @@ To check:
 
 
 ** FIXED **:
+        - B 131009: passwords are not used correctly with regard to replacement with ***
         - B 131008: CourseDiplomas: very slow when enqueuing files - qrcode?
         - B 131008: Can't create diplomas anymore! Some problem with zip...
           added new zip-library, now replace all ZipFile with Zip::File

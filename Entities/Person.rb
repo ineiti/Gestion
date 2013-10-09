@@ -545,10 +545,12 @@ class Person < Entity
     dputs( 1 ){ "Setting password for #{self.login_name} to #{p}" }
     self._password = p
     if ( permissions and permissions.index( "center" ) ) or
-      ( groups and groups.index( "share" ) ) or
-      ( not self.password_plain or self.password_plain == "" )
+        ( groups and groups.index( "share" ) ) or
+        ( not self.password_plain or self.password_plain == "" or
+          self.password_plain == pass )
       self.password_plain = pass
     else
+      dputs(0){self.password_plain.inspect}
       self.password_plain = "****"
     end
   end
