@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I.
+#!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I.
 #!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I. -wKU
 require 'test/unit'
 
@@ -32,7 +32,7 @@ QooxView.init( '../Entities', '../Views' )
 
 tests = %w( login view tasks internet info course person )
 #tests = %w( compta )
-#tests = %w( course )
+tests = %w( course )
 tests.each{|t|
   require "ge_#{t}"
 }

@@ -1,5 +1,5 @@
 #!/usr/local/bin/ruby -I../QooxView -I. -I../AfriCompta
-##!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta
+#!/usr/local/bin/ruby -I../QooxView -I. -I../AfriCompta
 #!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta -wKU
 # ! /usr/bin/ruby -I../QooxView -I../AfriCompta  -wKU
 # ! /usr/local/opt/ruby/bin/ruby -I../QooxView -I../AfriCompta -w
@@ -9,7 +9,7 @@
 # - Login: - for payable laptop web-access
 #          - for students
 
-DEBUG_LVL=3
+DEBUG_LVL=2
 VERSION_GESTION="1.2.0"
 require 'fileutils'
 
@@ -27,11 +27,11 @@ def cleanup_data
   puts "Oups - looking what to do"
   youngest = nil
   if File.exists? "Backups"
-    youngest = %x[ ls Backups | tail -n 1 ]
+    youngest = %x[ ls Backups | sort | tail -n 1 ]
     puts "Backups are here - trying youngest: #{ youngest }"
   end
   puts "Making new backup and deleting everything in data/*"
-  %x[ Binaries/backup ]
+  %x[ Binaries/backup 1rescue_ ]
   exec "nohup Binaries/swipe_gestion #{youngest}"
   #FileUtils.rm_rf( "data" )
   #youngest and exec "nohup Binaries/restore #{ youngest } &"
@@ -48,8 +48,8 @@ begin
   require 'GetDiplomas'
   require 'ACQooxView'
   ACQooxView.load_entities
-  #rescue StorageLoadError
-  #  cleanup_data
+rescue StorageLoadError
+  cleanup_data
 rescue Exception => e
   puts "#{e.inspect}"
   puts "#{e.to_s}"
@@ -71,7 +71,8 @@ begin
   Permission.add( 'internet', 'SelfInternet,SelfChat', 'default' )
   Permission.add( 'student', '', 'internet' )
   Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
-  Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint', 'assistant' )
+  Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
+                 'FlagResponsible', 'assistant' )
   Permission.add( 'secretary', 'SelfServices,CourseModify,FlagAdminPerson,' + 
       'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
   Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
@@ -80,7 +81,7 @@ begin
   Permission.add( 'director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
       'PersonAdmin,PersonCourse,NetworkConnection', 'secretary,cybermanager,teacher' )
   Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseDiploma,' +
-      'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson', 'teacher' )
+      'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson', '' )
   Permission.add( 'admin', '.*', '.*' )
 
   if uri = get_config( false, :LibNet, :URI )

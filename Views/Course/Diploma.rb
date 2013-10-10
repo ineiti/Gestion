@@ -102,23 +102,25 @@ class CourseDiploma < View
         reply( :update, :status => overall_state )
     end
     
-    states = if course.get_files.index{|f| f =~ /(000-4pp.pdf|zip)$/ }
-      if $1 =~ /zip$/
-        [["all.zip",["All files", "", "", pdf_link("#{course.name}/all.zip")]]]
-      else
-        [["000-4pp.pdf",["4 on 1 page", "", "", 
-              pdf_link("#{course.name}/000-4pp.pdf") ]], 
-          ["000-all.pdf",["All diplomas", "", "", 
-              pdf_link("#{course.name}/000-all.pdf")]]]
-      end
+    states = case course.get_files.select{|f| f =~ /(000-4pp.pdf|zip)$/ }.first
+    when /zip$/
+      [["all.zip",["All files", "", "", pdf_link("#{course.name}/all.zip")]]]
+    when /pdf$/
+      [["000-4pp.pdf",["4 on 1 page", "", "", 
+            pdf_link("#{course.name}/000-4pp.pdf") ]], 
+        ["000-all.pdf",["All diplomas", "", "", 
+            pdf_link("#{course.name}/000-all.pdf")]]]
     else
+      dputs(0){course.get_files.inspect}
       []
     end
+
     states += course.make_pdfs_state.keys.reject{|k| k == "0"}.
       collect{|s|
       st = course.make_pdfs_state[s]
       p = Persons.match_by_login_name(s)
-      [s, [p.full_name, st[0], st[1], pdf_link( st[2] ) ]]
+      link = st[1] == "done" ? pdf_link( st[2] ) : "---"
+      [s, [p.full_name, st[0], st[1], link ]]
     }.sort{|a,b|
       a[1][0] <=> b[1][0]
     }

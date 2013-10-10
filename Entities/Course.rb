@@ -150,9 +150,6 @@ class Courses < Entities
     if needs_center
       dputs(3){"Got center of #{creator.inspect}"}
       course.center = creator
-    elsif creator
-      dputs(3){"Got responsible of #{creator.class}"}
-      course.responsible = creator
     end
     
     dputs(4){"Course is #{course.class}"}
@@ -687,19 +684,21 @@ base_gestion
             outfile = p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
             outfiles.push outfile
             @make_pdfs_state[student_name][1] = "done"
-            @make_pdfs_state[student_name][2] = outfile
+            @make_pdfs_state[student_name][2] = outfile.sub( /^#{@proxy.dir_diplomas}./, '' )
           }
           @make_pdfs_state["0"] = "collecting"
           if format == :certificate
             dputs( 3 ){ "Getting #{outfiles.inspect} out of #{dir}" }
             all = "#{dir}/000-all.pdf"
             psn = "#{dir}/000-4pp.pdf"
-            dputs( 3 ){ "Putting it all in one file: pdftk #{outfiles.join( ' ' )} cat output #{all}" }
-            `pdftk #{outfiles.join( ' ' )} cat output #{all}`
-            dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
+            #cmd = "pdftk #{outfiles.join( ' ' )} cat output #{all}"
+            cmd = "pdfunite #{outfiles.join( ' ' )} #{all}"
+            ddputs( 3 ){ "Putting it all in one file: #{cmd}" }
+            %x[ #{cmd} ]
+            ddputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
             pf = ctype.data_get(:page_format, true)[0]
-            format = ['', '-f', '-l', '-r'][pf]
-            dputs(3){"Page-format is #{format}"}
+            format = ['', '-f', '-l', '-r'][pf - 1]
+            ddputs(3){"Page-format is #{pf.inspect}: #{format}"}
             `pdftops #{all} - | psnup -4 #{format} | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
             FileUtils.mv( "#{psn}.tmp", psn )
             dputs( 2 ){ "Finished" }
@@ -732,7 +731,7 @@ base_gestion
       FileUtils.mkdir( dir_diplomas )
     else
       if ! @only_psnup
-        FileUtils.rm( Dir.glob( dir_diplomas + "/*" ) )
+        FileUtils.rm_rf( Dir.glob( dir_diplomas + "/*" ) )
       end
     end
     @make_pdfs_state = {"0" => 'collecting'}

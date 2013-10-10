@@ -4,9 +4,16 @@ class GetDiplomas < RPCQooxdooPath
     dputs( 4 ){ "GetDiplomas: #{req.inspect}" }
     path, query, addr = req.path, req.query.to_sym, req.peeraddr[2]
     if req.request_method == "GET"
-      ddputs(4){req.inspect}
-      res['content-type'] = "application/pdf"
-      return IO.read( Courses.dir_diplomas + "/" + path.sub( /^.[^\/]*./, '' ) ).
+      filename = path.sub( /^.[^\/]*./, '' )
+      res['content-type'] = case filename
+      when /pdf$/i
+        "application/pdf"
+      when /png$/i
+        "image/png"
+      end
+      dputs(4){"Request is #{req.inspect}" }
+      ddputs(3){"filename is #{filename} - content-type is #{res['content-type']}" }
+      return IO.read( Courses.dir_diplomas + "/" + filename ).
         force_encoding( "ASCII-8BIT" )
     end
   end

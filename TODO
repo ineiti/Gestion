@@ -1,7 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - on smileplug, problem with docsplit and libreoffice
+        - Sync-error on server if family-name is not given
 
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
@@ -192,6 +192,11 @@ To check:
 
 
 ** FIXED **:
+        - B 131010: when creating diplomas, no correct error-handling if no center present
+          -> add to diploma-check in View/CourseTabs
+        - B 131010: when using "first-add-dialog", the new course-type has no file set!
+        - B 131010: on smileplug, problem with docsplit and libreoffice
+        - B 131010: CourseDiplomas shows links even for non-finished diplomas
         - B 131009: passwords are not used correctly with regard to replacement with ***
         - B 131008: CourseDiplomas: very slow when enqueuing files - qrcode?
         - B 131008: Can't create diplomas anymore! Some problem with zip...

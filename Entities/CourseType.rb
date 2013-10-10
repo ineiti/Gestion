@@ -62,7 +62,11 @@ class CourseTypes < Entities
   end
   
   def migration_3(ct)
-    ct.page_format = [2]
+    ct.page_format = [0]
+  end
+    
+  def migration_4( ct )
+    ct.page_format[0] += 1
   end
 end
 

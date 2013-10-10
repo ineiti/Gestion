@@ -2,5 +2,5 @@
 . $( dirname $0 )/lib_backup
 DATE=$( date +%Y-%m-%d_%H.%M.%S )
 
-tar -C $WDIR --exclude ./Backups -czf $BACKUP_DIR/backup_$DATE.tgz .
+tar -C $WDIR --exclude ./Backups -czf $BACKUP_DIR/${1}backup_$DATE.tgz .
 
