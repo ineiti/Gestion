@@ -8,7 +8,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="1.1.12-1"
+VERSION_GESTION="1.1.12-2"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -27,6 +27,8 @@ begin
   require 'Info'
   require 'Label'
   require 'ACQooxView'
+  ddputs(0){"Loading africompta"}
+  ACQooxView.load_entities
 rescue Exception => e
   dputs( 0 ){ "#{e.inspect}" }
   dputs( 0 ){ "#{e.to_s}" }
@@ -72,7 +74,7 @@ if uri = get_config( false, :LibNet, :URI )
 else
   begin
     require "../LibNet/LibNet.rb"
-    $lib_net = LibNet.new
+    $lib_net = LibNet.new( get_config( false, :LibNet, :simulation ) )
     dputs(0){ "Loaded Libnet" }
   rescue LoadError
     dputs(0){ "Couldn't load LibNet!" }
@@ -80,6 +82,7 @@ else
   end
 end
 
+ddputs(0){"Init QooxView"}
 QooxView::init( 'Entities', 'Views' )
 
 # Look for admin, create if it doesn't exist

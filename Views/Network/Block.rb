@@ -8,6 +8,7 @@ class NetworkBlock < View
     @functions_need = [:internet]
     @order = 100
     @blocking = Entities.Statics.get( :NetworkBlock )
+    @blocking.data_str == "" and @blocking.data_str = []
     update_block( @blocking.data_str )
 
     gui_hbox do
@@ -19,7 +20,7 @@ class NetworkBlock < View
   end
 
   def update_block( ips )
-    $lib_net.call_args( :captive_block, ips.collect{|ip| ip.sub(/ .*/,'') } )
+    $lib_net.call( :captive_block, ips.collect{|ip| ip.sub(/ .*/,'') } )
   end
 
   def list_dhcp
