@@ -3,6 +3,8 @@
 ./commit "Making branch $1"
 
 dirs_do(){
+  echo Doing -$1-
+  return
   for d in AfriCompta QooxView LibNet Gestion; do
     echo Doing -$1- in $d
     cd ../$d
@@ -10,11 +12,11 @@ dirs_do(){
   done
 }
 
-if ! echo $( hg branches ) | grep -q "^$1 "; then
+if ! hg branches | grep -q "^$1 "; then
   echo HG: Branch $1 doesnt exist, creating
   dirs_do "hg branch $1"
 fi
-if ! echo $( git branch ) | grep -q "^$1 "; then
+if ! git branch | grep -q "^$1 "; then
   echo Git: Branch $1 doesnt exist, creating
   dirs_do "git branch $1"
 fi
