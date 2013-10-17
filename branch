@@ -2,9 +2,13 @@
 
 ./commit "Making branch $1"
 
+NEWBRANCH=${1:-default}
+echo $NEWBRANCH
+exit
+
 dirs_do(){
-  echo Doing -$1-
-  return
+#  echo Doing -$1-
+#  return
   for d in AfriCompta QooxView LibNet Gestion; do
     echo Doing -$1- in $d
     cd ../$d
