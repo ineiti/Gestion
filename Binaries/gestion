@@ -1,0 +1,10 @@
+/var/log/gestion/gestion.log {
+  daily
+  copytruncate
+  rotate 30
+  mail root@localhost
+  postrotate
+    /var/www/Gestion/Binaries/log_scan_errors
+  endscript
+  nocompress
+}
