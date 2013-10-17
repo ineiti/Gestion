@@ -356,7 +356,7 @@ class Person < Entity
       #acc = data_get( :account_name_due )
       acc = account_name_due
       if acc.to_s.length == 0
-        acc = ( first_name || login_name ).capitalize 
+        acc = ( full_name || login_name ).capitalize 
         #data_set( :account_name_due, acc )
         self.account_name_due = acc
       end
@@ -365,9 +365,9 @@ class Person < Entity
       dputs( 2 ){ "Searching accounts for #{full_name} with "+
           "lending: #{lending} - service: #{service}" }
       @account_due = Accounts.get_by_path_or_create( lending, 
-        lending, false, -1, true )
+        acc, false, -1, true )
       @account_service = Accounts.get_by_path_or_create( service,
-        service, false, 1, false )
+        acc, false, 1, false )
     end
   end
   
@@ -380,11 +380,10 @@ class Person < Entity
         #data_set( :account_name_cash, acc )
         self.account_name_cash = acc
       end
-      dputs(3){"Getting account #{acc}"}
-      cc = get_config( "Root::Cash::#{acc}", 
-        :Accounting, :cash )
-      @account_cash = ( Accounts.get_by_path( cc ) or 
-          Accounts.create_path( cc, cc, false, -1, true ) )
+      dputs(3){"Getting cash account #{acc}"}
+      cc = "#{get_config( 'Root::Cash', :Accounting, :cash )}::#{acc}"
+      @account_cash = Accounts.get_by_path_or_create( cc, cc, false, -1, true )
+      dputs(3){"Account is #{@account_cash.inspect}"}
     end
   end
   
@@ -429,10 +428,14 @@ class Person < Entity
     update_smb_passwd
   end
   
-  def permissions=(p)
-    self._permissions = p
+  def update_accounts
     update_account_cash
     update_account_due
+  end
+  
+  def permissions=(p)
+    self._permissions = p
+    update_accounts
   end
   
   def account_name_due=(a)
