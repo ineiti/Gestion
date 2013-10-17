@@ -9,8 +9,8 @@
 # - Login: - for payable laptop web-access
 #          - for students
 
-DEBUG_LVL=3
-VERSION_GESTION="1.2.1-beta1"
+DEBUG_LVL=2
+VERSION_GESTION="1.2.1-rc1"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
