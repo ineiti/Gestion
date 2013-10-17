@@ -17,7 +17,8 @@ $( date )
 " >> $LOG
 }
 
-LOG=/var/log/gestion.log
+mkdir -p /var/log/gestion
+LOG=/var/log/gestion/gestion.log
 if ! touch $LOG; then
   LOG=gestion.log
 fi

@@ -52,10 +52,12 @@ class PersonTabs < View
   
   def rpc_update_view( session, args = nil )
     admin = session.can_view( :FlagAdminPerson ) ? :unhide : :hide
+    login_prop = session.can_view( :FlagAdminLoginProp ) ? :unhide : :hide
     super( session, args ) +
       reply( :focus, :search ) +
       reply( admin, :delete ) +
       reply( admin, :add ) +
+      reply( login_prop, :login_prop ) +
       reply( :fade_in, :parent )
   end
   
