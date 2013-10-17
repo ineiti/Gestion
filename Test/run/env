@@ -1,0 +1,710 @@
+ACTIONLOG=/Users/ineiti/Documents/workspace/Gestion/Test/log/action.log
+ALLOW_DHCP=255.255.255.255
+Apple_PubSub_Socket_Render=/tmp/launch-0Jev19/Render
+Apple_Ubiquity_Message=/tmp/launch-H2vx9s/Apple_Ubiquity_Message
+BASH=/bin/bash
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_LINENO=([0]="0")
+BASH_SOURCE=()
+BASH_VERSINFO=([0]="3" [1]="2" [2]="48" [3]="1" [4]="release" [5]="x86_64-apple-darwin11")
+BASH_VERSION='3.2.48(1)-release'
+CHAIN=FCAPTIVE
+CMDS=/Users/ineiti/Documents/workspace/Gestion/Test/run/cmd
+COMMAND_MODE=unix2003
+CONNSTAT=/Users/ineiti/Documents/workspace/Gestion/Test/run/connection
+COUNT=0
+DATE=130926-16.58
+DIRSTACK=()
+DISPLAY=/tmp/launch-TByg2U/org.macosforge.xquartz:0
+ENV=/Users/ineiti/Documents/workspace/Gestion/Test/run/env
+EUID=501
+FAKE_IP=true
+FIRST_INTERNAL=
+FUNC=captive_block
+GROUPS=()
+HOME=/Users/ineiti
+HOSTNAME=MBP-Linus.local
+HOSTTYPE=x86_64
+IFS=$' \t\n'
+INTERNAL_IPS=
+IPNAT='iptables -t nat'
+IPS_IDLE=/Users/ineiti/Documents/workspace/Gestion/Test/run/ips_idle
+IPT=iptables
+IP_LIST=/Users/ineiti/Documents/workspace/Gestion/Test/log/allowed_ips
+LC_CTYPE=UTF-8
+LIB_CAPTIVE=loaded
+LOG=/Users/ineiti/Documents/workspace/Gestion/Test/log
+LOGNAME=ineiti
+MACHTYPE=x86_64-apple-darwin11
+MAC_LIST=/Users/ineiti/Documents/workspace/Gestion/Test/log/allowed_macs
+MCAPTIVE=/Users/ineiti/Documents/workspace/Gestion/Test/multiconf-captive
+MSGS=/Users/ineiti/Documents/workspace/Gestion/Test/log/msgs.log
+OPTERR=1
+OPTIND=1
+OSTYPE=darwin11
+PARENT=FORWARD
+PATH=/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/X11/bin:/usr/X11/bin:/usr/local/git/bin:/usr/texbin:/Users/ineiti/bin:/Users/ineiti/.rvm/bin:/sbin:/usr/sbin
+PIPESTATUS=([0]="0")
+PPID=60403
+PREROUTING=PREROUTING
+PS4='+ '
+PWD=/Users/ineiti/Documents/workspace/Gestion/Test
+REPLY=/Users/ineiti/Documents/workspace/Gestion/Test/run/reply
+RESTRICTED=/Users/ineiti/Documents/workspace/Gestion/Test/run/restricted
+RUN=/Users/ineiti/Documents/workspace/Gestion/Test/run
+RUN_PID=/Users/ineiti/Documents/workspace/Gestion/Test/run/pid
+SECURITYSESSIONID=186a5
+SHELL=/bin/bash
+SHELLOPTS=braceexpand:hashall:interactive-comments
+SHLVL=3
+SSH_AUTH_SOCK=/tmp/launch-w4msHH/Listeners
+TERM=xterm-color
+TERM_PROGRAM=Apple_Terminal
+TERM_PROGRAM_VERSION=303.2
+TERM_SESSION_ID=CCBA607B-1C6B-46DF-9571-2C04A25082B4
+TMPDIR=/var/folders/c9/74fwd38x3_z2w_7zr5l9793m0000gn/T/
+UID=501
+USER=ineiti
+USERS=/etc/captive.users
+USERS_CONNECTED=/Users/ineiti/Documents/workspace/Gestion/Test/run/connected
+USER_COST_MAX=0
+VAR=
+WDIR=/Users/ineiti/Documents/workspace/LibNet
+WHO=simple
+WWW_USER=
+_=/Users/ineiti/Documents/workspace/Gestion/Test/run/reply
+__CF_USER_TEXT_ENCODING=$'0x1F5:0:91\n'
+args=captive_block
+cmd=func
+ip=255.255.255.255
+lib=isp
+line='func captive_block'
+rvm_bin_path=/Users/ineiti/.rvm/bin
+rvm_path=/Users/ineiti/.rvm
+rvm_prefix=/Users/ineiti
+rvm_version='1.21.4 (stable)'
+captive_accept_all () 
+{ 
+    captive_clear;
+    iptables -A FCAPTIVE -j ACCEPT;
+    $IPNAT -I CAPTIVE -j INTERNET
+}
+captive_block () 
+{ 
+    log Blocking $1
+}
+captive_cleanup () 
+{ 
+    local CS=$( isp_connection_status );
+    if [ "$CS" = 0 ]; then
+        if [ "$( ips_connected )" ]; then
+            log "Disconnecting everybody as we're not connected";
+            users_disconnect_all;
+        fi;
+        return;
+    else
+        if [ "$CS" -lt 4 ]; then
+            log not really connected;
+            return;
+        fi;
+    fi;
+    if [ "$( ips_connected )" ]; then
+        for ip in $( ips_connected );
+        do
+            PACKETS=$( captive_packets_count $ip );
+            log Checking ip $ip - has $PACKETS packets;
+            if [ ! "$PACKETS" ]; then
+                loga Still in $USERS_CONNECTED, but not in iptables;
+                users_connected_delete $ip;
+                remove_line "^$ip\$" $IPS_IDLE;
+            else
+                if [ "$PACKETS" = 0 ]; then
+                    if egrep -q "^$ip\$" $IPS_IDLE; then
+                        loga No packets, kicking $ip;
+                        user_disconnect_ip $ip;
+                        remove_line "^$ip\$" $IPS_IDLE;
+                    else
+                        log $ip is idle, adding to list;
+                        echo $ip >> $IPS_IDLE;
+                    fi;
+                else
+                    remove_line "^$ip\$" $IPS_IDLE;
+                fi;
+            fi;
+        done;
+    else
+        if [ "$CONNECTION_TYPE" = "ondemand" ]; then
+            isp_connection_stop;
+        fi;
+    fi;
+    iptables -Z FCAPTIVE
+}
+captive_clear () 
+{ 
+    loga Clearing IPs and refreshing MACs;
+    $IPNAT -F CAPTIVE;
+    iptables -F FCAPTIVE;
+    ALLOW_DHCP=${ALLOW_DHCP:-255.255.255.255};
+    INTERNAL_IPS=${INTERNAL_IPS:-$( ip addr | grep "inet " | sed -e "s/.*inet \([^\/ ]*\).*/\1/" | grep -v 127.0.0.1 )};
+    log Internal is $INTERNAL_IPS;
+    for ip in $ALLOW_DHCP $INTERNAL_IPS $ALLOW_DST;
+    do
+        log Allowing requests to $ip to go through;
+        $IPNAT -A NOCAPTIVE -d $ip -j ACCEPT;
+        iptables -A FCAPTIVE -d $ip -j ACCEPT;
+    done;
+    for ip in $ALLOW_SRC_DIRECT;
+    do
+        log Allowing requests from $ip to go through;
+        $IPNAT -A NOCAPTIVE -s $ip -j ACCEPT;
+        $IPNAT -A NOCAPTIVE -d $ip -j ACCEPT;
+        iptables -A FCAPTIVE -s $ip -j ACCEPT;
+        iptables -A FCAPTIVE -d $ip -j ACCEPT;
+    done;
+    FIRST_INTERNAL=$( echo $INTERNAL_IPS | sed -e "s/ .*//" );
+    echo CAPTIVE IS $CAPTIVE_DNAT;
+    $IPNAT -I CAPTIVE -j DNAT --to-dest ${CAPTIVE_DNAT:-$FIRST_INTERNAL};
+    for ip in $( cat $IP_LIST );
+    do
+        captive_ip_accept $ip;
+    done;
+    for mac in $( cat $MAC_LIST );
+    do
+        captive_mac_accept $mac;
+    done;
+    for ip in $ALLOW_SRC_PROXY;
+    do
+        log Allowing requests from $ip to go through Proxy;
+        $IPNAT -A NOCAPTIVE -s $ip -j INTERNET;
+        $IPNAT -A NOCAPTIVE -d $ip -j INTERNET;
+        iptables -A FCAPTIVE -s $ip -j ACCEPT;
+        iptables -A FCAPTIVE -d $ip -j ACCEPT;
+    done;
+    iptables -A FCAPTIVE -j RETURN
+}
+captive_ip () 
+{ 
+    iptables $1 FCAPTIVE -s $2 -j ACCEPT;
+    iptables $1 FCAPTIVE -d $2 -j ACCEPT;
+    $IPNAT $1 CAPTIVE -s $2 -j INTERNET
+}
+captive_ip_accept () 
+{ 
+    captive_ip -I $1
+}
+captive_ip_add () 
+{ 
+    if ! captive_ip_check $1; then
+        echo $1 >> $IP_LIST;
+        captive_ip_accept $1;
+    fi
+}
+captive_ip_check () 
+{ 
+    if [ "$1" ]; then
+        grep -q $1 $IP_LIST;
+    fi
+}
+captive_ip_del () 
+{ 
+    grep -v $1 $IP_LIST > /tmp/ips;
+    mv /tmp/ips $IP_LIST;
+    captive_ip_deny $1
+}
+captive_ip_deny () 
+{ 
+    captive_ip -D $1
+}
+captive_ip_drop () 
+{ 
+    iptables $1 FCAPTIVE -s $2 -j DROP;
+    iptables $1 FCAPTIVE -d $2 -j DROP
+}
+captive_mac_accept () 
+{ 
+    if ! iptables -L FCAPTIVE -n | grep -qi $1; then
+        MAC_IPT="-m mac --mac-source $1";
+        iptables -I FCAPTIVE $MAC_IPT -j ACCEPT;
+        $IPNAT -I CAPTIVE $MAC_IPT -j INTERNET;
+    fi
+}
+captive_mac_add () 
+{ 
+    if ! captive_mac_check $1; then
+        echo $1 >> $MAC_LIST;
+        captive_mac_accept $1;
+    fi
+}
+captive_mac_check () 
+{ 
+    if [ "$1" ]; then
+        grep -q $1 $MAC_LIST;
+    fi
+}
+captive_mac_del () 
+{ 
+    grep -v $1 $MAC_LIST > /tmp/macs;
+    mv /tmp/macs $MAC_LIST;
+    captive_mac_deny $1
+}
+captive_mac_deny () 
+{ 
+    if iptables -L FCAPTIVE -n | grep -qi $1; then
+        MAC_IPT="-m mac --mac-source $1";
+        iptables -D FCAPTIVE $MAC_IPT -j ACCEPT;
+        $IPNAT -D CAPTIVE $MAC_IPT -j INTERNET;
+    fi
+}
+captive_packets_count () 
+{ 
+    echo $( iptables -L FCAPTIVE -nv | grep $1 | head -n 1 | 
+    sed -e "s/ *\([^ ]*\).*/\1/" )
+}
+captive_rest_add () 
+{ 
+    captive_rest_addr -I;
+    if [ "$1" ]; then
+        captive_ip_accept $1;
+    fi
+}
+captive_rest_addr () 
+{ 
+    for ip in 10.1.0.0/24 10.0.10.0/21 10.1.10.0/21 10.2.10.0/21;
+    do
+        captive_ip_drop $1 $ip;
+    done;
+    if [ "$1" = "-I" ]; then
+        captive_ip_accept 10.9.0.0/16;
+        captive_ip_accept 10.1.14.0/24;
+    else
+        captive_ip_deny 10.9.0.0/16;
+        captive_ip_deny 10.1.14.0/24;
+    fi
+}
+captive_rest_del () 
+{ 
+    captive_rest_addr -D;
+    if [ "$1" ]; then
+        captive_ip_deny $1;
+    fi
+}
+captive_rest_txt_ip () 
+{ 
+    case "$1" in 
+        info1)
+            echo 10.1.11.0/24
+        ;;
+        info2)
+            echo 10.1.12.0/24
+        ;;
+        *)
+            echo ""
+        ;;
+    esac
+}
+captive_restriction_get () 
+{ 
+    log Restriction get $( cat $RESTRICTED );
+    cat $RESTRICTED
+}
+captive_restriction_set () 
+{ 
+    log restricting -$REST-;
+    OLDREST=$( captive_restriction_get );
+    if [ "$OLDREST" ]; then
+        captive_rest_del $( captive_rest_txt_ip $OLDREST );
+    fi;
+    REST=$1;
+    case $REST in 
+        info1 | info2)
+            captive_rest_add $( captive_rest_txt_ip $REST )
+        ;;
+        *)
+            REST=""
+        ;;
+    esac;
+    echo $REST > $RESTRICTED
+}
+captive_setup () 
+{ 
+    log Setting up;
+    PREROUTING=${PREROUTING:-PREROUTING};
+    delete_chain $PREROUTING CAPTIVE nat;
+    delete_chain $PREROUTING NOCAPTIVE nat;
+    delete_chain "" INTERNET nat;
+    if [ "$HTTP_PROXY" ]; then
+        $IPNAT -A INTERNET -p tcp --dport 80 -j DNAT --to-dest $HTTP_PROXY;
+    fi;
+    $IPNAT -A INTERNET -j ACCEPT;
+    delete_chain FORWARD FCAPTIVE;
+    iptables -P FORWARD DROP;
+    captive_clear;
+    for ip in $( ips_connected );
+    do
+        captive_ip_accept $ip;
+    done;
+    if [ "$( captive_restriction_get )" ]; then
+        captive_restriction_set $( captive_restriction_get );
+    fi
+}
+change_var () 
+{ 
+    local FILE=$1;
+    local VAR=$2;
+    local VALUE=$3;
+    loga "Going to add $VAR = $VALUE to $FILE";
+    if grep -q $VAR $FILE; then
+        perl -pi -e "s/^($VAR)=.*/\1=$VALUE/" $FILE;
+    else
+        echo "$VAR=$VALUE" >> $FILE;
+    fi;
+    . ./$FILE
+}
+delete_chain () 
+{ 
+    PARENT="$1";
+    CHAIN="$2";
+    IPT="iptables";
+    if [ "$3" ]; then
+        IPT="$IPT -t $3";
+    fi;
+    if $IPT -L $PARENT -n | grep -q $CHAIN; then
+        if [ "$PARENT" ]; then
+            $IPT -D $PARENT -j $CHAIN;
+        fi;
+        $IPT -F $CHAIN;
+        $IPT -X $CHAIN;
+    fi;
+    $IPT -N $CHAIN;
+    if [ "$PARENT" ]; then
+        $IPT -I $PARENT -j $CHAIN;
+    fi
+}
+email_backup () 
+{ 
+    EMAIL=${1:-info@profeda.org};
+    BACKUP="/tmp/backup-$DATE.tgz";
+    tar czf $BACKUP /var/www/Gestion/data;
+    echo "Backup of Gestion from Bitkine" | mail -a $BACKUP -s "Backup from Bitkine at $DATE" $EMAIL
+}
+get_line_field () 
+{ 
+    grep $2 $1 | sed -e "s/ \+/ /g" | cut -d " " -f $3
+}
+ip () 
+{ 
+    log ip $@
+}
+ips_connected () 
+{ 
+    cat $USERS_CONNECTED | sed -e "s/ .*//"
+}
+iptables () 
+{ 
+    log Iptables $@
+}
+isp_connect () 
+{ 
+    log Starting connection;
+    isp_connection_start
+}
+isp_cost_get () 
+{ 
+    echo "{\"cost_base\":$COST_BASE,\"cost_shared\":$COST_SHARED\)"
+}
+isp_cost_set () 
+{ 
+    logf Setting cost $1-$2;
+    change_var $MCAPTIVE COST_BASE $1;
+    change_var $MCAPTIVE COST_SHARED $2
+}
+isp_disconnect () 
+{ 
+    log Stopping connection;
+    isp_connection_stop
+}
+isp_free_set () 
+{ 
+    logf Setting allow_free to $1;
+    change_var $MCAPTIVE ALLOW_FREE $1
+}
+isp_may_disconnect () 
+{ 
+    isp_connection_stop
+}
+isp_params () 
+{ 
+    echo "{\"isp\":\"$ISP\",\"conn_type\":\"$CONNECTION_TYPE\"," "\"has_promo\":\"$HAS_PROMO\",\"has_credit\":\"$HAS_CREDIT\"," "\"allow_free\":\"$ALLOW_FREE\"}"
+}
+isp_restart () 
+{ 
+    if [ "$CONN_TYPE" = "always_on" ]; then
+        isp_connection_stop;
+        isp_connection_start;
+        if [ -f $USERS_CONNECTED ]; then
+            rm -f $USERS_CONNECTED;
+        fi;
+        captive_clear;
+    fi
+}
+isp_setup () 
+{ 
+    action Dummy setup
+}
+lib_init () 
+{ 
+    captive_setup;
+    isp_setup
+}
+log () 
+{ 
+    msg simple "$@"
+}
+loga () 
+{ 
+    msg action $@;
+    echo $DATE $@ >> $ACTIONLOG
+}
+logf () 
+{ 
+    msg function "$@"
+}
+mail_get_queue () 
+{ 
+    postqueue -p | grep -v "Connection refused" -
+}
+mail_start_copy () 
+{ 
+    $WDIR/start_copy_emails;
+    rm /var/spool/postfix/hold/*
+}
+msg () 
+{ 
+    WHO=$1;
+    shift;
+    echo $( date +%F_%R ) - $WHO: $@ >> $MSGS
+}
+msg_rcv_cmd () 
+{ 
+    $WDIR/Tools/msgtool r 2
+}
+msg_rcv_rpl () 
+{ 
+    REPLY=$( $WDIR/Tools/msgtool r 3 );
+    log Reply is $REPLY;
+    echo $REPLY
+}
+msg_snd_cmd () 
+{ 
+    log sending command $@;
+    $WDIR/Tools/msgtool s 2 "$*"
+}
+msg_snd_rpl () 
+{ 
+    log sending reply $@;
+    $WDIR/Tools/msgtool s 3 "$*"
+}
+ppp_rx () 
+{ 
+    BYTES=$( get_line_field /proc/net/dev ppp0 3 );
+    echo ${BYTES:-0}
+}
+ppp_tx () 
+{ 
+    BYTES=$( get_line_field /proc/net/dev ppp0 11 );
+    echo ${BYTES:-0}
+}
+remove_line () 
+{ 
+    SEARCH=$1;
+    FILE=$2;
+    egrep -v "$SEARCH" "$FILE" > "$FILE.tmp";
+    mv "$FILE.tmp" "$FILE"
+}
+to_json () 
+{ 
+    RESULT=""
+}
+uap_rx () 
+{ 
+    BYTES=$( get_line_field /proc/net/dev uap0 3 );
+    echo ${BYTES:-0}
+}
+uap_tx () 
+{ 
+    BYTES=$( get_line_field /proc/net/dev uap0 11 );
+    echo ${BYTES:-0}
+}
+user_connect () 
+{ 
+    local IP=$1;
+    local NAME=$2;
+    local ALLOW_DOUBLE=${3:-no};
+    logf user_connect :$IP:$NAME:;
+    isp_connect;
+    if [ $( user_connected $NAME ) = "yes" ]; then
+        log User $NAME already connected;
+        if [ "$ALLOW_DOUBLE" = "no" ]; then
+            return;
+        fi;
+    fi;
+    local KEEP_PPP="";
+    if egrep -q "^$IP " $USERS_CONNECTED; then
+        KEEP_PPP="keep_$IP keep_$USER";
+        log IP $IP already connected, first adding $KEEP_PPP user;
+        echo $KEEP_PPP >> $USERS_CONNECTED;
+        log now disconnecting old user;
+        user_disconnect_ip $IP;
+    fi;
+    log Connecting user $NAME - $IP;
+    echo $IP $NAME >> $USERS_CONNECTED;
+    captive_ip_accept $IP;
+    if [ "$KEEP_PPP" ]; then
+        user_disconnect $KEEP_PPP;
+    fi
+}
+user_connected () 
+{ 
+    logf user_connected $1;
+    if users_connected | egrep -q "^$1\$"; then
+        echo yes;
+    else
+        echo no;
+    fi
+}
+user_cost_max () 
+{ 
+    local COST_MAX=$(( COST_BASE + COST_SHARED ));
+    logf user_cost_max is $COST_MAX;
+    echo $COST_MAX
+}
+user_cost_now () 
+{ 
+    local USERS_CONNECTED=$( users_connected | wc -l );
+    if [ "$USERS_CONNECTED" -gt 0 ]; then
+        local COST=$(( COST_BASE + COST_SHARED / USERS_CONNECTED ));
+    else
+        local COST=$(( COST_BASE + COST_SHARED ));
+    fi;
+    log Cost per user is $COST;
+    echo $COST
+}
+user_disconnect () 
+{ 
+    local IP=$1;
+    local NAME=$2;
+    logf user_disconnect :$IP:$NAME:;
+    if [ ! "$1" -o ! "$2" ]; then
+        return;
+    fi;
+    if [ $( user_connected $NAME ) = "yes" ]; then
+        log Doing disconnection of $NAME;
+        egrep -v "^$IP $NAME\$" $USERS_CONNECTED > /tmp/users.connected;
+        mv /tmp/users.connected $USERS_CONNECTED;
+        captive_ip_deny $IP;
+    else
+        log User $NAME is not connected;
+    fi;
+    if [ ! -s $USERS_CONNECTED ]; then
+        isp_may_disconnect;
+    fi
+}
+user_disconnect_ip () 
+{ 
+    for ip in $( egrep "^$1 " $USERS_CONNECTED | sed -e "s/ /:/" );
+    do
+        local U=$( echo $ip | sed -e "s/:/ /" );
+        log Disconnecting -$U-;
+        user_disconnect $U;
+    done
+}
+user_disconnect_name () 
+{ 
+    user_disconnect $( egrep " $1\$" $USERS_CONNECTED )
+}
+users_check () 
+{ 
+    USER=$( echo $1 | sed -e "s/ //g" | tr A-Z a-z | tr -cd a-z0-9_- );
+    LINE=$( egrep -i "^$USER:" $USERS );
+    if [ -z "$LINE" ]; then
+        PASS="";
+        LEVEL=0;
+    else
+        PASS=$( echo $LINE | cut -f 2 -d ":" );
+        LEVEL=$( echo $LINE | cut -f 3 -d ":" );
+    fi;
+    if [ "$2" -a "$2" = "$PASS" ]; then
+        USER_OK="true";
+    else
+        if [ "$USER" -a "$2" ]; then
+            if [ "$2" ]; then
+                USER_OK="wrong";
+            else
+                USER_OK="add";
+            fi;
+        else
+            USER_OK="nothing";
+        fi;
+    fi;
+    if [ "$FORM_signup" ]; then
+        USER_OK="add";
+    fi
+}
+users_connected () 
+{ 
+    cat $USERS_CONNECTED | sed -e "s/.* //"
+}
+users_connected_delete () 
+{ 
+    egrep -v "^$1 " $USERS_CONNECTED > /tmp/uc;
+    mv /tmp/uc $USERS_CONNECTED
+}
+users_disconnect_all () 
+{ 
+    for ip in $( sed -e "s/ /:/" $USERS_CONNECTED );
+    do
+        local U=$( echo $ip | sed -e "s/:/ /" );
+        log Disconnecting -$U-;
+        user_disconnect $U;
+    done
+}
+users_high_level () 
+{ 
+    USERS_HIGH="";
+    for u in $( users_connected );
+    do
+        if [ $( users_level $u ) -gt 2 ]; then
+            USERS_HIGH="$USERS_HIGH $u";
+        fi;
+    done;
+    echo -n $USERS_HIGH
+}
+users_level () 
+{ 
+    USER=$1;
+    LINE=$( egrep "^$USER:" $USERS );
+    echo $LINE | cut -f 3 -d :
+}
+users_low_level () 
+{ 
+    USERS_LOW="";
+    for u in $( users_connected );
+    do
+        if [ $( users_level $u ) -lt 3 ]; then
+            USERS_LOW="$USERS_LOW $u";
+        fi;
+    done;
+    echo -n $USERS_LOW
+}
+users_mac () 
+{ 
+    USERS_MAC="";
+    for p in $( iptables -L FCAPTIVE -nv | grep MAC | sed -e "s/ *\([0-9]*\).*/\1/" );
+    do
+        if [ $p -gt 0 ]; then
+            USERS_MAC="mac";
+        fi;
+    done;
+    echo -n $USERS_MAC
+}
