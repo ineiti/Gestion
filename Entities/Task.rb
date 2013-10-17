@@ -23,7 +23,7 @@ class Tasks < Entities
   end
 
   def data_to_time( d )
-    dputs 3, d.inspect
+    dputs( 3 ){ d.inspect }
     t = d[:date].split('.').values_at( 2, 1, 0 ) +
         d[:time].to_s.split('.')
     Time.utc( *t )
@@ -39,17 +39,13 @@ class Tasks < Entities
   
   def list_task_month( worker, year, month, client )
     @data.values.select{|d|
-      dputs 3, "Data is: #{d.inspect}"
+      dputs( 3 ){ "Data is: #{d.inspect}" }
       date = data_to_time( d )
-      dputs 3, [ date.inspect, year, month, worker, d[:person] ].inspect
+      dputs( 3 ){ [ date.inspect, year, month, worker, d[:person] ].inspect }
       date.year == year.to_i and 
         date.month == month.to_i and 
         worker == Entities.Workers.find_full_name( d[:person][0] ) and
         client.name == d[:client][0]
     }
   end
-end
-
-class Task < Entity
-  
 end

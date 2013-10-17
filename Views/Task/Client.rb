@@ -10,7 +10,7 @@ class TaskClient < View
         show_button :delete
       end
       gui_vbox :nogroup do
-        show_find :name
+        #show_find :name
         show_block :prices
         show_block :address
         show_block :contact

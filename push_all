@@ -8,14 +8,11 @@ elif [ "$1" != production ]; then
   HOST=$1
 fi
 
-echo Pushing Gestion
-hg commit
-hg push $1
-echo Pushing QooxView
-cd ../QooxView
-hg commit
-hg push $1
-for a in Gestion QooxView; do
+for a in Gestion QooxView AfriCompta; do
+  echo Pushing $a
+  cd ../$a
+  hg commit
+  hg push -f --new-branch $1
   echo Updating $a on $HOST
   ssh root@$HOST.wifi "cd $BASE/$a; hg up"
 done

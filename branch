@@ -1,7 +1,21 @@
 #!/bin/bash
-if echo $( hg branches ) | grep -q $1; then
-  hg branch $1
-  git branch $1
+
+./commit "Making branch $1"
+
+dirs_do(){
+  for d in AfriCompta QooxView LibNet Gestion; do
+    echo Doing -$1- in $d
+    cd ../$d
+    $1
+  done
+}
+
+if ! echo $( hg branches ) | grep -q $1; then
+  echo Branch $1 doesnt exist, creating
+  dirs_do "git branch $1"
+  dirs_do "hg branch $1"
 fi
-hg up $1
-git checkout $1
+
+dirs_do "git checkout $1"
+dirs_do "hg branch $1"
+

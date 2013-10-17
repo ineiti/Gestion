@@ -23,22 +23,22 @@ class TaskList < View
     to = from = Time.now.year
     Entities.Tasks.list_date{|d|
       year = d.sub( /.*\./, '' )
-      dputs 5, "date is #{d}, year is #{year}"
+      dputs( 5 ){ "date is #{d}, year is #{year}" }
       from = [ from, year ].min
       to = [ to, year ].max
     }
-    dputs 5, "from #{from} to #{to}"
+    dputs( 5 ){ "from #{from} to #{to}" }
     from.upto( to ).to_a
   end
   
   def rpc_button_list( session, data )
-    dputs 3, data.inspect
+    dputs( 3 ){ data.inspect }
     worker = Entities.Workers.find_full_name( data["person"][0] )
-    dputs 3, worker.inspect
-    client = Entities.Clients.find_by_name( data["client"][0] )
-    dputs 3, client.inspect
+    dputs( 3 ){ worker.inspect }
+    client = Entities.Clients.match_by_name( data["client"][0] )
+    dputs( 3 ){ client.inspect }
     list = Tasks.list_task_month( worker, data["year"][0], data["month"][0], client)
-    dputs 3, list.inspect
+    dputs( 3 ){ list.inspect }
     tasks = ""
     hours = 0.0
     list.sort{|a,b| a[:date] <=> b[:date] }.each{|l|

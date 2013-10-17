@@ -3,50 +3,27 @@ Shows the existing courses and the courses on the server, so that the
 two can be synchronized.
 =end
 
-#require 'rubygems'
-require 'zip/zipfilesystem'; include Zip
-require 'docsplit'
-
-$create_pdfs = Thread.new{
-  $new_pdfs = []
-  loop{
-    if $new_pdfs.length == 0
-      Thread.stop
-    end
-    dputs 2, "Creating pdfs #{$new_pdfs.inspect}"
-    `date >> /tmp/cp`
-    pdfs = []
-    n_pdfs = $new_pdfs.shift
-    dir = File::dirname( n_pdfs.first )
-    n_pdfs.sort.each{ |p|
-      dputs 3, "Started thread for file #{p} in directory #{dir}"
-      Docsplit.extract_pdf p, :output => dir
-      dputs 5, "Finished docsplit"
-      FileUtils::rm( p )
-      dputs 5, "Finished rm"
-      pdfs.push p.sub( /\.[^\.]*/, '.pdf' )
-    }
-    dputs 3, "Getting #{pdfs.inspect} out of #{dir}"
-    all = "#{dir}/000-all.pdf"
-    psn = "#{dir}/000-4pp.pdf"
-    dputs 3, "Putting it all in one file"
-    `pdftk #{pdfs.join( ' ' )} cat output #{all}`
-    dputs 3, "Putting 4 pages of #{all} into #{psn}"
-    `pdftops #{all} - | psnup -4 -f | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
-    FileUtils::mv( "#{psn}.tmp", psn )
-    dputs 2, "Finished"
-  }
-}
 
 class CourseDiploma < View
+  include PrintButton
+  
   def layout
     set_data_class :Courses
     @order = 30
+    @thread = nil
+    @update = true
 
     gui_hbox do
       gui_vbox :nogroup do
-        show_list :diplomas
-        show_button :do_diplomass, :print
+        show_table :diplomas_t, :headings => [:Name, :Grade, :State, :PDF ],
+          :widths => [200, 50, 100], :height => 500, :render_html => [3]
+      end
+      gui_vbox :nogroup do
+        gui_fields do
+          show_info :status
+          show_button :do_diplomas, :abort
+        end
+        show_print :print
       end
       gui_window :missing_data do
         show_html :missing
@@ -57,127 +34,163 @@ class CourseDiploma < View
         show_button :close
       end
     end
-    
-    @default_printer = @default_printer ? "-P #{@default_printer}" : 
-      $config[:default_printer] ? "-P #{$config[:default_printer]}" : ""
+  end
+  
+  def rpc_show( session )
+    super( session ) +
+      reply( :hide, [ :abort, :status ] )
+  end
+  
+  def rpc_update( session )
+    super( session ) +
+      reply_print( session )
   end
 
   def rpc_list_choice( session, name, args )
-    dputs 3, "rpc_list_choice with #{name} - #{args.inspect}"
-    ret = reply('empty', ['diplomas'])
-    case name
+    args.to_sym!
+    dputs( 3 ){ "rpc_list_choice with #{name.inspect} - #{args.inspect}" }
+    ret = []
+    case name.to_s
     when "courses"
-      if args['courses'].length > 0
-        course = Entities.Courses.find_by_course_id( args['courses'] )
-        course and ret += reply( 'update', :diplomas => course.get_pdfs )
+      ret = reply( :empty, :diplomas_t1 )
+      if args._courses.length > 0
+        if course = Entities.Courses.match_by_course_id( args._courses.to_a[0] )
+          course.update_state
+          ret += rpc_update_with_values( session, args )
+        end
       end
     end
     return ret
   end
 
-  def update_student_diploma( file, student, course )
-    grade = Entities.Grades.find_by_course_person( course.course_id, student.login_name )
-    if grade and grade.to_s != "NP"
-      dputs 3, "New diploma for: #{course.course_id} - #{student.login_name} - #{grade.to_hash.inspect}"
-      ZipFile.open(file){ |z|
-        doc = z.read("content.xml")
-        contents = ""
-        dputs 5, "Contents is: #{course.contents.inspect}"
-        course.contents.split("\n").each{|d|
-          dputs 5, "One line is: #{d}"
-          contents += d + "</text:p></text:list-item><text:list-item><text:p text:style-name='P2'>"
-        }
-        contents.sub!(/(.*)<\/text:p.*/, '\1')
-        dputs 4, "Contents is: #{contents}"
-        doc.gsub!( /_PROF_/, Entities.Persons.login_to_full( course.teacher ) )
-        doc.gsub!( /_RESP_/, Entities.Persons.login_to_full( course.responsible ) )
-        doc.gsub!( /_NOM_/, student.full_name )
-        doc.gsub!( /_DUREE_/, course.duration )
-        doc.gsub!( /_COURS_/, course.description )
-        show_year = course.start.gsub(/.*\./, '' ) != course.end.gsub(/.*\./, '' )
-        doc.gsub!( /_DU_/, course.date_fr( course.start, show_year ) )
-        doc.gsub!( /_AU_/, course.date_fr( course.end ) )
-        doc.gsub!( /_DESC_/, contents )
-        doc.gsub!( /_SPECIAL_/, grade.remark || "" )
-        doc.gsub!( /_MENTION_/, grade.mention )
-        doc.gsub!( /_DATE_/, course.date_fr( course.sign ) )
-        z.file.open("content.xml", "w"){ |f|
-          f.write( doc )
-        }
-        z.commit
-      }
-    else
-      FileUtils.rm( file )
-    end
-  end
-
-  def rpc_button_do_diplomass( session, args )
+  def rpc_button_do_diplomas( session, args )
     course_id = args['courses'][0]
-    course = Courses.find_by_course_id(course_id)
+    course = Courses.match_by_course_id(course_id)
     if not course or course.export_check
       if course
-        return reply( "window_show", :missing_data ) +
-        reply("update", :missing => "The following fields are not filled in:<br>" + 
-          course.export_check.join("<br>"))
+        return reply( :window_show, :missing_data ) +
+          reply( :update, :missing => "The following fields are not filled in:<br>" + 
+            course.export_check.join("<br>"))
       end
     else
-      students = course.students
-      digits = Math::log10( students.size + 1 ).ceil
-      counter = 1
-      dputs 2, "Diploma_dir is: #{course.diploma_dir}"
-      if not File::directory? course.diploma_dir
-        FileUtils::mkdir( course.diploma_dir )
-      else
-        FileUtils::rm( Dir.glob( course.diploma_dir + "/*" ) )
-      end
-      dputs 2, students.inspect
-      students.each{ |s|
-        student = Entities.Persons.find_by_login_name( s )
-        if student
-          dputs 2, student.login_name
-          student_file = "#{course.diploma_dir}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
-          dputs 2, "Doing #{counter}: #{student.login_name}"
-          FileUtils::cp( "#{Entities.Courses.diploma_dir}/base_gestion.odt", student_file )
-          update_student_diploma( student_file, student, course )
-        end
-        counter += 1
-      }
-      FileUtils::rm( Dir.glob( course.diploma_dir + "/content.xml*" ) )
-      $new_pdfs += [ Dir.glob( course.diploma_dir + "/*odt" ) ]
-      if $new_pdfs.length > 0
-        $create_pdfs.run
-        rpc_list_choice( session, "courses", "courses" => course_id.to_s ) +
-        reply( "auto_update", "-5" )
-      end
+      course.prepare_diplomas
+
+      rpc_list_choice( session, :courses, :courses => [course_id.to_s] )
     end
+  end
+  
+  def pdf_link( path )
+    "<a target='other' href=\"/getdiplomas/#{path}\">#{File.basename(path)}</a>"
   end
   
   def rpc_update_with_values( session, args )
-    course_id = args['courses'][0]
-    ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
-    course = Entities.Courses.find_by_course_id( course_id )
-    if course.get_pdfs.index( "000-4pp.pdf" )
-      ret += reply( :auto_update, 0 )
+    args.to_sym!
+    ( course_id = args._courses[0] ) or return []
+    #ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
+    ret = []
+    ( course = Entities.Courses.match_by_course_id( course_id ) ) or return []
+
+    overall_state = course.make_pdfs_state["0"]
+    if overall_state == "done"
+      ret += reply( :auto_update, 0 ) +
+        reply( :hide, [:abort,:status] ) +
+        reply( :unhide, :do_diplomas )
+    else
+      ret += reply( :auto_update, -5 ) +
+        reply( :unhide, [:abort,:status] ) +
+        reply( :hide, :do_diplomas ) +
+        reply( :update, :status => overall_state )
     end
-    return ret
+    
+    states = case course.get_files.select{|f| f =~ /(000-4pp.pdf|zip)$/ }.first
+    when /zip$/
+      [["all.zip",["All files", "", "", pdf_link("#{course.name}/all.zip")]]]
+    when /pdf$/
+      [["000-4pp.pdf",["4 on 1 page", "", "", 
+            pdf_link("#{course.name}/000-4pp.pdf") ]], 
+        ["000-all.pdf",["All diplomas", "", "", 
+            pdf_link("#{course.name}/000-all.pdf")]]]
+    else
+      dputs(0){course.get_files.inspect}
+      []
+    end
+
+    states += course.make_pdfs_state.keys.reject{|k| k == "0"}.
+      collect{|s|
+      st = course.make_pdfs_state[s]
+      p = Persons.match_by_login_name(s)
+      link = st[1] == "done" ? pdf_link( st[2] ) : "---"
+      [s, [p.full_name, st[0], st[1], link ]]
+    }.sort{|a,b|
+      a[1][0] <=> b[1][0]
+    }
+    
+    return ret + 
+      reply_print( session ) +
+      reply( :update, :diplomas_t => states )
   end
 
   def rpc_button_close( session, args )
-    reply( "window_hide" )
+    reply( :window_hide )
   end
   
   def rpc_button_print( session, args )
-    ret = nil
-    if args['diplomas'].length > 0
+    ret = rpc_print( session, :print, args ) +
+      reply( :window_hide )
+    lp_cmd = cmd_printer( session, :print )
+    if ( names = args['diplomas_t'] ).length > 0
       course_id = args['courses'][0]
-      course = Courses.find_by_course_id(course_id)
-      dputs 2, "Printing #{args['diplomas'].inspect}"
-      args['diplomas'].each{|g|
-        `lpr #{@default_printer} #{course.diploma_dir}/#{g}`
+      course = Courses.match_by_course_id(course_id)
+
+      files = names.collect{|f|
+        file = "#{course.dir_diplomas}/#{f}"
+        exts = %w( pdf png )
+        while ( ! File.exists? file ) and ( exts.length > 0 )
+          file = "#{course.get_diploma_filename(f, exts.pop)}"
+        end
+        if ! File.exists? file
+          file = "Not found"
+        end
+        dputs(3){"Filename is #{file}"}
+        name = ( ( p = Persons.match_by_login_name( f ) ) and p.full_name ) ||
+          {"all.zip"=>"All files", "000-4pp.pdf"=>"4 on 1 page",
+          "000-all.pdf"=>"All diplomas"}[f] || "Unknown"
+        [ name, file ]
       }
-      ret = reply( :window_show, :printing ) +
-        reply( :update, :msg_print => "Impression de<ul><li>#{args['diplomas'].join('</li><li>')}</li></ul>en cours" )
+      dputs( 2 ){ "Printing #{files.inspect}" }
+      if lp_cmd
+        names = []
+        files.each{|name, file|
+          if File.exists? file
+            `#{lp_cmd} #{file}`
+            names.push name
+          end
+        }
+        ret += reply( :window_show, :printing ) +
+          reply( :update, :msg_print => "Impression de<ul><li>" +
+            "#{names.join('</li><li>')}</li></ul>en cours" )
+      else
+        ret += reply( :window_show, :printing ) +
+          reply( :update, :msg_print => "Choisir le pdf:<ul>" +
+            files.collect{|name,file|
+            if File.exists? file
+              %x[ cp #{file} /tmp ] 
+              "<li><a target='other' href=\"/tmp/#{File.basename(file)}\">#{name}</a></li>"
+            else
+              "<li>#{name} - not found</li>"
+            end
+          }.join('') + "</ul>" )
+      end
     end
     ret
+  end
+  
+  def rpc_button_abort( session, args )
+    course_id = args['courses'][0]
+    course = Entities.Courses.match_by_course_id( course_id )
+    course.abort_pdfs
+    reply( :unhide, :do_diplomas ) +
+      reply( :hide, :abort ) +
+      reply( :auto_update, 0 )
   end
 end

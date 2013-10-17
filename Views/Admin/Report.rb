@@ -18,7 +18,7 @@ class AdminReport < View
   
   def rpc_list_choice( session, name, args )
     if name == "report_type"
-      dputs 0, "args is #{args.inspect}"
+      dputs( 0 ){ "args is #{args.inspect}" }
       case args["report_type"][0]
       when 1
       when 2

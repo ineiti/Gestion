@@ -6,6 +6,3 @@ class Payments < Entities
     # value_entity :client, :Person
   end
 end
-
-class Payment < Entity  
-end

@@ -1,5 +1,17 @@
 #!/bin/bash
 
+. /etc/environment
+export LANG
+export LC_ALL
+date >> /var/log/start_gestion
+set >> /var/log/start_gestion
+logger -s "Starting Gestion"
+sleep 2
 cd $( dirname $0 )/..
-pkill -9 -f ruby.*Gestion
-screen -S Gestion -d -m ./Gestion.rb
+pwd >> /var/log/start_gestion
+if pgrep -f ruby.*Gestion; then
+  Binaries/kill_gestion
+fi
+logger -s "Starting new Gestion"
+sudo -i screen -S Gestion -d -s /usr/bin/bash -m $( pwd )/Binaries/loop_gestion
+echo $! > /var/run/gestion.pid

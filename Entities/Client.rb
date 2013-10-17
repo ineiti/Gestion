@@ -17,7 +17,3 @@ class Clients < Entities
     value_str :phone
   end
 end
-
-class Client < Entity
-  
-end
