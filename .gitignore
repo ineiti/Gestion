@@ -22,3 +22,5 @@ old/*
 Exas
 Test/share_test
 Doc/.backup
+po/*mo
+tmp/
