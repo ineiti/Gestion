@@ -1,15 +1,13 @@
-#!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I.
-#!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I. -wKU
+#!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -wKU
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"
-DEBUG_LVL=0
+DEBUG_LVL=3
 
 require 'QooxView'
 require 'ACQooxView'
 require 'LibNet'
 require 'Label'
-ACQooxView.load_entities
 
 $lib_net = LibNet.new
 
@@ -31,8 +29,8 @@ permissions_init
 QooxView.init( '../Entities', '../Views' )
 
 tests = %w( login view tasks internet info course person )
-#tests = %w( compta )
 tests = %w( course )
+#tests = %w( person )
 tests.each{|t|
   require "ge_#{t}"
 }

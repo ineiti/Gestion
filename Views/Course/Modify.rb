@@ -34,7 +34,7 @@ class CourseModify < View
           show_print :print_presence
           gui_vbox do
             gui_fields do
-              show_list :students, :flexheight => 1
+              show_list :students
               show_button :bulk_add, :del_student, :edit_student
             end
             show_print :print_student
@@ -122,7 +122,7 @@ class CourseModify < View
       if rep[0].class == String
         ret = reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Click on one of the links:<ul>" +
-            rep.collect{|r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
+            rep.collect{|r| "<li><a href=\"#{r}\">#{r}</a></li>" }.join('') +
             "</ul>" )
       elsif rep.length > 0
         ret = reply( :window_show, :printing ) +
@@ -145,7 +145,7 @@ class CourseModify < View
           reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
       else
         ret + reply( "window_show", "missing_data" ) +
-          reply( "update", :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>" )
+          reply( "update", :missing => "Click on the link: <a href=\"#{rep}\">PDF</a>" )
       end
     end
   end
@@ -191,8 +191,8 @@ class CourseModify < View
   
   def present_doubles( session, course )
     doubles = session.s_data[:perhaps_double]
-    dputs(4){"Doubles are #{doubles.inspect}"}
-    if doubles and doubles.length > 0
+    ddputs(4){"Doubles are #{doubles.inspect}"}
+    if doubles.length > 0
       prefix = ConfigBase.has_function?( :course_server ) ?
         "#{session.owner.login_name}_" : ""
       name = doubles.pop
@@ -203,7 +203,7 @@ class CourseModify < View
           join("-")
         [p.person_id, "#{p.full_name}:#{p.login_name}:#{courses}"]
       }
-      dputs(4){"Proposition is #{prop.inspect}"}
+      ddputs(4){"Proposition is #{prop.inspect}"}
       reply( :window_show, :ask_double ) +
         reply( :update, :double_name => name ) +
         reply( :empty_only, [:double_proposition ]) +
@@ -217,8 +217,7 @@ class CourseModify < View
   def rpc_button_accept( session, data )
     course = Courses.match_by_name( data['name'] )
     student = data['double_proposition']
-    dputs(5){"Data is #{data.inspect} - #{course.students.inspect} " + 
-        "- #{student.inspect}"}
+    ddputs(5){"Data is #{data.inspect} - #{course.students.inspect}"}
     if not course.students.index( student.login_name )
       course.students.push(
         student.login_name )
@@ -257,9 +256,9 @@ class CourseModify < View
     end
   end
   
-  def hide_if_center( session )
+  def center?( session )
     if session.owner.permissions.index( "center" )
-      %w( print_student duration dow hours
+      %w( print_presence print_student duration dow hours
       classroom ).collect{|e|
         reply( :hide, e )        
       }.flatten
@@ -272,14 +271,11 @@ class CourseModify < View
     reply( 'empty', [:students] ) +
       super( session ) +
       reply_print( session ) +
-      hide_if_center( session )
+      center?( session )
   end
   
   def update_layout( session )
-    resps = Persons.search_all.select{|p| 
-      Permission.can_view( p.permissions.reject{|perm| perm.to_s == "admin"}, 
-        "FlagResponsible" )
-    }
+    resps = Persons.search_by_permissions( "teacher" )
     if session.owner.permissions.index( "center" )
       resps = resps.select{|p|
         p.login_name =~ /^#{session.owner.login_name}_/
@@ -293,7 +289,7 @@ class CourseModify < View
     
     super( session ) +
       reply( :empty, fields ) +
-      reply( :update, :assistant => [[0, "---"]]) +
+      reply( :update, :assistant => [0, "---"]) +
       fields.collect{|p|
       reply( :update, p => resps )
     }.flatten

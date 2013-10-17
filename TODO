@@ -1,8 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Sync-error on server if family-name is not given
-
+        - Install mercurial repository on D-server
+        - Form is still active, even if shaded out
+        - PersonAdmin: when deleting person that is shown, there is an error
+        - after migration, solar-system hangs when saving Grades
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
         - Fresh install with Course::add_missing doesn't work because of missing
@@ -14,35 +16,50 @@ BUGS:
           find getActiveForm, as it is not drawn yet...
 	- 10 crashes when not operating "properly"
 
+UNCLEAR BUGS:
+        - ne pas afficher dans label quand "pas passé" -> when creating?
+        - missing fields won't work in Entity::to_hash( true ) ??
+
+HEISENBUGS:
+        - can't set up cybermanager anymore - permissions vanish !? - or was it
+          unclear setup of get_config::Accounting?
+        - Confirmed: NetworkPermissions: sometimes when saving, the chosen entry shows up
+          as a number in the list. Seems to be somewhere in the Javascript where
+          things don't get updated in the correct way. Not reproducible in a
+          reliable manner. Perhaps linked with more than one field as array like
+          130625?
+        - Confirmed: PersonAdmin sometimes doesn't show permissions and groups when
+          added new stuff -> also array-problem of 130625?
+
+UNCONFIRMED:
+        - Course::Diploma - can't create for more than one course at the same time
+          -> make a @thread for each course, or is it just ruby not really
+          multi-threaded?
+        - Test if Admin::Backup::restore resets passwords as it should in samba-module
+
 [5', 15', 30', 1h, 4h]
 Security:
 
 UI:
+        - CourseTabs still very slow for startup
+        - CourseDiploma: replace diploma-list with content of pop-up window
+          - display random-id if available
+        - CourseGrade::sync - catch timeouts on requests
+
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
-        - CourseGrade::sync - catch timeouts on requests
-        - CourseGrade - add comment to file-uploads, so people know what to
-          upload
-        - CourseTabs still very slow for startup
-
-        - SelfChat: if on multilogin, propose a "name"-field
-        - CourseDiplomas: display random-id if available
+        - auto_update from a window enables also the background (CourseGrade::sync)
+        - extend lists on all the height
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
 
 FEATURES:
-        - make an accounting-module
-
-        - use multilogin as flag for users
-        - configure better print, libnet, uploadwidget, so that it get's correctly
-          addressed with a configuration
-	- import courses from server
-        - logrotate gestion.log, and send daily error-reports to info@profeda.org
         - when a student logins remotely to a course_sever, don't allow to change
           his name, only address, phone-#, password and e-mail
+
         - adding a course:
           - add m/f recognition to change wording
           - Implement better handling of course-days
@@ -55,12 +72,14 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - Do something with CSV that don't load
         - Change ConfigBase functions_base: all functions are evaluated with
           base_dependencies, like network, network_share and network_internet,
           so that network_internet and network_share depend on network
         - Why is a value_list-definition in Entities not able to give a default-
           value for the list? -> it is, but only if it is taken as a show_block
           in a View, test whether show_field works, too
+        - Grade needs to change course_id and person_id with real entities
         - merge two ways of free surfing: group::freesurf and
           permissions::FreeInternet
         - Lots of stuff in View/* should go into Entities/*
@@ -102,9 +121,6 @@ Features:
 	- CourseHistory - what should go in there?
 
 Programming:
-        - Calling rpc_calls
-          - Convert all "args" to_sym!
-          - take out last [0]-arrays needed in args
 	-2 Allow subdirectories in Entities-directory
 	-3 Remove QooxView/Storages/AfriCompta.rb and adjust
 	 Gestion/Entities/Person.rb
@@ -166,25 +182,6 @@ Unconfirmed bugs:
 		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
 			-> where is that a problem?
 	- TaskList: sometimes when pressing "list", it takes twice to show everything
-        - Course::Diploma - can't create for more than one course at the same time
-          -> make a @thread for each course, or is it just ruby not really
-          multi-threaded?
-        - Test if Admin::Backup::restore resets passwords as it should in samba-module
-
-UNCLEAR BUGS:
-        - ne pas afficher dans label quand "pas passé" -> when creating?
-        - missing fields won't work in Entity::to_hash( true ) ??
-
-HEISENBUGS:
-        - can't set up cybermanager anymore - permissions vanish !? - or was it
-          unclear setup of get_config::Accounting?
-        - Confirmed: NetworkPermissions: sometimes when saving, the chosen entry shows up
-          as a number in the list. Seems to be somewhere in the Javascript where
-          things don't get updated in the correct way. Not reproducible in a
-          reliable manner. Perhaps linked with more than one field as array like
-          130625?
-        - Confirmed: PersonAdmin sometimes doesn't show permissions and groups when
-          added new stuff -> also array-problem of 130625?
 
 To check:
         - printing of student-card with accent in name fails (probably due to
@@ -192,53 +189,6 @@ To check:
 
 
 ** FIXED **:
-        - B 131010: when creating diplomas, no correct error-handling if no center present
-          -> add to diploma-check in View/CourseTabs
-        - B 131010: when using "first-add-dialog", the new course-type has no file set!
-        - B 131010: on smileplug, problem with docsplit and libreoffice
-        - B 131010: CourseDiplomas shows links even for non-finished diplomas
-        - B 131009: passwords are not used correctly with regard to replacement with ***
-        - B 131008: CourseDiplomas: very slow when enqueuing files - qrcode?
-        - B 131008: Can't create diplomas anymore! Some problem with zip...
-          added new zip-library, now replace all ZipFile with Zip::File
-	- UI131008: CourseDiplomas: take away "print to PDF" and insert direct links 
-          in the table -> take care about security-risk if only adding a
-          simple manager for diplomas
-        - B 131008: when courses not initialized, pop-up window is faded and can't be used
-        - B 131008: take away "login_prop"
-        - B 130919: PersonAdmin: when deleting person that is shown, there is an error,
-          in fact, it is only in the case when a course has a wrong attribute...
-        - B 130917: When synching courses, "teacher"-attribute of users 
-          doesn't get transferred
-        - UI130917: extend lists on all the height
-        - P 130917: Do something with CSV that don't load - first store in .sav, then
-          move over
-	- B 130917: in Binaries/start_gestion <ctrl-c> doesn't restart Gestion
-          can't restart Gestion anymore with a new call to start_gestion
-        - UI130909: PersonTabs - put search on top of results and stretch results all
-          the way down - added a gui-option of "flexheight"
-        - F 130822: Network::Share - add "force (user|group)" to smb.conf
-        - UI130822: auto_update from a window enables also the background (CourseGrade::sync)
-        - UI130822: Delete selection of a table upon "empty"
-        - UI130822: sort student-names in presence-sheet
-        - B 130822: Form is still active, even if shaded out
-        - UI130822: CourseGrade - list is sorted, but selected student is not on top
-        - B 130822: Label: "Pas passé" is not "passé avec succès"
-        - B 130822: CourseDiplomas: when nothing converted yet, it's like it's already
-          done
-        - B 130820: Config:LibNet:simul whether we do the forking or not
-        - B 130820: LibNet:: readlines somewhere in env where file does just not exist..
-        - B 130820: CoursePrint - add "presence_sheet" and other sheets like exams and stuff
-        - B 130820: update rest of promotion
-        - B 130820: fix bug with error in readline
-        - F 130820: add printing-page specific to profeda-courses
-        - UI130819: accredited_profeda: QRcode trop petit -> mettre à droite et plus grand?
-        - UI130802: Course* sort students-list
-        - B 130720: Install mercurial repository on D-server
-        - UI130802: CourseDiplomas: make name-column wider
-        - UI130802: CourseDiploma: replace diploma-list with a real table
-          - put everything into a "real" table to select and do proper printing
-          - show if file exists yet or not
         - F 130705: when adding a student to a course, check whether he already exists.
           for example: if same username exists, propose to take over the other
           name

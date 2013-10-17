@@ -6,7 +6,7 @@ class SelfInternet < View
     @auto_update = 10
     @auto_update_send_values = false
     @functions_need = [:internet]
-    @isp = $lib_net.isp_params
+    @isp = JSON.parse( $lib_net.call( :isp_params ) )
 
     gui_vbox do
       show_html :connection_status
@@ -24,23 +24,20 @@ class SelfInternet < View
   def can_connect( session )
     if not ( ag = AccessGroups.allow_user_now( session.owner ) )[0]
       return ag[1]
-    elsif $lib_net.get_var_file( :RESTRICTED ).join.length > 0
+    elsif $lib_net.call( :captive_restriction_get ).length > 0
       return 2
     elsif Internet.free( session.owner )
       return 0
     else
-      return session.owner.internet_credit.to_i >= $lib_net.print( :USER_COST_MAX ).to_i ? 
+      return session.owner.internet_credit.to_i >= $lib_net.call( :user_cost_max ).to_i ? 
         0 : 1
     end
   end
 	
   def update_connection_status( session )
-    ret = reply( Internet.free( session.owner ) ? :hide : :unhide, :internet_credit )
     case (cc = can_connect( session ))
     when 0
-      status = $lib_net.call( :isp_connection_status )
-      dputs(3){"Connection-status is #{status.inspect}"}
-      status = status.to_i
+      status = $lib_net.call( :isp_connection_status ).to_i
       status_str = %w( None PPP PAP IP VPN )
       status_color = %w( ff0000 ff2200 ff5500 ffff88 88ff88 )
       status_width = %w( 25 30 35 100 150 )
@@ -49,19 +46,18 @@ class SelfInternet < View
         status_color[status] + "'>" + 
         status_str[status] + "</td><td bgcolor='ffffff'></td>"
 
-      ret += reply( :update, :connection_status => 
+      reply( :update, :connection_status => 
           "Etat de la connexion:<br>" + 
           "<table width='150px'><tr>" + 
           connection_status +
           "</tr></table>" )
     when 1
-      ret += reply( :update, :connection_status => "Not enough money in account" )
+      reply( :update, :connection_status => "Not enough money in account" )
     when 2
-      ret += reply( :update, :connection_status => "Restricted access due to teaching" )
+      reply( :update, :connection_status => "Restricted access due to teaching" )
     else
-      ret += reply( :update, :connection_status => cc )
+      reply( :update, :connection_status => cc )
     end
-    return ret
   end
 	
   def update_button( session, nobutton = false )
@@ -70,14 +66,14 @@ class SelfInternet < View
         reply( :hide, :disconnect )
     end
     show_button = :connect
-    connected = $lib_net.call( :user_connected, session.owner.login_name )
+    connected = $lib_net.call_args( :user_connected, session.owner.login_name )
     if can_connect( session ) == 0
       dputs( 3 ){ "User_connected #{session.owner.login_name}: #{connected.inspect}" +
           " - #{@isp.inspect}" }
       if connected == "yes"
         dputs(4){"Showing disconnect because we're connected"}
         show_button = :disconnect
-      elsif $lib_net.print( :PROMOTION_LEFT ).to_i == 0 and 
+      elsif $lib_net.call( nil, :PROMOTION_LEFT ).to_i == 0 and 
           @isp['has_promo'] == 'true'
         dputs(4){"Showing disconnect because there is no promotion left"}
         show_button = :disconnect
@@ -96,11 +92,11 @@ class SelfInternet < View
   end
   
   def update_isp( session )
-    @isp = $lib_net.isp_params
+    @isp = JSON.parse( $lib_net.call( :isp_params ) )
     show_status = true
     #show_status = ( ( @isp['conn_type'] == 'ondemand' ) or 
     #    ( can_connect(session) == 0 ) )
-    dputs(3){"isp-params is: #{@isp.inspect}, " +
+    dputs(2){"isp-params is: #{@isp.inspect}, " +
         "show_status is #{show_status.inspect}"}
     reply( @isp['has_promo'] == 'true' ? :unhide : :hide, :bytes_left ) +
       reply( show_status ? :unhide : :hide, :connection_status )
@@ -131,7 +127,7 @@ class SelfInternet < View
       reply( :update, :users_connected => 
         "#{users.split.count}: #{users_str}" )
     if @isp['has_promo'] == 'true'
-      ret += reply( :update, :bytes_left => $lib_net.print( :PROMOTION_LEFT ) )
+      ret += reply( :update, :bytes_left => $lib_net.call( nil, :PROMOTION_LEFT ) )
     end
     return ret
   end
@@ -144,7 +140,7 @@ class SelfInternet < View
   def rpc_button_connect( session, data )
     if session.web_req
       ip = session.web_req.peeraddr[3]
-      $lib_net.async( :user_connect, "#{ip} #{session.owner.login_name}" )
+      $lib_net.call_args( :user_connect, "#{ip} #{session.owner.login_name}" )
       rpc_update( session, true )
     end
   end
@@ -152,7 +148,7 @@ class SelfInternet < View
   def rpc_button_disconnect( session, data )
     if session.web_req
       #ip = session.web_req.peeraddr[3]
-      $lib_net.async( :user_disconnect_name, "#{session.owner.login_name}" )
+      $lib_net.call_args( :user_disconnect_name, "#{session.owner.login_name}" )
       rpc_update( session, true )
     end
   end

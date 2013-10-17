@@ -448,8 +448,7 @@ class Person < Entity
   def update_smb_passwd( pass = password )
     if ConfigBase.has_function?( :share ) and ( groups and groups.index( "share" ) )
       if not @proxy.has_storage? :LDAP
-        %x[ if which adduser; then adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name};
-            else useradd #{self.login_name}; fi ]
+        %x[ adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name} ]
       end
       dputs(1){"Changing password in Samba to #{pass}"}
       dputs(3){"( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name}"}
@@ -502,12 +501,12 @@ class Person < Entity
   def check_pass( pass )
     if @proxy.has_storage? :LDAP
       # We have to try to bind to the LDAP
-      dputs( 2 ){ "Trying LDAP" }
+      dputs( 0 ){ "Trying LDAP" }
       #return @proxy.storage[:LDAP].check_login( data_get(:login_name), pass )
       return @proxy.storage[:LDAP].check_login( login_name, pass )
     else
       #dputs( 0 ){ "is #{pass} equal to #{data_get( :password ) }" }
-      dputs( 2 ){ "is #{pass} equal to #{password}" }
+      dputs( 0 ){ "is #{pass} equal to #{password}" }
       #return pass == data_get( :password )
       return pass == password
     end
@@ -544,14 +543,8 @@ class Person < Entity
     update_smb_passwd( pass )
     dputs( 1 ){ "Setting password for #{self.login_name} to #{p}" }
     self._password = p
-    if ( permissions and permissions.index( "center" ) ) or
-        ( groups and groups.index( "share" ) ) or
-        ( not self.password_plain or self.password_plain == "" or
-          self.password_plain == pass )
+    if permissions and permissions.index( "center" )
       self.password_plain = pass
-    else
-      dputs(0){self.password_plain.inspect}
-      self.password_plain = "****"
     end
   end
 
@@ -658,18 +651,8 @@ class Person < Entity
   
   def delete
     Courses.search_all.each{|course|
-      dputs(3){"Checking course #{course.name}"}
       [ :teacher, :assistant, :responsible, :center ].each{|role|
-        begin
-          r = course.data_get( "_#{role}" )
-        rescue Exception => e
-          if e.message == "WrongIndex"
-            dputs(0){"Role :#{role} is not well defined - resetting to nil"}
-            course.data_set( "_#{role}", nil )
-          end
-        end
-        dputs(3){"Role #{role} is #{r.inspect}"}
-        if r and r.login_name == login_name
+        if r = course.data_get("_#{role}") and r.login_name == login_name
           raise IsNecessary.new( course )
         end
       }
@@ -691,8 +674,7 @@ class Person < Entity
     }
 
     if not @proxy.has_storage? :LDAP
-      %x[ if which deluser; then deluser #{self.login_name}; else
-          userdel #{self.login_name}; fi ]
+      %x[ deluser #{self.login_name} ]
     end
     if ConfigBase.has_function?( :share )
       %x[ smbpasswd -x #{self.login_name} ]

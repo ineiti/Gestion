@@ -14,7 +14,6 @@ class PersonAdmin < View
               show_str_ro :login_name
               show_str_ro :person_id
               show_block :admin
-              show_arg :permissions, :flexheight => 1
             end
           end
           gui_vbox :nogroup do

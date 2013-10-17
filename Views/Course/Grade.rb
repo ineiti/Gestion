@@ -14,24 +14,25 @@ class CourseGrade < View
       @files.data_str = []
     end
 
-    #    gui_vboxgl do
     gui_hbox do
-      gui_vbox :nogroup do
-        show_list_single :students, :width => 300, :callback => true, :flexheight => 1
-        show_str_ro :last_synched
-        show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
-      end
-      gui_vbox :nogroup do
-        show_int :mean1
-        show_int :mean2
-        show_int :mean3
-        show_int :mean4
-        show_int :mean5
-        show_int_ro :files_saved
-        show_str :remark
-        show_str :first_name, :width => 150
-        show_str :family_name
-        show_button :save, :upload
+      gui_hbox :nogroup do
+        gui_vbox :nogroup do
+          show_list_single :students, :width => 300, :callback => true
+          show_str_ro :last_synched
+          show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
+        end
+        gui_vbox :nogroup do
+          show_int :mean1
+          show_int :mean2
+          show_int :mean3
+          show_int :mean4
+          show_int :mean5
+          show_int_ro :files_saved
+          show_str :remark
+          show_str :first_name, :width => 150
+          show_str :family_name
+          show_button :save, :upload
+        end
       end
       gui_window :transfer do
         show_html :txt
@@ -122,10 +123,9 @@ class CourseGrade < View
           reply(:update, {:courses => [course_id]}) +
           reply(:focus, :mean1 )
         if course.students.size > 0
-          first = course.list_students[0][0]
-          ret += reply(:update, {:students => [first]} ) +
+          ret += reply(:update, {:students => [course.students[0]]} ) +
             update_grade( {"courses" => [course.course_id],
-              "students" => [first]})
+              "students" => [course.students[0]]})
         end
 
         ret += to_means( course ){|s, i| 
@@ -189,11 +189,11 @@ class CourseGrade < View
       data['students'] = course[:students][( saved + 1 ) % course[:students].size]
       dputs( 2 ){ "Next student is #{data['students'].inspect}" }
 
-      reply( :empty, :students ) +
+      reply( "empty", [:students] ) +
         update_grade( data ) +
-        reply( :update, :students => course[:students] ) +
-        reply( :update, :students => [data['students'][0]] ) +
-        reply( :focus, :mean1 )
+        reply( 'update', {:students => course[:students]} ) +
+        reply( 'update', {:students => [data['students'][0]] } ) +
+        reply( 'focus', :mean1 )
     end
   end
   
@@ -204,7 +204,7 @@ class CourseGrade < View
       if file = course.zip_create
         @files.data_str.push file
         ret = reply( :update, :txt => "Download skeleton: " +
-            "<a target='other' href='/tmp/#{file}'>#{file}</a>" ) +
+            "<a href='/tmp/#{file}'>#{file}</a>" ) +
           reply( :unhide, :upload )
       end
     end
@@ -251,7 +251,7 @@ class CourseGrade < View
       course.sync_start
 
       reply( :window_show, :sync ) +
-        reply( :auto_update, -5 ) +
+        reply( :auto_update, -2 ) +
         rpc_update_with_values( session, data )
     else
       reply( :window_show, :sync ) +

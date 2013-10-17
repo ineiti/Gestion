@@ -15,14 +15,10 @@ class CourseDiploma < View
 
     gui_hbox do
       gui_vbox :nogroup do
-        show_table :diplomas_t, :headings => [:Name, :Grade, :State, :PDF ],
-          :widths => [200, 50, 100], :height => 500, :render_html => [3]
+        show_list :diplomas
       end
       gui_vbox :nogroup do
-        gui_fields do
-          show_info :status
-          show_button :do_diplomas, :abort
-        end
+        show_button :do_diplomas
         show_print :print
       end
       gui_window :missing_data do
@@ -32,13 +28,12 @@ class CourseDiploma < View
       gui_window :printing do
         show_html :msg_print
         show_button :close
+      end    
+      gui_window :create_diplomas do
+        show_html :state
+        show_button :close, :abort
       end
     end
-  end
-  
-  def rpc_show( session )
-    super( session ) +
-      reply( :hide, [ :abort, :status ] )
   end
   
   def rpc_update( session )
@@ -47,17 +42,14 @@ class CourseDiploma < View
   end
 
   def rpc_list_choice( session, name, args )
-    args.to_sym!
-    dputs( 3 ){ "rpc_list_choice with #{name.inspect} - #{args.inspect}" }
+    dputs( 3 ){ "rpc_list_choice with #{name} - #{args.inspect}" }
     ret = []
-    case name.to_s
+    case name
     when "courses"
-      ret = reply( :empty, :diplomas_t1 )
-      if args._courses.length > 0
-        if course = Entities.Courses.match_by_course_id( args._courses.to_a[0] )
-          course.update_state
-          ret += rpc_update_with_values( session, args )
-        end
+      ret = reply('empty', ['diplomas'])
+      if args['courses'].length > 0
+        course = Entities.Courses.match_by_course_id( args['courses'].to_a[0] )
+        course and ret += reply( :update, :diplomas => course.get_files )
       end
     end
     return ret
@@ -75,110 +67,71 @@ class CourseDiploma < View
     else
       course.prepare_diplomas
 
-      rpc_list_choice( session, :courses, :courses => [course_id.to_s] )
+      rpc_list_choice( session, :courses, :courses => course_id.to_s ) +
+        reply( :auto_update, "-5" ) +
+        reply( :window_show, :create_diplomas ) +
+        reply( :hide, :close ) +
+        reply( :unhide, :abort ) +
+        reply( :update, :state => "Preparing -<br>Please wait")
     end
-  end
-  
-  def pdf_link( path )
-    "<a target='other' href=\"/getdiplomas/#{path}\">#{File.basename(path)}</a>"
   end
   
   def rpc_update_with_values( session, args )
-    args.to_sym!
-    ( course_id = args._courses[0] ) or return []
-    #ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
-    ret = []
-    ( course = Entities.Courses.match_by_course_id( course_id ) ) or return []
-
+    course_id = args['courses'][0]
+    ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
+    course = Entities.Courses.match_by_course_id( course_id )
+    #if course.get_files.index{|f| f =~ /(000-4pp.pdf|zip)$/ }
     overall_state = course.make_pdfs_state["0"]
     if overall_state == "done"
       ret += reply( :auto_update, 0 ) +
-        reply( :hide, [:abort,:status] ) +
-        reply( :unhide, :do_diplomas )
-    else
-      ret += reply( :auto_update, -5 ) +
-        reply( :unhide, [:abort,:status] ) +
-        reply( :hide, :do_diplomas ) +
-        reply( :update, :status => overall_state )
+        reply( :hide, :abort ) +
+        reply( :unhide, :close )
     end
-    
-    states = case course.get_files.select{|f| f =~ /(000-4pp.pdf|zip)$/ }.first
-    when /zip$/
-      [["all.zip",["All files", "", "", pdf_link("#{course.name}/all.zip")]]]
-    when /pdf$/
-      [["000-4pp.pdf",["4 on 1 page", "", "", 
-            pdf_link("#{course.name}/000-4pp.pdf") ]], 
-        ["000-all.pdf",["All diplomas", "", "", 
-            pdf_link("#{course.name}/000-all.pdf")]]]
-    else
-      dputs(0){course.get_files.inspect}
-      []
-    end
-
-    states += course.make_pdfs_state.keys.reject{|k| k == "0"}.
-      collect{|s|
-      st = course.make_pdfs_state[s]
-      p = Persons.match_by_login_name(s)
-      link = st[1] == "done" ? pdf_link( st[2] ) : "---"
-      [s, [p.full_name, st[0], st[1], link ]]
-    }.sort{|a,b|
-      a[1][0] <=> b[1][0]
-    }
-    
+    header = "<table border='1'><tr><th>Name</th><th>Grade</th><th>State</th></tr>"
+    footer = "</table>"
+    keys = course.make_pdfs_state.keys.reject{|k| k == "0"}
+    index = 0
+    state = "<table><tr><td>#{header}" + 
+      keys.sort.collect{|s|
+      state = course.make_pdfs_state[s]
+      str = "<tr><td>#{s}</td><td align='right'>#{state[0]}</td><td>#{state[1]}</td></tr>"
+      index += 1
+      if ( keys.length > 10 ) and ( index == ( ( keys.length + 1 ) / 2 ) )
+        str += "#{footer}</td><td>#{header}"
+      end
+      str
+    }.join("") + footer + "</td></tr></table>" +
+      "<br>Progress: #{overall_state}"
+    dputs(3){course.make_pdfs_state.inspect}
+    dputs(3){state.inspect}
     return ret + 
       reply_print( session ) +
-      reply( :update, :diplomas_t => states )
+      reply( :update, :state => state )
   end
 
   def rpc_button_close( session, args )
-    reply( :window_hide )
+    reply( "window_hide" )
   end
   
   def rpc_button_print( session, args )
-    ret = rpc_print( session, :print, args ) +
-      reply( :window_hide )
+    ret = rpc_print( session, :print, args )
     lp_cmd = cmd_printer( session, :print )
-    if ( names = args['diplomas_t'] ).length > 0
+    if args['diplomas'].length > 0
       course_id = args['courses'][0]
       course = Courses.match_by_course_id(course_id)
-
-      files = names.collect{|f|
-        file = "#{course.dir_diplomas}/#{f}"
-        exts = %w( pdf png )
-        while ( ! File.exists? file ) and ( exts.length > 0 )
-          file = "#{course.get_diploma_filename(f, exts.pop)}"
-        end
-        if ! File.exists? file
-          file = "Not found"
-        end
-        dputs(3){"Filename is #{file}"}
-        name = ( ( p = Persons.match_by_login_name( f ) ) and p.full_name ) ||
-          {"all.zip"=>"All files", "000-4pp.pdf"=>"4 on 1 page",
-          "000-all.pdf"=>"All diplomas"}[f] || "Unknown"
-        [ name, file ]
-      }
-      dputs( 2 ){ "Printing #{files.inspect}" }
+      dputs( 2 ){ "Printing #{args['diplomas'].inspect}" }
       if lp_cmd
-        names = []
-        files.each{|name, file|
-          if File.exists? file
-            `#{lp_cmd} #{file}`
-            names.push name
-          end
+        args['diplomas'].each{|g|
+          `#{lp_cmd} #{course.dir_diplomas}/#{g}`
         }
         ret += reply( :window_show, :printing ) +
-          reply( :update, :msg_print => "Impression de<ul><li>" +
-            "#{names.join('</li><li>')}</li></ul>en cours" )
+          reply( :update, :msg_print => "Impression de<ul><li>#{args['diplomas'].join('</li><li>')}</li></ul>en cours" )
       else
         ret += reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Choisir le pdf:<ul>" +
-            files.collect{|name,file|
-            if File.exists? file
-              %x[ cp #{file} /tmp ] 
-              "<li><a target='other' href=\"/tmp/#{File.basename(file)}\">#{name}</a></li>"
-            else
-              "<li>#{name} - not found</li>"
-            end
+            args['diplomas'].collect{|d|
+            %x[ cp #{course.dir_diplomas}/#{d} /tmp ] 
+            "<li><a href=\"/tmp/#{d}\">#{d}</a></li>"
           }.join('') + "</ul>" )
       end
     end
@@ -189,8 +142,7 @@ class CourseDiploma < View
     course_id = args['courses'][0]
     course = Entities.Courses.match_by_course_id( course_id )
     course.abort_pdfs
-    reply( :unhide, :do_diplomas ) +
-      reply( :hide, :abort ) +
+    reply( :window_hide ) +
       reply( :auto_update, 0 )
   end
 end

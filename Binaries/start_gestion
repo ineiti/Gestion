@@ -8,10 +8,16 @@ set >> /var/log/start_gestion
 logger -s "Starting Gestion"
 sleep 2
 cd $( dirname $0 )/..
-pwd >> /var/log/start_gestion
 if pgrep -f ruby.*Gestion; then
-  Binaries/kill_gestion
+  logger -s "Killing old Gestion"
+  touch /tmp/stop_gestion
+  pkill -f ruby.*Gestion
+  logger -s "Waiting for 10 seconds"
+  sleep 10
+  logger -s "Killing old Gestion with -9"
+  pkill -9 -f ruby.*Gestion
 fi
+#logger "Deleting old LogAction"
+#rm data/LogAction*
 logger -s "Starting new Gestion"
-sudo -i screen -S Gestion -d -s /usr/bin/bash -m $( pwd )/Binaries/loop_gestion
-echo $! > /var/run/gestion.pid
+screen -S Gestion -d -m Binaries/run_gestion

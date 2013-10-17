@@ -10,9 +10,7 @@ class Welcome < View
       person = Entities.Persons.match_by_login_name( get_config( false, :autologin ) )
       person and dputs( 3 ){ "Found login #{person.data.inspect}" }
       if person then
-        session = get_config( false, :multilogin ) ? Sessions.find_by_owner( person.person_id ) : nil
-        session ||= Sessions.create( person )
-        dputs(1){"Session is #{session.inspect}"}
+        session = Sessions.create( person )
         return reply( :session_id, person.session_id ) +
           View.rpc_list( session )
       else
@@ -39,17 +37,14 @@ class Welcome < View
     if password.to_s.length == 0 then
       return reply( :focus, :password )
     elsif person and person.check_pass( password ) then
-      web_req = session.web_req
-      session = Sessions.create( person )
-      session.web_req = web_req
       dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
-      dputs( 0 ){ "Session is #{session.inspect}" }
-      dputs( 0 ){ "Authenticated person #{person.login_name} from #{session.web_req.peeraddr[3]}" }
-      return reply( :session_id, person.session_id ) +
-        reply( :list, View.list( session ) )
+      dputs( 2 ){ "Authenticated person #{person.login_name}" }
+      session = Sessions.create( person )
+      return reply( "session_id", person.session_id ) +
+        reply( "list", View.list( session ) )
     else
-      reply( :window_show, :login_failed ) +
-        reply( :update, :reason => person ? "Password wrong" : "User doesn't exist" )
+      reply( "window_show", "login_failed" ) +
+        reply( "update", {:reason => person ? "Password wrong" : "User doesn't exist" })
     end
   end
 

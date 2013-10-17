@@ -55,7 +55,7 @@ class PersonModify < View
         if file.class == String
           rep += reply( :window_show, :printing ) +
             reply( :update, :msg_print => "Click to download:<ul>" +
-              "<li><a target='other' href=\"#{file}\">#{file}</a></li></ul>" )
+              "<li><a href=\"#{file}\">#{file}</a></li></ul>" )
         end
       when "close"
         rep = reply( :window_hide )
@@ -84,7 +84,7 @@ class PersonModify < View
         }.flatten + reply( can_change ? :hide : :unhide, :not_allowed ) +
           reply( :update, :not_allowed => "<b>Vous n'avez pas le droit<br>" +
             "de changer ce mot de passe</b>" )
-        dputs(4){"change_pwd is #{change_pwd.inspect}"}
+        ddputs(4){"change_pwd is #{change_pwd.inspect}"}
         reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) ) +
           reply( :focus, :credit_add ) + reply_print( session ) + change_pwd
       end

@@ -3,11 +3,6 @@ class CourseTabs < View
     @order = 20
     @update = true
     @functions_need = [:courses]
-    
-    gui_vbox :nogroup do
-      show_list_single :courses, :flexheight => 1, :callback => true
-      show_button :delete, :add
-    end
 
     gui_window :error do
       show_html "<h1>You're not allowed to do that</h1>"
@@ -21,14 +16,14 @@ class CourseTabs < View
           show_int :ct_duration
           show_str :ct_desc
           show_text :ct_contents
-          show_list_drop :ct_filename, 'CourseTypes.files'
         end
         gui_vbox :nogroup do
           show_str :new_room
-          show_str :new_teacher
-          show_str :new_center
         end
-        show_button :add_missing, :close
+        gui_vbox :nogroup do
+          show_str :new_teacher
+        end
+        show_button :add_missing
       end
     end
     
@@ -40,6 +35,11 @@ class CourseTabs < View
           show_button :new_course, :close
         end
       end
+    end
+    
+    gui_vboxg :nogroup do
+      show_list_single :courses, :callback => true
+      show_button :delete, :add
     end
   end
   
@@ -53,9 +53,6 @@ class CourseTabs < View
     end
     if Persons.search_by_permissions( "teacher" ).size > 0
       hide.push :new_teacher
-    end
-    if Persons.find_by_permissions( :center )
-      hide.push :new_center
     end
     if hide.size < 6
       ( reply( :window_show, :not_all_elements ) +
@@ -74,35 +71,27 @@ class CourseTabs < View
   
   def rpc_button_add_missing( session, args )
     args.to_sym!
-    dputs(5){args.inspect}
+    ddputs(5){args.inspect}
     if args._ct_name and args._ct_name.size > 0
-      dputs(1){"Creating CourseType"}
+      ddputs(3){"Creating CourseType"}
       ct = CourseTypes.create( :name => args._ct_name, :duration => args._ct_duration,
         :tests => 1, :description => args._ct_desc, :contents => args._ct_contents,
-        :diploma_type => ["simple"], :output => ["certificate"],
-        :page_format => [1], :filename => args._ct_filename )
-      dputs(1){"Ct is #{ct.inspect}"}
+        :diploma_type => ["simple"], :output => ["certificate"])
+      ddputs(3){"Ct is #{ct.inspect}"}
     end
     if args._new_room and args._new_room.size > 0
-      dputs(1){"Creating Room"}
+      ddputs(3){"Creating Room"}
       room = Rooms.create( :name => args._new_room )
-      dputs(1){"Room is #{room.inspect}"}
+      ddputs(3){"Room is #{room.inspect}"}
     end
     if args._new_teacher and args._new_teacher.size > 0
-      dputs(1){"Creating Teacher"}
+      ddputs(3){"Creating Teacher"}
       teacher = Persons.create( :complete_name => args._new_teacher )
-      teacher.permissions = ["teacher"]
-      dputs(1){"Teacher #{teacher.inspect}"}
-    end
-    if args._new_center and args._new_center.size > 0
-      dputs(1){"Creating Center"}
-      center = Persons.create( :complete_name => args._new_center )
-      center.permissions = ["center"]
-      dputs(1){"Center #{center.inspect}"}
+      teacher.permissions = [:teacher]
+      ddputs(3){"Teacher #{teacher.inspect}"}
     end
     reply( :window_hide ) +
       rpc_update( session ) +
-      rpc_update_view( session ) +
       reply( :pass_tabs, [ :update_hook ] )
   end
 
@@ -124,14 +113,9 @@ class CourseTabs < View
   end
 
   def rpc_button_new_course( session, data )
-    dputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
+    ddputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
     
-    course = Courses.create_ctype( data['new_ctype'], data['name_date'], 
-      session.owner )
-    
-    course.teacher = Persons.find_by_permissions( "teacher" )
-    course.responsible = Persons.find_by_permissions( "director" ) || 
-      course.teacher
+    course = Courses.create_ctype( data['new_ctype'], data['name_date'], session.owner )
 
     reply( :window_hide ) +
       View.CourseTabs.rpc_update( session ) +
@@ -148,7 +132,7 @@ class CourseTabs < View
   end
 
   def rpc_list_choice( session, name, args )
-    dputs( 2 ){ "New choice #{name} - #{args.inspect}" }
+    ddputs( 2 ){ "New choice #{name} - #{args.inspect}" }
 
     reply( 'pass_tabs', [ "list_choice", name, args ] ) +
       reply( :fade_in, :parent_child )
@@ -156,6 +140,6 @@ class CourseTabs < View
 
   def rpc_update_view( session, args = nil )
     super( session, args ) +
-      reply( :fade_in, "parent,windows" )
+      reply( :fade_in, :parent )
   end
 end

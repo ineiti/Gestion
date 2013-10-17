@@ -4,17 +4,17 @@
 # - Teacher and Assistant
 # - Classroom
 
-require 'zip'
-require 'zip/filesystem'
+#require 'rubygems'
+require 'zip/zipfilesystem'; include Zip
 require 'docsplit'
-require 'rqrcode'
-require 'rqrcode/export/png'
+require 'rqrcode_png'
+require 'ftools'
 require 'net/http'
 
 
 class Courses < Entities
   attr_reader :dir_diplomas, :dir_exas, :dir_exas_share,
-    :print_presence, :print_presence_small, :print_exa, :print_exa_long
+    :print_presence, :print_presence_small
   
   def setup_data
 
@@ -71,12 +71,6 @@ class Courses < Entities
     @presence_sheet_small ||= "presence_sheet_small.ods"
     @print_presence = OpenPrint.new( "#{@dir_diplomas}/#{@presence_sheet}" )
     @print_presence_small = OpenPrint.new( "#{@dir_diplomas}/#{@presence_sheet_small}" )
-    @print_exa = (1..3).collect{|i|
-      OpenPrint.new( "#{@dir_diplomas}/exa_#{i}.ods" )
-    }
-    @print_exa_long = (1..3).collect{|i|
-      OpenPrint.new( "#{@dir_diplomas}/exa_#{i}_long.ods" )
-    }
   end
   
   def set_entry( id, field, value )
@@ -150,6 +144,9 @@ class Courses < Entities
     if needs_center
       dputs(3){"Got center of #{creator.inspect}"}
       course.center = creator
+    elsif creator
+      dputs(3){"Got responsible of #{creator.class}"}
+      course.responsible = creator
     end
     
     dputs(4){"Course is #{course.class}"}
@@ -261,20 +258,8 @@ class Course < Entity
     end
     
     check_students_dir
-    @make_pdfs_state = {"0" => 'undefined'}
+    @make_pdfs_state = {"0" => 'idle'}
     @only_psnup = false
-  end
-  
-  def update_state
-    if @make_pdfs_state["0"] == "undefined"
-      @make_pdfs_state = {}
-      students.each{|s|
-        dputs(3){"Working on #{s}"}
-        student = Persons.match_by_login_name( s )
-        get_grade_args( student, true )
-      }
-      @make_pdfs_state["0"] = 'done'
-    end
   end
   
   def check_dir
@@ -312,7 +297,7 @@ class Course < Entity
         if person = Entities.Persons.match_by_login_name( s )
           [ s, "#{person.full_name} - #{person.login_name}:#{person.password_plain}" ]
         end
-      }.sort{|a,b| a[1] <=> b[1] }
+      }
     end
     ret
   end
@@ -435,9 +420,7 @@ base_gestion
     return false if not teacher
     return false if not start or not data_get( :end ) or students.count == 0
     stud_nr = 1
-    studs = students.sort{|a,b|
-      Persons.match_by_login_name( a ).full_name <=>
-      Persons.match_by_login_name( b ).full_name }.collect{|s|
+    studs = students.collect{|s|
       stud = Entities.Persons.match_by_login_name( s )
       stud_str = stud_nr.to_s.rjust( 2, '0' )
       stud_nr += 1
@@ -465,45 +448,11 @@ base_gestion
         [ /321/, duration ],
       ] )
   end
-  
-  def print_exa( lp_cmd, number )
-    stud_nr = 1
-    studs = students.sort.collect{|s|
-      stud = Entities.Persons.match_by_login_name( s )
-      stud_str = stud_nr.to_s.rjust( 2, '0' )
-      stud_nr += 1
-      [ [ /Nom#{stud_str}/, stud.full_name ],
-        [ /Login#{stud_str}/, stud.login_name ],
-        [ /Passe#{stud_str}/, stud.password_plain ] ]
-    }
-    (stud_nr..30).each{|s|
-      studs.push [[/Nom#{s.to_s.rjust(2,'0')}/, ""]]
-    }
-    dputs( 3 ){ "Students are: #{studs.inspect}" }
-
-    pp = if stud_nr <= 12
-      @proxy.print_exa[ number - 1 ]
-    else
-      @proxy.print_exa_long[ number - 1 ]
-    end
-
-    lp_cmd and pp.lp_cmd = lp_cmd
-    pp.print( studs.flatten(1) + [
-        [ /Teacher/, teacher.full_name ],
-        [ /Course_name/, name ],
-        [ /Center_name/, center.full_name ],
-        [ /2010-08-20/, dstart.to_s ],
-        [ /20.08.10/, dstart.strftime("%d/%m/%y") ],
-        [ /2010-10-20/, dend.to_s ],
-        [ /20.10.10/, dend.strftime("%d/%m/%y") ],
-        [ /123/, students.count ],
-        [ /321/, duration ],
-      ] )
-  end
-  
-  def get_grade_args( student, update = false )
+	
+	
+  def update_student_diploma( file, student )
     grade = Grades.match_by_course_person( course_id, student )
-    dputs(3){"Course is #{name} - student is #{student} - ctype is #{ctype.inspect} and grade is " +
+    dputs(0){"Course is #{name} - student is #{student} - ctype is #{ctype.inspect} and grade is " +
         "#{grade.inspect} - #{grade.to_s}"}
 
     state = if ( ctype.diploma_type[0] == "accredited" ) and grade and
@@ -514,12 +463,6 @@ base_gestion
       "incomplete"
     elsif ( not grade ) or ( grade.to_s == "NP" )
       "not passed"
-    elsif update
-      if get_files.find{|f| f =~ /^[0-9]+-#{student.login_name}\./}
-        "done"
-      else
-        "not created"
-      end
     else
       "queued"
     end
@@ -529,14 +472,7 @@ base_gestion
       "-"
     end
     dputs(4){"State is #{state}"}
-    ln = student.login_name
-    @make_pdfs_state[ln] = [ mean, state, get_diploma_filename( ln, "pdf", false ) ]
-    
-    [ grade, state ]
-  end
-	
-  def update_student_diploma( file, student )
-    grade, state = get_grade_args( student )
+    @make_pdfs_state[student.login_name] = [ mean, state ]
 
     #if grade and grade.to_s != "NP" and 
     #    ( ( ctype.diploma_type[0] == "simple" ) or
@@ -547,17 +483,16 @@ base_gestion
       FileUtils.rm( file )
     else
       dputs( 3 ){ "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
-      Zip::File.open(file){ |z|
+      ZipFile.open(file){ |z|
         dputs(5){"Cours is #{self.inspect}"}
         doc = z.read("content.xml")
-        doc.force_encoding( Encoding::UTF_8 )
-        dputs(5){ doc.inspect }
         dputs( 5 ){ "Contents is: #{contents.inspect}" }
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match( doc )
           dputs( 2 ){"QRcode-image is #{qrcode[1]}"}
           qr = RQRCode::QRCode.new( grade.get_url_label )
-          png = qr.as_png
-          z.get_output_stream(qrcode[1]){ |f|
+          png = qr.to_img
+          png.resample_nearest_neighbor!(900, 900)
+          z.file.open(qrcode[1], "w"){ |f|
             png.write( f )
           }
         end
@@ -596,19 +531,13 @@ base_gestion
         doc.gsub!( /-CENTER_PLACE-/, c.town || "" )
         doc.gsub!( /-CENTER_PHONE-/, c.phone || "" )
         doc.gsub!( /-CENTER_EMAIL-/, c.email || "" )
-        z.get_output_stream("content.xml"){ |f|
+
+        z.file.open("content.xml", "w"){ |f|
           f.write( doc )
         }
         z.commit
       }
     end
-  end
-  
-  def get_diploma_filename( student, ext = "odt", diplomadir = true )
-    digits = students.size.to_s.size
-    counter = students.index( student ) + 1
-    str = diplomadir ? dir_diplomas : name
-    "#{str}/#{counter.to_s.rjust(digits, '0')}-#{student}.#{ext}"
   end
 
   def make_pdfs( convert )
@@ -627,15 +556,16 @@ base_gestion
     dputs( 2 ){ "Starting new thread" }
     @thread = Thread.new{
       begin
+        digits = students.size.to_s.size
         counter = 1
         dputs( 2 ){ "Preparing students: #{students.inspect}" }
         if ! @only_psnup
-          students.sort.each{ |s|
+          students.each{ |s|
             student = Persons.match_by_login_name( s )
             if student
-              dputs( 4 ){"Is #{s} == #{student.login_name}?"}
-              student_file = get_diploma_filename( s )
-              dputs( 2 ){ "Doing #{counter}: #{s} - file: #{student_file}" }
+              dputs( 2 ){ student.login_name }
+              student_file = "#{dir_diplomas}/#{counter.to_s.rjust(digits, '0')}-#{student.login_name}.odt"
+              dputs( 2 ){ "Doing #{counter}: #{student.login_name} - file: #{student_file}" }
               FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}", 
                 student_file )
               update_student_diploma( student_file, student )
@@ -674,37 +604,32 @@ base_gestion
             if format == :certificate
               Docsplit.extract_pdf p, :output => dir
             else
-              Docsplit.extract_images p, :output => dir,
+              Docsplit.extract_images p, :output => dir, 
               :density => 300, :format => :png
-              FileUtils.mv( p.sub(/.odt$/, '_1.png'), p.sub( /.odt$/, '.png'))
             end
             dputs( 5 ){ "Finished docsplit" }
             FileUtils.rm( p )
             dputs( 5 ){ "Finished rm" }
-            outfile = p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
-            outfiles.push outfile
+            outfiles.push p.sub( /\.[^\.]*$/, format == :certificate ? '.pdf' : '.png' )
             @make_pdfs_state[student_name][1] = "done"
-            @make_pdfs_state[student_name][2] = outfile.sub( /^#{@proxy.dir_diplomas}./, '' )
           }
           @make_pdfs_state["0"] = "collecting"
           if format == :certificate
             dputs( 3 ){ "Getting #{outfiles.inspect} out of #{dir}" }
             all = "#{dir}/000-all.pdf"
             psn = "#{dir}/000-4pp.pdf"
-            #cmd = "pdftk #{outfiles.join( ' ' )} cat output #{all}"
-            cmd = "pdfunite #{outfiles.join( ' ' )} #{all}"
-            ddputs( 3 ){ "Putting it all in one file: #{cmd}" }
-            %x[ #{cmd} ]
-            ddputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
+            dputs( 3 ){ "Putting it all in one file: pdftk #{outfiles.join( ' ' )} cat output #{all}" }
+            `pdftk #{outfiles.join( ' ' )} cat output #{all}`
+            dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
             pf = ctype.data_get(:page_format, true)[0]
-            format = ['', '-f', '-l', '-r'][pf - 1]
-            ddputs(3){"Page-format is #{pf.inspect}: #{format}"}
+            format = ['', '-f', '-l', '-r'][pf]
+            dputs(3){"Page-format is #{format}"}
             `pdftops #{all} - | psnup -4 #{format} | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
             FileUtils.mv( "#{psn}.tmp", psn )
             dputs( 2 ){ "Finished" }
           else
             dputs(3){"Making a zip-file"}
-            Zip::File.open("#{dir}/all.zip", Zip::File::CREATE){|z|
+            Zip::ZipFile.open("#{dir}/all.zip", Zip::ZipFile::CREATE){|z|
               Dir.glob( "#{dir}/*" ).each{|image|
                 z.get_output_stream(image.sub(".*/", "")) { |f| 
                   File.open(image){|fi|
@@ -731,7 +656,7 @@ base_gestion
       FileUtils.mkdir( dir_diplomas )
     else
       if ! @only_psnup
-        FileUtils.rm_rf( Dir.glob( dir_diplomas + "/*" ) )
+        FileUtils.rm( Dir.glob( dir_diplomas + "/*" ) )
       end
     end
     @make_pdfs_state = {"0" => 'collecting'}
@@ -750,8 +675,8 @@ base_gestion
     tmp_file = "/tmp/#{file}"
       
     if students and students.size > 0
-      File.exists?( tmp_file ) and FileUtils.rm( tmp_file )
-      Zip::File.open(tmp_file, Zip::File::CREATE){|z|
+      File.exists?( tmp_file ) and File.unlink( tmp_file )
+      Zip::ZipFile.open(tmp_file, Zip::ZipFile::CREATE){|z|
         z.mkdir dir
         students.each{|s|
           p = "#{dir}/#{pre}#{s}"
@@ -784,7 +709,7 @@ base_gestion
       %x[ test -d #{dir_exas} && mv #{dir_exas} /tmp ]
       FileUtils.mkdir dir_exas
 
-      Zip::File.open( file ){|z|
+      ZipFile.open( file ){|z|
         students.each{|s|
           dir_zip_student = "#{dir_zip}/#{s}"
           dir_exas_student = "#{dir_exas}/#{s}"
@@ -797,7 +722,7 @@ base_gestion
           end
         }
       }
-      FileUtils.rm file
+      File.unlink file
     end
   end
   
@@ -820,7 +745,7 @@ base_gestion
     students.each{|s|
       dir_s_exas = "#{dir_exas}/#{s}"
       if File.exists? dir_s_exas
-        FileUtils.mv dir_s_exas, dir_exas_share
+        File.move dir_s_exas, dir_exas_share
       else
         FileUtils.mkdir "#{dir_exas_share}/#{s}"
       end
@@ -839,7 +764,7 @@ base_gestion
         dir_student = "#{dir_exas_share}/#{s}"
         if File.exists? dir_student
           dputs(3){"Moving student-dir of #{s}"}
-          FileUtils.move dir_student, "#{dir_exas}"
+          File.move dir_student, "#{dir_exas}"
         end
       }
     end
@@ -850,23 +775,14 @@ base_gestion
     path = URI.parse( "#{ctype.get_url}/" )
     post = { :field => field, :data => data }
     dputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
-    err = ""
-    (1..4).each{|i|
-      begin
-        ret = Net::HTTP.post_form( path, post )
-        dputs(4){"Return-value is #{ret.inspect}, body is #{ret.body}"}
-        return ret.body
-      rescue Timeout::Error
-        dputs(2){"Timeout occured"}
-        err = "Error Timeout occured"
-      end
-    }
-    return err
+    ret = Net::HTTP.post_form( path, post )
+    dputs(4){"Return-value is #{ret.inspect}, body is #{ret.body}"}
+    return ret.body
   end
   
   def sync_transfer( field, transfer, slow = false )
     ss = @sync_state
-    block_size = 4096
+    block_size = 1024
     transfer_md5 = Digest::MD5.hexdigest( transfer )
     t_array = []
     while t_array.length * block_size < transfer.length
@@ -902,48 +818,47 @@ base_gestion
     dputs(3){@sync_state}
     slow and sleep 3
 
-    dputs(4){"Responsibles"}
+    ddputs(4){"Responsibles"}
     @sync_state = sync_s += "<li>Transferring responsibles: "
     users = [ teacher.login_name, responsible.login_name, center.login_name ]
-    assistant and users.push assistant.login_name
     ret = sync_transfer( :users, users.collect{|s|
         Persons.match_by_login_name( s ) 
       }.to_json, slow )
     @sync_state += ret
-    if ret =~ /^Error:/
+    if ret =~ /^Error: /
       return false
     end
     @sync_state = sync_s += "OK</li>"
 
-    dputs(4){"Students"}
+    ddputs(4){"Students"}
     if students.length > 0
-      dputs(4){"Students - go"}
+      ddputs(4){"Students - go"}
       @sync_state = sync_s += "<li>Transferring users: "
       users = students + [ teacher.login_name, responsible.login_name ]
       ret = sync_transfer( :users, users.collect{|s|
           Persons.match_by_login_name( s ) 
         }.to_json, slow )
       @sync_state += ret
-      if ret =~ /^Error:/
+      if ret =~ /^Error: /
         return false
       end
       @sync_state = sync_s += "OK</li>"
     end
 
-    dputs(4){"Courses"}
+    ddputs(4){"Courses"}
     @sync_state = sync_s += "<li>Transferring course: "
     myself = self.to_hash( true )
     myself._students = students
     ret = sync_transfer( :course, myself.to_json, slow )
     @sync_state += ret
-    if ret =~ /^Error:/
+    if ret =~ /^Error: /
       return false
     end
     @sync_state = sync_s += "OK</li>"
 
-    dputs(4){"Grades"}
+    ddputs(4){"Grades"}
     if ( grades = Grades.matches_by_course( self.course_id ) ).length > 0
-      dputs(4){"Grades - go"}      
+      ddputs(4){"Grades - go"}      
       @sync_state = sync_s += "<li>Transferring grades: "
       ret = sync_transfer( :grades, grades.select{|g|
           g.course and g.student
@@ -953,7 +868,7 @@ base_gestion
             :person => g.student.login_name )
         }.to_json, slow )
       @sync_state += ret
-      if ret =~ /^Error:/
+      if ret =~ /^Error: /
         return false
       end
       grades = JSON.parse( ret.sub(/^OK: /, '') )
@@ -971,15 +886,15 @@ base_gestion
       @sync_state = sync_s += "OK</li>"
     end
 
-    dputs(4){"Exams"}
+    ddputs(4){"Exams"}
     if file = zip_create( true )
-      dputs(4){"Exams - go"}
+      ddputs(4){"Exams - go"}
       @sync_state = sync_s += "<li>Transferring exams: "
       file = "/tmp/#{file}"
       dputs(3){"Exa-file is #{file}"}
       ret = sync_transfer( :exams, File.open(file){|f| f.read }, slow )
       @sync_state += ret
-      if ret =~ /^Error:/
+      if ret =~ /^Error: /
         return false
       end
       @sync_state = sync_s += "OK</li>"
@@ -1021,8 +936,6 @@ base_gestion
   end
   
   def center
-    dputs(4){".center is #{_center.inspect}"}
-    dputs(4){"Persons.center is #{Persons.find_by_permissions(:center).inspect}"}
     ret = _center || Persons.find_by_permissions( :center )
     dputs(4){"Center is #{ret.login_name}"}
     ret

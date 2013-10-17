@@ -10,8 +10,8 @@ class TaskWorker < View
         show_button :delete
       end
       gui_vbox :nogroup do
-        #show_find :login_name
-        #show_find :person_id
+        show_find :login_name
+        show_find :person_id
         show_block :work
         
         show_button :new, :save

@@ -267,8 +267,4 @@ class TC_Person < Test::Unit::TestCase
       assert_equal "maint_1201", who.for_course.name
     end
   end
-
-#  def test_multilogin
-#    assert_equal nil, Views.Welcome.rpc_show( nil )
-#  end
 end

@@ -37,13 +37,13 @@ class SelfCash < View
         ad.movements.collect{|m|
           dputs(4){"Collecting #{m.inspect}"}
           "#{m.date} :: #{( m.value * 1000 ).floor.to_s.rjust(6,'_')} " + 
-              ":: #{m.global_id}"
+              ":: #{m.desc}"
         }
       else
         ""
       end
     end
-    ddputs(3){"Found movements #{@cache_payments[pid].inspect}"}
+    dputs(3){"Found movements #{@cache_payments[pid].inspect}"}
     @cache_payments[pid]
   end
 
