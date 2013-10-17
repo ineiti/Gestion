@@ -1,30 +1,28 @@
 #!/bin/bash
 
-./commit "Making branch $1"
+./commit "Making branch $NEWBRANCH"
 
 NEWBRANCH=${1:-default}
-echo $NEWBRANCH
-exit
 
 dirs_do(){
-#  echo Doing -$1-
+#  echo Doing -$NEWBRANCH-
 #  return
   for d in AfriCompta QooxView LibNet Gestion; do
-    echo Doing -$1- in $d
+    echo Doing -$NEWBRANCH- in $d
     cd ../$d
-    $1
+    $NEWBRANCH
   done
 }
 
-if ! hg branches | grep -q "^$1 "; then
-  echo HG: Branch $1 doesnt exist, creating
-  dirs_do "hg branch $1"
+if ! hg branches | grep -q "^$NEWBRANCH "; then
+  echo HG: Branch $NEWBRANCH doesnt exist, creating
+  dirs_do "hg branch $NEWBRANCH"
 fi
-if ! git branch | egrep -q "^..$1"; then
-  echo Git: Branch $1 doesnt exist, creating
-  dirs_do "git branch $1"
+if ! git branch | egrep -q "^..$NEWBRANCH"; then
+  echo Git: Branch $NEWBRANCH doesnt exist, creating
+  dirs_do "git branch $NEWBRANCH"
 fi
 
-dirs_do "git checkout $1"
-dirs_do "hg up -C $1"
+dirs_do "git checkout $NEWBRANCH"
+dirs_do "hg up -C $NEWBRANCH"
 
