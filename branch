@@ -16,7 +16,7 @@ if ! hg branches | grep -q "^$1 "; then
   echo HG: Branch $1 doesnt exist, creating
   dirs_do "hg branch $1"
 fi
-if ! git branch | egrep -q "^..$1 "; then
+if ! git branch | egrep -q "^..$1"; then
   echo Git: Branch $1 doesnt exist, creating
   dirs_do "git branch $1"
 fi
