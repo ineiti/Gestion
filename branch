@@ -8,7 +8,7 @@ dirs_do(){
 #  echo Doing -$NEWBRANCH-
 #  return
   for d in AfriCompta QooxView LibNet Gestion; do
-    echo Doing -$NEWBRANCH- in $d
+    echo Doing -$1- in $d
     cd ../$d
     $1
   done
