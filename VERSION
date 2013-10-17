@@ -1,0 +1,62 @@
+Important notices for versions:
+
+- 130819: 1.1.15
+  - changes in LibNet: now you need to compile a small tool "msgtool", so that
+   the ruby-part and the bash-part can communicate
+
+- 130627: 1.1.11
+  - changes of names in templates for diplomas:
+    - MENTION -> GRADE
+  - fiche_presence.ods is defined now in Config::Entities:Courses:presence_sheet and
+    presence_sheet_small
+  - carte_etudiant.odg is defined now in Config::Entities:Persons:student_card
+  - views are chosen according to AdminFunction
+  - Config::OpenPrint:search_remote defaults to "none"
+  - Config::Courses:* are moved to Config::Entities:Courses
+  - Renamed in Config::Courses
+    - diploma_dir -> dir_diplomas
+    - exas_dir -> dir_exas
+    - exas_share -> dir_exas_share
+  - All config-variables are 
+    - CamelCased and start with a capital for the categories
+    - start with a lowercase and are seperated with "_" for the values
+  - PersonAdd and CourseAdd have been moved to a button, the views-admins have
+    been moved to FlagAdminPerson (add and delete), FlagAdminCourse (add and delete)
+
+- 130425: 1.0.3
+  - config-vars
+    DiplomaDir -> Courses::DiplomaDir
+    -- -> Courses::ExaDir
+
+- 130420: 1.0.2
+  - Different changes to LibNet/multiconf-*, verify that all is OK
+
+- 130401: 1.0.0
+  - Made the jump to a 1.0.0-version
+
+- 130323: 0.9.6
+  - Added Network-access-control and Samba-shares
+  - LibNet/Tools-directory with lots of useful files
+
+- 130221: 0.9.4
+  - Renaming of some config-vars:
+    - compta_due::src,dst -> 
+      Accounting::Lending - where the secretaries write how much they owe
+      Accounting::Service - where the center sees how much came in
+      Accounting::Cash - where the accountant stores its cash
+
+- 121210: 0.9.2
+  - Renaming of some views:
+    AdminAccess / Admin/ControlAccess -> AdminRestriction / Admin/Restriction
+    AdminInternet / Admin/InternetSimple -> ../ Admin/Internet
+    AdminTigo / Admin/InternetTigo -> .. / Admin/Tigo
+    InventoryComputers / Inventory/Computers -> InventoryComputer / Inventory/Computer
+    InventoryRoom / Inventory/Rooms -> .. / Inventory/Room
+
+- 121101: 0.9.1
+  - version at AlTatawwur
+
+- 120928: 
+  - base_gestion needs to have all items inbetween "-" instead of "_"
+  - base_gestion now takes -DESC1- and -DESC2-
+

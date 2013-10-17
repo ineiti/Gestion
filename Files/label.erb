@@ -1,0 +1,86 @@
+<DOCTYPE html  "-//W3C//DTD  1.0 //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+      <title>Référence Profeda pour un étudiant</title>
+      <style>
+        body {background-color:#607860;} 
+
+        .center {text-align: center;}
+
+        .right {text-align: right;}
+
+        .main {
+          margin-left:auto;
+          margin-right:auto;
+          padding: 10px;
+          width:70%;
+          background-color:#b0deb0;
+        }
+
+        a:link {
+          text-decoration:none; 
+          color: #000000; 
+        }
+        a:visited {
+          text-decoration:none;
+          color: #000000;
+        }
+        a:hover {
+          text-decoration:underline;
+        }
+        a:active {
+          text-decoration:underline;
+        }
+
+        .big {font-size: 30px;}
+        .medium {font-size: 20px;}
+        .small {font-size: 10px;}
+      </style>
+    </head>
+    <body>
+      <div class="main">
+        <div class="center">
+          <h1><a href="http://profeda.org">Profeda.org</a></h1>
+          <h2><%= center %></h2>
+          <p>Ceci est pour confirmer que</p>
+          <div class="big"><%= grade.student.full_name %></div>
+          <p>a terminé avec succès</p>
+          <div class="medium"><%= grade.course.ctype.name %> -
+            <%= grade.course.ctype.description %> </div>
+          <p>avec mention</p>
+          <div class="medium"><%= grade.mention %></div>
+        </div>
+
+        <br/><br/><br/>
+
+        <div align="center">
+          <table width="60%">
+            <tr>
+              <td>
+                <table border="1">
+                  <tr><td>Début</td><td class="right"><%= grade.course.start %></td></tr>
+                  <tr><td>Fin</td><td class="right"><%= grade.course.end %></td></tr>
+                  <tr><td>Signature</td><td class="right"><%= grade.course.sign %></td></tr>
+                  <tr><td>Durée(heures)</td><td class="right"><%= grade.course.duration %></td></tr>
+                </table>
+              </td><td>
+                <p>Le contenu du cours est le suivant:</p>
+                <pre><%= grade.course.ctype.contents %></pre>
+                <p><%= remark %></p>
+              <td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="center">
+          <p class="small">
+            Ce site est seulement disponible pour vérifier la justesse d'une
+            attestation et ne peut être utilisé en tant que copie pour remplacer
+            une attestation.
+          </p>
+        </div>
+      </div>
+    </body>
+  </html>

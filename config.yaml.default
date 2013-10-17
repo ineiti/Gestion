@@ -1,0 +1,75 @@
+# Uncomment to automatically login admin
+#autologin: admin
+
+title: "Gestion avec Profeda"
+
+StorageHandler:
+  Replace:
+    LDAP: CSV
+
+#version_local: orig
+
+#locale_force: fr
+
+#log: events.log
+
+#autosave: true
+
+OpenPrint:
+#  simulation: true
+#  search_remote: .*
+
+UploadFiles:
+#  path: /tmp
+
+#profiling: profile.txt
+
+Webrick:
+#  port: 3302
+
+Accounting:
+#  lending: Root::Lending
+#  cash: Root::Cash
+#  service: Root::Income::Internet
+#  course: Root::Income::IT-Courses
+
+LibNet:
+#  URI: druby://localhost:9000
+#  simul: false
+
+Samba:
+  simulation: true
+  config_dir: /etc/samba
+
+AfriCompta:
+#  filename: compta.rb
+
+Views:
+#  CourseTabs:
+#    order: 0
+
+Entities:
+  Courses:
+#    dir_diplomas: Diplomas
+#    dir_exas: Exas
+#    dir_exas_share: Exas/Share
+#    hostname: localhost
+#    presence_sheet: presence_sheet.ods
+#    presence_sheet_small: presence_sheet_small.ods
+  Persons:
+#    student_card: student_card.odg
+#    adduser_cmd: Binaries/adduser_to_buzz
+#    cmd_after_new: Binaries/update_users
+
+LDAPConfig:
+#  array: host, base, root, group_users, password
+#  ldapscripts: /etc/ldapscripts/ldapscripts.conf
+#  ldapsecret: /etc/ldap.secret
+
+
+
+#welcome_text: |
+#  Here you can have some welcome-text
+#  with <a href="http://profeda.org">Links</a>
+
+#terminal_width: 160

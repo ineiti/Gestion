@@ -1,6 +1,0 @@
-#!/bin/bash
-
-cd $( dirname $0 )
-pkill -9 -f SCREEN.*CopyEmails
-screen -wipe
-screen -S CopyEmails -d -m ./copy_emails
