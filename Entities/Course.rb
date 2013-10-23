@@ -692,8 +692,12 @@ base_gestion
             all = "#{dir}/000-all.pdf"
             psn = "#{dir}/000-4pp.pdf"
             #cmd = "pdftk #{outfiles.join( ' ' )} cat output #{all}"
-            cmd = "pdfunite #{outfiles.join( ' ' )} #{all}"
-            ddputs( 3 ){ "Putting it all in one file: #{cmd}" }
+            if outfiles.length > 1
+              cmd = "pdfunite #{outfiles.join( ' ' )} #{all}"
+              ddputs( 3 ){ "Putting it all in one file: #{cmd}" }
+            else
+              FileUtils.cp( outfiles.first, all )
+            end
             %x[ #{cmd} ]
             ddputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
             pf = ctype.data_get(:page_format, true)[0]

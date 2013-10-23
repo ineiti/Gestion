@@ -143,7 +143,7 @@ class Persons < Entities
       d[:first_name].capitalize_all!
       d[:family_name].capitalize_all!
     end
-    if ! d[:login_name]
+    if ! d[:login_name] or d[:login_name].length == 0
       d[:login_name] = create_login_name( d[:first_name], d[:family_name] )
     end
 

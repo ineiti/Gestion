@@ -277,7 +277,7 @@ class CourseModify < View
   
   def update_layout( session )
     resps = Persons.search_all.select{|p| 
-      Permission.can_view( p.permissions.reject{|perm| perm.to_s == "admin"}, 
+      p.permissions and Permission.can_view( p.permissions.reject{|perm| perm.to_s == "admin"}, 
         "FlagResponsible" )
     }
     if session.owner.permissions.index( "center" )

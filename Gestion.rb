@@ -1,5 +1,6 @@
 #!/usr/local/bin/ruby -I../QooxView -I. -I../AfriCompta
-#!/usr/local/bin/ruby -I../QooxView -I. -I../AfriCompta
+#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta
+#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta -KU
 #!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta -wKU
 # ! /usr/bin/ruby -I../QooxView -I../AfriCompta  -wKU
 # ! /usr/local/opt/ruby/bin/ruby -I../QooxView -I../AfriCompta -w
