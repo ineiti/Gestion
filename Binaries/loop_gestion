@@ -48,9 +48,10 @@ while [ ! -f $STOP ]; do
   else
     PRE=""
   fi
-  #$PRE ./Gestion.rb 2>&1 >> $LOG
-  ./Gestion.rb 2>&1 >> $LOG
-  #./Gestion.rb 2>&1
+  #$PRE ./Gestion 2>&1 >> $LOG
+  #./Gestion
+  ./Gestion 2>&1 >> $LOG
+  #./Gestion 2>&1
   biglog Oups - quit Gestion after $(( quit - now )) seconds
   quit=$( date +%s )
   if [ $(( quit - now )) -lt 60 ]; then

@@ -694,15 +694,16 @@ base_gestion
             #cmd = "pdftk #{outfiles.join( ' ' )} cat output #{all}"
             if outfiles.length > 1
               cmd = "pdfunite #{outfiles.join( ' ' )} #{all}"
-              ddputs( 3 ){ "Putting it all in one file: #{cmd}" }
+              dputs( 3 ){ "Putting it all in one file: #{cmd}" }
+              %x[ #{cmd} ]
             else
+              dputs( 3 ){ "#{outfiles.first} - #{all}" }
               FileUtils.cp( outfiles.first, all )
             end
-            %x[ #{cmd} ]
-            ddputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
+            dputs( 3 ){ "Putting 4 pages of #{all} into #{psn}" }
             pf = ctype.data_get(:page_format, true)[0]
             format = ['', '-f', '-l', '-r'][pf - 1]
-            ddputs(3){"Page-format is #{pf.inspect}: #{format}"}
+            dputs(3){"Page-format is #{pf.inspect}: #{format}"}
             `pdftops #{all} - | psnup -4 #{format} | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
             FileUtils.mv( "#{psn}.tmp", psn )
             dputs( 2 ){ "Finished" }

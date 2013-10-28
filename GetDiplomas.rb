@@ -12,7 +12,7 @@ class GetDiplomas < RPCQooxdooPath
         "image/png"
       end
       dputs(4){"Request is #{req.inspect}" }
-      ddputs(3){"filename is #{filename} - content-type is #{res['content-type']}" }
+      dputs(3){"filename is #{filename} - content-type is #{res['content-type']}" }
       return IO.read( Courses.dir_diplomas + "/" + filename ).
         force_encoding( "ASCII-8BIT" )
     end

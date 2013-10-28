@@ -35,7 +35,7 @@ Accounting:
 
 LibNet:
 #  URI: druby://localhost:9000
-#  simul: false
+#  simulation: false
 
 Samba:
   simulation: true

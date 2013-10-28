@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 131028: 1.2.2-alpha
+  - Changes in QooxView: needs to run Config/install, for different docsplit-libs
+
 - 130819: 1.1.15
   - changes in LibNet: now you need to compile a small tool "msgtool", so that
    the ruby-part and the bash-part can communicate

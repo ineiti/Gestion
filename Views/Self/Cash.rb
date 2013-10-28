@@ -43,7 +43,7 @@ class SelfCash < View
         ""
       end
     end
-    ddputs(3){"Found movements #{@cache_payments[pid].inspect}"}
+    dputs(3){"Found movements #{@cache_payments[pid].inspect}"}
     @cache_payments[pid]
   end
 

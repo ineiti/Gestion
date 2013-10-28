@@ -1,9 +1,4 @@
-#!/usr/local/bin/ruby -I../QooxView -I. -I../AfriCompta
-#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta
-#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta -KU
-#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta -wKU
-# ! /usr/bin/ruby -I../QooxView -I../AfriCompta  -wKU
-# ! /usr/local/opt/ruby/bin/ruby -I../QooxView -I../AfriCompta -w
+#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta -E UTF-8:UTF-8 -Ku
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad. The following modules shall be covered:
@@ -11,7 +6,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="1.2.1-rc1"
+VERSION_GESTION="1.2.2-alpha"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -74,11 +69,12 @@ begin
   Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
   Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
                  'FlagResponsible', 'assistant' )
-  Permission.add( 'secretary', 'SelfServices,CourseModify,FlagAdminPerson,' + 
+  Permission.add( 'secretary', 'SelfServices,CourseModify,FlagPersonAdd,FlagPersonDelete,' + 
       'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
   Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
   Permission.add( 'maintenance', 'Inventory.*', 'default' )
-  Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,SelfServices', '' )
+  Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,' +
+      'FlagPersonAdd,SelfServices', '' )
   Permission.add( 'director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
       'PersonAdmin,PersonCourse,NetworkConnection', 'secretary,cybermanager,teacher' )
   Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseDiploma,' +

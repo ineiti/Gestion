@@ -2,6 +2,9 @@
 
 BUGS:
         - Sync-error on server if family-name is not given
+        - nicer bail-out in Person.create(159) if LDAP and entry is already
+          there -> just update, don't complain
+        - lpstat localhost:631 hangs if no cups is running
 
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
@@ -18,6 +21,7 @@ BUGS:
 Security:
 
 UI:
+        - Cours::Modify::Add-bulk - double-window needs to be larger
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)

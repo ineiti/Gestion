@@ -73,8 +73,8 @@ module Internet
         courses.each{|c|
           dputs(3){"Searching course #{c}"}
           if c.name and c.start and c.end
-            ddputs(3){"Searching course for #{user.full_name}"}
-            ddputs( 3 ){ [ c.name, c.start, c.end ].inspect }
+            dputs(3){"Searching course for #{user.full_name}"}
+            dputs( 3 ){ [ c.name, c.start, c.end ].inspect }
             begin
               c_start = Date.strptime( c.start, "%d.%m.%Y" )
               c_end = Date.strptime( c.end, "%d.%m.%Y" )

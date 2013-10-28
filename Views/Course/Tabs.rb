@@ -46,7 +46,7 @@ class CourseTabs < View
   def rpc_update( session )
     hide = []
     if CourseTypes.search_all.size > 0
-      hide.push :ct_name, :ct_duration, :ct_desc, :ct_contents
+      hide.push :ct_name, :ct_duration, :ct_desc, :ct_contents, :ct_filename
     end
     if Rooms.search_all.size > 0
       hide.push :new_room

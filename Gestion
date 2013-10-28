@@ -1,12 +1,21 @@
 #!/bin/bash
 
+call_ruby(){
+  INCLUDE="-I../QooxView -I. -I../AfriCompta -Ku -E UTF-8:UTF-8"
+  if [ -x /usr/local/bin/ruby ]; then
+    /usr/local/bin/ruby $INCLUDE $@
+  else
+    ruby $INCLUDE $@
+  fi
+}
+
 echo ""
 if [ "$( which ruby )" -a "$1" != "--install" ]; then
   if [ ! -f data/compta.db ]; then
     mkdir -p data
     cp db.emptyAC data/compta.db
   fi
-  ./Gestion.rb $@
+  call_ruby Gestion.rb $@
 else
   if [ "$1" = "--install" ]; then
     shift
@@ -50,7 +59,7 @@ else
           Binaries/install_ldap
         fi
         echo $( cd ../QooxView; ./update_sqlite3 )
-        ./Gestion.rb -p $@
+        call_ruby Gestion.rb -p $@
       else
         echo OK, wont run Gestion then
       fi
@@ -65,7 +74,7 @@ else
           Binaries/install_ldap
         fi
         echo $( cd ../QooxView; ./update_sqlite3 )
-        ./Gestion.rb -p $@
+        call_ruby Gestion.rb -p $@
        fi
     else
       echo Sorry, dont know how to install on $DISTRIB_ID
