@@ -15,7 +15,6 @@ Test/run
 .hg*
 .settings*
 Diplomas/*/*
-<<<<<<< HEAD
 Diplomas.Profeda*
 Diplomas.Man
 .idea*
@@ -25,6 +24,4 @@ Test/share_test
 Doc/.backup
 po/*mo
 tmp/
-=======
-old.*
->>>>>>> man
+.~lock*

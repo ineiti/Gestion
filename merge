@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+./commit "Making branch $NEWBRANCH"
+
+BRANCH=${1:-default}
+
+dirs_do(){
+  #  echo Doing -$NEWBRANCH-
+  #  return
+  for d in AfriCompta QooxView LibNet Gestion Config; do
+    echo Doing -$1- in $d
+    cd ../$d
+    $1
+  done
+}
+
+dirs_do "hg merge -r $BRANCH"
+dirs_do "hg commit -m 'Merged branch $BRANCH'"
+dirs_do "git merge $BRANCH"
