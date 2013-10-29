@@ -17,6 +17,7 @@ dirs_do(){
 if ! hg branches | grep -q "^$NEWBRANCH "; then
   echo HG: Branch $NEWBRANCH doesnt exist, creating
   dirs_do "hg branch $NEWBRANCH"
+  dirs_do "hg commit -m 'added branch'"
 fi
 if ! git branch | egrep -q "^..$NEWBRANCH"; then
   echo Git: Branch $NEWBRANCH doesnt exist, creating
