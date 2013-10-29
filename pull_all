@@ -8,7 +8,7 @@ elif [ "$1" != production ]; then
   HOST=$1
 fi
 
-for a in Gestion QooxView AfriCompta; do
+for a in Gestion QooxView AfriCompta LibNet Config; do
   echo Committing $a
   ssh root@$HOST.wifi "cd $BASE/$a; hg commit -m 'pull-all'"
   echo Pulling QooxView
