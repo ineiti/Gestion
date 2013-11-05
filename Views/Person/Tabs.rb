@@ -91,7 +91,7 @@ class PersonTabs < View
       dputs( 3 ){ "Result for #{f} is: #{ret.collect{|r| r.login_name}}" }
       ret
     }.flatten.uniq.sort{|a,b|
-      a.login_name <=> b.login_name
+      a.login_name.to_s <=> b.login_name.to_s
     }
     dputs( 3 ){ "Result is: #{result.collect{|r| r.login_name}}" }
     not result and result = []

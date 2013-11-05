@@ -254,7 +254,7 @@ class Persons < Entities
     if has_storage? :LDAP
       user = data[:login_name]
       if %x[ ldapadduser #{user} plugdev ] and defined? @adduser_cmd
-        dputs( 0 ){ "Going to call #{@adduser_cmd}" }
+        dputs( 0 ){ "Going to call #{@adduser_cmd} #{user.inspect}" }
         %x[ #{@adduser_cmd} #{user} ]
       end
     end

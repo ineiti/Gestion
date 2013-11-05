@@ -5,6 +5,8 @@ BUGS:
         - nicer bail-out in Person.create(159) if LDAP and entry is already
           there -> just update, don't complain
         - lpstat localhost:631 hangs if no cups is running
+        - QV/Storages/LDAP - verify creation of new user with regard to his uid
+        - Views/Person/Tabs::delete doesn't work
 
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?

@@ -66,6 +66,16 @@ module Internet
       dputs( 4 ){"Found user #{user.login_name}"}
     end
     if user
+      dputs(3){"Searching groups for user #{user.login_name}: #{user.groups.inspect}"}
+      if user.groups and user.groups.index( 'freesurf' )
+        dputs(3){"User #{user.login_name} is on freesurf"}
+        return true
+      end
+      if Permission.can_view( user.permissions, "FlagInternetFree" )
+        dputs(3){"User #{user.login_name} has FlagInternetFree" }
+        return true
+      end
+
       # We want an exact match, so we put the name between ^ and $
       courses = Entities.Courses.search_by_students( "^#{user.login_name}$" )
       if courses
@@ -86,15 +96,6 @@ module Internet
             end
           end
         }
-      end
-      dputs(3){"Searching groups for user #{user.login_name}: #{user.groups.inspect}"}
-      if user.groups and user.groups.index( 'freesurf' )
-        dputs(3){"User #{user.login_name} is on freesurf"}
-        return true
-      end
-      if Permission.can_view( user.permissions, "FlagInternetFree" )
-        dputs(3){"User #{user.login_name} has FlagInternetFree" }
-        return true
       end
     end
     dputs(3){"Found nothing"}

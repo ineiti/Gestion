@@ -152,6 +152,7 @@ $internet = Thread.new{
   loop {
     begin
       sleep 60
+      dputs( 0 ){ "It is now: " + Time.now.strftime( "%Y-%m-%d %H:%M" ) }
       Internet::take_money
     rescue Exception => e
       dputs( 0 ){ "#{e.inspect}" }
