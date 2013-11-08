@@ -12,7 +12,7 @@ class SelfChat < View
     @functions_need = [:network]
 
     gui_vbox do
-      show_text :discussion, :width => 400
+      show_text :discussion, :width => 400, :flexheight => 1
       show_str :talk
       show_button :send
     end

@@ -10,11 +10,12 @@ class PersonCourse < View
     gui_vbox do
       show_str_ro :first_name
       show_str_ro :family_name
-      show_list_single :courses
+      show_list_single :courses, :maxheight => 150
       show_button :add, :delete
       
       gui_window :new_course do
-        show_list_single :courses_available, 'Entities.Courses.list_courses'
+        show_list_single :courses_available, 'Entities.Courses.list_courses',
+          :maxheight => 150
         show_button :add_course, :close
       end
     end

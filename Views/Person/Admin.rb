@@ -6,10 +6,10 @@ class PersonAdmin < View
     @update = true
     @order = 30
 
-    gui_vbox do
+    gui_vboxg do
       gui_group do
-        gui_hbox :nogroup do
-          gui_hbox :nogroup do
+        gui_hboxg :nogroup do
+          gui_hboxg :nogroup do
             gui_fields do
               show_str_ro :login_name
               show_str_ro :person_id

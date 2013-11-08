@@ -4,8 +4,9 @@ class AdminFunction < View
     @update = true
     set_data_class( :ConfigBases )
 
-    gui_hbox do
+    gui_vboxg do
       show_block :default
+      show_arg :functions, :flexheight => 1
       show_button :save
     end
   end

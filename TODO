@@ -25,7 +25,10 @@ UI:
           then gray out
         -> Cours::Modify::Add-bulk - double-window needs to be larger, changed
           to list
-        - On small screens Cours::Modify is not visible
+        -> On small screens Cours::Modify is not visible
+        - Self::Chat needs a "align to bottom" instead of 20 lfs
+
+        - Cours::Modify::Bulkadd::double_check - add "cancel"-button
 
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server

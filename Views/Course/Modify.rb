@@ -20,25 +20,25 @@ class CourseModify < View
     @update = true
     @order = 10
 
-    #gui_hboxg :nogroup do
-      gui_vbox do
-        gui_hbox :nogroup do
+    gui_hboxg do
+      gui_vboxg :nogroup do
+        gui_hboxg :nogroup do
           gui_vbox :nogroup do
             show_block :name
             show_arg :name, :ro => true
             show_block :calendar
             show_block :teacher
           end
-          gui_vbox :nogroup do
+          gui_vboxg :nogroup do
             show_block :content
         
             show_print :print_presence
-            gui_vbox do
+            gui_vboxg do
               gui_fields do
                 show_list :students, :width => 300, :flexheight => 1
                 show_button :bulk_add, :del_student, :edit_student
               end
-            #  show_print :print_student
+              show_print :print_student
             end
           end
           gui_window :students_bulk do
@@ -48,7 +48,7 @@ class CourseModify < View
           gui_window :ask_double do
             show_str :double_name
             show_entity_person_lazy :double_proposition, :single, :full_name,
-              :width => 250
+              :width => 250, :maxheight => 250
             show_button :accept, :create_new
           end
           gui_window :missing_data do
@@ -60,9 +60,9 @@ class CourseModify < View
             show_button :close
           end
         end
-        #show_button :save
+        show_button :save
       end
-    #end
+    end
   end
 
   def rpc_button_save( session, data )

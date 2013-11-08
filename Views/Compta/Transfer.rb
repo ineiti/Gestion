@@ -11,7 +11,7 @@ class ComptaTransfer < View
 
     gui_hbox  do
       gui_vbox :nogroup do
-        vtlp_list :person_list, :account_due
+        vtlp_list :person_list, :account_due, :maxheight => 250
         show_button :empty
       end
       gui_vbox :nogroup do

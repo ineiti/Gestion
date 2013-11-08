@@ -9,22 +9,22 @@ class AdminCourseType < View
     
     @functions_need = [:courses]
     
-    gui_hbox do
-      gui_vbox :nogroup do
-        vtlp_list :ctype, 'name'
+    gui_hboxg do
+      gui_vboxg :nogroup do
+        vtlp_list :ctype, 'name', :flexheight => 1
         show_button :new, :delete
       end
       
-      gui_vbox do
-        gui_hbox :nogroup do
-          gui_vbox :nogroup do
+      gui_vboxg do
+        gui_hboxg :nogroup do
+          gui_vboxg :nogroup do
             show_block :strings
           end
-          gui_vbox :nogroup do
+          gui_vboxg :nogroup do
             show_block :central
           end
         end
-        gui_vbox :nogroup do
+        gui_vboxg :nogroup do
           show_block :long, :width => 200
           show_field :page_format
           show_list_drop :filename, 'CourseTypes.files'

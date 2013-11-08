@@ -7,16 +7,10 @@ class SelfCash < View
     @functions_need = [:accounting]
 
     gui_vbox do
-      gui_fields do
         show_int_ro :account_total_due, :width => 100
-      end
-      gui_fields do
         show_list_single :payments, :width => 500, :callback => true,
-          :nopreselect => true
-      end
-      gui_fields do
+          :nopreselect => true, :flexheight => 1
         show_button :update
-      end
     end
   end
 

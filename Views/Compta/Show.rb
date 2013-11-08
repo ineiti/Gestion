@@ -8,7 +8,7 @@ class ComptaShow < View
     end
     gui_hbox do
       gui_vbox do
-        vtlp_list :account_list, 'path', :width => 150
+        vtlp_list :account_list, 'path', :width => 150, :maxheight => 250
       end
       gui_vbox do
         show_int :total

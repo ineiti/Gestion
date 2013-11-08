@@ -15,8 +15,8 @@ class CourseGrade < View
     end
 
     #    gui_vboxgl do
-    gui_hbox do
-      gui_vbox :nogroup do
+    gui_hboxg do
+      gui_vboxg :nogroup do
         show_list_single :students, :width => 300, :callback => true, :flexheight => 1
         show_str_ro :last_synched
         show_button :prepare_files, :fetch_files, :transfer_files, :sync_server

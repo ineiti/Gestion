@@ -6,7 +6,7 @@ class ComptaUsers < View
 
     gui_hbox do
       gui_vbox :nogroup do
-        vtlp_list :users_list, 'name', :width => 150
+        vtlp_list :users_list, 'name', :width => 150, :maxheight => 250
         show_button :new
       end
       gui_vbox :nogroup do
