@@ -1,12 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Sync-error on server if family-name is not given
-        - nicer bail-out in Person.create(159) if LDAP and entry is already
-          there -> just update, don't complain
-        - lpstat localhost:631 hangs if no cups is running
-        - QV/Storages/LDAP - verify creation of new user with regard to his uid
-        - Views/Person/Tabs::delete doesn't work
+        -V Sync-error on server if family-name is not given
+        -? lpstat localhost:631 hangs if no cups is running - what system?
+        -> QV/Storages/LDAP - verify creation of new user with regard to his uid
+        -> Views/Person/Tabs::delete doesn't work - no delete given
 
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
@@ -23,7 +21,12 @@ BUGS:
 Security:
 
 UI:
-        - Cours::Modify::Add-bulk - double-window needs to be larger
+        -> error when graying out and clicking on a tab -> disable first,
+          then gray out
+        -> Cours::Modify::Add-bulk - double-window needs to be larger, changed
+          to list
+        - On small screens Cours::Modify is not visible
+
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
@@ -198,6 +201,8 @@ To check:
 
 
 ** FIXED **:
+        - B 131107: nicer bail-out in Person.create(159) if LDAP and entry is already
+          there -> just update, don't complain
         - B 131010: when creating diplomas, no correct error-handling if no center present
           -> add to diploma-check in View/CourseTabs
         - B 131010: when using "first-add-dialog", the new course-type has no file set!

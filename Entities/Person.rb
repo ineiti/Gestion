@@ -253,9 +253,13 @@ class Persons < Entities
     dputs( 0 ){ "Creating new data #{data.inspect}" }
     if has_storage? :LDAP
       user = data[:login_name]
-      if %x[ ldapadduser #{user} plugdev ] and defined? @adduser_cmd
-        dputs( 0 ){ "Going to call #{@adduser_cmd} #{user.inspect}" }
-        %x[ #{@adduser_cmd} #{user} ]
+      if Kernel.system( "ldapadduser #{user} plugdev" )
+        if defined? @adduser_cmd
+          dputs( 0 ){ "Going to call #{@adduser_cmd} #{user.inspect}" }
+          %x[ #{@adduser_cmd} #{user} ]
+        end
+      else
+        dputs( 0 ){ "Error: Couldn't create #{user}" }
       end
     end
   end
@@ -693,7 +697,11 @@ class Person < Entity
       g.delete
     }
 
-    if not @proxy.has_storage? :LDAP
+    if @proxy.has_storage? :LDAP
+      if ! Kernel.system( "ldapdeleteuser #{self.login_name}")
+        dputs(0){"Error: couldn't delete user #{self.inspect}"}
+      end
+    else
       %x[ if which deluser; then deluser #{self.login_name}; else
           userdel #{self.login_name}; fi ]
     end

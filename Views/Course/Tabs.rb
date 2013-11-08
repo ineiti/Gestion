@@ -5,7 +5,8 @@ class CourseTabs < View
     @functions_need = [:courses]
     
     gui_vbox :nogroup do
-      show_list_single :courses, :flexheight => 1, :callback => true
+      show_list_single :courses, :flexheight => 1, :callback => true, 
+        :width => 100
       show_button :delete, :add
     end
 

@@ -20,46 +20,49 @@ class CourseModify < View
     @update = true
     @order = 10
 
-    gui_vbox do
-      gui_hbox :nogroup do
-        gui_vbox :nogroup do
-          show_block :name
-          show_arg :name, :ro => true
-          show_block :calendar
-          show_block :teacher
-        end
-        gui_vbox :nogroup do
-          show_block :content
+    #gui_hboxg :nogroup do
+      gui_vbox do
+        gui_hbox :nogroup do
+          gui_vbox :nogroup do
+            show_block :name
+            show_arg :name, :ro => true
+            show_block :calendar
+            show_block :teacher
+          end
+          gui_vbox :nogroup do
+            show_block :content
         
-          show_print :print_presence
-          gui_vbox do
-            gui_fields do
-              show_list :students, :flexheight => 1
-              show_button :bulk_add, :del_student, :edit_student
+            show_print :print_presence
+            gui_vbox do
+              gui_fields do
+                show_list :students, :width => 300, :flexheight => 1
+                show_button :bulk_add, :del_student, :edit_student
+              end
+            #  show_print :print_student
             end
-            show_print :print_student
+          end
+          gui_window :students_bulk do
+            show_text :names
+            show_button :bulk_students, :close
+          end
+          gui_window :ask_double do
+            show_str :double_name
+            show_entity_person_lazy :double_proposition, :single, :full_name,
+              :width => 250
+            show_button :accept, :create_new
+          end
+          gui_window :missing_data do
+            show_html :missing
+            show_button :close
+          end
+          gui_window :printing do
+            show_html :msg_print
+            show_button :close
           end
         end
-        gui_window :students_bulk do
-          show_text :names
-          show_button :bulk_students, :close
-        end
-        gui_window :ask_double do
-          show_str :double_name
-          show_entity_person_lazy :double_proposition, :drop, :full_name
-          show_button :accept, :create_new
-        end
-        gui_window :missing_data do
-          show_html :missing
-          show_button :close
-        end
-        gui_window :printing do
-          show_html :msg_print
-          show_button :close
-        end
+        #show_button :save
       end
-      show_button :save
-    end
+    #end
   end
 
   def rpc_button_save( session, data )
@@ -216,7 +219,7 @@ class CourseModify < View
   
   def rpc_button_accept( session, data )
     course = Courses.match_by_name( data['name'] )
-    student = data['double_proposition']
+    student = Persons.match_by_person_id( data['double_proposition'].first )
     dputs(5){"Data is #{data.inspect} - #{course.students.inspect} " + 
         "- #{student.inspect}"}
     if not course.students.index( student.login_name )
