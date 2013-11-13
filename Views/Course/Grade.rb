@@ -44,7 +44,7 @@ class CourseGrade < View
         show_button :close
       end
       
-      gui_window :single_file do
+      gui_window :upload_files do
         show_html :name_file_1
         show_upload :upload_file_1, :callback => true
         show_html :name_file_2
@@ -266,7 +266,7 @@ class CourseGrade < View
     files_needed = course.ctype.files_needed.to_i
     exam_files = course.exam_files( student )
     dputs(3){"Exam-files = #{exam_files.inspect}"}
-    ret = window_show ? reply( :window_show, :single_file ) : []
+    ret = window_show ? reply( :window_show, :upload_files ) : []
     ret + (1..5).collect{|i|
       show = :hide
       ret = []
@@ -287,7 +287,7 @@ class CourseGrade < View
   
   def rpc_button( session, name, data )
     if name =~ /^upload_file_/
-      number = name.sub( /.*_/, '' )
+      number = name.sub( /.*_/, '' ).to_i
       
       data.to_sym!
       course = Courses.match_by_course_id( data._courses[0])
@@ -296,7 +296,6 @@ class CourseGrade < View
           "student is #{student}" }
       if course and student and data._filename
         files_needed = course.ctype.files_needed.to_i
-        close_window = files_needed == ( course.exam_files( student ).count + 1 )
 
         course.check_students_dir
         filename = UploadFiles.escape_chars( data._filename )
@@ -308,7 +307,8 @@ class CourseGrade < View
 
         ret = rpc_button_upload( session, data, false ) +
           update_files_saved( course, student )
-        if close_window and ( files_needed == course.exam_files( student ).count )
+        if ( number == files_needed ) and 
+            ( files_needed == course.exam_files( student ).count )
           ret += reply( :window_hide )
         end
         dputs(3){"Return is #{ret.inspect}"}

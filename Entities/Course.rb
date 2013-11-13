@@ -124,16 +124,20 @@ class Courses < Entities
   end
   
   def self.create_ctype( ctype, date, creator = nil )
-    needs_center = ( ConfigBase.has_function?( :course_server ) and
-        ( creator and creator.has_permission?( :center ) ) )
-    dputs(4){"needs_center is #{needs_center.inspect}"}
+    needs_center = ( ( ConfigBase.has_function?( :course_server ) and
+        ( creator and creator.has_permission?( :center ) ) ) or
+      ( ConfigBase.has_function?( :course_client ) and
+      ( ctype.diploma_type.first.to_sym == :accredited ) ) )
+    ddputs(4){"needs_center is #{needs_center.inspect}" }
 
     # Prepare correct name
     name = if needs_center
-      "#{creator.login_name}_#{ctype.name}_#{date}"
-    else
-      "#{ctype.name}_#{date}"
-    end
+      if creator.permissions.index "center"
+        creator.login_name
+      else
+        Persons.find_by_permissions(:center).login_name
+      end + "_"
+    end + "#{ctype.name}_#{date}"
     
     # Check for double names
     suffix = ""
@@ -667,8 +671,9 @@ base_gestion
           dir = File::dirname( list.first )
           @only_psnup and list = []
           list.sort.each{ |p|
-            dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
-            student_name = p.sub(/.*-/, '').sub(/\.odt/, '')
+            ddputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
+            student_name = p.sub(/.*[0-9]+-/, '').sub(/\.odt/, '')
+            ddputs( 3 ){ "Student name is #{student_name}" }
             @make_pdfs_state[student_name][1] = "working"
 
             if format == :certificate

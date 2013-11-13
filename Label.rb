@@ -76,8 +76,10 @@ class Label < RPCQooxdooPath
   end
 
   def self.field_save( tr )
-    course_name = "#{tr._user}_#{tr._course}"
-    dputs(3){"Course-name is #{course_name} and field is #{tr._field}"}
+    if not ( course_name = tr._course ) =~ /^#{tr._user}_/
+      course_name = "#{tr._user}_#{tr._course}"
+    end
+    ddputs(3){"Course-name is #{course_name} and field is #{tr._field}"}
     case tr._field
     when /users/
       users = JSON.parse( tr._data )
@@ -118,6 +120,7 @@ class Label < RPCQooxdooPath
       course._students = course._students.collect{|s| "#{tr._user}_#{s}"}
       course._ctype = CourseTypes.match_by_name( course._ctype )
       course._center = Persons.match_by_login_name( tr._user )
+      course._room = Rooms.find_by_name( "" )
       dputs(3){"Course is now #{course.inspect}"}
       if c = Courses.match_by_name( course._name )
         dputs(3){"Updating course #{course._name}"}

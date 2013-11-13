@@ -1,17 +1,19 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        -V Sync-error on server if family-name is not given
-        -? lpstat localhost:631 hangs if no cups is running - what system?
-        -> QV/Storages/LDAP - verify creation of new user with regard to his uid
-        -> Views/Person/Tabs::delete doesn't work - no delete given
+        - client/server:
+          - add "standalone" to adminfunction, which will not add center-id to
+            course-ids
+          - B 131113: server: when getting new course, ignore "room", check for center-id
+          - server: error with regard to "assistant" - ??
+          - server: "error in handling method" for CourseGrade - mas_it-101_1307
+          - transfert: also get "assistant", "dow" and "hours" - ??
 
+        - Clean up ruby-version mess
+        - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
-        - Fresh install with Course::add_missing doesn't work because of missing
-          file in CourseType
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
-        - creation of diplomas breaks if argument "-p" is given
         - why is Entity::get_value always called three times?
         - When CourseAdd is first tab and course is added, LTab.js:174 can't
           find getActiveForm, as it is not drawn yet...
@@ -21,14 +23,14 @@ BUGS:
 Security:
 
 UI:
-        -> error when graying out and clicking on a tab -> disable first,
-          then gray out
-        -> Cours::Modify::Add-bulk - double-window needs to be larger, changed
-          to list
-        -> On small screens Cours::Modify is not visible
         - Self::Chat needs a "align to bottom" instead of 20 lfs
 
         - Cours::Modify::Bulkadd::double_check - add "cancel"-button
+        - "different number of items ..."- show in what field
+
+        - check why Lib/Fields:window_fade_to:1147 doesn't need fadeIn - is
+          it because setEnabled is enough?
+        - delete all effect-references in LTab and Fields
 
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
@@ -46,6 +48,9 @@ UI:
         - write a good documentation...
 
 FEATURES:
+        - Backup only data: data/ Exa/ Diplomas*/ config.yaml
+        - Add "send server", "fetch server", "download backup", "upload backup"
+
         - make an accounting-module
 
         - use multilogin as flag for users
@@ -90,7 +95,6 @@ Documentation:
 Features:
         - Add accounting for students-money and service-money
         - Add a cookie to log in automatically
-        -3 Print student-cards the Markas-way with the idea of Josue and Viviane
         -2 Rename course
         -3 Add a status-bar on bottom for progresses and information like:
            printing, progress, messages, connect/disconnect, ...
@@ -99,7 +103,6 @@ Features:
 	-4 make an asynchronous printing-module
 	- Using data from solar on local account without failing
 	- Make a dropbox when using _find
-	- Graying out fields not usable (PersonModify, CashAdd, ...)
         - AfriCompta-support:
 		-4 Define reports
 	-2 Make internet.wifi with Self::Internet only, and a link which allows
@@ -110,7 +113,7 @@ Features:
           - vérifier si la sim est expirée
           - Montrer le log des derniers communications avec le Modem
 	-3 Inventory of screens, mice, routers
-	-4 Double-users: merge them and avoid them in the first place
+	-4 Double-users: merge them
 	- CourseHistory - what should go in there?
 
 Programming:
@@ -118,8 +121,6 @@ Programming:
           - Convert all "args" to_sym!
           - take out last [0]-arrays needed in args
 	-2 Allow subdirectories in Entities-directory
-	-3 Remove QooxView/Storages/AfriCompta.rb and adjust
-	 Gestion/Entities/Person.rb
 	-3 add a print-dialog with window and buttons
 	-3 Change Frontend::Views::LTab::dispatch to handle one request at a
 	  time and to allow new requests to be inserted before handling other
@@ -157,9 +158,6 @@ VERIFY:
 Rare bugs:
 	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
 	  use that one. Don't rely on Gestion/ldap.secret!
-	- adding an already existing user crashes if he has been added outside
-	  of Gestion: CourseModify::add_students doesn't work sometimes 
-          (when there is a stale uid of a removed user)
 	- check why ruby-gettext from debian/squeeze messes things up
         - When copying compta.db over to standalone AfriCompta, then checking,
          some accounts are marked as "local only" - why? - because the "check"
@@ -172,6 +170,8 @@ Rare bugs:
           eventually also problems with local logins
 
 Unconfirmed bugs:
+        -V Sync-error on server if family-name is not given
+        -? lpstat localhost:631 hangs if no cups is running - what system?
         - ??? Wrong printer-dialog in Cours/Attestations/Print
 	- PersonAdd - password is not stored - not repeatable
 	- Default focus and button:
@@ -201,9 +201,24 @@ HEISENBUGS:
 To check:
         - printing of student-card with accent in name fails (probably due to
           accent in filename - sanitize using "accents_replace")
+        - Fresh install with Course::add_missing doesn't work because of missing
+          file in CourseType
+        - creation of diplomas breaks if argument "-p" is given
 
 
 ** FIXED **:
+        - course client/server
+          - B 131113: client: add center-id to course-name for accredited courses
+          - B 131113: client: file-transfer locally not OK - 0 bytes
+          - B 131113: client: delete exa-file-zip in /tmp when transferred
+        - B 131113: "aborted list-tabs" when viewing Course from fresh installation
+        - B 131108: QV/Storages/LDAP - verify creation of new user with regard to his uid
+        - B 131108: Views/Person/Tabs::delete doesn't work - no delete given
+        - UI131108: error when graying out and clicking on a tab -> disable first,
+          then gray out
+        - UI131108: Cours::Modify::Add-bulk - double-window needs to be larger, changed
+          to list
+        - UI131108: On small screens Cours::Modify is not visible
         - B 131107: nicer bail-out in Person.create(159) if LDAP and entry is already
           there -> just update, don't complain
         - B 131010: when creating diplomas, no correct error-handling if no center present
@@ -220,6 +235,9 @@ To check:
           simple manager for diplomas
         - B 131008: when courses not initialized, pop-up window is faded and can't be used
         - B 131008: take away "login_prop"
+        - F 131000: Print student-cards the Markas-way with the idea of Josue and Viviane
+	- F 131000: Graying out fields not usable (PersonModify, CashAdd, ...)
+	- F 131000: Double-users: avoid them in the first place
         - B 130919: PersonAdmin: when deleting person that is shown, there is an error,
           in fact, it is only in the case when a course has a wrong attribute...
         - B 130917: When synching courses, "teacher"-attribute of users 
