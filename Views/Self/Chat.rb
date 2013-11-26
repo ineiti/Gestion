@@ -3,8 +3,10 @@
 
 class SelfChat < View
   def layout
+    @@box_length = 40
     @@disc = Entities.Statics.get( :SelfChat )
-    @@disc.data_str.length < 20 and @@disc.data_str = Array.new(20, "")
+    @@disc.data_str.length < @@box_length and @@disc.data_str = 
+      Array.new(@@box_length, "")
     @order = 100
     @update = true
     @auto_update = 10
@@ -12,9 +14,9 @@ class SelfChat < View
     @functions_need = [:network]
 
     gui_vbox do
-      show_text :discussion, :width => 400, :flexheight => 1
       show_str :talk
       show_button :send
+      show_text :discussion, :width => 400, :flexheight => 1
     end
   end
 	
@@ -25,7 +27,8 @@ class SelfChat < View
       @@disc.data_str.push today_date
     end
     @@disc.data_str = @@disc.data_str.last( 200 )
-    reply( :update, :discussion => @@disc.data_str[-20..-1].join("\n") ) +
+    reply( :update, :discussion => @@disc.data_str[-@@box_length..-1].
+        reverse.join("\n") ) +
       reply( :focus, :talk)
   end
 	

@@ -2,12 +2,14 @@
 
 BUGS:
         - client/server:
-          - add "standalone" to adminfunction, which will not add center-id to
-            course-ids
           - B 131113: server: when getting new course, ignore "room", check for center-id
           - server: error with regard to "assistant" - ??
-          - server: "error in handling method" for CourseGrade - mas_it-101_1307
           - transfert: also get "assistant", "dow" and "hours" - ??
+
+        - when Network::Tigo::update is clicked, it is possible to change
+          to Self-tab
+        - LibNet has concurrency-troubles - use "flock" to mend it:
+          ( flock -e 200; locked commands ) 200>/tmp/blah.lockfile
 
         - Clean up ruby-version mess
         - Get QooxView/Test/qv_gettext to run
@@ -23,15 +25,6 @@ BUGS:
 Security:
 
 UI:
-        - Self::Chat needs a "align to bottom" instead of 20 lfs
-
-        - Cours::Modify::Bulkadd::double_check - add "cancel"-button
-        - "different number of items ..."- show in what field
-
-        - check why Lib/Fields:window_fade_to:1147 doesn't need fadeIn - is
-          it because setEnabled is enough?
-        - delete all effect-references in LTab and Fields
-
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
@@ -41,6 +34,7 @@ UI:
         - CourseTabs still very slow for startup
 
         - SelfChat: if on multilogin, propose a "name"-field
+        - Cours::Modify::Bulkadd::double_check - add "cancel"-button
         - CourseDiplomas: display random-id if available
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
@@ -48,8 +42,13 @@ UI:
         - write a good documentation...
 
 FEATURES:
-        - Backup only data: data/ Exa/ Diplomas*/ config.yaml
-        - Add "send server", "fetch server", "download backup", "upload backup"
+        - client/server:
+          - only add center-ids when a course is "certified"
+        - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
+          - send-server: same as synchronize
+          - fetch: to do, adding to courseTabs
+          - download/upload backup: same as synchronize and fetch
+        - CourseType: Add versions
 
         - make an accounting-module
 
@@ -207,7 +206,15 @@ To check:
 
 
 ** FIXED **:
+        - UI 131119: Self::Chat needs a "align to bottom" instead of 20 lfs - can't align
+          to bottom, so inverse layout
+        - UI 131119: check why Lib/Fields:window_fade_to:1147 doesn't need fadeIn - is
+          it because setEnabled is enough? - yes
+        - UI 131119: "different number of items ..."- show in what field
+        - UI 131119: delete all effect-references in LTab and Fields
+        - F 131114: Backup only data: data/ Exa/ Diplomas*/ config.yaml
         - course client/server
+          - B 131113: server: "error in handling method" for CourseGrade - mas_it-101_1307
           - B 131113: client: add center-id to course-name for accredited courses
           - B 131113: client: file-transfer locally not OK - 0 bytes
           - B 131113: client: delete exa-file-zip in /tmp when transferred

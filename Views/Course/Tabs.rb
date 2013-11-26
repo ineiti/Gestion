@@ -7,7 +7,7 @@ class CourseTabs < View
     gui_vbox :nogroup do
       show_list_single :courses, :flexheight => 1, :callback => true, 
         :width => 100
-      show_button :delete, :add
+      show_button :delete, :add, :import
     end
 
     gui_window :error do
@@ -58,7 +58,7 @@ class CourseTabs < View
     if Persons.find_by_permissions( :center )
       hide.push :new_center
     end
-    if hide.size < 6
+    if hide.size < 8
       ( reply( :window_show, :not_all_elements ) +
           hide.collect{|h| reply( :hide, h ) } ).flatten
       #      reply( :window_show, :not_all_elements ) +

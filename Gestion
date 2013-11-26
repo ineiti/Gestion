@@ -58,7 +58,7 @@ else
         if [ "$a" = "y" -o "$a" = "Y" ]; then
           Binaries/install_ldap
         fi
-        echo $( cd ../QooxView; ./update_sqlite3 )
+        echo $( cd ../QooxView/Config; ./install )
         call_ruby Gestion.rb -p $@
       else
         echo OK, wont run Gestion then
@@ -73,7 +73,7 @@ else
         if [ "$a" = "y" -o "$a" = "Y" ]; then
           Binaries/install_ldap
         fi
-        echo $( cd ../QooxView; ./update_sqlite3 )
+        echo $( cd ../QooxView/Config; ./install )
         call_ruby Gestion.rb -p $@
        fi
     else
