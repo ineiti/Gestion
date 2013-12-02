@@ -15,3 +15,6 @@ StorageHandler:
 
 DiplomaDir: Diplomas
 
+LibNet:
+  simulation: true
+

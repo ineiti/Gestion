@@ -8,8 +8,8 @@ fi
 USER=$1
 ldapaddusertogroup $USER cyber_club
 
-if rsync -Paiv /home/$USER root@buzz.wifi:/home; then
-  exit
-else
-  exit 2
-fi
+#if rsync -Paiv /home/$USER root@buzz.wifi:/home; then
+#  exit
+#else
+#  exit 2
+#fi

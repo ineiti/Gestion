@@ -21,7 +21,7 @@ class NetworkTigo < View
           show_button :recharge
         end
         gui_vbox :nogroup do
-          show_list_drop :size, "%w( 30MB 100MB 1GB 5GB )"
+          show_list_drop :size, "%w( 20MB 30MB 100MB 1GB 5GB )"
           show_button :add_promotion
         end
       end

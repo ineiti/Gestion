@@ -6,7 +6,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="1.2.2-alpha"
+VERSION_GESTION="1.3.0-alpha"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -153,6 +153,9 @@ $internet = Thread.new{
     begin
       sleep 60
       dputs( 0 ){ "It is now: " + Time.now.strftime( "%Y-%m-%d %H:%M" ) }
+      if ConfigBase.has_function :internet_only
+        Internet::fetch_cash
+      end
       Internet::take_money
     rescue Exception => e
       dputs( 0 ){ "#{e.inspect}" }

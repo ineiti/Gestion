@@ -36,6 +36,7 @@ Accounting:
 LibNet:
 #  URI: druby://localhost:9000
 #  simulation: false
+#  internetCash: cash.internet.com
 
 Samba:
   simulation: true

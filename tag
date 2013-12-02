@@ -4,7 +4,7 @@ if [ ! "$1" ]; then
   exit
 fi
 (
-for a in Gestion QooxView AfriCompta LibNet Config; do
+for a in Gestion QooxView AfriCompta LibNet Config Profeda; do
   echo Doing $a
   cd ../$a
   hg tag "$1"
