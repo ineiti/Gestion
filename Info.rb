@@ -4,7 +4,7 @@
 class Info < RPCQooxdooPath
   def self.parse_req( req )
     dputs( 4 ){ "in QVInfo: #{req.inspect}" }
-    self.parse( req.request_method, req.path, req.query, req.peeraddr[2] )
+    self.parse( req.request_method, req.path, req.query, RPCQooxdooHandler.get_ip( req ) )
   end
 
   def self.parse( m, p, q, ip )

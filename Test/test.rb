@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I.
+#!/usr/local/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I.
 #!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I. -wKU
 require 'test/unit'
 

@@ -2,7 +2,7 @@
 class GetDiplomas < RPCQooxdooPath
   def self.parse_req_res( req, res )
     dputs( 4 ){ "GetDiplomas: #{req.inspect}" }
-    path, query, addr = req.path, req.query.to_sym, req.peeraddr[2]
+    path, query, addr = req.path, req.query.to_sym, RPCQooxdooHandler.get_ip( req )
     if req.request_method == "GET"
       filename = path.sub( /^.[^\/]*./, '' )
       res['content-type'] = case filename

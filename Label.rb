@@ -6,8 +6,7 @@ class Label < RPCQooxdooPath
   def self.parse_req( req )
     dputs( 4 ){ "Label: #{req.inspect}" }
     if req.request_method == "POST"
-      #self.parse( req.request_method, req.path, req.query, req.peeraddr[2] )
-      path, query, addr = req.path, req.query.to_sym, req.peeraddr[2]
+      path, query, addr = req.path, req.query.to_sym, RPCQooxdooHandler.get_ip( req )
       dputs(4){"Got query: #{path} - #{query.inspect} - #{addr}"}
       
       if query._field == "start"

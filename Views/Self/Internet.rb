@@ -143,15 +143,13 @@ class SelfInternet < View
 
   def rpc_button_connect( session, data )
     if session.web_req
-      ip = session.web_req.peeraddr[3]
-      $lib_net.async( :user_connect, "#{ip} #{session.owner.login_name}" )
+      $lib_net.async( :user_connect, "#{session.client_ip} #{session.owner.login_name}" )
       rpc_update( session, true )
     end
   end
 
   def rpc_button_disconnect( session, data )
     if session.web_req
-      #ip = session.web_req.peeraddr[3]
       $lib_net.async( :user_disconnect_name, "#{session.owner.login_name}" )
       rpc_update( session, true )
     end

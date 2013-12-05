@@ -147,7 +147,7 @@ end
 
 class InternetCash < RPCQooxdooPath
   def self.parse_req_res(req, res)
-    ddputs(4) { "InternetCash: #{req.inspect} - #{req.path} - #{req.peeraddr[2]}" }
+    ddputs(4) { "InternetCash: #{req.inspect} - #{req.path} - #{RPCQooxdooHandler.get_ip( req )}" }
     if req.request_method == "GET"
       case req.path
         when /fetch_users/

@@ -55,7 +55,7 @@ class LibNet
 end
 
 class Web_req
-  attr_reader :peeraddr
+  attr_reader :peeraddr, :header
 
   def initialize(ip)
     @peeraddr = [0, 0, 0, ip]
@@ -231,4 +231,9 @@ class TC_Internet < Test::Unit::TestCase
                                                               Time.parse("1/2/2012 8:0"))
 
   end
+
+  def test_header
+    assert_fail "Shall test for ip-address in header"
+  end
+
 end

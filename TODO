@@ -42,6 +42,9 @@ UI:
         - write a good documentation...
 
 FEATURES:
+        - add material-config to LibNet
+          - different USB-keys
+          - different distributions
         - client/server:
           - only add center-ids when a course is "certified"
         - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
