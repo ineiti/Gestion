@@ -140,9 +140,9 @@ dputs(0){"Starting autosave"}
 if get_config( true, :autosave )
   $autosave = Thread.new{
     loop {
-      sleep 2 * 60
       Entities.save_all
       Internet::check_services    
+      sleep 2 * 60
     }
   }
 end
@@ -153,7 +153,7 @@ $internet = Thread.new{
     begin
       sleep 60
       dputs( 0 ){ "It is now: " + Time.now.strftime( "%Y-%m-%d %H:%M" ) }
-      if ConfigBase.has_function :internet_only
+      if ConfigBase.has_function? :internet_only
         Internet::fetch_cash
       end
       Internet::take_money

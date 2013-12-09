@@ -1,8 +1,11 @@
 [Unit]
 Description=Gestion of cultural centers
+Requires=network.target
+After=network.target
 
 [Service]
 Type=forking
+#PIDFile=/var/run/lib-net/pid
 ExecStart=/var/profeda/Gestion/Binaries/start_gestion
 ExecStop=/var/profeda/Gestion/Binaries/kill_gestion
 
