@@ -5,6 +5,10 @@ BUGS:
           - B 131113: server: when getting new course, ignore "room", check for center-id
           - server: error with regard to "assistant" - ??
           - transfert: also get "assistant", "dow" and "hours" - ??
+        - CoursePrint: error in printing
+          - when clicking printer/pdf/printer it gets confused
+          - when clicking on the left part of the button it gets ignored
+          - clicking "PDF" doesn't work when there is no printer
 
         - when Network::Tigo::update is clicked, it is possible to change
           to Self-tab
@@ -25,6 +29,10 @@ BUGS:
 Security:
 
 UI:
+        - CoursesModify::check_double
+          - needs more width
+          - by default check first entry
+          - windows is not grayed out when submitting
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
@@ -42,6 +50,8 @@ UI:
         - write a good documentation...
 
 FEATURES:
+        - add Profeda-repository with all special files
+        - add init-script for Gestion to "service gestion restart"
         - add material-config to LibNet
           - different USB-keys
           - different distributions

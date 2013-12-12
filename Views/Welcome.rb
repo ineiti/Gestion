@@ -45,7 +45,7 @@ class Welcome < View
       session.client_ip = RPCQooxdooHandler.get_ip( web_req )
       dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
       dputs( 0 ){ "Session is #{session.inspect}" }
-      dputs( 0 ){ "Authenticated person #{person.login_name} from #{session.client_id}" }
+      dputs( 0 ){ "Authenticated person #{person.login_name} from #{session.client_ip}" }
       return reply( :session_id, person.session_id ) +
         reply( :list, View.list( session ) )
     else

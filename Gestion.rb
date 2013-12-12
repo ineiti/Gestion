@@ -77,7 +77,7 @@ begin
       'FlagPersonAdd,SelfServices', '' )
   Permission.add( 'director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
       'PersonAdmin,PersonCourse,NetworkConnection', 'secretary,cybermanager,teacher' )
-  Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseDiploma,' +
+  Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseDiploma,CourseGrade,' +
       'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson', '' )
   Permission.add( 'admin', '.*', '.*' )
 
