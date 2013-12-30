@@ -1,6 +1,14 @@
 require 'test/unit'
 
-
+class SimulWebReq
+  def self.header
+    {}
+  end
+  
+  def self.peeraddr
+    [0,0,0,0]
+  end
+end
 
 class TC_Login < Test::Unit::TestCase
   def setup
@@ -24,21 +32,21 @@ class TC_Login < Test::Unit::TestCase
     assert_not_nil admin, "Couldn't get 'admin'"
 
     reply = RPCQooxdooHandler.request( 1, "View.Welcome", "button", [["default", "login",
-        {"username" => "admin", "password" => "super123" }]])
+        {"username" => "admin", "password" => "super123" }]], SimulWebReq )
     assert_not_nil reply
-    assert_not_equal nil, reply['result'].index{|i| i[:cmd] == "session_id"}, "#{reply.inspect}"
+    assert_not_equal nil, reply['result'].index{|i| i[:cmd] == :session_id}, reply.inspect
 
     reply = RPCQooxdooHandler.request( 1, "View.Welcome", "button", [["default", "login",
         {"username" => "josue", "password" => "false" }]])
     assert_not_nil reply
-    assert_equal [{:data=>"login_failed", :cmd=>"window_show"},
-        {:data=>{:reason=>"Password wrong"}, :cmd=>"update"}], reply['result'], "#{reply.inspect}"
+    assert_equal [{:data=>:login_failed, :cmd=>:window_show},
+        {:data=>{:reason=>"Password wrong"}, :cmd=>:update}], reply['result'], "#{reply.inspect}"
 
     reply = RPCQooxdooHandler.request( 1, "View.Welcome", "button", [["default", "login",
         {"username" => "foo", "password" => "false" }]])
     assert_not_nil reply
-    assert_equal [{:data=>"login_failed", :cmd=>"window_show"},
-        {:data=>{:reason=>"User doesn't exist"}, :cmd=>"update"}], reply['result'], "#{reply.inspect}"
+    assert_equal [{:data=>:login_failed, :cmd=>:window_show},
+        {:data=>{:reason=>"User doesn't exist"}, :cmd=>:update}], reply['result'], "#{reply.inspect}"
   end
 
 end

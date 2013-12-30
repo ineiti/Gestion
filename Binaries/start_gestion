@@ -1,5 +1,6 @@
 #!/bin/bash
 
+test -x /etc/init.d/blink-fast && /etc/init.d/blink-fast start
 . /etc/environment
 export LANG
 export LC_ALL

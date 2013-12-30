@@ -202,7 +202,6 @@ class TC_Course < Test::Unit::TestCase
     it_101 = Courses.create_ctype( @it_101_t, "1202", @surf )
     assert_equal( {:ctype=>[2],
         :course_id=>8,
-        :responsible=>[3],
         :students=>[],
         :name=>"it-101_1202",
         :contents => "it-101",

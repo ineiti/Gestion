@@ -167,7 +167,7 @@ class TC_Person < Test::Unit::TestCase
     @secretary = Entities.Persons.create( :login_name => "secretary",
       :permissions => ["secretary"] )
   
-    assert_equal "Secretary", @secretary.account_name_due
+    assert_equal "Secretary", @secretary.account_name_due, @secretary.inspect
     
     assert_equal nil, @surf.account_name_due
 

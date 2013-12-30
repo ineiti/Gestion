@@ -107,6 +107,7 @@ module Internet
         end
       }
     end
+    return false
   end
 
   def self.free(user)

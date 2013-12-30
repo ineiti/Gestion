@@ -142,6 +142,11 @@ class Persons < Entities
       end
       d[:first_name].capitalize_all!
       d[:family_name].capitalize_all!
+    elsif d.has_key? :login_name
+      d[:first_name] = d[:login_name]
+    else
+      dputs(0){"Creating Person with missing names: #{d.inspect}"}
+      return nil
     end
     if !d[:login_name] or d[:login_name].length == 0
       d[:login_name] = create_login_name(d[:first_name], d[:family_name])
@@ -154,7 +159,7 @@ class Persons < Entities
     d[:person_id] = nil
     dputs(1) { "Creating #{d.inspect}" }
 
-    person = super(d)
+    person = super(d, true)
 
     person.password_plain = d.has_key?(:password) ? d[:password] : rand(10000).to_s.rjust(4, "0")
     person.password = person.password_plain
@@ -357,6 +362,7 @@ class Person < Entity
 
   def update_account_due
     if can_view :FlagAddInternet and login_name != "admin"
+      dputs(3){"Adding account_due to #{login_name}"}
       #acc = data_get( :account_name_due )
       acc = account_name_due
       if acc.to_s.length == 0
@@ -563,7 +569,11 @@ class Person < Entity
   end
 
   def full_name
-    "#{self.first_name} #{self.family_name}"
+    ret = []
+    first_name and ret.push first_name
+    family_name and ret.push family_name
+    ret.length == 0 and ret.push login_name
+    ret.join(" ")
   end
 
   def replace(orig, field, str)

@@ -128,7 +128,7 @@ class Courses < Entities
         ( creator and creator.has_permission?( :center ) ) ) or
       ( ConfigBase.has_function?( :course_client ) and
       ( ctype.diploma_type.first.to_sym == :accredited ) ) )
-    ddputs(4){"needs_center is #{needs_center.inspect}" }
+    dputs(4){"needs_center is #{needs_center.inspect}" }
 
     # Prepare correct name
     name = if needs_center
@@ -137,6 +137,8 @@ class Courses < Entities
       else
         Persons.find_by_permissions(:center).login_name
       end + "_"
+    else
+      ""
     end + "#{ctype.name}_#{date}"
     
     # Check for double names
@@ -671,9 +673,9 @@ base_gestion
           dir = File::dirname( list.first )
           @only_psnup and list = []
           list.sort.each{ |p|
-            ddputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
+            dputs( 3 ){ "Started thread for file #{p} in directory #{dir}" }
             student_name = p.sub(/.*[0-9]+-/, '').sub(/\.odt/, '')
-            ddputs( 3 ){ "Student name is #{student_name}" }
+            dputs( 3 ){ "Student name is #{student_name}" }
             @make_pdfs_state[student_name][1] = "working"
 
             if format == :certificate

@@ -78,7 +78,7 @@ class Label < RPCQooxdooPath
     if not ( course_name = tr._course ) =~ /^#{tr._user}_/
       course_name = "#{tr._user}_#{tr._course}"
     end
-    ddputs(3){"Course-name is #{course_name} and field is #{tr._field}"}
+    dputs(3){"Course-name is #{course_name} and field is #{tr._field}"}
     case tr._field
     when /users/
       users = JSON.parse( tr._data )

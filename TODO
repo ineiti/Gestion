@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - error when login-page-comment too long - login-request doesn't get sent on
+          Firefox
+        - wrong-password-window can't get clicked away -> not reproducible on 1.3.0-rc1
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check for center-id
           - server: error with regard to "assistant" - ??
@@ -29,6 +32,7 @@ BUGS:
 Security:
 
 UI:
+        - Self:Services -> don't add "nil"-entries
         - CoursesModify::check_double
           - needs more width
           - by default check first entry

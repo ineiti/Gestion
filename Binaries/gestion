@@ -4,7 +4,7 @@
   rotate 30
   mail root@localhost
   postrotate
-    /var/www/Gestion/Binaries/log_scan_errors
+    /var/profeda/Gestion/Binaries/log_scan_errors
   endscript
   nocompress
 }
