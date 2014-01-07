@@ -1,6 +1,21 @@
-hg commit -m "$@"
-git commit -a -m "$@"
-cd ../QooxView
-hg commit -m "$@"
-git commit -a -m "$@"
-cd ../Gestion
+#!/bin/bash
+
+git_func(){
+  if [ "$( which git 2>/dev/null )" ]; then
+    git "$@"
+  fi
+}
+
+for a in Gestion QooxView AfriCompta LibNet Config Profeda; do
+  echo Doing $a
+  cd ../$a
+  if [ ! "$1" ]; then
+    hg diff
+    hg st
+    git_func status
+    echo
+  else
+    hg commit -m "$@"
+    git_func commit -a -m "$@"
+  fi
+done

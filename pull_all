@@ -1,19 +1,18 @@
 #!/bin/bash
 
 BASE=/var/www
+HOST=vpn-man
 if [ ! "$1" ]; then
   BASE=$BASE/test
+elif [ "$1" != production ]; then
+  HOST=$1
 fi
 
-for a in Gestion QooxView; do
+for a in Gestion QooxView AfriCompta LibNet Config; do
   echo Committing $a
-  ssh root@solar.wifi "cd $BASE/$a; hg commit -m 'pull-all'"
+  ssh root@$HOST.wifi "cd $BASE/$a; hg commit -m 'pull-all'"
+  echo Pulling QooxView
+  cd ../$a
+  hg pull $1
+  hg up
 done
-echo Pulling Gestion
-hg pull $1
-hg up
-echo Pulling QooxView
-cd ../QooxView
-hg pull $1
-hg up
-

@@ -1,39 +1,156 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
-ENTITY_BASE:
-	- Have one tab with all Entities to chose from
-	- Other tabs with actions on each entity
-	- Recognize entities from View-name
-	- PersonCourseModify has a person and a course entity chosen
-	- "sid" is replaced with "session", and has members that allow to
-	  access already chosen entities
-	  - Add class Session
-	  - move session-ids from "Permission" to here
-	- cleanup:
-		- arrays with strings coming from Frontend
-		- Cash* views have to be moved, as there is no "Cash"-Entity
-		- @data_class has to be replaced with something else
-
 BUGS:
-	- 1000 crashes when not operating "properly"
-	
-UserFriendly:
-	- Widen "students"-field so that all text fits in CourseGrade
-	- Delete CourseModify::add_students and put courses to add in PersonModify
-	- Make a dropbox when using _find
-	- Graying out fields not usable (PersonModify, CashAdd, ...)
-	- Make 2-dimensional field with "Course, Person, Cash, ..." on top and rest on left
-	- Accelerate adding of students (is LogAction::add_only enough?)
+        - AC: clean lone accounts != (Root|Archive)
+        - AC: propagate deleted accounts from old to new
+        - AC: correctly show different accounts
+        - error when login-page-comment too long - login-request doesn't get sent on
+          Firefox
+        - wrong-password-window can't get clicked away -> not reproducible on 1.3.0-rc1
+        - client/server:
+          - B 131113: server: when getting new course, ignore "room", check for center-id
+          - server: error with regard to "assistant" - ??
+          - transfert: also get "assistant", "dow" and "hours" - ??
+        - CoursePrint: error in printing
+          - when clicking printer/pdf/printer it gets confused
+          - when clicking on the left part of the button it gets ignored
+          - clicking "PDF" doesn't work when there is no printer
+
+        - when Network::Tigo::update is clicked, it is possible to change
+          to Self-tab
+        - LibNet has concurrency-troubles - use "flock" to mend it:
+          ( flock -e 200; locked commands ) 200>/tmp/blah.lockfile
+
+        - Clean up ruby-version mess
+        - Get QooxView/Test/qv_gettext to run
+        - when migrating with old value-names, it gives an error - how to keep
+          old names during migration?
+        - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
+        - why is Entity::get_value always called three times?
+        - When CourseAdd is first tab and course is added, LTab.js:174 can't
+          find getActiveForm, as it is not drawn yet...
+	- 10 crashes when not operating "properly"
+
+[5', 15', 30', 1h, 4h]
+Security:
+
+UI:
+        - Self:Services -> don't add "nil"-entries
+        - CoursesModify::check_double
+          - needs more width
+          - by default check first entry
+          - windows is not grayed out when submitting
+        - Courses::center needs work:
+          - it isn't shown in CourseModify, even with center_server
+          - it is by default to responsible (at least installation from 130613)
+        - CourseGrade::sync - catch timeouts on requests
+        - CourseGrade - add comment to file-uploads, so people know what to
+          upload
+        - CourseTabs still very slow for startup
+
+        - SelfChat: if on multilogin, propose a "name"-field
+        - Cours::Modify::Bulkadd::double_check - add "cancel"-button
+        - CourseDiplomas: display random-id if available
+        - if only Course-tabs are visible, the basic tab is not shown, so no
+         tabs can be added
+        - clean up the interface, mostly the tabs and sub-tabs
+        - write a good documentation...
 
 FEATURES:
-	- CourseHistory
-		- 
-	- use language file to replace name of the fields
-	- Person*: Search pops up windows
+        - add Profeda-repository with all special files
+        - add init-script for Gestion to "service gestion restart"
+        - add material-config to LibNet
+          - different USB-keys
+          - different distributions
+        - client/server:
+          - only add center-ids when a course is "certified"
+        - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
+          - send-server: same as synchronize
+          - fetch: to do, adding to courseTabs
+          - download/upload backup: same as synchronize and fetch
+        - CourseType: Add versions
+
+        - make an accounting-module
+
+        - use multilogin as flag for users
+        - configure better print, libnet, uploadwidget, so that it get's correctly
+          addressed with a configuration
+	- import courses from server
+        - logrotate gestion.log, and send daily error-reports to info@profeda.org
+        - when a student logins remotely to a course_sever, don't allow to change
+          his name, only address, phone-#, password and e-mail
+        - adding a course:
+          - add m/f recognition to change wording
+          - Implement better handling of course-days
+        - label. : show a form if no student found
+        - receive SMS through LibNet and do actions
+          - make connection
+          - return stats
+        - progression-bar in Administration::Backup::restore
+	-4 Courses::Days - add other days to the list
+	-3 check diploma-templates
 
 Programming:
-	- Further automize: Take first part of View-class as the standard entity
-	- Add a method "focus" to Frontend
+        - Change ConfigBase functions_base: all functions are evaluated with
+          base_dependencies, like network, network_share and network_internet,
+          so that network_internet and network_share depend on network
+        - Why is a value_list-definition in Entities not able to give a default-
+          value for the list? -> it is, but only if it is taken as a show_block
+          in a View, test whether show_field works, too
+        - merge two ways of free surfing: group::freesurf and
+          permissions::FreeInternet
+        - Lots of stuff in View/* should go into Entities/*
+        - configure also LibNet through Gestion
+          - 130400 can set cost_* now
+          - 130400 also change permanent or 
+        - replace gsm-ussd with something Debian
+        -2 verify if Person::data_set and Person::data_set_log are really
+          necessary
+        -3 change Course::make_pdfs to OpenPrint
+
+Documentation:
+
+> 1.0
+Features:
+        - Add accounting for students-money and service-money
+        - Add a cookie to log in automatically
+        -2 Rename course
+        -3 Add a status-bar on bottom for progresses and information like:
+           printing, progress, messages, connect/disconnect, ...
+	-3 Admin::Restore - show progress
+	-3 Import attestation.markas-al-nour.wifi
+	-4 make an asynchronous printing-module
+	- Using data from solar on local account without failing
+	- Make a dropbox when using _find
+        - AfriCompta-support:
+		-4 Define reports
+	-2 Make internet.wifi with Self::Internet only, and a link which allows
+	  to do the infamous internet.wifi/?pass=&user=
+        -3 take Admin::ControlAccess from Rooms-definition
+	-Tigo
+          - 3 auto-reconnect on error
+          - vérifier si la sim est expirée
+          - Montrer le log des derniers communications avec le Modem
+	-3 Inventory of screens, mice, routers
+	-4 Double-users: merge them
+	- CourseHistory - what should go in there?
+
+Programming:
+        - Calling rpc_calls
+          - Convert all "args" to_sym!
+          - take out last [0]-arrays needed in args
+	-2 Allow subdirectories in Entities-directory
+	-3 add a print-dialog with window and buttons
+	-3 Change Frontend::Views::LTab::dispatch to handle one request at a
+	  time and to allow new requests to be inserted before handling other
+	  requests -> doing a reply( parent->switch_tab ) + reply( switch_tab )
+	  should switch the tab in the NEW parent-tab!
+	-3 kill Layout.js::dispatch::init_values, as it is not needed anymore with
+	  the RPC-queue enabled (even though I'm nut sure the latter really works...)
+	-3 when empty configuration and LDAP is not here, fall back to CSV
+	-3 Add real type-checking between value_* and Storages
+	-4 rpc_parse_reply
+		- take out arrays when only one reply anyway
 	- Really slow search or something when starting up
 		- also in CourseModify
 	- having lists and dropbox with additional hidden "index" that is returned for chosen entries
@@ -41,25 +158,531 @@ Programming:
 		- Can't change name of courses
 		- Add a method "select" instead of sending a list-item twice
 	- make class to easy allow for a "add/delete"-list
-	
-DOMINIQUE:
-	- Statistiques de "Cours::accounting"
-	
-NELBE:
-	- Voir qui a payé combien pour l'internet - ici ou AfriCompta?
+	- ENTITY_BASE:
+		- Have one tab with all Entities to chose from
+		- Other tabs with actions on each entity
+		- Recognize entities from View-name
+			- PersonCourseModify has a person and a course entity chosen, available
+			 through session.chosen.Person and session.chosen.Course
+		- cleanup:
+			- arrays with strings coming from Frontend ?!?
+			- Cash* views have to be moved, as there is no "Cash"-Entity
+		- convert views to value_entities
+	- DOMINIQUE:
+		- Statistiques de "Cours::accounting"
+		- Bibliotheque
 
 VERIFY:
 
 Rare bugs:
+	- Better check of LDAP-dependency: if /etc/*/ldapscripts.conf is here,
+	  use that one. Don't rely on Gestion/ldap.secret!
+	- check why ruby-gettext from debian/squeeze messes things up
+        - When copying compta.db over to standalone AfriCompta, then checking,
+         some accounts are marked as "local only" - why? - because the "check"
+         doesn't return ALL accounts, but only those attached to a top-level
+         account - now, why are not all accounts attached, and what to do about
+         them? - seems to be rests of Accounts::archive, but concrete
+         circumstances are not known...
+        - Restriction is not waterproof: some local sites don't get shown, like
+          markas-al-nour.org which gets wrongly resolved by internal zentyal-boxes
+          eventually also problems with local logins
+
+Unconfirmed bugs:
+        -V Sync-error on server if family-name is not given
+        -? lpstat localhost:631 hangs if no cups is running - what system?
+        - ??? Wrong printer-dialog in Cours/Attestations/Print
+	- PersonAdd - password is not stored - not repeatable
 	- Default focus and button:
 		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
 			-> where is that a problem?
-	- B 110826: It's possible to click other tab while first starting up: re-activate the
-	  correct tab when getting "update" or "show"
 	- TaskList: sometimes when pressing "list", it takes twice to show everything
-	- CourseModify::add_students doesn't work sometimes (when there is a stale uid of a removed user)
-	
+        - Course::Diploma - can't create for more than one course at the same time
+          -> make a @thread for each course, or is it just ruby not really
+          multi-threaded?
+        - Test if Admin::Backup::restore resets passwords as it should in samba-module
+
+UNCLEAR BUGS:
+        - ne pas afficher dans label quand "pas passé" -> when creating?
+        - missing fields won't work in Entity::to_hash( true ) ??
+
+HEISENBUGS:
+        - can't set up cybermanager anymore - permissions vanish !? - or was it
+          unclear setup of get_config::Accounting?
+        - Confirmed: NetworkPermissions: sometimes when saving, the chosen entry shows up
+          as a number in the list. Seems to be somewhere in the Javascript where
+          things don't get updated in the correct way. Not reproducible in a
+          reliable manner. Perhaps linked with more than one field as array like
+          130625?
+        - Confirmed: PersonAdmin sometimes doesn't show permissions and groups when
+          added new stuff -> also array-problem of 130625?
+
+To check:
+        - printing of student-card with accent in name fails (probably due to
+          accent in filename - sanitize using "accents_replace")
+        - Fresh install with Course::add_missing doesn't work because of missing
+          file in CourseType
+        - creation of diplomas breaks if argument "-p" is given
+
+
 ** FIXED **:
+        - UI 131119: Self::Chat needs a "align to bottom" instead of 20 lfs - can't align
+          to bottom, so inverse layout
+        - UI 131119: check why Lib/Fields:window_fade_to:1147 doesn't need fadeIn - is
+          it because setEnabled is enough? - yes
+        - UI 131119: "different number of items ..."- show in what field
+        - UI 131119: delete all effect-references in LTab and Fields
+        - F 131114: Backup only data: data/ Exa/ Diplomas*/ config.yaml
+        - course client/server
+          - B 131113: server: "error in handling method" for CourseGrade - mas_it-101_1307
+          - B 131113: client: add center-id to course-name for accredited courses
+          - B 131113: client: file-transfer locally not OK - 0 bytes
+          - B 131113: client: delete exa-file-zip in /tmp when transferred
+        - B 131113: "aborted list-tabs" when viewing Course from fresh installation
+        - B 131108: QV/Storages/LDAP - verify creation of new user with regard to his uid
+        - B 131108: Views/Person/Tabs::delete doesn't work - no delete given
+        - UI131108: error when graying out and clicking on a tab -> disable first,
+          then gray out
+        - UI131108: Cours::Modify::Add-bulk - double-window needs to be larger, changed
+          to list
+        - UI131108: On small screens Cours::Modify is not visible
+        - B 131107: nicer bail-out in Person.create(159) if LDAP and entry is already
+          there -> just update, don't complain
+        - B 131010: when creating diplomas, no correct error-handling if no center present
+          -> add to diploma-check in View/CourseTabs
+        - B 131010: when using "first-add-dialog", the new course-type has no file set!
+        - B 131010: on smileplug, problem with docsplit and libreoffice
+        - B 131010: CourseDiplomas shows links even for non-finished diplomas
+        - B 131009: passwords are not used correctly with regard to replacement with ***
+        - B 131008: CourseDiplomas: very slow when enqueuing files - qrcode?
+        - B 131008: Can't create diplomas anymore! Some problem with zip...
+          added new zip-library, now replace all ZipFile with Zip::File
+	- UI131008: CourseDiplomas: take away "print to PDF" and insert direct links 
+          in the table -> take care about security-risk if only adding a
+          simple manager for diplomas
+        - B 131008: when courses not initialized, pop-up window is faded and can't be used
+        - B 131008: take away "login_prop"
+        - F 131000: Print student-cards the Markas-way with the idea of Josue and Viviane
+	- F 131000: Graying out fields not usable (PersonModify, CashAdd, ...)
+	- F 131000: Double-users: avoid them in the first place
+        - B 130919: PersonAdmin: when deleting person that is shown, there is an error,
+          in fact, it is only in the case when a course has a wrong attribute...
+        - B 130917: When synching courses, "teacher"-attribute of users 
+          doesn't get transferred
+        - UI130917: extend lists on all the height
+        - P 130917: Do something with CSV that don't load - first store in .sav, then
+          move over
+	- B 130917: in Binaries/start_gestion <ctrl-c> doesn't restart Gestion
+          can't restart Gestion anymore with a new call to start_gestion
+        - UI130909: PersonTabs - put search on top of results and stretch results all
+          the way down - added a gui-option of "flexheight"
+        - F 130822: Network::Share - add "force (user|group)" to smb.conf
+        - UI130822: auto_update from a window enables also the background (CourseGrade::sync)
+        - UI130822: Delete selection of a table upon "empty"
+        - UI130822: sort student-names in presence-sheet
+        - B 130822: Form is still active, even if shaded out
+        - UI130822: CourseGrade - list is sorted, but selected student is not on top
+        - B 130822: Label: "Pas passé" is not "passé avec succès"
+        - B 130822: CourseDiplomas: when nothing converted yet, it's like it's already
+          done
+        - B 130820: Config:LibNet:simul whether we do the forking or not
+        - B 130820: LibNet:: readlines somewhere in env where file does just not exist..
+        - B 130820: CoursePrint - add "presence_sheet" and other sheets like exams and stuff
+        - B 130820: update rest of promotion
+        - B 130820: fix bug with error in readline
+        - F 130820: add printing-page specific to profeda-courses
+        - UI130819: accredited_profeda: QRcode trop petit -> mettre à droite et plus grand?
+        - UI130802: Course* sort students-list
+        - B 130720: Install mercurial repository on D-server
+        - UI130802: CourseDiplomas: make name-column wider
+        - UI130802: CourseDiploma: replace diploma-list with a real table
+          - put everything into a "real" table to select and do proper printing
+          - show if file exists yet or not
+        - F 130705: when adding a student to a course, check whether he already exists.
+          for example: if same username exists, propose to take over the other
+          name
+        - UI130704: Confusing labels in CourseGrade (MultiTransfert, sync serveur, Enr., transf)
+        - B 130704: can't upload files anymore in CourseGrade
+        - B 130704: auto_update doesn't work anymore in CourseGrade::sync_state
+        - B 130704: CourseGrade::sync_files should be shown also when no files needed
+        - B 130704: Grades: re-writing means or remark resets "random", even when it was the
+          same value
+        - F 130704: Adding courses:
+          - Possible conflict in random-numbers when created locally and uploading
+            to server -> create random-numbers on server and copy to local, takes
+            also care of being sure it's synched: as long as there is no random-number,
+            don't allow to print diplomas. When changing Grades, delete random-number
+          - If course_client, don't make PDF before synched to server
+          - Once synched to server, don't allow for changes, or have a system that
+            prevents abuses like changing the grade afterwards, but allowing to
+            change in case of errors -> grade and remark changes need a new
+            sync
+        - P 130704: Use value_entity in Grades
+        - P 130704: Entity::data_set and data_get have to check for value() and value=()
+        - P 130704: Add a testcase for ConfigBase::values_need
+        - UI130702: *Tabs: inactivate if nothing selected
+        - UI130702: CourseDiploma::do_attestation - add a column after 10 students
+        - B 130702: printing: add option to reduce pages to printable surface
+        - B 130702: name shows twice in Person::Tabs when both in full_name and login_name
+        - B 130702: ldapscripts.conf is not readable when not in directory - should search
+        - B 130701: when searching a person, put login_name matches first
+        - B 130701: resetting uploadWidget when reopening window
+        - B 130701: Person::Modify when changing pw for "center", password_plain is not updated
+        - B 130701: Person.delete: check Courses for teacher, assistant and responsible
+        - B 130627: CoursDiplomas - change button "attestation" to "create attestations"
+        - B 130627: CoursDiplomas - not updated correctly with list_changed
+        - UI130627: Updated French translations
+        - CL130626: Cleaned up Diplomas/* files and references in tree
+        - F 130626: Mettre le nom "Profeda" sur l'étiquette, make A4 and "mpage -8"
+        - UI130626: add "zipping/putting together"-something to CourseDiploma::do_attestations
+        - UI130626: Course::Diploma - show better what's happening - perhaps a window
+          with info: name1 - failed, name2 - creating, name3, name4
+        - F 130626: adding more than one file to courses
+        - UI130626: Course::Grade shows files_saved, even if counter == 0, also
+          other buttons are shown when not needed
+        - B 130625: Course::Grade - can't upload files with accents or spaces
+        - B 130625: CourseGrade: deleted files in mho - then couldn't re-create directory
+        - B 130625: CourseDiploma: if all students are incomplete or failed, stop autoupdate
+        - B 130625: Still not OK with Tabs and multiple arrays
+        - B 130625: Still error if second array is available
+        - B 130624: Course::Tabs if second array is available, it breaks 50%
+        - B 130624: Person::Add also adds the family-name
+        - B 130624: Course::Tabs actual course is not used automatically
+          - Course::Diplomas shows empty list even if something is there
+        - B 130624: Course::Grade breaks if note is empty
+        - B 130624: Course::Tabs new course always gets ctype=1
+        - UI130624: Course::Add - move to a button in CourseTabs
+        - UI130624: Person::Add - move to a button in PersonTabs
+        - B 130624: Courses::Grades 4pp doesn't turn the page correctly when switching
+          from landscape to portrait mode
+        - B 130624: Course:Grade:mean* - accept 15.5 and 15,5
+        - B 130624: when deleting a course, files stay (at least Diplomas and Exas)
+        - B 130624: when deleting a course, make sure there is no @thread for it
+        - B 130624: when uploading, a file get's created instead of a directory
+        - P 130620: clean up config.yaml with uppercase, lowercase, also replaced
+          most of the direct $config-uses with get_config
+        - P 130620: added an Entities.needs for classes so that they can be
+          made to rely on each other -> shudder for dependency-troubles
+        - D 130620: make a nice config.yaml.default which contains all major configurations
+        - F 130618: Cours::Grade - send files directly without sync
+        - B 130618: empty installation: CourseModify complains about no CourseTypes, even
+          when one was added -> problem in html-display -> pops up a
+          dialog that asks everything missing in a very simple way, takes care of
+          - If Functions doesn't contain "inventory", one can't add a room for
+            the courses
+        - F 130612: labels - mettre aussi le nom (en petit)
+        - B 130612: Test ge_course doesn't pass
+        - F 130612: prepare_diplomas takes a long time now -> put this into the thread, too
+        - B 130610: config.yaml.default is really not in a good shape - all different options
+         should be in there
+        - B 130604: Grades are not updated with sync_do
+        - B 130604: Center-person is not updated with sync_do, don't update
+         permissions and groups, only address!
+        - P 130604: Why is a false return-value in Entities::setup_data used for not
+          auto-loading data? Change this to a @auto_load variable which is "true"
+          by default... But first check who is really returning a false value anyway
+        - F 130604: Have the possibility of storing course-data centrally
+          - input multiple notes
+          - store files for exams
+          - send everything to profeda.org with the notes
+          - 130528 for remote-only labels, add possibility for creating teachers
+          - 130530 add the name and place of the center - center itself
+        - B 130604: password_plain is not updated when changing the password for the
+          use of synching -> update password_plain when in "center"-group
+        - B 130528: confusing use of /label in URL...
+        - B 130528: Adding course doesn't add date
+        - B 130528: CourseModify shows also teachers that are not of this center
+        - B 130528: gender is not stored in CourseResponsible
+        - B 130528: sort course-names using the 4-digit, if available
+        - B 130528: for user.center also show courses that start with "#{center}_"
+        - B 130528: Deleting an user doesn't take away it's grades
+        - B 130528: adding twice the same course-name fails -> also moved course-creation
+          to Course
+        - B 130528: CourseModify::add_bulk: Don't add username to users in a local course,
+          only when connected "remote" for "label"s
+        - B 130527: Wrong new coursename in CourseAdd -> fixed, depending on course_server
+          or not
+        - B 130528: config:Samba:enable is stupid - it works nearly, even when it's off ->
+          replaced with ConfigBase::share
+        - UI130528: Administration::Backup is not nicely bordered
+        - P 130522: Define roles of installation
+          - AdminFunction for chosing what to do
+          - Show tabs according to function
+        - B 130422: Course::Modify crashes for a new course when there is no teacher
+        - B 130422: Course::Modify doesn't show courses for teachers
+        - B 130411: sort permissions in Persons::Admin
+        - B 130411: NetworkAccess: if new group and direct "activer plage", it doesn't
+          work, as the group is not yet stored
+        - B 130411: Network::share::new needs to clear users
+        - B 130411: Network::share, when no domain or no hostname, it fails in 
+         ./Views/Network/Share.rb:149:in `gsub!'
+        - B 130411: Person::Admin if adding "share", what to do with the password of the
+         samba-user? Store it anyway in clear, then add it to samba? Stupid, INSECURE
+         When no LDAP, it works to add it later, as the password is stored in clear!
+        - F 130411: Show all users (for small installations)
+        - F 130411: Delete users
+        - B 130325: No write-access to external harddisk
+        - B 130325: Users have read-access to other directories!
+        - T 130323: Checked all tests
+        - UI130323: Update translation
+        - B 130323: MB-Limit in NetworkAccess is not considered
+        - UI130323: tell people why they can't connect if NetworkAccess kicks in
+        - UI130322: make network-tab with all the Network-stuff
+        - P 130322: Arranging files for LibNet
+        - B 130322: When clicking Network::Tigo::"recharge", all is empty
+        - F 130321: Shares for Bethanie
+        - F 130321: Byte-counter for each day for Bethanie
+        - UI130321: NetworkShare::public == Yes -> hide users
+        - B 130321: admin has not the right to change password of "internet"-user??
+	- B 130315: 3 PersonModify - only allow to change password from persons which have equal or
+	  lower rights - not very nice looking empty border when not allowed to
+          change the password
+        - B 130315: When entering user-name only, a bug appears -> 
+         probably LDAP-related... yes, confirmed. Now it asks for the password
+         if it is empty
+        - B 130315: AfriCompta: when doing reports, accounts with movs. but a total of 0
+         don't get listed
+        - B 130315: When having more than 24 students, they don't appear on the
+         presence-list -> made 30 students per list
+        - B 130312: AfriCompta::merge is very slow
+        - P 130312: added creation of methods in method_missing of Entit(y|ies)
+	- P 130225: AfriCompta-support:
+		-4 Don't show archived and deleted accounts, but do stats on them
+		-3 Delete accounts
+        - F 130225: Allow for freebies to log in twice
+        - F 130225: Lots of debugging and adding for AfriCompta
+        - B 130221: Noms de cours sans espaces!
+        - P 130221: change all cash-methods to credit-methods
+        - P 130221: add a AddCash-permission and change Person.setup_instance
+        - P 130221: change Person::credit to Person::internet_credit
+        - P 130221: change config::compta_due to config::account::cash
+        - P 130221: change Person::credit_due to Person::account_total_due
+        - P 130221: change Person::compta_due to Person::account_due
+        - P 130221: change Person::account_* to Person::account_name_*
+        - B 130219: don't get printers for remote users on Windows ->
+          uses config:OpenPrint:search_remote for regexp on who is searched - refuses
+          Windows computers anyway
+        - B 130219: Why does it sometimes redirect to stuff like http://admin:3302/?afdj ??
+          -> send proper files and do some regex-magic in Frontend/Lib/RPC.js
+        - B 130219: put full match first in Person::search
+        - B 130219: When creating a username from "name1 name2 name3 name4", it gets to
+          "n3_name1_name2" instead of "n3_name1"
+        - B 130219: when adding "cybermanager" to a person, account is not created
+        - B 130219: Can't print presence-list
+        - TC130205: Why are the people refused in Info.rb? -> Added FlagInternetFree
+        - TC130205: FreeInternet for paying internet is not to be used
+        - F 130205: add list of "add_promotion"
+        - B 130201: admin created repeatedly? Why? To secure in case of bug...
+	- UI130201: 2/4 PrintButton - Have a SplitButton with PDF and printers from local
+         and remote computer - added config::OpenPrint::update_remote
+        - F 130201: 2/5 Transfer money from one account to another directly in the interface
+        - B 130201: creation of accounts is not reliable. Probably fields of
+          Person::account_due and Person::account_cash are not automatically
+          filled in
+        - B 130201: accounts are mixed - account_due in Admin::Transfer is same for all...
+        - B 130201: when user connected and no credit, then credit is added, it doesn't
+         show in the user's interface
+        - B 130123: Course::Modify::assistant doesn't work as expected: null is not
+          stored correctly and returns as [0], whereas the other return as
+          2
+        - F 130123: Added a simple ticket-system
+	- NB130123: AfriCompta::check doesn't work anymore - couldn't reproduce
+	- P 130115: 4 Correctly delete accounts and migrate through AfriCompta
+        - P 130115: 4 Correctly archive accounts and keep total only of selected ones
+        - P 130110: Tigo:
+          - Ajouter
+            AT+CREG? pour l'id de la cellule
+            AT+CSQ pour voir la qualité
+            AT+COPS=? pour voir les fournisseurs
+        - UI130108: keep focus for <enter> in current group
+        - B 130108: Auto-update = 0 makes reload very fast -> Course:Diplomas:do_diplomas
+        - F 130108: 2/3.5 Use Entities in Course::Modify
+        - B 130105: 2/3 keep session-ids over restarts
+        - B 130105: when Gestion.rb is restarted, and a connected user wants to use it,
+         it crashes
+        - B 121219: Reload Gestion if it fails, log everything
+        - B 121213: Crashes on Self::Cash
+        - UI121213: "local" printer is in fact "server"
+        - F 121213: Ajouter permissions "internet" to new users
+        - B 121212: Course::Modify::Print without student selected still shows
+         pop-up window
+        - B 121211: When deleting course, its data is stille displayed
+        - F 121210: Use Inventory::Rooms in Cours::Modify
+        - F 121210: Delete courses
+	- F 121206: Migration of new data-types: have defaults and offer
+         migration-support when changing values
+	- UI121206: Cours::Noter should have a bigger and longer student-list
+        - F 121206:  Add a working "version" to the welcome-screen, including
+          main, sub and local versions (0.9.1-altatawwur)
+        - B 121206: When showing Self::Cash, some entries may be shown double or
+          triple, leading to an error "no multi selections in single mode"
+          -> add an option to "show_txt" to not select upon double-lines
+          (which was a stupid hack in the first time anyway)
+        - F 121130: Use accounts in Self::Cash instead of LogActions
+	- B 121130: Mon Compte - Dépenses is not updated, because it relies on LogAction
+        - F 121129: Import old credits -> Admin::Credit
+        - B 121129: Adding credit to a person who has nothing results in
+          0 credit -> insert .to_i
+        - B 121129: when only sub-tabs are visible (like "student"), it doesn't get unfaded
+        - B 121129: why are all accounts checked for AfriCompta when autosaving?
+          -> because of Internet::check_services
+        - B 121129: connection::permanent and can_connect, show correct status
+          in Self::Internet
+        - F 121127: Automatically taking into account no-promotion settings
+	- F 121127: When no promotion left, show only "disconnect"-button
+	- B 121126: When sending something from "Frontend", stop the timer, then
+	 restart it when the answer arrives
+        - B 121126: Person::Tabs gets enabled before it gets unfaded
+        - B 121122: First tabs shouldn't be clickable (while waiting to be positioned
+         as should)
+	- B 121122: Retirer le droit de noter a Secretaire
+        - B 121122: empty tab gives an error: if a user doesn't have the right to
+          any tab, the parent is ds
+	- B 121122: if teacher has permission AdminAccess and AdminAccess.visible=false, it fails
+        - F 121116: AfriCompta-support:
+		- 120724 - Add Account and Movement
+		- 120912 - Gestion acts like a server, and clients can merge with it
+		- 120924 - Synchronize with AfriCompta
+		- 120925 - Update Person-class to use new AfriCompta
+		- 121025 - Archive old accounts
+		- 121116 - Use accounts for internet-cash
+        - B 121122: save in Course::Modify doesn't work anymore!
+        - B 121122: All kinds of flickering and enabled buttons fixed
+	- B 121121: when clicking on tab while other tab is loading, it loops endlessly
+	- B 121121: Windows don't get hidden when working (CourseModify::bulkAdd)
+	- B 121120: When Cours::Modify modifying a student, it might get the wrong
+	 one if there is another student who starts with the same name
+	- B 121120: Don't search in Person::Tabs when there are less than 3 chars
+	 and only return 20 results
+	- F 121117: Person::print - put into directory
+	- B 121116: Personnes - Admin is not always updated
+	- UF121116: Kick user when he's idle for 2-4 minutes
+	- UI121116: Traduction des nouveautés
+	- B 121116: Vider liste dans "bulk add" quand dernier étudiant
+	- B 121116: Capitalise les prénoms et noms de famille
+	- UI121116: Students::bulk_add doesn't add e-mail
+	- B 121116: Auto-update continues to be called, even when view is changed!
+	- B 121116: Login - permettre espaces avant et après le nom
+	- UI121116: credit-add is in its own tab
+	- UI121116: read-only fields are better marked
+	- UI121116: Tigo - estimate bytes left
+	- B 121116: Tigo - promotion add only works on command-line
+	- B 121116: Admin::Internet - adjust for new lib_net
+	- F 121116: Internet - reduce money
+	- F 121116: Internet - no money -> no connection
+	- F 121116: Internet - show status in Self::Internet
+	- B 121116: block - command not found
+	- UI121116: Internet - show connected / disconnected even when first viewed
+	- F 121116: Chat - added a simple chat-module
+	- F 121106: Add a "role"-field to user, that can be used in the Diplomas
+	- B 121106: doesn't work anymore for signing up new students
+	- B 121030: when no student passes, it crashes
+	- B 121025: Why is account.total not updated? old stuff, put a button
+	- B 121025: Make rounding in Account-total
+	- B 121024: Why is account.movements.each{|m| m.to_json} so slow? account.update_total?
+	    - dputs is evaluated even for not-shown levels, fixed
+	- B 121019: - credit and lock_hours are not in LDAP anymore
+	- B 121005: - Speeding up of Tigo
+	  - Account-creation when starting up
+	  - QooxView/Tests are not running through
+	- B 120925 - AfriCompta: test creation of accounts on both sides, when using
+	  AfriCompta.new and Persons.add_cash
+	- F 120718 - Have multiple course-types with own templates
+	- B 120623 - Sometimes Diplomas/* gets deleted! BAD - Course.diploma_dir didn't get udpated
+				- different small bugs in diploma-handling
+	- F 120623 - Added blocking of computers (at least front-end, still need to do iptables)
+	- P 120623 - Entity corresponding to Entities is created automatically - more concise, but
+				bug-prone...
+	- B 120619 - No PDF-export in Person::Modify::Print, Person::Add::Print
+	- B 120614 - New installation under Lubuntu1204 should work
+				- DropDown don't update on changes:
+					- Inventory::Computers::rooms doesn't update on new rooms
+					- Course::Modify::teachers don't update on new teachers
+				- Self::Cash doesn't update
+				- person is not displayed correctly:
+					1. Person::search viviane
+					2. AdminPerson
+					3. Cours
+					4. Check cours
+					5. Modify Student
+					6. AdminPerson still shows viviane
+					7. switching to ModifyPerson doesn't work
+				- Add PDF-export if printer is empty
+	- B 120605 - Change lots of ids and stuff to value_entity
+				 - Tested adding CourseModify::another, but troubles of having the
+		  		  right amount of [] everywhere
+	- UF  	   - Clicking on Self::Cash puts back to PersonModify
+			   - Widen "students"-field so that all text fits in CourseGrade
+			   - Delete CourseModify::add_students and put courses to add in PersonModify
+	- B 120602 - Addcredit doesn't work anymore
+			   - add test for LogActions
+			   - add password-changes to logactions
+			   - Add logging to all Person-changes
+			   - Lots of changes in Person and Entity::set_data* - have to check
+	- P 120602 - change Entity::(data_set|set_data|set_entry) to a more meaningful set
+				 - took data_set, data_set_hash and data_set_log
+	- B 120530 - QooxDoo-error when viewing Admin-tabs (fade on not yet visible elements)
+			   - Command-line options different for tests and real
+			   - QooxDoo-error when no elements in parent-tab
+			   - Add a method "focus" to Frontend - doesn't work in PersonTabs
+			   - some operations are very slow
+			     - CashAdd takes time to fill up the whole log - is not standard anymore
+			   - When adding a person twice to a course, he appears twice in the course
+	- B 120528 - VTListPane: when adding new elements, "null" appears
+			   - value_entity: is not saved
+	  P 120528 - value_entity: - also do show_entity
+	- B 120526 - Adding PersonAdmin::account_due doesn't allow user to use AfriCompta
+	  			 directly
+	- B 120524 - PersonModify - Everything is gone when the password is changed
+			   - PersonAdmin - InternetNone keeps values when switching user...
+			   - When adding cash in PersonModify, it doesn't show in the user
+	- B 120523 - CourseModify - editStudent doesn't work
+				- parents( switch_tab, update ) doesn't work as supposed, as the
+		  		  rpc_calls from "switch_tab" get done after "update". Add a local
+		  		  variable to each parent-tab which holds eventual values to be over-
+		  		  written to the available values
+			   - PersonAdd - should directly open in PersonTabs
+			   - When switching from/to CourseTabs, course is not highlighted anymore
+	- B 120522 - CoursTabs - add should be in its own tab, delete protected
+	- B 120522 - Permissions are mangled with tabs...
+	- UI120517 - Resizing is nicer for login-screen again
+	- B 120516 - add translation for tab-names
+	- B 120516 - CourseTabs - new_course doesn't work
+	- B 120515 - CourseModify waits for all students to populate
+	- UI120515 - Replace text-field in info-boxes with HTML-field 
+	- UI120515 - Moved all tabs into sub-tabs
+	- B 120511 - *Tabs: error in CoursGrade when selected a course and multiply switch back
+		and forth to it
+	- B 120511 - *Tabs: horizontal scrolling-bar is missing in sub-tabs
+	- B 120509 - *Tabs: when changing sub-tabs, the field-elements of the *Tab should be sent over,
+		especially in Course*
+	- UI120504 - Make 2-dimensional field with "Course, Person, Cash, ..." on left and rest inside from top
+	- F 120503 - use language file to replace name of the fields
+	- B 120331 - Wrong order in View::rpc_update_view
+	- B 120328 - cash doesn't show up in CashAdd - oups, error in LogActions!
+	- P 120327 - change value_entity_Persons to value_entity_person
+	- P 120326 - Make value_entity a reality!
+		120323 - added first code.
+		120324 - do code in Value.to_a for entity
+		120324 - push entity with "id:name" in Value.to_a
+		120326 - View.rpc_parse_reply searches for entities and converts them back
+	- P 120323: Further automize: Take first part of View-class as the standard entity,
+		only if the specific entity exists
+	- T 120323: All test cases work
+	- F 120317: Added "carte_etudiant" and "fiche_presence" in the CourseModify-view
+	- B 120317: OpenOffice doesn't work on MacOSX - fixed, was space in path...
+	- B 120312: Gestion crashes on MultiJSON with Ubuntu 1004
+	- AC120127: Start with SQLite-StorageType
+	- EB120107: @data_class has to be kept for general use and not for classes that
+		know their Entity
+			- get_entity is used for Person-class only anyway, so let's drop it
+			- Session gets new instance variable "owner" instead of Person
+	- EB120102: "sid" is replaced with "session", and has members that allow to
+	    access already chosen entities
+	    - Add class Session
+	    - move session-ids from "Permission" to here
+	- B 120102: Are all necessary views shown? - yes
+	- B 120102: PersonShow doesn't work anymore - fixed
 	- B 111216: CourseGrade: all teachers can grade all courses - only appropriate teachers should be able to grade
 	- UF111216: CourseModify: Copy "description" and "contents" when creating new course
 	- B 111215: CourseModify: "students" is not deleted when clicking tab
