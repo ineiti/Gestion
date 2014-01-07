@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - AC: clean lone accounts != (Root|Archive)
+        - AC: propagate deleted accounts from old to new
+        - AC: correctly show different accounts
         - error when login-page-comment too long - login-request doesn't get sent on
           Firefox
         - wrong-password-window can't get clicked away -> not reproducible on 1.3.0-rc1
