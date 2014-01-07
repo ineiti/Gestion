@@ -3,6 +3,7 @@
 ./commit "Making branch $NEWBRANCH"
 
 NEWBRANCH=${1:-default}
+NEWBRANCHGIT=${1:-master}
 
 dirs_do(){
   #  echo Doing -$NEWBRANCH-
@@ -20,10 +21,10 @@ if ! hg branches | grep -q "^$NEWBRANCH "; then
   dirs_do "hg commit -m 'added branch'"
 fi
 if ! git branch | egrep -q "^..$NEWBRANCH"; then
-  echo Git: Branch $NEWBRANCH doesnt exist, creating
-  dirs_do "git branch $NEWBRANCH"
+  echo Git: Branch $NEWBRANCHGIT doesnt exist, creating
+  dirs_do "git branch $NEWBRANCHGIT"
 fi
 
-dirs_do "git checkout $NEWBRANCH"
+dirs_do "git checkout $NEWBRANCHGIT"
 dirs_do "hg up -C $NEWBRANCH"
 
