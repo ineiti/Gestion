@@ -10,3 +10,9 @@ Test/data2/*
 .hg*
 .settings*
 Diplomas/*
+old*
+*.data
+.idea
+Diplomas.*
+Exas
+Test/data
