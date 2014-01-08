@@ -3,11 +3,7 @@ if [ ! "$1" ]; then
   echo Please give a tag-name
   exit
 fi
-(
-for a in Gestion QooxView AfriCompta LibNet Config Profeda; do
-  echo Doing $a
-  cd ../$a
-  hg tag "$1"
-done
-)
+
+hg tag "$1"
+git tag "$1"
 ./commit "Added Tag $1"
