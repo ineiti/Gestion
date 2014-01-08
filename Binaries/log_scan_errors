@@ -1,0 +1,8 @@
+#!/bin/bash
+
+LOG=/var/log/gestion/gestion.log.1
+
+if grep -q Error $LOG
+  grep Error -A 20 -B 20 $LOG | mail -s "$( hostname ): Error-logs for $( date )" ineiti@profeda.org
+fi
+

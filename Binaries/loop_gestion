@@ -1,0 +1,64 @@
+#!/bin/bash
+LOGR=""
+
+cd $( dirname $0 )/..
+
+log(){
+  echo $( date ) $@ >> $LOG
+}
+
+biglog(){
+  echo "
+
+            ****            ****            ****            ****
+$( date )
+            ****            ****            ****            ****
+
+" >> $LOG
+}
+
+mkdir -p /var/log/gestion
+LOG=/var/log/gestion/gestion.log
+if ! touch $LOG; then
+  LOG=gestion.log
+fi
+if [ "$LOGR" ]; then
+  if [ -f $LOG ]; then
+    mv $LOG $LOG.1
+    gzip -f $LOG.1
+  fi
+fi
+
+#log "$( set )"
+#set
+#while sleep 1; do date; done
+#exit
+
+STOP=/tmp/stop_gestion
+rm $STOP
+touch $LOG
+pkill -9 -f "tail -f $LOG"
+tail -f $LOG &
+while [ ! -f $STOP ]; do
+  now=$( date +%s )
+  if which unbuffer > /dev/null; then
+    PRE="unbuffer"
+  elif which stdbuf > /dev/null; then
+    PRE="stdbuf -oL -eL"
+  else
+    PRE=""
+  fi
+  #$PRE ./Gestion 2>&1 >> $LOG
+  #./Gestion
+  ./Gestion 2>&1 >> $LOG
+  #./Gestion 2>&1
+  biglog Oups - quit Gestion after $(( quit - now )) seconds
+  quit=$( date +%s )
+  if [ $(( quit - now )) -lt 60 ]; then
+    log This seems to be quite bad... not restarting >> $LOG
+    #tail -n 30 $LOG | mail -s "Gestion crashed on short notice" ineiti@profeda.org
+    exit
+  fi
+done
+pkill -9 -f "tail -f $LOG"
+biglog Stopped because of $STOP >> $LOG

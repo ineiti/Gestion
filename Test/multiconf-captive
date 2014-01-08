@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Example of a captive-configuration
+
+# The ISP - for the moment we have Prestabist, Tigo and Simul(ation)
+ISP=simul
+
+ISP_FILE=$( dirname $BASH_SOURCE )/multiconf-captive-$ISP
+if [ -f $ISP_FILE ]; then
+  . $ISP_FILE
+fi
+
+# The table where to attache the captive - has to be linked with PREROUTING
+#PREROUTING=PREROUTING
+
+# Where the HTTP-proxy resides - this has to be a transparent proxy
+#HTTP_PROXY=192.168.1.1:3128
+
+# Destinations to allow always
+#ALLOW_DST=""
+
+# Override internal IP detection
+#INTERNAL_IPS=""
+
+# Set to space to disallow DHCP-requests - if empty, will allow anyway
+#ALLOW_DHCP=" "
+
+# Where to redirect the packets for non-authenticated users
+#CAPTIVE_DNAT=""

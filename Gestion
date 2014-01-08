@@ -1,0 +1,86 @@
+#!/bin/bash
+
+call_ruby(){
+  INCLUDE="-I../QooxView -I. -I../AfriCompta -Ku -E UTF-8:UTF-8"
+  if [ -x /usr/local/bin/ruby ]; then
+    /usr/local/bin/ruby $INCLUDE $@
+  else
+    ruby $INCLUDE $@
+  fi
+}
+
+echo ""
+if [ "$( which ruby )" -a "$1" != "--install" ]; then
+  if [ ! -f data/compta.db ]; then
+    mkdir -p data
+    cp db.emptyAC data/compta.db
+  fi
+  call_ruby Gestion.rb $@
+else
+  if [ "$1" = "--install" ]; then
+    shift
+  fi
+
+  if echo _$MACHTYPE | grep -q darwin; then
+    echo Cant automatically install stuff for you - Try to get a hold on
+    echo "  ** ruby - rubygems - libreoffice - pdftk - psutils - sqlite - java - gettext"
+    echo Good luck!
+  elif echo _$MACHTYPE | grep -q linux; then
+    OOFFICE=libreoffice
+    #if [ ! -f /etc/lsb-release ]; then
+    #  echo Oups - no lsb-release, trying to get it
+    #  sudo apt-get install lsb-release
+    #  if [ ! -f /etc/lsb-release ]; then
+    #    echo Sorry, couldnt get it, giving up.
+    #  #  exit
+    #  fi
+    #fi
+    if [ -f /etc/lsb-release ]; then
+      . /etc/lsb-release
+    elif grep -q Debian /etc/issue; then
+      DISTRIB_ID=Debian
+      if grep -q 6 /etc/issue; then
+        OOFFICE=openoffice.org
+      fi
+    elif [ -f /etc/os-release ]; then
+      . /etc/os-release
+    fi
+    if [ "$DISTRIB_ID" = "Ubuntu" -o "$DISTRIB_ID" = "Debian" ]; then
+      echo -n "Shall I install all dependencies? [Y/n] "
+      read a
+      if [ "$a" != "n" -a "$a" != "N" ]; then
+        echo
+        sudo apt-get install ruby rubygems $OOFFICE pdftk psutils sqlite libsqlite3-dev \
+          default-jdk gettext comgt libexpect-perl gammu bc cups-client graphicsmagick \
+          poppler-utils
+        echo -n "Do you also want ldap?"
+        read a
+        if [ "$a" = "y" -o "$a" = "Y" ]; then
+          Binaries/install_ldap
+        fi
+        echo $( cd ../QooxView/Config; ./install )
+        call_ruby Gestion.rb -p $@
+      else
+        echo OK, wont run Gestion then
+      fi
+    elif [ "$ID" = "archarm" ]; then
+      echo -n "Shall I install all dependencies? [Y/n] "
+      read a
+      if [ "$a" != "n" -a "$a" != "N" ]; then
+        pacman -S sqlite3 gammu bc ruby sudo ruby-rack ruby-iconv screen gcc
+        echo -n "Do you also want ldap?"
+        read a
+        if [ "$a" = "y" -o "$a" = "Y" ]; then
+          Binaries/install_ldap
+        fi
+        echo $( cd ../QooxView/Config; ./install )
+        call_ruby Gestion.rb -p $@
+       fi
+    else
+      echo Sorry, dont know how to install on $DISTRIB_ID
+    fi
+  else
+    echo Unknown system - youre on your own...
+  fi
+fi
+echo

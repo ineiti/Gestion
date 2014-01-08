@@ -1,0 +1,18 @@
+#!/bin/bash
+
+killall ruby
+if pgrep ruby > /dev/null; then
+  echo Waiting 5 seconds before termination
+  sleep 5
+  killall -9 ruby
+fi
+cd $( dirname $0 )/../..
+
+cp Test/db.testGestion data/compta.db
+./Gestion &
+sleep 5
+return
+
+cd ../AfriCompta
+cp db.testGestion.orig db.testGestion
+./startAfriCompta testGestion
