@@ -47,6 +47,14 @@ class SelfServices < View
     services_total
   end
   
+  def self.cash_msg( data )
+    "{" + 
+      data.collect{|k,v|
+      v.to_f > 0 and "\"#{k}\"=>\"#{v}\""
+    }.select{|m| m }.join(", ") + 
+      "}"
+  end
+  
   # Adds the cash to the destination account, and puts the same amount into
   # the AfriCompta-framework
   def rpc_button_add_cash( session, data )
@@ -56,7 +64,7 @@ class SelfServices < View
     actor = session.owner
     data.delete( "services_total" )
     data.delete( "account_total_due" )
-    actor.pay_service( services_total, data.inspect )
+    actor.pay_service( services_total, self.cash_msg( data ) )
     reply( 'empty', nil ) + rpc_update( session )
   end
   

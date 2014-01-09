@@ -271,4 +271,18 @@ class TC_Person < Test::Unit::TestCase
 #  def test_multilogin
 #    assert_equal nil, Views.Welcome.rpc_show( nil )
 #  end
+
+  def test_cash_msg
+    data = {"copies_laser"=>"0", "heures_groupe_grand"=>"", "CDs"=>nil, 
+      "autres_text"=>"", "autres_cfa"=>""}
+    assert_equal "{}", SelfServices.cash_msg( data )
+    
+    data["copies_laser"] = 100
+    assert_equal "{\"copies_laser\"=>\"100\"}", SelfServices.cash_msg( data )
+    
+    data["copies_laser"] = 0
+    data["autres_text"] = "électricité"
+    data["autres_cfa"] = 1000
+    assert_equal "{\"autres_cfa\"=>\"1000\"}", SelfServices.cash_msg( data )
+  end
 end
