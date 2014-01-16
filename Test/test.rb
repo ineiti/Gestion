@@ -3,7 +3,7 @@
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"
-DEBUG_LVL=0
+DEBUG_LVL=2
 
 require 'QooxView'
 require 'ACQooxView'
