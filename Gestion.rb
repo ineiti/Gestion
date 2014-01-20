@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta -E UTF-8:UTF-8 -Ku
+#!/usr/bin/env ruby -I../QooxView -I. -I../AfriCompta -E UTF-8:UTF-8 -Ku
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad. The following modules shall be covered:
