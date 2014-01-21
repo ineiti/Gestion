@@ -1,8 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Clean up branch-discrepency between hg and git
-        - AC: correctly show different accounts in "check"
+        - AC: correctly show differing accounts in "check"
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check for center-id
           - server: error with regard to "assistant" - ??
@@ -224,6 +223,7 @@ To check:
 
 
 ** FIXED **:
+        - B 140121: Clean up branch-discrepency between hg and git
         - B 140120: Clean up ruby-version mess -> use rbenv
         - B 140120: AC: propagate deleted accounts from old to new
         - P 140116: faster Entity::StorageHelper::new_id
