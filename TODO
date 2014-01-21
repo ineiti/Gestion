@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Clean up branch-discrepency between hg and git
         - AC: correctly show different accounts in "check"
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check for center-id
