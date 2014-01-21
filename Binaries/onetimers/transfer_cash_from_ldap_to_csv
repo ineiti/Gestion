@@ -1,0 +1,26 @@
+#!/bin/bash
+if [ ! -f Persons.csv ]; then
+  echo Please run in data-directory!
+  exit
+fi
+
+cp Persons.csv Persons.csv.backup.$( date +%Y%m%d-%M%H )
+
+# First we read everything in
+slapcat | egrep "(^MaN-Internet-Cash|^cn|^uidNumber)" | grep -B 2 MaN | grep -v -- "--" > cash
+
+# Then we clean up Persons.csv
+perl -pi -e "s/.credit_due[^,]*,//" Persons.csv 
+
+# Finally we set every cash
+while read one; do
+  read two
+  read three
+  echo -e "$one\n$two\n$three" | sort | sed -e "s/.* //" > cash.tmp
+  while read cn; do
+    read cash
+    read uid
+    echo cn is $cn with uid=$uid and $cash CFAs;
+    perl -pi -e "s/(.person_id..$uid[^0-9])/\"credit\":$cash,\1/" Persons.csv
+  done < cash.tmp
+done < cash
