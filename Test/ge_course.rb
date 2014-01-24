@@ -217,6 +217,13 @@ class TC_Course < Test::Unit::TestCase
         :description=>"windows, word, excel"}, it_101.to_hash)
   end
 	
+  def test_create_account
+    ConfigBase.add_function :accounting_courses
+    nmaint = Courses.create_ctype( @maint_t, "1201" )
+    
+    assert_equal "Root::Income::Courses::maint_1201", nmaint.entries.get_path
+  end
+	
   def test_prepare_diplomas
     dputs(1){"Checking for diplomas in #{@maint_2.dir_diplomas}"}
     dputs(5){@maint_2.inspect}
