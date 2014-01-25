@@ -57,7 +57,6 @@ class Courses < Entities
     value_int :students_start
     value_int :students_finish
     value_int :entry_total
-    value_entity_account :entries
 
     @dir_diplomas ||= "Diplomas"
     @dir_exas ||= "Exas"
@@ -157,12 +156,6 @@ class Courses < Entities
     if needs_center
       dputs(3){"Got center of #{creator.inspect}"}
       course.center = creator
-    end
-    
-    if ConfigBase.get_functions.index :accounting_courses
-      course.entries = Accounts.create_path( 
-        get_config( "Root::Income::Courses", :Accounting, :courses ) +
-        "::#{course.name}")
     end
     
     dputs(4){"Course is #{course.class}"}

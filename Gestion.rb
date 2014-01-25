@@ -1,11 +1,11 @@
-#!/usr/bin/env ruby -I../QooxView -I. -I../AfriCompta -E UTF-8:UTF-8 -Ku
+#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta -E UTF-8:UTF-8 -Ku
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad. The following modules shall be covered:
 # - Login: - for payable laptop web-access
 #          - for students
 
-DEBUG_LVL=4
+DEBUG_LVL=2
 VERSION_GESTION="1.3.1"
 require 'fileutils'
 
@@ -169,20 +169,22 @@ trap("SIGINT") {
   throw :ctrl_c
 }
 
+webrick_port = get_config( 3302, :Webrick, :port )
+dputs(2){"Starting at port #{webrick_port}" }
+
 $profiling = get_config( nil, :profiling )
+if $profiling
+  dputs(0){"Starting Profiling"}
+  require 'rubygems'
+  require 'perftools'
+  PerfTools::CpuProfiler.start("/tmp/#{$profiling}") do
+    QooxView::startWeb webrick_port
+    dputs(0){"Finished profiling"}
+  end
+else
 catch :ctrl_c do
   begin
-    webrick_port = get_config( 3302, :Webrick, :port )
-    dputs(2){"Starting at port #{webrick_port}" }
-    if $profiling
-      require 'rubygems'
-      require 'perftools'
-      PerfTools::CpuProfiler.start("/tmp/#{$profiling}") do
-        QooxView::startWeb webrick_port
-      end
-    else
-      QooxView::startWeb webrick_port
-    end
+    QooxView::startWeb webrick_port
   rescue Exception => e
     dputs( 0 ){ "#{e.inspect}" }
     dputs( 0 ){ "#{e.to_s}" }
@@ -190,6 +192,7 @@ catch :ctrl_c do
     dputs( 0 ){ "Saving all" }
     Entities.save_all
   end
+end
 end
 
 if get_config( true, :autosave )
