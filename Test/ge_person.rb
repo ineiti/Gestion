@@ -148,7 +148,7 @@ class TC_Person < Test::Unit::TestCase
         :undo_function=>:undo_set_entry,
         :data_old=>"super123",
         :msg=>nil},
-      @admin.log_list[-1].undate.unlogid )
+      @admin.log_list[-2].undate.unlogid )
   end
 
   def test_log_change
@@ -158,7 +158,7 @@ class TC_Person < Test::Unit::TestCase
         :data_value=>"Super",
         :data_class=>"Person",
         :undo_function=>:undo_set_entry,
-        :data_old=>nil,
+        :data_old=>"admin",
         :msg=>nil},
       @admin.log_list[-1].undate.unlogid )
   end
@@ -251,11 +251,11 @@ class TC_Person < Test::Unit::TestCase
     @grade = Grades.save_data( :course => @maint,
       :student => @surf, :means => [12])
   
-    assert_equal 1, Grades.search_by_student( @surf ).length
+    assert_equal 1, Grades.matches_by_student( @surf ).length, Grades.data.inspect
     
     @surf.delete
   
-    assert_equal 0, Grades.search_by_student( @surf ).length
+    assert_equal 0, Grades.matches_by_student( @surf ).length
   end
   
   def test_delete_needed
