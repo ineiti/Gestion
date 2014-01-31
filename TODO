@@ -39,7 +39,6 @@ UI:
           - login of users
           - adding cash to users
           - grades for users
-        - Cours::Modify - Sort teachers
         - Add async-requests (for Self::Internet and Admin::Tigo)
         - Put adding of students and printing as background-tasks
 
@@ -235,6 +234,8 @@ To check:
 
 
 ** FIXED **:
+        - F 140131: Print 4 student-cards on one page
+        - UI140131: Cours::Modify - Sort teachers
         - P 140125: Speeding up SQLite-storage by not saving everything right away
         - B 140121: Clean up branch-discrepency between hg and git
         - B 140120: Clean up ruby-version mess -> use rbenv

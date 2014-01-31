@@ -128,7 +128,7 @@ class CourseModify < View
         student.lp_cmd = nil
         rep.push student.print( rep.length )
       }
-      pages = OpenPrint.print_nup( rep, "student_cards" )
+      pages = OpenPrint.print_nup_duplex( rep, "student_cards" )
       if pages[0].class == String
         ret = reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Click on one of the links:<ul>" +
@@ -300,7 +300,7 @@ class CourseModify < View
     end
     resps = resps.collect{|p|
       [p.person_id, p.full_name]
-    }
+    }.sort{|a,b| a.full_name <=> b.full_name}
     
     fields = %w( teacher assistant responsible )
     
