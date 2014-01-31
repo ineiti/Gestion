@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - Course::Grade - Syncing with server when course-type doesn't exist must
+          return error
+        - Course::Modify::add_student - gray out window and check first choice
         - AC: correctly show differing accounts in "check"
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check for center-id
@@ -30,6 +33,13 @@ BUGS:
 Security:
 
 UI:
+        - Put most important actions in dbg-level 1:
+          - creation of users, courses
+          - attribution of users to courses
+          - login of users
+          - adding cash to users
+          - grades for users
+        - Cours::Modify - Sort teachers
         - Add async-requests (for Self::Internet and Admin::Tigo)
         - Put adding of students and printing as background-tasks
 
@@ -203,6 +213,8 @@ UNCLEAR BUGS:
         - missing fields won't work in Entity::to_hash( true ) ??
 
 HEISENBUGS:
+        - Course::Modify::add_course - GUI doesn't come up once added - only
+          under certain circumstances
         - wrong-password-window can't get clicked away -> not reproducible on 1.3.0-rc1
         - can't set up cybermanager anymore - permissions vanish !? - or was it
           unclear setup of get_config::Accounting?
@@ -223,6 +235,7 @@ To check:
 
 
 ** FIXED **:
+        - P 140125: Speeding up SQLite-storage by not saving everything right away
         - B 140121: Clean up branch-discrepency between hg and git
         - B 140120: Clean up ruby-version mess -> use rbenv
         - B 140120: AC: propagate deleted accounts from old to new

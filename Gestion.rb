@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -I../QooxView -I. -I../AfriCompta -E UTF-8:UTF-8 -Ku
+#!/usr/bin/env ruby -I../QooxView -I. -I../AfriCompta -E UTF-8:UTF-8 -Ku
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad. The following modules shall be covered:
@@ -6,7 +6,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="1.3.1"
+VERSION_GESTION="1.3.3"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -68,7 +68,7 @@ begin
   Permission.add( 'student', '', 'internet' )
   Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
   Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
-                 'FlagResponsible', 'assistant' )
+      'FlagResponsible', 'assistant' )
   Permission.add( 'secretary', 'SelfServices,CourseModify,FlagPersonAdd,FlagPersonDelete,' + 
       'PersonModify,CourseDiploma,FlagCourseGradeAll', 'assistant' )
   Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
@@ -135,40 +135,6 @@ rescue Exception => e
   exit
 end
 
-dputs(0){"Starting autosave"}
-# Autosave every 2 minutes
-if get_config( true, :autosave )
-  $autosave = Thread.new{
-    loop {
-      Entities.save_all
-      Internet::check_services    
-      sleep 2 * 60
-    }
-  }
-end
-
-dputs(0){"Starting internet"}
-$internet = Thread.new{
-  loop {
-    begin
-      sleep 60
-      dputs( 0 ){ "It is now: " + Time.now.strftime( "%Y-%m-%d %H:%M" ) }
-      if ConfigBase.has_function? :internet_only
-        Internet::fetch_cash
-      end
-      Internet::take_money
-    rescue Exception => e
-      dputs( 0 ){ "#{e.inspect}" }
-      dputs( 0 ){ "#{e.to_s}" }
-      puts e.backtrace
-    end
-  }
-}
-
-trap("SIGINT") { 
-  throw :ctrl_c
-}
-
 webrick_port = get_config( 3302, :Webrick, :port )
 dputs(2){"Starting at port #{webrick_port}" }
 
@@ -178,32 +144,69 @@ if $profiling
   require 'rubygems'
   require 'perftools'
   PerfTools::CpuProfiler.start("/tmp/#{$profiling}") do
-    QooxView::startWeb webrick_port
+    QooxView::startWeb webrick_port, get_config( 30, :profiling, :duration )
     dputs(0){"Finished profiling"}
   end
-else
-catch :ctrl_c do
-  begin
-    QooxView::startWeb webrick_port
-  rescue Exception => e
-    dputs( 0 ){ "#{e.inspect}" }
-    dputs( 0 ){ "#{e.to_s}" }
-    puts e.backtrace
-    dputs( 0 ){ "Saving all" }
-    Entities.save_all
-  end
-end
-end
-
-if get_config( true, :autosave )
-  $autosave.kill
-end
-$internet.kill
-
-if $profiling
-  puts "Now run the following:
+  
+  if $profiling
+    puts "Now run the following:
 pprof.rb --pdf /tmp/#{$profiling} > /tmp/#{$profiling}.pdf
 open /tmp/#{$profiling}.pdf
 CPUPROFILE_FREQUENCY=500
-  "
+    "
+  end
+else
+  dputs(0){"Starting autosave"}
+  # Autosave every 2 minutes
+  if get_config( true, :autosave )
+    $autosave = Thread.new{
+      loop {
+        Entities.save_all
+        Internet::check_services    
+        sleep 2 * 60
+      }
+    }
+  end
+
+  $internet = Thread.new{
+    dputs(0){"Starting internet"}
+    loop {
+      begin
+        sleep 60
+        dputs( 0 ){ "It is now: " + Time.now.strftime( "%Y-%m-%d %H:%M" ) }
+        if ConfigBase.has_function? :internet_only
+          Internet::fetch_cash
+        end
+        Internet::take_money
+      rescue Exception => e
+        dputs( 0 ){ "#{e.inspect}" }
+        dputs( 0 ){ "#{e.to_s}" }
+        puts e.backtrace
+      end
+    }
+  }
+  
+  trap("SIGINT") { 
+    throw :ctrl_c
+  }
+
+  catch :ctrl_c do
+    begin
+      QooxView::startWeb webrick_port
+    rescue Exception => e
+      dputs( 0 ){ "#{e.inspect}" }
+      dputs( 0 ){ "#{e.to_s}" }
+      puts e.backtrace
+      dputs( 0 ){ "Saving all" }
+      Entities.save_all
+    end
+  end
+
+  if get_config( true, :autosave )
+    $autosave.kill
+  end
+  
+  $internet.kill
 end
+
+

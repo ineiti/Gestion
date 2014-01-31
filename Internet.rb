@@ -14,7 +14,7 @@ module Internet
         }
 
         users.each { |user, pass, cash, free|
-          ddputs(2) { "Updating #{user}-#{pass}-#{cash}-#{free}" }
+          dputs(2) { "Updating #{user}-#{pass}-#{cash}-#{free}" }
           if (u = Persons.find_by_login_name(user))
             u.password = pass
             u.internet_credit += cash
@@ -148,7 +148,7 @@ end
 
 class InternetCash < RPCQooxdooPath
   def self.parse_req_res(req, res)
-    ddputs(4) { "InternetCash: #{req.inspect} - #{req.path} - #{RPCQooxdooHandler.get_ip( req )}" }
+    dputs(4) { "InternetCash: #{req.inspect} - #{req.path} - #{RPCQooxdooHandler.get_ip( req )}" }
     if req.request_method == "GET"
       case req.path
         when /fetch_users/
@@ -162,7 +162,7 @@ class InternetCash < RPCQooxdooPath
             free = Permission.can_view(p.permissions, "FlagInternetFree") or
                 Internet.active_course_for(p)
             if free or credit > 0
-              ddputs(3) { "Putting #{p.login_name} with credit #{credit} - #{free.inspect}" }
+              dputs(3) { "Putting #{p.login_name} with credit #{credit} - #{free.inspect}" }
               user_list.push [p.login_name, p.password, credit, free]
             end
           }

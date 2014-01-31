@@ -50,7 +50,7 @@ else
           Binaries/install_ldap
         fi
         echo $( cd ../QooxView/Config; ./install )
-        call_ruby Gestion.rb -p $@
+        ./Gestion.rb -p $@
       else
         echo OK, wont run Gestion then
       fi
@@ -58,7 +58,7 @@ else
       echo -n "Shall I install all dependencies? [Y/n] "
       read a
       if [ "$a" != "n" -a "$a" != "N" ]; then
-        pacman -S sqlite3 gammu bc ruby sudo ruby-rack ruby-iconv screen gcc
+        pacman -S sqlite3 gammu bc ruby sudo ruby-rack ruby-iconv screen gcc make
         echo -n "Do you also want ldap?"
         read a
         if [ "$a" = "y" -o "$a" = "Y" ]; then

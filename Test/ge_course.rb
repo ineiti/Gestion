@@ -21,12 +21,6 @@ class TC_Course < Test::Unit::TestCase
       :permissions => [ "default", "teacher" ], :first_name => "Le", :family_name => "Secretaire" )
     @surf = Entities.Persons.create( :login_name => "surf", :password => "super", 
       :permissions => [ "default" ], :first_name => "Internet", :family_name => "Surfer" )
-    @net = Entities.Courses.create( :name => "net_1001" )
-    @base = Entities.Courses.create( :name => "base_1004" )
-    @maint = Entities.Courses.create( :name => "maint_1204", :start => "19.01.2012", :end => "18.02.2012",
-      :dow => "lu-ve", :teacher => @secretaire )
-    @maint.students = %w( admin surf )
-    @base.students = %w( admin2 surf )
     @maint_t = Entities.CourseTypes.create( :name => "maint", :duration => 72,
       :desciption => "maintenance", :contents => "lots of work",
       :filename => ['base_gestion.odt'], :output => "certificate",
@@ -45,12 +39,25 @@ class TC_Course < Test::Unit::TestCase
     @it_101.data_set_hash( :responsible => @secretaire, :teacher => @surf,
       :start => "1.11.2012", :end => "1.2.2013", :sign => "10.2.2013",
       :students => %w( secretaire surf ) )
+    
+    @net_t = CourseTypes.create( :name => "it-301", :description => "Networking")
+    @net = Entities.Courses.create( :name => "net_1001",
+      :ctype => @net_t )
+  
+    @base = Entities.Courses.create( :name => "base_1004", :ctype => @it_101_t )
+    
+    @maint = Entities.Courses.create( :name => "maint_1204", :start => "19.01.2012", :end => "18.02.2012",
+      :dow => "lu-ve", :teacher => @secretaire, :ctype => @maint_t )
+    @maint.students = %w( admin surf )
+    @base.students = %w( admin2 surf )
+
+
     @center = Persons.create( :login_name => "foo", :permissions => ["center"],
       :address => "B.P. 1234", :town => "Sansibar",
       :phone => "+23599999999", :email => "profeda@gmail.com")
     @center.password = @center.password_plain = "1234"
     
-    Sessions.create( @admin, "default" )
+    @admin_session = Sessions.create( @admin, "default" )
   end
   
   def teardown
@@ -65,65 +72,18 @@ class TC_Course < Test::Unit::TestCase
     #Entities.LogActions.save
   end
   
-  def tes_bulk
-    ConfigBase.set_functions([])
-    names = [ "Dmin A","Zero","One Two","Ten Eleven Twelve","A B C D",
-      "Hélène Méyère","Äeri Soustroup" ]
-    reply = ""
-    while names.length > 0
-      dputs(4){"Doing #{names.inspect}"}
-      reply = RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "bulk_students",
-            {"name" => "net_1001", "names" => names.join("\n") }]])
-      assert_not_nil reply
-      names.shift
-    end
-    bulk = [ [ "zero", "Zero", "" ], %w( tone One Two ), [ "eten", "Ten", "Eleven Twelve" ],
-      ["ca", "A B", "C D"], %w( mhelene Hélène Méyère ) ]
-    bulk.each{|b|
-      login, first, family = b
-      dputs( 1 ){ "Doing #{b.inspect}" }
-      p = Entities.Persons.match_by_login_name( login )
-      dputs( 5 ){"p is #{p.inspect} - login is #{login.inspect}"}
-      assert_not_nil p, login.inspect
-      assert_equal login, p.login_name
-      assert_equal first, p.first_name
-      assert_equal family, p.family_name
-      assert_equal %w( student ), p.permissions
-    }
-    
-    students = Entities.Courses.match_by_name( 'net_1001' ).students
-    assert_equal %w( ca eten mhelene s_eri tone zero ), students.sort
+  def test_print
+    View.CourseModify.rpc_button_print_student( @admin_session, 
+      {'name' => @it_101.name})
   end
-
-  def tes_add_double
-    RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "create_new",
-        {"name" => "net_1001", "double_name" => "Dmin A"}]])
-    RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "accept",
-        {"name" => "net_1001", "double_proposition" => [@admin.person_id] }]] )
   
-    assert_equal %w( admin admin2 ), @net.students.sort
-  end
-
-  def tes_grade
-    @grade0 = Grades.save_data({:student => @secretaire,
-        :course => @net, :means => [11]})
-    assert_equal 11, @grade0[:mean]
-    @grade1 = Grades.save_data({:student => @surf,
-        :course => @net, :means => [12]})
-    assert_equal 12, @grade1[:mean]
-    @grade2 = Grades.save_data({:student => @surf,
-        :course => @net, :means => [13]})
-    assert_equal 13, @grade2[:mean]
-    assert_equal @grade1[:grade_id], @grade2[:grade_id]
-  end
-
   def test_search
     courses_admin2 = Entities.Courses.search_by_students( "admin2" )
     assert_equal 1, courses_admin2.length
     RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "bulk_students",
           {"name" => "net_1001", "names" => "Dmin A" }]])
     RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "create_new",
-        {"name" => "net_1001", "double_name" => "Dmin A"}]])
+          {"name" => "net_1001", "double_name" => "Dmin A"}]])
     courses_admin2 = Entities.Courses.search_by_students( "admin2" )
     courses_surf = Entities.Courses.search_by_students( "surf" )
     assert_equal 2, courses_admin2.length
@@ -215,6 +175,13 @@ class TC_Course < Test::Unit::TestCase
         :name=>"foo_it-101_1202",
         :contents => "it-101",
         :description=>"windows, word, excel"}, it_101.to_hash)
+  end
+	
+  def test_create_account
+    ConfigBase.add_function :accounting_courses
+    nmaint = Courses.create_ctype( @maint_t, "1201" )
+    
+    assert_equal "Root::Income::Courses::maint_1201", nmaint.entries.get_path
   end
 	
   def test_prepare_diplomas
@@ -583,7 +550,7 @@ class TC_Course < Test::Unit::TestCase
     assert @it_101.sync_do
     assert_equal(
       "<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>" +
-      "<li>Transferring course: OK</li><li>Transferring exams: OK</li>It is finished!", 
+        "<li>Transferring course: OK</li><li>Transferring exams: OK</li>It is finished!", 
       @it_101.sync_state )
 
     @center.password_plain = ""
@@ -597,7 +564,7 @@ class TC_Course < Test::Unit::TestCase
     assert @it_101.sync_do
     assert_equal(
       "<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>" +
-      "<li>Transferring course: OK</li><li>Transferring exams: OK</li>It is finished!", 
+        "<li>Transferring course: OK</li><li>Transferring exams: OK</li>It is finished!", 
       @it_101.sync_state )
     
     main.kill
@@ -632,4 +599,57 @@ class TC_Course < Test::Unit::TestCase
 
     main.kill
   end
+
+  def tes_bulk
+    ConfigBase.set_functions([])
+    names = [ "Dmin A","Zero","One Two","Ten Eleven Twelve","A B C D",
+      "Hélène Méyère","Äeri Soustroup" ]
+    reply = ""
+    while names.length > 0
+      dputs(4){"Doing #{names.inspect}"}
+      reply = RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "bulk_students",
+            {"name" => "net_1001", "names" => names.join("\n") }]])
+      assert_not_nil reply
+      names.shift
+    end
+    bulk = [ [ "zero", "Zero", "" ], %w( tone One Two ), [ "eten", "Ten", "Eleven Twelve" ],
+      ["ca", "A B", "C D"], %w( mhelene Hélène Méyère ) ]
+    bulk.each{|b|
+      login, first, family = b
+      dputs( 1 ){ "Doing #{b.inspect}" }
+      p = Entities.Persons.match_by_login_name( login )
+      dputs( 5 ){"p is #{p.inspect} - login is #{login.inspect}"}
+      assert_not_nil p, login.inspect
+      assert_equal login, p.login_name
+      assert_equal first, p.first_name
+      assert_equal family, p.family_name
+      assert_equal %w( student ), p.permissions
+    }
+    
+    students = Entities.Courses.match_by_name( 'net_1001' ).students
+    assert_equal %w( ca eten mhelene s_eri tone zero ), students.sort
+  end
+
+  def tes_add_double
+    RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "create_new",
+          {"name" => "net_1001", "double_name" => "Dmin A"}]])
+    RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "accept",
+          {"name" => "net_1001", "double_proposition" => [@admin.person_id] }]] )
+  
+    assert_equal %w( admin admin2 ), @net.students.sort
+  end
+
+  def tes_grade
+    @grade0 = Grades.save_data({:student => @secretaire,
+        :course => @net, :means => [11]})
+    assert_equal 11, @grade0[:mean]
+    @grade1 = Grades.save_data({:student => @surf,
+        :course => @net, :means => [12]})
+    assert_equal 12, @grade1[:mean]
+    @grade2 = Grades.save_data({:student => @surf,
+        :course => @net, :means => [13]})
+    assert_equal 13, @grade2[:mean]
+    assert_equal @grade1[:grade_id], @grade2[:grade_id]
+  end
+
 end

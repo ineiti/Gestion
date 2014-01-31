@@ -71,7 +71,7 @@ class Persons < Entities
     end
     @student_card ||= "student_card.odg"
     @print_card = OpenPrint.new(
-        "#{ddir}/#{@student_card}", cdir)
+      "#{ddir}/#{@student_card}", cdir)
   end
 
   # Searches for an empty name starting with "login", adding 2, 3, 4, ...
@@ -287,7 +287,7 @@ class Persons < Entities
   def find_name_or_create(name)
     first, last = name.split(" ", 2)
     find_full_name(name) or
-        create(:first_name => first, :family_name => last)
+      create(:first_name => first, :family_name => last)
   end
 
   def login_to_full(login)
@@ -375,9 +375,9 @@ class Person < Entity
       dputs(2) { "Searching accounts for #{full_name} with "+
           "lending: #{lending} - service: #{service}" }
       @account_due = Accounts.get_by_path_or_create(lending,
-                                                    acc, false, -1, true)
+        acc, false, -1, true)
       @account_service = Accounts.get_by_path_or_create(service,
-                                                        acc, false, 1, false)
+        acc, false, 1, false)
     end
   end
 
@@ -419,16 +419,16 @@ class Person < Entity
     end
     ret = super(field, value)
     case field.to_s
-      when /account_name_due/
-        update_account_due
-      when /account_name_cash/
-        update_account_cash
-      when /permissions/
-        # They will check for themself
-        update_account_cash
-        update_account_due
-      when /groups/
-        update_smb_passwd
+    when /account_name_due/
+      update_account_due
+    when /account_name_cash/
+      update_account_cash
+    when /permissions/
+      # They will check for themself
+      update_account_cash
+      update_account_due
+    when /groups/
+      update_smb_passwd
     end
     return ret
   end
@@ -491,7 +491,7 @@ class Person < Entity
       internet_credit = -client.internet_credit.to_i
     end
     client.data_set_log(:_internet_credit, (client.internet_credit.to_i + internet_credit.to_i).to_s,
-                        "#{self.person_id}:#{internet_credit}")
+      "#{self.person_id}:#{internet_credit}")
     pay_service(internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
     log_msg("AddCash", "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
         "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}")
@@ -503,7 +503,7 @@ class Person < Entity
     self.account_total_due = 0
     if @account_due
       Movements.create("Automatic from Gestion: #{msg}", Time.now.strftime("%Y-%m-%d"),
-                       credit.to_i / 1000.0, @account_due, @account_service)
+        credit.to_i / 1000.0, @account_due, @account_service)
       self.account_total_due = (@account_due.total.to_f * 1000.0 + 0.5).to_i
     else
       #account_total_due = data_get( :account_total_due ).to_i + credit.to_i
@@ -560,7 +560,7 @@ class Person < Entity
     if (permissions and permissions.index("center")) or
         (groups and groups.index("share")) or
         (not self.password_plain or self.password_plain == "" or
-            self.password_plain == pass)
+          self.password_plain == pass)
       self.password_plain = pass
     else
       dputs(0) { self.password_plain.inspect }
@@ -599,18 +599,30 @@ class Person < Entity
     Courses.list_courses_for_person(self).each { |c|
       courses.unshift(Courses.match_by_course_id(c.first).ctype.description)
     }
-    @proxy.print_card.print([[/--NOM--/, first_name],
-                             [/--NOM2--/, family_name],
-                             [/--BDAY--/, birthday],
-                             [/--TDAY--/, `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"`],
-                             [/--TOWN--/, town],
-                             [/--TEL--/, phone],
-                             [/--UNAME--/, login_name],
-                             [/--EMAIL--/, email],
-                             [/--CTYPE--/, ctype],
-                             [/--COURSE1--/, courses[0]],
-                             [/--COURSE2--/, courses[1]],
-                             [/--PASS--/, password_plain]], nil, fname)
+    replace = [[/--NAME1--/, first_name],
+      [/--NAME2--/, family_name],
+      [/--BDAY--/, birthday],
+      [/--TDAY--/, `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"`],
+      [/--TOWN--/, town],
+      [/--TEL--/, phone],
+      [/--UNAME--/, login_name],
+      [/--EMAIL--/, email],
+      [/--CTYPE--/, ctype],
+      [/--COURSE1--/, courses[0]],
+      [/--COURSE2--/, courses[1]],
+      [/--PASS--/, password_plain]]
+    if center = Persons.find_by_permissions( :center )
+      url, email = center.email.to_s.split( "::" )
+      replace.concat( [[/--CENTER_NAME--/, center.full_name],
+          [/--CENTER_ADDRESS--/, center.address],
+          [/--CENTER_TOWN--/, center.town],
+          [/--CENTER_COUNTRY--/, center.country],
+          [/--CENTER_TEL--/, center.phone],
+          [/--CENTER_URL--/, url],
+          [/--CENTER_EMAIL--/, email]])
+    end
+    dputs(3){"Replace is #{replace.inspect}"}
+    @proxy.print_card.print( replace, nil, fname )
   end
 
   def to_list
@@ -648,7 +660,7 @@ class Person < Entity
         "#{person.account_due.get_path}"
     }
     Movements.create("Payement au comptable", Date.today,
-                     amount / 1000.0, @account_cash, person.account_due)
+      amount / 1000.0, @account_cash, person.account_due)
     return true
   end
 

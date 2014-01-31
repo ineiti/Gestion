@@ -3,7 +3,7 @@
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"
-DEBUG_LVL=0
+DEBUG_LVL=3
 
 require 'QooxView'
 require 'ACQooxView'
@@ -32,7 +32,7 @@ QooxView.init( '../Entities', '../Views' )
 
 tests = %w( login view tasks internet info course person )
 #tests = %w( compta )
-tests = %w( person )
+tests = %w( course )
 tests.each{|t|
   require "ge_#{t}"
 }

@@ -114,24 +114,34 @@ class CourseModify < View
   def rpc_button_print_student( session, data )
     rep = []
     ret = rpc_print( session, :print_student, data )
-    lp_cmd = cmd_printer( session, :print_student )
-    data['students'].each{|s|
-      student = Persons.match_by_login_name( s )
-      dputs( 1 ){ "Printing student #{student.full_name}" }
-      student.lp_cmd = lp_cmd
-      rep.push student.print( rep.length )
-    }
-    if data['students']
-      if rep[0].class == String
+    dputs( 3 ){"#{data['students'].inspect}"}
+    students = if data['students'] and data['students'].length > 0
+      data['students']
+    else
+      Courses.match_by_name( data['name'] ).students
+    end
+    dputs( 3 ){"Students to print: #{students.inspect}"}
+    if students
+      students.each{|s|
+        student = Persons.match_by_login_name( s )
+        dputs( 2 ){ "Printing student #{student.full_name}" }
+        student.lp_cmd = nil
+        rep.push student.print( rep.length )
+      }
+      pages = OpenPrint.print_nup( rep, "student_cards" )
+      if pages[0].class == String
         ret = reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Click on one of the links:<ul>" +
-            rep.collect{|r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
+            pages.collect{|r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
             "</ul>" )
-      elsif rep.length > 0
+      elsif pages.length > 0
         ret = reply( :window_show, :printing ) +
-          reply( :update, :msg_print => "Impression de<ul><li>#{data['students'].join('</li><li>')}</li></ul>en cours" )
+          reply( :update, :msg_print => "Impression de<ul><li>#{students.join('</li><li>')}</li></ul>en cours" )
       end
     end
+    cmd = "#{cmd_printer( session, :print_student )} #{pages.join( ' ' )}"
+    dputs(3){"Printing-cmd is #{cmd.inspect}"}
+    #%x[ cmd ]
     ret
   end
 

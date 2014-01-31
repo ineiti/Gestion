@@ -23,6 +23,7 @@ UploadFiles:
 #  path: /tmp
 
 #profiling: profile.txt
+#  duration: 30
 
 Webrick:
 #  port: 3302

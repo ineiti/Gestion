@@ -138,7 +138,7 @@ class TC_Person < Test::Unit::TestCase
     @accents = Entities.Persons.create( {:first_name => "éaënne", :family_name => "ässer"})
     @accents.print
   end
-
+  
   def test_log_password
     @admin.password = "admin"
     assert_equal( {:data_class_id=>1,
