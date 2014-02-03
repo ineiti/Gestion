@@ -57,7 +57,8 @@ class CourseModify < View
           end
           gui_window :printing do
             show_html :msg_print
-            show_button :close
+            show_int_hidden :step
+            show_button :print_next, :close
           end
         end
         show_button :save
@@ -110,6 +111,70 @@ class CourseModify < View
         reply( :switch_tab, :PersonTabs ) ) + 
       reply( :switch_tab, :PersonModify )
   end
+  
+  def rpc_button_print_next( session, data )
+    rpc_button_print_student_steps( session, data )
+  end
+  
+  def rpc_button_print_student_steps( session, data )
+    ret = reply( :callback_button, :print_student_steps )
+    var = session.s_data[:print_student]
+    ddputs(3){"Doing with data #{var.inspect} step is #{var._step.inspect}"}
+    case var._step
+    when 1
+      ddputs(3){"Showing prepare-window"}
+      ret += reply( :window_show, :printing ) +
+        reply( :update, :msg_print => "Preparing students: " +
+          var._students.join(", ")) +
+        reply( :hide, :print_next )
+    when 2
+      ddputs(3){"Printing pdfs"}
+      files = var._students.collect{|s|
+        Persons.find_by_login_name( s ).print( var._students.length )
+      }
+      var._pages = OpenPrint.print_nup_duplex( files, "student_cards" )
+      cmd = cmd_printer( session, :print_student )
+      ddputs(3){"Command is #{cmd} with pages #{var._pages.inspect}"}
+      if not cmd
+        ret = reply( :window_show, :printing ) +
+          reply( :update, :msg_print => "Click on one of the links:<ul>" +
+            var._pages.collect{|r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
+            "</ul>" )
+        var._step = 9
+      elsif var._pages.length > 0
+        ret = reply( :window_show, :printing ) +
+          reply( :update, :msg_print => "Impression de la page face en cours pour<ul>" +
+            "<li>#{var._students.join('</li><li>')}</li></ul>" +
+            "<br>Cliquez sur 'suivant' pour imprimer les pages arrières") +
+          reply( :unhide, :print_next )
+        cmd += " #{var._pages[0]}"
+        ddputs(3){"Printing-cmd is #{cmd.inspect}"}
+        %x[ #{cmd} ]
+      else
+        var._step = 9
+      end
+    when 3
+      cmd = cmd_printer( session, :print_student )
+      ddputs(3){"Command is #{cmd} with pages #{var._pages.inspect}"}
+      ret = reply( :window_show, :printing ) +
+        reply( :update, :msg_print => "Impression de la page face arrière en cours<ul>" +
+          "<li>#{var._students.join('</li><li>')}</li></ul>" ) +
+        reply( :hide, :print_next )
+      cmd += " #{var._pages[1]}"
+      ddputs(3){"Printing-cmd is #{cmd.inspect}"}
+      %x[ #{cmd} ]
+    when 4..10
+      ddputs(3){"Hiding"}
+      ret = reply( :window_hide )
+    else
+      ddputs(3){"Oups - step is #{var._step.inspect}"}
+    end
+    
+    var._step += 1
+    session.s_data[:print_student] = var
+    ddputs(3){"Ret is #{ret.inspect}"}
+    return ret
+  end
 
   def rpc_button_print_student( session, data )
     rep = []
@@ -126,22 +191,11 @@ class CourseModify < View
         student = Persons.match_by_login_name( s )
         dputs( 2 ){ "Printing student #{student.full_name}" }
         student.lp_cmd = nil
-        rep.push student.print( rep.length )
+        rep.push student.login_name
       }
-      pages = OpenPrint.print_nup_duplex( rep, "student_cards" )
-      if pages[0].class == String
-        ret = reply( :window_show, :printing ) +
-          reply( :update, :msg_print => "Click on one of the links:<ul>" +
-            pages.collect{|r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
-            "</ul>" )
-      elsif pages.length > 0
-        ret = reply( :window_show, :printing ) +
-          reply( :update, :msg_print => "Impression de<ul><li>#{students.join('</li><li>')}</li></ul>en cours" )
-      end
+      session.s_data[:print_student] = {:step => 1, :students => rep}
+      return ret + rpc_button_print_student_steps( session, data )
     end
-    cmd = "#{cmd_printer( session, :print_student )} #{pages.join( ' ' )}"
-    dputs(3){"Printing-cmd is #{cmd.inspect}"}
-    #%x[ cmd ]
     ret
   end
 
@@ -152,12 +206,13 @@ class CourseModify < View
       case rep = Courses.match_by_name( data['name'] ).print_presence( lp_cmd )
       when true
         ret + reply( :window_show, :printing ) +
-          reply( :update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours" )
+          reply( :update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours" ) +
+          reply( :hide, :print_next )
       when false
-        ret + reply( "window_show", "missing_data" ) +
+        ret + reply( :window_show, :missing_data ) +
           reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
       else
-        ret + reply( "window_show", "missing_data" ) +
+        ret + reply( :window_show, :missing_data ) +
           reply( "update", :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>" )
       end
     end
@@ -252,7 +307,7 @@ class CourseModify < View
   end
 
   def rpc_button_close( session, data )
-    reply( "window_hide", "*" )
+    reply( :window_hide )
   end
 
   def rpc_list_choice( session, name, args )

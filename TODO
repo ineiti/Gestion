@@ -33,6 +33,8 @@ BUGS:
 Security:
 
 UI:
+        - Make "Creating pdfs" - "Print front" - "Print back" in 
+          Course::Modify - print card
         - Put most important actions in dbg-level 1:
           - creation of users, courses
           - attribution of users to courses
