@@ -126,9 +126,9 @@ class Courses < Entities
   
   def self.create_ctype( ctype, date, creator = nil )
     needs_center = ( ( ConfigBase.has_function?( :course_server ) and
-        ( creator and creator.has_permission?( :center ) ) ) or
-      ( ConfigBase.has_function?( :course_client ) and
-      ( ctype.diploma_type.first.to_sym == :accredited ) ) )
+          ( creator and creator.has_permission?( :center ) ) ) or
+        ( ConfigBase.has_function?( :course_client ) and
+          ( ctype.diploma_type.first.to_sym == :accredited ) ) )
     dputs(4){"needs_center is #{needs_center.inspect}" }
 
     # Prepare correct name
@@ -162,7 +162,7 @@ class Courses < Entities
     if ConfigBase.get_functions.index :accounting_courses
       course.entries = Accounts.create_path( 
         get_config( "Root::Income::Courses", :Accounting, :courses ) +
-        "::#{course.name}")
+          "::#{course.name}")
     end
     
     dputs(4){"Course is #{course.class}"}
@@ -317,15 +317,16 @@ class Course < Entity
     @proxy.dir_exas_share + "/#{self.name}"
   end
   
-  def list_students
+  def list_students( by_id = false )
     dputs( 3 ){ "Students for #{self.name} are: #{self.students.inspect}" }
     ret = []
     if self.students
       ret = self.students.collect{|s|
-        if person = Entities.Persons.match_by_login_name( s )
-          [ s, "#{person.full_name} - #{person.login_name}:#{person.password_plain}" ]
+        if person = Persons.match_by_login_name( s )
+          [ ( by_id ? person.person_id : s ), 
+            "#{person.full_name} - #{person.login_name}:#{person.password_plain}" ]
         end
-      }.sort{|a,b| a[1] <=> b[1] }
+      }.select{|s| s }.sort{|a,b| a[1] <=> b[1] }
     end
     ret
   end
@@ -450,7 +451,7 @@ base_gestion
     stud_nr = 1
     studs = students.sort{|a,b|
       Persons.match_by_login_name( a ).full_name <=>
-      Persons.match_by_login_name( b ).full_name }.collect{|s|
+        Persons.match_by_login_name( b ).full_name }.collect{|s|
       stud = Entities.Persons.match_by_login_name( s )
       stud_str = stud_nr.to_s.rjust( 2, '0' )
       stud_nr += 1

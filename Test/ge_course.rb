@@ -17,6 +17,8 @@ class TC_Course < Test::Unit::TestCase
 
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123", 
       :permissions => [ "default", "teacher" ], :first_name => "Admin", :family_name => "The" )
+    @admin2 = Entities.Persons.create( :login_name => "admin2", :password => "super123", 
+      :permissions => [ "default", "teacher" ], :first_name => "Admin", :family_name => "The" )
     @secretaire = Entities.Persons.create( :login_name => "secretaire", :password => "super", 
       :permissions => [ "default", "teacher" ], :first_name => "Le", :family_name => "Secretaire" )
     @surf = Entities.Persons.create( :login_name => "surf", :password => "super", 
@@ -652,4 +654,10 @@ class TC_Course < Test::Unit::TestCase
     assert_equal @grade1[:grade_id], @grade2[:grade_id]
   end
 
+  def test_list_students
+    assert_equal [["admin2", "Admin The - admin2:super123"],
+      ["surf", "Internet Surfer - surf:super"]], @base.list_students
+    assert_equal [[2, "Admin The - admin2:super123"], 
+      [4, "Internet Surfer - surf:super"]], @base.list_students( true )
+  end
 end

@@ -350,7 +350,7 @@ class CourseModify < View
   
   def update_layout( session )
     if not @resps
-      ddupts(3){"Making responsible-cache"}
+      ddputs(3){"Making responsible-cache"}
       @resps = Persons.search_all.select{|p| 
         p.permissions and Permission.can_view( p.permissions.reject{|perm| perm.to_s == "admin"}, 
           "FlagResponsible" )
@@ -360,7 +360,7 @@ class CourseModify < View
           p.login_name =~ /^#{session.owner.login_name}_/
         }
       end
-      @resps = resps.collect{|p|
+      @resps = @resps.collect{|p|
         [p.person_id, p.full_name]
       }.sort{|a,b| a.last <=> b.last}
     else

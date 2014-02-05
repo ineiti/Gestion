@@ -68,6 +68,11 @@ FEATURES:
         - CourseType: Add versions
 
         - make an accounting-module
+          - 140201: add possibility to link courses with accounts
+          - 140205: add payment for students in courses
+          - create Movements for payments
+          - add services and other stuff
+          - create daily and weekly reports
 
         - use multilogin as flag for users
         - configure better print, libnet, uploadwidget, so that it get's correctly
