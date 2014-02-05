@@ -6,6 +6,7 @@ class SelfInternet < View
     @auto_update = 10
     @auto_update_send_values = false
     @functions_need = [:internet]
+    @functions_reject = [:internet_simple]
     @isp = $lib_net.isp_params
 
     gui_vbox do

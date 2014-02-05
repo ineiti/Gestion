@@ -1,11 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - Course::Grade - Syncing with server when course-type doesn't exist must
-          return error
-        - Course::Modify::add_student - gray out window and check first choice
         - AC: correctly show differing accounts in "check"
         - client/server:
+          - Course::Grade - Syncing with server when course-type doesn't exist must
+            return error
           - B 131113: server: when getting new course, ignore "room", check for center-id
           - server: error with regard to "assistant" - ??
           - transfert: also get "assistant", "dow" and "hours" - ??
@@ -33,8 +32,6 @@ BUGS:
 Security:
 
 UI:
-        - Make "Creating pdfs" - "Print front" - "Print back" in 
-          Course::Modify - print card
         - Put most important actions in dbg-level 1:
           - creation of users, courses
           - attribution of users to courses
@@ -45,11 +42,6 @@ UI:
         - Put adding of students and printing as background-tasks
 
         - CourseModify::print_presence_sheet doesn't show exactly what is missing
-        - CourseModify::check_double
-          - needs more width
-          - by default check first entry
-          - windows is not grayed out when submitting
-          - add "cancel"-button
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
@@ -81,7 +73,6 @@ FEATURES:
         - configure better print, libnet, uploadwidget, so that it get's correctly
           addressed with a configuration
 	- import courses from server
-        - logrotate gestion.log, and send daily error-reports to info@profeda.org
         - when a student logins remotely to a course_sever, don't allow to change
           his name, only address, phone-#, password and e-mail
         - adding a course:
@@ -236,6 +227,13 @@ To check:
 
 
 ** FIXED **:
+        - B 140205: Finished 4 student-cards on one page
+        - UI140205: Make "Creating pdfs" - "Print front" - "Print back" in 
+          Course::Modify - print card
+        - F 140205: CourseModify::check_double
+          - needs more width
+          - by default check first entry
+          - add "cancel"-button
         - F 140131: Print 4 student-cards on one page
         - UI140131: Cours::Modify - Sort teachers
         - P 140125: Speeding up SQLite-storage by not saving everything right away
@@ -252,6 +250,7 @@ To check:
         - F 131201: add material-config to LibNet
           - different USB-keys
           - different distributions
+        - F 131201: logrotate gestion.log, and send daily error-reports to info@profeda.org
         - UI131201: Self:Services -> don't add "nil"-entries
         - UI131119: Self::Chat needs a "align to bottom" instead of 20 lfs - can't align
           to bottom, so inverse layout

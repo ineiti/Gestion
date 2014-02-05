@@ -362,7 +362,11 @@ class Person < Entity
 
   def update_account_due
     if can_view :FlagAddInternet and login_name != "admin"
-      dputs(3){"Adding account_due to #{login_name}"}
+      if login_name.to_s == ""
+        dputs(0){"Login-name is empty! Not good! #{self.inspect}"}
+        return
+      end
+      dputs(3){"Adding account_due to -#{login_name.inspect}-"}
       #acc = data_get( :account_name_due )
       acc = account_name_due
       if acc.to_s.length == 0

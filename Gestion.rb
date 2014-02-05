@@ -6,7 +6,7 @@
 #          - for students
 
 DEBUG_LVL=2
-VERSION_GESTION="1.3.3"
+VERSION_GESTION="1.3.4"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -156,36 +156,47 @@ CPUPROFILE_FREQUENCY=500
     "
   end
 else
-  dputs(0){"Starting autosave"}
   # Autosave every 2 minutes
   if get_config( true, :autosave )
+    dputs(0){"Starting autosave"}
     $autosave = Thread.new{
       loop {
         Entities.save_all
         Internet::check_services    
-        sleep 2 * 60
+        sleep get_config( 2 * 60, :autosave, :timer )
       }
     }
   end
 
-  $internet = Thread.new{
+  if ConfigBase.has_function? :internet
     dputs(0){"Starting internet"}
-    loop {
-      begin
+    $internet = Thread.new{
+      loop {
+        begin
+          sleep 60
+          if ConfigBase.has_function? :internet_only
+            Internet::fetch_cash
+          end
+          Internet::take_money
+        rescue Exception => e
+          dputs( 0 ){ "#{e.inspect}" }
+          dputs( 0 ){ "#{e.to_s}" }
+          puts e.backtrace
+        end
+      }
+    }
+  end
+  
+  if get_config( true, :showTime )
+    dputs(0){"Showing time"}
+    $internet = Thread.new{
+      loop {
         sleep 60
         dputs( 0 ){ "It is now: " + Time.now.strftime( "%Y-%m-%d %H:%M" ) }
-        if ConfigBase.has_function? :internet_only
-          Internet::fetch_cash
-        end
-        Internet::take_money
-      rescue Exception => e
-        dputs( 0 ){ "#{e.inspect}" }
-        dputs( 0 ){ "#{e.to_s}" }
-        puts e.backtrace
-      end
+      }
     }
-  }
-  
+  end
+
   trap("SIGINT") { 
     throw :ctrl_c
   }
@@ -199,7 +210,7 @@ else
       puts e.backtrace
       dputs( 0 ){ "Saving all" }
       Entities.save_all
-    end
+    end    
   end
 
   if get_config( true, :autosave )

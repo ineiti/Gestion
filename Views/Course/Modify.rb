@@ -48,8 +48,8 @@ class CourseModify < View
           gui_window :ask_double do
             show_str :double_name
             show_entity_person_lazy :double_proposition, :single, :full_name,
-              :width => 250, :maxheight => 250
-            show_button :accept, :create_new
+              :width => 350, :maxheight => 250
+            show_button :accept, :create_new, :cancel
           end
           gui_window :missing_data do
             show_html :missing
@@ -64,6 +64,7 @@ class CourseModify < View
         show_button :save
       end
     end
+    @resps = nil
   end
 
   def rpc_button_save( session, data )
@@ -115,7 +116,7 @@ class CourseModify < View
   def rpc_button_print_next( session, data )
     rpc_button_print_student_steps( session, data )
   end
-  
+
   def rpc_button_print_student_steps( session, data )
     ret = reply( :callback_button, :print_student_steps )
     var = session.s_data[:print_student]
@@ -124,13 +125,13 @@ class CourseModify < View
     when 1
       ddputs(3){"Showing prepare-window"}
       ret += reply( :window_show, :printing ) +
-        reply( :update, :msg_print => "Preparing students: " +
-          var._students.join(", ")) +
+        reply( :update, :msg_print => "Preparing students: <br><br>" +
+          var._students.each_slice(5).collect{|s| s.join(", ")}.join(",<br>") ) +
         reply( :hide, :print_next )
     when 2
       ddputs(3){"Printing pdfs"}
       files = var._students.collect{|s|
-        Persons.find_by_login_name( s ).print( var._students.length )
+        Persons.match_by_login_name( s ).print( var._students.length )
       }
       var._pages = OpenPrint.print_nup_duplex( files, "student_cards" )
       cmd = cmd_printer( session, :print_student )
@@ -160,7 +161,7 @@ class CourseModify < View
         reply( :update, :msg_print => "Impression de la page face arrière en cours<ul>" +
           "<li>#{var._students.join('</li><li>')}</li></ul>" ) +
         reply( :hide, :print_next )
-      cmd += " #{var._pages[1]}"
+      cmd += " -o outputorder=reverse #{var._pages[1]}"
       ddputs(3){"Printing-cmd is #{cmd.inspect}"}
       %x[ #{cmd} ]
     when 4..10
@@ -275,7 +276,7 @@ class CourseModify < View
       reply( :window_show, :ask_double ) +
         reply( :update, :double_name => name ) +
         reply( :empty_only, [:double_proposition ]) +
-        reply( :update, :double_proposition => prop )
+        reply( :update, :double_proposition => prop.concat( [prop.first[0]] ) )
     else
       reply( :window_hide )
     end +
@@ -284,7 +285,7 @@ class CourseModify < View
   
   def rpc_button_accept( session, data )
     course = Courses.match_by_name( data['name'] )
-    student = Persons.match_by_person_id( data['double_proposition'].first )
+    student = data._double_proposition
     dputs(5){"Data is #{data.inspect} - #{course.students.inspect} " + 
         "- #{student.inspect}"}
     if not course.students.index( student.login_name )
@@ -307,6 +308,10 @@ class CourseModify < View
   end
 
   def rpc_button_close( session, data )
+    reply( :window_hide )
+  end
+
+  def rpc_button_cancel( session, data )
     reply( :window_hide )
   end
 
@@ -344,18 +349,23 @@ class CourseModify < View
   end
   
   def update_layout( session )
-    resps = Persons.search_all.select{|p| 
-      p.permissions and Permission.can_view( p.permissions.reject{|perm| perm.to_s == "admin"}, 
-        "FlagResponsible" )
-    }
-    if session.owner.permissions.index( "center" )
-      resps = resps.select{|p|
-        p.login_name =~ /^#{session.owner.login_name}_/
+    if not @resps
+      ddupts(3){"Making responsible-cache"}
+      @resps = Persons.search_all.select{|p| 
+        p.permissions and Permission.can_view( p.permissions.reject{|perm| perm.to_s == "admin"}, 
+          "FlagResponsible" )
       }
+      if session.owner.permissions.index( "center" )
+        @resps = resps.select{|p|
+          p.login_name =~ /^#{session.owner.login_name}_/
+        }
+      end
+      @resps = resps.collect{|p|
+        [p.person_id, p.full_name]
+      }.sort{|a,b| a.last <=> b.last}
+    else
+      ddputs(3){"Lazily using responsible-cache"}
     end
-    resps = resps.collect{|p|
-      [p.person_id, p.full_name]
-    }.sort{|a,b| a.full_name <=> b.full_name}
     
     fields = %w( teacher assistant responsible )
     
@@ -363,7 +373,7 @@ class CourseModify < View
       reply( :empty, fields ) +
       reply( :update, :assistant => [[0, "---"]]) +
       fields.collect{|p|
-      reply( :update, p => resps )
+      reply( :update, p => @resps )
     }.flatten
   end
   
