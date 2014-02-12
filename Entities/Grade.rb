@@ -123,7 +123,7 @@ class Grade < Entity
   end
   
   def person
-    dputs(0){"Deprecated - use student  in #{caller.inspect}"}
+    dputs(0){"Deprecated - use student in #{caller.inspect}"}
     student
   end
   

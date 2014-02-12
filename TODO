@@ -1,7 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - AC: correctly show differing accounts in "check"
         - client/server:
           - Course::Grade - Syncing with server when course-type doesn't exist must
             return error
@@ -19,6 +18,7 @@ BUGS:
         - LibNet has concurrency-troubles - use "flock" to mend it:
           ( flock -e 200; locked commands ) 200>/tmp/blah.lockfile
 
+        - AC: correctly show differing accounts in "check"
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
@@ -32,12 +32,6 @@ BUGS:
 Security:
 
 UI:
-        - Put most important actions in dbg-level 1:
-          - creation of users, courses
-          - attribution of users to courses
-          - login of users
-          - adding cash to users
-          - grades for users
         - Add async-requests (for Self::Internet and Admin::Tigo)
         - Put adding of students and printing as background-tasks
 
@@ -232,6 +226,12 @@ To check:
 
 
 ** FIXED **:
+        - UI140212: Put most important actions in dbg-level 1:
+          - creation of users, courses
+          - attribution of users to courses
+          - login of users
+          - adding cash to users
+          - grades for users
         - B 140205: Finished 4 student-cards on one page
         - UI140205: Make "Creating pdfs" - "Print front" - "Print back" in 
           Course::Modify - print card

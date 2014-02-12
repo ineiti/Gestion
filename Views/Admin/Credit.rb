@@ -23,7 +23,7 @@ class AdminCredit < View
           user.permissions.push "internet"
         end
       else
-        dputs(1){"Didn't find #{u}"}
+        dputs(0){"Error: Didn't find #{u}"}
       end
     }
     Entities.save_all

@@ -12,7 +12,7 @@ class Welcome < View
       if person then
         session = get_config( false, :multilogin ) ? Sessions.find_by_owner( person.person_id ) : nil
         session ||= Sessions.create( person )
-        dputs(1){"Session is #{session.inspect}"}
+        dputs(3){"Session is #{session.inspect}"}
         return reply( :session_id, person.session_id ) +
           View.rpc_list( session )
       else
@@ -44,8 +44,8 @@ class Welcome < View
       session.web_req = web_req
       session.client_ip = RPCQooxdooHandler.get_ip( web_req )
       dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
-      dputs( 1 ){ "Session is #{session.inspect}" }
-      dputs( 1 ){ "Authenticated person #{person.login_name} from #{session.client_ip}" }
+      dputs( 3 ){ "Session is #{session.inspect}" }
+      dputs( 1 ){ "Authenticated person #{person.login_name} from #{session.client_ip} with session #{session.inspect}" }
       return reply( :session_id, person.session_id ) +
         reply( :list, View.list( session ) )
     else

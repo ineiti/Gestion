@@ -175,6 +175,8 @@ class CourseGrade < View
           :student => student,
           :means => means,
           :remark => data['remark']})
+      dputs(1){"Added grades #{means.inspect} to #{student.login_name} " +
+          "with remark -#{data._remark}-" }
       if data['first_name']
         Entities.Persons.save_data({:person_id => student.person_id,
             :first_name => data['first_name'], :family_name => data['family_name']})

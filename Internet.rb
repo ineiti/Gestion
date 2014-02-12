@@ -26,10 +26,10 @@ module Internet
           end
         }
       rescue
-        dputs(1) { "Error: Couldn't contact server" }
+        dputs(0) { "Error: Couldn't contact server" }
       end
     else
-      dputs(1) { 'Error: no server defined - please add :LibNet:internetCash to config.yaml' }
+      dputs(0) { 'Error: no server defined - please add :LibNet:internetCash to config.yaml' }
     end
   end
 
@@ -61,7 +61,7 @@ module Internet
           end
         end
       else
-        dputs(1) { "Couldn't find user #{u}" }
+        dputs(0) { "Error: LibNet said #{u} is connected, but couldn't find that user!" }
       end
     }
   end
@@ -168,7 +168,7 @@ class InternetCash < RPCQooxdooPath
           }
           return user_list.to_json
         else
-          dputs(1) { "#{req.inspect} is not supported" }
+          dputs(0) { "Error: #{req.inspect} is not supported" }
       end
     end
   end

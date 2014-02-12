@@ -77,29 +77,29 @@ class CourseTabs < View
     args.to_sym!
     dputs(5){args.inspect}
     if args._ct_name and args._ct_name.size > 0
-      dputs(1){"Creating CourseType"}
+      dputs(3){"Creating CourseType"}
       ct = CourseTypes.create( :name => args._ct_name, :duration => args._ct_duration,
         :tests => 1, :description => args._ct_desc, :contents => args._ct_contents,
         :diploma_type => ["simple"], :output => ["certificate"],
         :page_format => [1], :filename => args._ct_filename )
-      dputs(1){"Ct is #{ct.inspect}"}
+      dputs(1){"New CourseType is #{ct.inspect}"}
     end
     if args._new_room and args._new_room.size > 0
-      dputs(1){"Creating Room"}
+      dputs(3){"Creating Room"}
       room = Rooms.create( :name => args._new_room )
-      dputs(1){"Room is #{room.inspect}"}
+      dputs(1){"New room is #{room.inspect}"}
     end
     if args._new_teacher and args._new_teacher.size > 0
-      dputs(1){"Creating Teacher"}
+      dputs(3){"Creating Teacher"}
       teacher = Persons.create( :complete_name => args._new_teacher )
       teacher.permissions = ["teacher"]
-      dputs(1){"Teacher #{teacher.inspect}"}
+      dputs(1){"New teacher #{teacher.inspect}"}
     end
     if args._new_center and args._new_center.size > 0
-      dputs(1){"Creating Center"}
+      dputs(3){"Creating Center"}
       center = Persons.create( :complete_name => args._new_center )
       center.permissions = ["center"]
-      dputs(1){"Center #{center.inspect}"}
+      dputs(1){"New center #{center.inspect}"}
     end
     reply( :window_hide ) +
       rpc_update( session ) +

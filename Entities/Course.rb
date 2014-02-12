@@ -165,7 +165,7 @@ class Courses < Entities
           "::#{course.name}")
     end
     
-    dputs(4){"Course is #{course.class}"}
+    dputs(1){"Created new course #{course.inspect}"}
     return course
   end
 
@@ -187,8 +187,8 @@ class Courses < Entities
 
     lines = course_str.split( "\n" )
     template = lines.shift
-    dputs( 1 ){ "Template is: #{template}" }
-    dputs( 1 ){ "lines are: #{lines.inspect}" }
+    dputs( 2 ){ "Template is: #{template}" }
+    dputs( 2 ){ "lines are: #{lines.inspect}" }
     case template
     when /base_gestion/ then
       course.teacher, course.responsible = lines.shift( 2 ).collect{|p|
@@ -203,7 +203,7 @@ class Courses < Entities
       while lines[0].size > 0
         course.contents += lines.shift
       end
-      dputs( 1 ){ "Course contents: #{course.contents}" }
+      dputs( 2 ){ "Course contents: #{course.contents}" }
       lines.shift
       course.start, course.end, course.sign =
         lines.shift( 3 ).collect{|d| self.from_date_fr( d ) }
@@ -1064,5 +1064,10 @@ base_gestion
       FileUtils.remove_entry_secure( d, true )      
     }
     super
+  end
+  
+  def students=( s )
+    super( s )
+    dputs( 1 ){ "Students for #{name} are: #{students.inspect}"}
   end
 end

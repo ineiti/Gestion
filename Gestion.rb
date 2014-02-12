@@ -1,12 +1,15 @@
-#!/usr/bin/env ruby -I../QooxView -I. -I../AfriCompta -E UTF-8:UTF-8 -Ku
+#!/usr/bin/env ruby
+# encoding: UTF-8
+$LOAD_PATH.push( "../QooxView", ".", "../AfriCompta" )
+Encoding.default_external = Encoding::UTF_8
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad. The following modules shall be covered:
 # - Login: - for payable laptop web-access
 #          - for students
 
-DEBUG_LVL=2
-VERSION_GESTION="1.3.4"
+DEBUG_LVL=1
+VERSION_GESTION="1.3.5"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -82,7 +85,7 @@ begin
   Permission.add( 'admin', '.*', '.*' )
 
   if uri = get_config( false, :LibNet, :URI )
-    dputs(1){ "Making DRB-connection with #{uri}" }
+    dputs(2){ "Making DRB-connection to LibNet with #{uri}" }
     require 'drb'
     $lib_net = DRbObject.new nil, uri
     dputs(1){ "Connection is #{$lib_net.status}" }

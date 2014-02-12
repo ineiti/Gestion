@@ -93,7 +93,7 @@ class Persons < Entities
       s = names.length < 4 ? 0 : 1
       first = names[0..s].join(" ")
       family = names[(s+1)..-1].join(" ")
-      dputs(1) { "Creating user #{names.inspect} as #{first} - #{family}" }
+      dputs(2) { "Creating user #{names.inspect} as #{first} - #{family}" }
       [first, family]
     else
       [fullname, ""]
@@ -157,7 +157,7 @@ class Persons < Entities
     end
     d[:login_name] = find_empty_login_name(d[:login_name])
     d[:person_id] = nil
-    dputs(1) { "Creating #{d.inspect}" }
+    dputs(1) { "Creating Person #{d.inspect}" }
 
     person = super(d, true)
 
@@ -554,12 +554,12 @@ class Person < Entity
   def password=(pass)
     p = pass
     if @proxy.has_storage? :LDAP
-      dputs(1) { "Changing password for #{self.login_name}: #{pass}" }
+      dputs(2) { "Changing password for #{self.login_name}: #{pass}" }
       p = %x[ slappasswd -s #{pass} ]
-      dputs(1) { "Hashed password for #{self.login_name} is: #{pass}" }
+      dputs(2) { "Hashed password for #{self.login_name} is: #{pass}" }
     end
     update_smb_passwd(pass)
-    dputs(1) { "Setting password for #{self.login_name} to #{p}" }
+    dputs(1) { "Setting password (#{pass}) for #{self.login_name} to #{p}" }
     self._password = p
     if (permissions and permissions.index("center")) or
         (groups and groups.index("share")) or
