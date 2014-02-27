@@ -145,7 +145,7 @@ class Persons < Entities
     elsif d.has_key? :login_name
       d[:first_name] = d[:login_name]
     else
-      dputs(0){"Creating Person with missing names: #{d.inspect}"}
+      dputs(0){"Error: Trying to create Person with missing names: #{d.inspect}"}
       return nil
     end
     if !d[:login_name] or d[:login_name].length == 0
@@ -255,12 +255,12 @@ class Persons < Entities
   end
 
   def data_create(data)
-    dputs(0) { "Creating new data #{data.inspect}" }
+    dputs(2) { "Creating new data #{data.inspect}" }
     if has_storage? :LDAP
       user = data[:login_name]
       if Kernel.system("ldapadduser #{user} plugdev")
         if defined? @adduser_cmd
-          dputs(0) { "Going to call #{@adduser_cmd} #{user.inspect}" }
+          dputs(2) { "Going to call #{@adduser_cmd} #{user.inspect}" }
           %x[ #{@adduser_cmd} #{user} ]
         end
       else
@@ -309,14 +309,14 @@ class Persons < Entities
 
   def migration_1(p)
     if p.person_id == 0
-      dputs(0) { "Oups, found person with id 0 - trying to change this" }
+      dputs(0) { "Error: Oups, found person with id 0 - trying to change this" }
       p.person_id = Persons.new_id[:person_id]
-      dputs(0) { "Putting person-id to #{p.person_id}" }
+      dputs(2) { "Putting person-id to #{p.person_id}" }
     end
   end
 
   def migration_2_raw(p)
-    dputs(0) { "p is #{p.class}" }
+    dputs(2) { "p is #{p.class}" }
     p._internet_credit = p._credit
     p._account_total_due = p._credit_due
     p._account_name_due = p._account_due
@@ -363,7 +363,7 @@ class Person < Entity
   def update_account_due
     if can_view :FlagAddInternet and login_name != "admin"
       if login_name.to_s == ""
-        dputs(0){"Login-name is empty! Not good! #{self.inspect}"}
+        dputs(0){"Error: Login-name is empty! Not good! #{self.inspect}"}
         return
       end
       dputs(3){"Adding account_due to -#{login_name.inspect}-"}
@@ -567,7 +567,7 @@ class Person < Entity
           self.password_plain == pass)
       self.password_plain = pass
     else
-      dputs(0) { self.password_plain.inspect }
+      dputs(2) { self.password_plain.inspect }
       self.password_plain = "****"
     end
   end
@@ -649,15 +649,15 @@ class Person < Entity
     dputs(3) { "Amount is #{amount.inspect} and #{person.inspect} will receive it" }
     amount = amount.to_i
     if amount < 0
-      dputs(0) { "Can't transfer a negative amount here" }
+      dputs(0) { "Error: Can't transfer a negative amount here" }
       return false
     end
     if not person.account_due
-      dputs(0) { "#{person.login_name}::#{person.full_name} has no account_due" }
+      dputs(0) { "Error: #{person.login_name}::#{person.full_name} has no account_due" }
       return false
     end
     if not @account_cash
-      dputs(0) { "#{self.inspect} has no account_cash" }
+      dputs(0) { "Error: #{self.inspect} has no account_cash" }
       return false
     end
     dputs(3) { "Transferring #{amount} from #{@account_cash.get_path} to " +
@@ -697,7 +697,7 @@ class Person < Entity
           r = course.data_get("_#{role}")
         rescue Exception => e
           if e.message == "WrongIndex"
-            dputs(0) { "Role :#{role} is not well defined - resetting to nil" }
+            dputs(0) { "Error: Role :#{role} is not well defined - resetting to nil" }
             course.data_set("_#{role}", nil)
           end
         end

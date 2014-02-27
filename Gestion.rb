@@ -98,21 +98,19 @@ begin
 
   # Look for admin, create if it doesn't exist
   admin = Entities.Persons.match_by_login_name( "admin" )
-  #dputs(0){ admin.inspect }
-  #exit
   if not admin
-    dputs( 0 ){ "OK, creating admin" }
+    dputs( 1 ){ "OK, creating admin" }
     admin = Entities.Persons.create( :login_name => "admin", :password => "super123", :permissions => [ "admin" ] ,
       :internet_credit => "100" )
   else
     admin.permissions = ["admin"];
   end
 
-  dputs( 0 ){ "Loading database" }
+  dputs( 1 ){ "Loading database" }
   ACQooxView::check_db
   
   if not Entities.Services.match_by_name( "Free solar" )
-    dputs( 0 ){ "Creating services" }
+    dputs( 1 ){ "Creating services" }
     Entities.Services.create( :name => "CCC", :group => "ccc", 
       :price => 1000, :duration => 0 )
     Entities.Services.create( :name => "CCC active", :group => "ccc_active", 
@@ -122,16 +120,15 @@ begin
     Entities.Services.create( :name => "Free internet", :group => "free_internet", 
       :price => 25000, :duration => 30 )
   end
-  dputs(0){"Finished with services"}
 
 rescue StorageLoadError
   cleanup_data
 rescue DRb::DRbConnError
-  dputs(0){ "Connection has been refused!" }
-  dputs(0){ "Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
+  dputs(0){ "Error: Connection to LibNet has been refused!" }
+  dputs(0){ "Error: Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
   exit
 rescue Exception => e
-  dputs(0){ "Couldn't load LibNet!" }
+  dputs(0){ "Error: Couldn't load LibNet!" }
   dputs( 0 ){ "#{e.inspect}" }
   dputs( 0 ){ "#{e.to_s}" }
   puts e.backtrace
@@ -143,12 +140,12 @@ dputs(2){"Starting at port #{webrick_port}" }
 
 $profiling = get_config( nil, :profiling )
 if $profiling
-  dputs(0){"Starting Profiling"}
+  dputs(1){"Starting Profiling"}
   require 'rubygems'
   require 'perftools'
   PerfTools::CpuProfiler.start("/tmp/#{$profiling}") do
     QooxView::startWeb webrick_port, get_config( 30, :profiling, :duration )
-    dputs(0){"Finished profiling"}
+    dputs(1){"Finished profiling"}
   end
   
   if $profiling
@@ -161,7 +158,7 @@ CPUPROFILE_FREQUENCY=500
 else
   # Autosave every 2 minutes
   if get_config( true, :autosave )
-    dputs(0){"Starting autosave"}
+    dputs(1){"Starting autosave"}
     $autosave = Thread.new{
       loop {
         Entities.save_all
@@ -172,7 +169,7 @@ else
   end
 
   if ConfigBase.has_function? :internet
-    dputs(0){"Starting internet"}
+    dputs(1){"Starting internet"}
     $internet = Thread.new{
       loop {
         begin
@@ -182,6 +179,7 @@ else
           end
           Internet::take_money
         rescue Exception => e
+          dputs( 0 ){ "Error: couldn't take internet-money" }
           dputs( 0 ){ "#{e.inspect}" }
           dputs( 0 ){ "#{e.to_s}" }
           puts e.backtrace
@@ -191,11 +189,11 @@ else
   end
   
   if get_config( true, :showTime )
-    dputs(0){"Showing time"}
+    dputs(1){"Showing time"}
     $internet = Thread.new{
       loop {
         sleep 60
-        dputs( 0 ){ "It is now: " + Time.now.strftime( "%Y-%m-%d %H:%M" ) }
+        dputs( 1 ){ "It is now: " + Time.now.strftime( "%Y-%m-%d %H:%M" ) }
       }
     }
   end
@@ -206,12 +204,14 @@ else
 
   catch :ctrl_c do
     begin
+      dputs( 1 ){ "Started Gestion at #{Time.now.strftime( "%Y-%m-%d %H:%M" )} on port #{webrick_port}" }
       QooxView::startWeb webrick_port
     rescue Exception => e
+      dputs( 0 ){ "Error: QooxView aborted" }
       dputs( 0 ){ "#{e.inspect}" }
       dputs( 0 ){ "#{e.to_s}" }
       puts e.backtrace
-      dputs( 0 ){ "Saving all" }
+      dputs( 1 ){ "Saving all" }
       Entities.save_all
     end    
   end

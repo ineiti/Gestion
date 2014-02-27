@@ -10,7 +10,6 @@ class NetworkRestriction < View
   end
 
   def rpc_update( session )
-    dputs( 0 ){ "rpc_update" }
     restricted = $lib_net.call :captive_restriction_get
     if restricted.length > 0
       reply( 'update', :state => "Restricted internet, only allowed for:<br><pre>#{ restricted }</pre>" )

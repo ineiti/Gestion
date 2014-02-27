@@ -120,22 +120,22 @@ class CourseModify < View
   def rpc_button_print_student_steps( session, data )
     ret = reply( :callback_button, :print_student_steps )
     var = session.s_data[:print_student]
-    ddputs(3){"Doing with data #{var.inspect} step is #{var._step.inspect}"}
+    dputs(3){"Doing with data #{var.inspect} step is #{var._step.inspect}"}
     case var._step
     when 1
-      ddputs(3){"Showing prepare-window"}
+      dputs(3){"Showing prepare-window"}
       ret += reply( :window_show, :printing ) +
         reply( :update, :msg_print => "Preparing students: <br><br>" +
           var._students.each_slice(5).collect{|s| s.join(", ")}.join(",<br>") ) +
         reply( :hide, :print_next )
     when 2
-      ddputs(3){"Printing pdfs"}
+      dputs(3){"Printing pdfs"}
       files = var._students.collect{|s|
         Persons.match_by_login_name( s ).print( var._students.length )
       }
       var._pages = OpenPrint.print_nup_duplex( files, "student_cards" )
       cmd = cmd_printer( session, :print_student )
-      ddputs(3){"Command is #{cmd} with pages #{var._pages.inspect}"}
+      dputs(3){"Command is #{cmd} with pages #{var._pages.inspect}"}
       if not cmd
         ret = reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Click on one of the links:<ul>" +
@@ -149,31 +149,31 @@ class CourseModify < View
             "<br>Cliquez sur 'suivant' pour imprimer les pages arrières") +
           reply( :unhide, :print_next )
         cmd += " #{var._pages[0]}"
-        ddputs(3){"Printing-cmd is #{cmd.inspect}"}
+        dputs(3){"Printing-cmd is #{cmd.inspect}"}
         %x[ #{cmd} ]
       else
         var._step = 9
       end
     when 3
       cmd = cmd_printer( session, :print_student )
-      ddputs(3){"Command is #{cmd} with pages #{var._pages.inspect}"}
+      dputs(3){"Command is #{cmd} with pages #{var._pages.inspect}"}
       ret = reply( :window_show, :printing ) +
         reply( :update, :msg_print => "Impression de la page face arrière en cours<ul>" +
           "<li>#{var._students.join('</li><li>')}</li></ul>" ) +
         reply( :hide, :print_next )
       cmd += " -o outputorder=reverse #{var._pages[1]}"
-      ddputs(3){"Printing-cmd is #{cmd.inspect}"}
+      dputs(3){"Printing-cmd is #{cmd.inspect}"}
       %x[ #{cmd} ]
     when 4..10
-      ddputs(3){"Hiding"}
+      dputs(3){"Hiding"}
       ret = reply( :window_hide )
     else
-      ddputs(3){"Oups - step is #{var._step.inspect}"}
+      dputs(3){"Oups - step is #{var._step.inspect}"}
     end
     
     var._step += 1
     session.s_data[:print_student] = var
-    ddputs(3){"Ret is #{ret.inspect}"}
+    dputs(3){"Ret is #{ret.inspect}"}
     return ret
   end
 
@@ -350,7 +350,7 @@ class CourseModify < View
   
   def update_layout( session )
     if not @resps
-      ddputs(3){"Making responsible-cache"}
+      dputs(3){"Making responsible-cache"}
       @resps = Persons.search_all.select{|p| 
         p.permissions and Permission.can_view( p.permissions.reject{|perm| perm.to_s == "admin"}, 
           "FlagResponsible" )
@@ -364,7 +364,7 @@ class CourseModify < View
         [p.person_id, p.full_name]
       }.sort{|a,b| a.last <=> b.last}
     else
-      ddputs(3){"Lazily using responsible-cache"}
+      dputs(3){"Lazily using responsible-cache"}
     end
     
     fields = %w( teacher assistant responsible )

@@ -40,9 +40,9 @@ class CashboxCourse < View
     if data._payment_date
       @date_pay = Date.parse( data._payment_date )
     end
-    ddputs(3){"Data is #{data.inspect}"}
+    dputs(3){"Data is #{data.inspect}"}
     if data._cash.to_i != 0
-      ddputs(3){ "Paying #{data._cash} to #{data._students.full_name} of " +
+      dputs(3){ "Paying #{data._cash} to #{data._students.full_name} of " +
           "#{data._courses.name}"}
     end
     rpc_list_choice_students( session, data )

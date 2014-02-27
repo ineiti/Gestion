@@ -37,12 +37,12 @@ class ComptaCourse < View
   end
   
   def rpc_button_save( session, data )
-    ddputs(4){"save with #{data.inspect} - #{data._courses} - #{data._account_path}"}
+    dputs(4){"save with #{data.inspect} - #{data._courses} - #{data._account_path}"}
     reply( :empty, :new_account_path ) +
       if course = data._courses
       if ap = data._account_path and
         acc = Accounts.find_by_path(ap)
-      ddputs(3){"New account at #{ap} is #{acc.inspect} - #{acc.path}"}
+      dputs(3){"New account at #{ap} is #{acc.inspect} - #{acc.path}"}
       course.entries = acc
       reply( :update, :account_path => acc.path )
       elsif course.entries
@@ -74,9 +74,9 @@ class ComptaCourse < View
   end
   
   def rpc_list_choice( session, name, data )
-    ddputs(4){"name is #{name} - data is #{data.inspect}"}
+    dputs(4){"name is #{name} - data is #{data.inspect}"}
     if course = data._courses
-      ddputs(3){"Course is #{course.inspect}"}
+      dputs(3){"Course is #{course.inspect}"}
       reply( :empty, [:account_path] ) +
         if course.entries
         reply( :update, :account_path => course.entries.path )
