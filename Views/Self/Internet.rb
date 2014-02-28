@@ -30,8 +30,13 @@ class SelfInternet < View
     elsif Internet.free( session.owner )
       return 0
     else
-      return session.owner.internet_credit.to_i >= $lib_net.print( :USER_COST_MAX ).to_i ? 
-        0 : 1
+      if session.owner and session.owner.internet_credit
+        return session.owner.internet_credit.to_i >= $lib_net.print( :USER_COST_MAX ).to_i ? 
+          0 : 1
+      else
+        dputs(0){"Error: Called with session.owner == nil! #{session.inspect}"}
+        return 1
+      end
     end
   end
 	
@@ -69,6 +74,10 @@ class SelfInternet < View
     if nobutton
       return reply( :hide, :connect ) +
         reply( :hide, :disconnect )
+    end
+    if not session.owner
+      dputs(0){"Error: no owner for session #{session.inspect}"}
+      return
     end
     show_button = :connect
     connected = $lib_net.call( :user_connected, session.owner.login_name )

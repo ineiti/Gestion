@@ -37,7 +37,7 @@ class PersonAdmin < View
   end
 
   def rpc_button( session, name, data )
-    dputs( 0 ){ "Pressed button #{name} with #{data.inspect}" }
+    dputs( 1 ){ "Pressed button #{name} with #{data.inspect}" }
     person = Persons.match_by_person_id( data['person_id'] )
     rep = reply( 'empty' )
     if person

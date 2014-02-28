@@ -226,6 +226,10 @@ To check:
 
 
 ** FIXED **:
+        - B 140228: Bug in View.Self.Internet that is called from a stale
+            session
+        - B 140228: Different small bugs that need to be tracked down
+        - B 140227: Small bugs in display, View
         - UI140212: Put most important actions in dbg-level 1:
           - creation of users, courses
           - attribution of users to courses
