@@ -32,10 +32,10 @@ class TC_Person < Test::Unit::TestCase
   def setup
     #Permission.add( 'default', '.*' )
 
-    dputs(0){"Setting up"}
+    dputs(1){"Setting up"}
     Entities.delete_all_data()
 
-    dputs(0){"Resetting SQLite"}
+    dputs(2){"Resetting SQLite"}
     SQLite.dbs_close_all
     FileUtils.cp( "db.testGestion", "data/compta.db" )
     SQLite.dbs_open_load_migrate
@@ -82,16 +82,16 @@ class TC_Person < Test::Unit::TestCase
 
     surf_credit = @surf.internet_credit.to_i
     josue_due = @josue.account_total_due.to_i
-    dputs( 0 ){ "surf_credit: #{surf_credit} - josue_due: #{josue_due}" }
+    dputs( 1 ){ "surf_credit: #{surf_credit} - josue_due: #{josue_due}" }
     # Josue puts 500 on "surf"s account
     View.PersonCredit.rpc_button( session, "add_credit",
       {'person_id' => 2, 'login_name' => 'surf', 'credit_add' => 500 } )
     assert_equal 500, @surf.internet_credit.to_i - surf_credit, "Credit"
     assert_equal 500, @josue.account_total_due.to_i - josue_due, "account_total_due"
-    dputs( 0 ){ "surf.log_list is #{@surf.log_list.inspect}" }
-    dputs( 0 ){ "josue.log_list #{@josue.log_list.inspect}" }
+    dputs( 1 ){ "surf.log_list is #{@surf.log_list.inspect}" }
+    dputs( 1 ){ "josue.log_list #{@josue.log_list.inspect}" }
     log_list = [ @surf.log_list.last, @josue.log_list.last]
-    dputs( 0 ){ "log_list #{log_list.inspect}" }
+    dputs( 1 ){ "log_list #{log_list.inspect}" }
     log_list.undate
     log_list.unlogid
     assert_equal( {:data_class_id=>3, :data_field=>:internet_credit, :data_value=>"500",

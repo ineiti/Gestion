@@ -7,7 +7,7 @@ class TC_info < Test::Unit::TestCase
     @info = Info.new
     Entities.delete_all_data()
 
-    dputs(0){"Resetting SQLite"}
+    dputs(1){"Resetting SQLite"}
     SQLite.dbs_close_all
     FileUtils.cp( "db.testGestion", "data/compta.db" )
     SQLite.dbs_open_load_migrate
@@ -21,6 +21,6 @@ class TC_info < Test::Unit::TestCase
   end
 
   def test_clientuse
-    dputs(0){ Info.clientUse({:user => "admin"}).to_s }
+    dputs(1){ Info.clientUse({:user => "admin"}).to_s }
   end
 end

@@ -87,8 +87,10 @@ class TC_Course < Test::Unit::TestCase
     RPCQooxdooHandler.request( 1, "View.CourseModify", "button", [["default", "create_new",
           {"name" => "net_1001", "double_name" => "Dmin A"}]])
     courses_admin2 = Entities.Courses.search_by_students( "admin2" )
+    courses_admin3 = Entities.Courses.search_by_students( "admin3" )
     courses_surf = Entities.Courses.search_by_students( "surf" )
-    assert_equal 2, courses_admin2.length
+    assert_equal 1, courses_admin2.length, Courses.search_all.inspect
+    assert_equal 1, courses_admin3.length, Courses.search_all.inspect
     assert_equal 3, courses_surf.length
   end
 
@@ -136,7 +138,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal 10, @grade_admin.mean
     assert_equal %w( 01.02.2003 04.05.2003 04.06.2003 72 admin secretaire ),
       course.data_get( %w( start end sign duration teacher responsible ) )
-    dputs( 0 ){ @course.inspect }
+    dputs( 1 ){ @course.inspect }
   end
 
   def test_print_presence
@@ -145,10 +147,10 @@ class TC_Course < Test::Unit::TestCase
   
   def test_person_courses
     courses = Entities.Courses.list_courses_for_person( @admin )
-    assert_equal [[3, "maint_1204"]], courses
+    assert_equal [[@maint.id, "maint_1204"]], courses
 
     courses = Entities.Courses.list_courses_for_person( @admin.login_name )
-    assert_equal [[3, "maint_1204"]], courses
+    assert_equal [[@maint.id, "maint_1204"]], courses
   end
   
   def test_new_course
@@ -173,7 +175,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal( {:ctype=>[2],
         :course_id=>9,
         :students=>[],
-        :center=>[4],
+        :center=>[@center.id],
         :name=>"foo_it-101_1202",
         :contents => "it-101",
         :description=>"windows, word, excel"}, it_101.to_hash)

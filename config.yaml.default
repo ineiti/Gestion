@@ -65,6 +65,7 @@ Entities:
 #    student_card: student_card.odg
 #    adduser_cmd: Binaries/adduser_to_buzz
 #    cmd_after_new: Binaries/update_users
+#    admin_users: false
 
 LDAPConfig:
 #  array: host, base, root, group_users, password

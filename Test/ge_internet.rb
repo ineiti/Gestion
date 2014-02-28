@@ -41,7 +41,7 @@ class LibNet
       when :USAGE_DAILY
         return 10.0
       else
-        dputs(0) { "Undefined value #{v.inspect}" }
+        dputs(1) { "Undefined value #{v.inspect}" }
     end
   end
 
@@ -78,7 +78,7 @@ class TC_Internet < Test::Unit::TestCase
     @test2 = Persons.create(:login_name => "test2", :internet_credit => 50)
     @free = Persons.create(:login_name => "free", :internet_credit => 50,
                            :groups => ['freesurf'])
-    dputs(0) { "#{@test.inspect}" }
+    dputs(1) { "#{@test.inspect}" }
   end
 
   def teardown

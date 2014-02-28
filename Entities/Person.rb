@@ -24,7 +24,7 @@ end
 
 
 class Persons < Entities
-  attr :print_card
+  attr :print_card, :admin_users
   self.needs :Courses
 
   def setup_data
@@ -69,6 +69,8 @@ class Persons < Entities
     if !File.exist? cdir
       FileUtils::mkdir(cdir)
     end
+    
+    defined? @admin_users or @admin_users = true
     @student_card ||= "student_card.odg"
     @print_card = OpenPrint.new(
       "#{ddir}/#{@student_card}", cdir)
@@ -465,8 +467,10 @@ class Person < Entity
   def update_smb_passwd(pass = password)
     if ConfigBase.has_function?(:share) and (groups and groups.index("share"))
       if not @proxy.has_storage? :LDAP
-        %x[ if which adduser; then adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name};
+        if Persons.admin_users
+          %x[ if which adduser; then adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name};
             else useradd #{self.login_name}; fi ]
+        end
       end
       dputs(1) { "Changing password in Samba to #{pass}" }
       dputs(3) { "( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name}" }
@@ -727,7 +731,7 @@ class Person < Entity
       if !Kernel.system("ldapdeleteuser #{self.login_name}")
         dputs(0) { "Error: couldn't delete user #{self.inspect}" }
       end
-    else
+    elsif Persons.admin_users
       %x[ if which deluser; then deluser #{self.login_name}; else
           userdel #{self.login_name}; fi ]
     end
