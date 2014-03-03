@@ -11,12 +11,8 @@ StorageHandler:
 
 #locale_force: fr
 
-#log: events.log
-
 #autosave: true
 #  timer: 120
-
-#showTime: true
 
 OpenPrint:
 #  simulation: true
@@ -78,4 +74,10 @@ LDAPConfig:
 #  Here you can have some welcome-text
 #  with <a href="http://profeda.org">Links</a>
 
-#terminal_width: 160
+#showTime: true
+#DPuts:
+#  terminal_width: 160
+#  silent: false
+#  show_time: sec
+#  log: events.log
+

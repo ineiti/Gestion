@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 140303: 1.3.6
+  - Changes in config.yaml - :log and :terminal_width moved under :DPuts
+
 - 131028: 1.2.2-alpha
   - Changes in QooxView: needs to run Config/install, for different docsplit-libs
 
