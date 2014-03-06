@@ -48,6 +48,8 @@ AfriCompta:
 Views:
 #  CourseTabs:
 #    order: 0
+#  Welcome:
+#    direct_internet: true
 
 Entities:
   Courses:
@@ -63,21 +65,18 @@ Entities:
 #    cmd_after_new: Binaries/update_users
 #    admin_users: false
 
-LDAPConfig:
-#  array: host, base, root, group_users, password
-#  ldapscripts: /etc/ldapscripts/ldapscripts.conf
-#  ldapsecret: /etc/ldap.secret
-
-
-
-#welcome_text: |
-#  Here you can have some welcome-text
-#  with <a href="http://profeda.org">Links</a>
-
-#showTime: true
 #DPuts:
 #  terminal_width: 160
 #  silent: false
 #  show_time: sec
 #  log: events.log
+
+LDAPConfig:
+#  array: host, base, root, group_users, password
+#  ldapscripts: /etc/ldapscripts/ldapscripts.conf
+#  ldapsecret: /etc/ldap.secret
+
+#welcome_text: |
+#  Here you can have some welcome-text
+#  with <a href="http://profeda.org">Links</a>
 

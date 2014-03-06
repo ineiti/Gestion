@@ -1,7 +1,7 @@
 class SelfInternet < View
   def layout
     set_data_class :Persons
-    @order = 10
+    @order = 1000
     @update = true
     @auto_update = 10
     @auto_update_send_values = false

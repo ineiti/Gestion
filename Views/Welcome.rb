@@ -53,6 +53,23 @@ class Welcome < View
         reply( :update, :reason => person ? "Password wrong" : "User doesn't exist" )
     end
   end
+  
+  def rpc_button_connect( session, args )
+    ret = rpc_button_login( session, args )
+    if ret.first._cmd == :window_show
+      return ret
+    else
+      session = Sessions.find_by_sid( ret.first._data )
+      ddputs(2){"Found session #{session.inspect} for #{ret.first.inspect}"}
+      if View.SelfInternet.can_connect( session ) == 0
+        ddputs(2){"Auto-connecting #{session.owner.login_name}"}
+        View.SelfInternet.rpc_button_connect( session, nil )
+      end
+      return ret +
+        reply( :switch_tab, :SelfTabs ) +
+        reply( :switch_tab, :SelfInternet )
+    end
+  end
 
   # On logout
   def rpc_button_logout( session )

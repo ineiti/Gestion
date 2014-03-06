@@ -32,6 +32,8 @@ BUGS:
 Security:
 
 UI:
+        - Slowness in CourseGrade when saving students
+          - don't "update" uidnumber, sn and givenname if not needed
         - Add async-requests (for Self::Internet and Admin::Tigo)
         - Put adding of students and printing as background-tasks
 
