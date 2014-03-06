@@ -65,9 +65,13 @@ class Welcome < View
         View.SelfInternet.rpc_button_connect( session, nil )
       end
       tabs = View.list( session )._views
+      ddputs(3){"Tabs starts as #{tabs.inspect}"}
       selftabs = tabs.find{|v| v.first == "SelfTabs" }
       tabs.delete_if{|v| v.first == "SelfTabs" }
-      tabs.unshift selftabs
+      if selftabs
+        tabs.unshift selftabs
+      end
+      ddputs(3){"Tabs is now #{tabs.inspect}"}
       return [ret[0]] +
         reply( :list, :views => tabs ) +
         reply( :switch_tab, :SelfInternet )
