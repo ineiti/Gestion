@@ -60,13 +60,16 @@ class Welcome < View
       return ret
     else
       session = Sessions.find_by_sid( ret.first._data )
-      ddputs(2){"Found session #{session.inspect} for #{ret.first.inspect}"}
       if View.SelfInternet.can_connect( session ) == 0
-        ddputs(2){"Auto-connecting #{session.owner.login_name}"}
+        dputs(2){"Auto-connecting #{session.owner.login_name}"}
         View.SelfInternet.rpc_button_connect( session, nil )
       end
-      return ret +
-        reply( :switch_tab, :SelfTabs ) +
+      tabs = View.list( session )._views
+      selftabs = tabs.find{|v| v.first == "SelfTabs" }
+      tabs.delete_if{|v| v.first == "SelfTabs" }
+      tabs.unshift selftabs
+      return [ret[0]] +
+        reply( :list, :views => tabs ) +
         reply( :switch_tab, :SelfInternet )
     end
   end
