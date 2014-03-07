@@ -27,6 +27,7 @@ Exas/
 po/*mo
 po/*pot
 tmp/
+po/*/*
 
 Test/share_test
 Doc/.backup
