@@ -141,6 +141,7 @@ class CourseDiploma < View
     if ( names = args['diplomas_t'] ).length > 0
       course_id = args['courses'][0]
       course = Courses.match_by_course_id(course_id)
+      log_msg :diploma, "Printing #{course.name}"
 
       files = names.collect{|f|
         file = "#{course.dir_diplomas}/#{f}"

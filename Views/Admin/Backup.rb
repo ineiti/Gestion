@@ -26,6 +26,7 @@ class AdminBackup < View
 	
   def rpc_button_do_backup( session, data )
     Entities.save_all
+    log_msg :backup, "Creating new backup"
     `#{GESTION_DIR}/Binaries/backup`
     reply( :empty, [ :backups ] ) + 
       reply( :update, :backups => list_backups )

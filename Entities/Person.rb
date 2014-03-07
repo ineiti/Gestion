@@ -159,7 +159,7 @@ class Persons < Entities
     end
     d[:login_name] = find_empty_login_name(d[:login_name])
     d[:person_id] = nil
-    dputs(1) { "Creating Person #{d.inspect}" }
+    log_msg :person, "Creating Person #{d.inspect}"
 
     person = super(d, true)
 
@@ -472,7 +472,7 @@ class Person < Entity
             else useradd #{self.login_name}; fi ]
         end
       end
-      dputs(1) { "Changing password in Samba to #{pass}" }
+      log_msg :person, "Changing password in Samba to #{pass}"
       dputs(3) { "( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name}" }
       %x[ ( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name} ]
     end
@@ -503,7 +503,6 @@ class Person < Entity
     pay_service(internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
     log_msg("AddCash", "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
         "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}")
-    #log_msg( "AddCash", "Total due: #{data_get :account_total_due}")
     log_msg("AddCash", "Total due: #{account_total_due}")
   end
 
@@ -563,7 +562,7 @@ class Person < Entity
       dputs(2) { "Hashed password for #{self.login_name} is: #{pass}" }
     end
     update_smb_passwd(pass)
-    dputs(1) { "Setting password (#{pass}) for #{self.login_name} to #{p}" }
+    log_msg :person, "Setting password (#{pass}) for #{self.login_name} to #{p}"
     self._password = p
     if (permissions and permissions.index("center")) or
         (groups and groups.index("share")) or

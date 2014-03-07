@@ -165,7 +165,7 @@ class Courses < Entities
           "::#{course.name}")
     end
     
-    dputs(1){"Created new course #{course.inspect}"}
+    log_msg :course, "Created new course #{course.inspect}"
     return course
   end
 
@@ -1068,6 +1068,6 @@ base_gestion
   
   def students=( s )
     super( s )
-    dputs( 1 ){ "Students for #{name} are: #{students.inspect}"}
+    log_msg :course, "Students for #{name} are: #{students.inspect}"
   end
 end

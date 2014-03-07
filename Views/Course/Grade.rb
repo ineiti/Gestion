@@ -175,8 +175,8 @@ class CourseGrade < View
           :student => student,
           :means => means,
           :remark => data['remark']})
-      dputs(1){"Added grades #{means.inspect} to #{student.login_name} " +
-          "with remark -#{data._remark}-" }
+      log_msg :grades, "Added grades #{means.inspect} to #{student.login_name} " +
+          "with remark -#{data._remark}-"
       if data['first_name']
         Entities.Persons.save_data({:person_id => student.person_id,
             :first_name => data['first_name'], :family_name => data['family_name']})
@@ -249,6 +249,7 @@ class CourseGrade < View
   end
 
   def rpc_button_sync_server( session, data )
+    log_msg :grade, "Syncing with server"
     if course = Courses.match_by_course_id( data['courses'][0])
       course.sync_start
 

@@ -8,7 +8,7 @@ Encoding.default_external = Encoding::UTF_8
 # - Login: - for payable laptop web-access
 #          - for students
 
-DEBUG_LVL=1
+DEBUG_LVL=2
 VERSION_GESTION="1.3.6"
 require 'fileutils'
 
@@ -128,10 +128,14 @@ rescue DRb::DRbConnError
   dputs(0){ "Error: Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
   exit
 rescue Exception => e
-  dputs(0){ "Error: Couldn't load LibNet!" }
-  dputs( 0 ){ "#{e.inspect}" }
-  dputs( 0 ){ "#{e.to_s}" }
-  puts e.backtrace
+  case e.to_s
+  when /UpdatePot|MakeMo|PrintHelp/
+  else
+    dputs(0){ "Error: Couldn't load LibNet!" }
+    dputs( 0 ){ "#{e.inspect}" }
+    dputs( 0 ){ "#{e.to_s}" }
+    puts e.backtrace
+  end
   exit
 end
 
@@ -188,7 +192,7 @@ else
     }
   end
   
-  if get_config( true, :showTime )
+  if get_config( false, :showTime )
     dputs(1){"Showing time"}
     $internet = Thread.new{
       loop {
@@ -204,7 +208,7 @@ else
 
   catch :ctrl_c do
     begin
-      dputs( 1 ){ "Started Gestion at #{Time.now.strftime( "%Y-%m-%d %H:%M" )} on port #{webrick_port}" }
+      log_msg :main, "Started Gestion on port #{webrick_port}"
       QooxView::startWeb webrick_port
     rescue Exception => e
       dputs( 0 ){ "Error: QooxView aborted" }

@@ -47,6 +47,7 @@ class PersonModify < View
             reply( :update, :password_plain => person.password_plain )
         end
       when "save"
+        log_msg :persons, "#{session.owner.login_name} saves #{data.inspect}"
         rep = reply( 'update', Persons.save_data( data ) )
       when "print_student"
         rep = rpc_print( session, name, data )

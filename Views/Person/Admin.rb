@@ -21,13 +21,6 @@ class PersonAdmin < View
             gui_vbox :nogroup do
               show_field :groups
             end
-=begin
-            gui_vbox :nogroup do
-              show_field :internet_none
-              show_fromto :internet_block
-              show_button :add_block, :del_block
-            end
-=end
           end
         end
         show_button :save
@@ -62,6 +55,7 @@ class PersonAdmin < View
         # "internet_none" only reflects chosen entries, not the available ones per se!
         #       rep += reply( 'update', Persons.save_data( data ) )
         # data.delete("internet_none")
+        log_msg :persons, "#{session.owner.login_name} saves #{data.inspect}"
         Persons.save_data( data )
         person.update_accounts
       end

@@ -25,6 +25,8 @@ class ComptaTransfer < View
     other = Persons.match_by_person_id( data["person_list"][0] )
     dputs(3){"Other is #{other.inspect}, id is #{data["person_list"].to_s.inspect}"}
     amount = ( other.account_due.total.to_f * 1000 ).to_i
+    log_msg :comptatransfer, "#{session.owner.login_name} gets #{amount} from " +
+      "#{other.login_name}"
     session.owner.get_cash( other, amount )
     
     vtlp_update_list( session ) + rpc_update( session )

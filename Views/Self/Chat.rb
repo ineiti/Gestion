@@ -5,8 +5,8 @@ class SelfChat < View
   def layout
     @@box_length = 40
     @@disc = Entities.Statics.get( :SelfChat )
-    @@disc.data_str.length < @@box_length and @@disc.data_str = 
-      Array.new(@@box_length, "")
+    @@disc.data_str.length < @@box_length and
+      @@disc.data_str = Array.new(@@box_length, "")
     @order = 100
     @update = true
     @auto_update = 10
@@ -34,7 +34,7 @@ class SelfChat < View
 	
   def rpc_button_send( session, data )
     @@disc.data_str.push( "#{Time.now.strftime('%H:%M')} - " +
-     "#{session.owner.login_name}: #{data['talk']}" )
+        "#{session.owner.login_name}: #{data['talk']}" )
     reply( :empty, [:talk] ) +
       rpc_update( session )
   end

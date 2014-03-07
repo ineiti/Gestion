@@ -153,6 +153,7 @@ class SelfInternet < View
 
   def rpc_button_connect( session, data )
     if session.web_req
+      log_msg :internet, "#{session.owner.login_name} connects"
       $lib_net.async( :user_connect, "#{session.client_ip} #{session.owner.login_name}" )
       rpc_update( session, true )
     end
@@ -160,6 +161,7 @@ class SelfInternet < View
 
   def rpc_button_disconnect( session, data )
     if session.web_req
+      log_msg :internet, "#{session.owner.login_name} disconnects"
       $lib_net.async( :user_disconnect_name, "#{session.owner.login_name}" )
       rpc_update( session, true )
     end

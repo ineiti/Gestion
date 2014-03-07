@@ -2,6 +2,7 @@ class Welcome < View
   def dummy_for_translation
     show_str :username
     show_str :version
+    show_str :direct_connect
   end
 
   # Overwrite the standard rpc_show to speed up testing...
@@ -54,7 +55,7 @@ class Welcome < View
     end
   end
   
-  def rpc_button_connect( session, args )
+  def rpc_button_direct_connect( session, args )
     ret = rpc_button_login( session, args )
     if ret.first._cmd == :window_show
       return ret

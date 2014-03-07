@@ -134,6 +134,8 @@ class CourseTabs < View
     course.responsible = Persons.find_by_permissions( "director" ) || 
       course.teacher
 
+    log_msg :coursetabs, "Adding new course #{course.inspect}"
+
     reply( :window_hide ) +
       View.CourseTabs.rpc_update( session ) +
       reply( :update, { :courses => [ course.course_id ] } )

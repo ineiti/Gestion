@@ -8,3 +8,15 @@
   endscript
   nocompress
 }
+
+/var/log/gestion/events.log {
+  daily
+  copytruncate
+  rotate 30
+  mail root@localhost
+  prerotate
+    mail -s "Events from $( hostname )" -a /var/log/gestion/events.log ineiti@profeda.org
+  endscript
+  nocompress
+}
+

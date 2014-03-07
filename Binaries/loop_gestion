@@ -41,9 +41,9 @@ pkill -9 -f "tail -f $LOG"
 tail -f $LOG &
 while [ ! -f $STOP ]; do
   now=$( date +%s )
-  if which -s unbuffer; then
+  if which unbuffer > /dev/null; then
     PRE="unbuffer"
-  elif which -s stdbuf; then
+  elif which stdbuf >  /dev/null; then
     PRE="stdbuf -oL -eL"
   else
     PRE=""
