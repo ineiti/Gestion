@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ ! "$( pgrep -f 'ruby.*Gestion' )" ]; then
+  logger Not found Gestion - restarting
+#  /var/www/Gestion/Binaries/start_gestion
+else
+  logger Gestion here
+fi
