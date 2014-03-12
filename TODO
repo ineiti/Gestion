@@ -228,6 +228,8 @@ To check:
 
 
 ** FIXED **:
+        - B 140312: Archiving was misled under some circumstances
+        - F 140312: Reporting of chosen account and sub-accounts
         - B 140228: Bug in View.Self.Internet that is called from a stale
             session
         - B 140228: Different small bugs that need to be tracked down
