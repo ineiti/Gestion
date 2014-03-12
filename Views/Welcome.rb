@@ -61,6 +61,10 @@ class Welcome < View
       return ret
     else
       session = Sessions.find_by_sid( ret.first._data )
+      if ! session or ! session.owner
+        return reply( :window_show, :login_failed ) +
+          reply( :update, :reason => "Please enter a valid login" )
+      end
       if View.SelfInternet.can_connect( session ) == 0
         dputs(2){"Auto-connecting #{session.owner.login_name}"}
         View.SelfInternet.rpc_button_connect( session, nil )

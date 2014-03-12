@@ -3,6 +3,7 @@ class ComptaShow < View
   def layout
     @visible = true
     @count = 1
+    @rpc_update = true
     
     if Module.constants.index :ACQooxView
       set_data_class :Accounts
@@ -14,12 +15,13 @@ class ComptaShow < View
       end
       gui_vbox do
         show_int :total
+        show_str :desc
         show_button :report_movements
       end
-    end
-    gui_window :get_report do
-      show_html :txt
-      show_button :close
+      gui_window :get_report do
+        show_html :txt
+        show_button :close
+      end
     end
     
   end
@@ -28,10 +30,14 @@ class ComptaShow < View
     if acc = data._account_list
       ddputs(3){"Got account #{acc.path}"}
       file = "/tmp/report_movs_#{@count += 1}.pdf"
-      acc.print_account( file, true )
-      reply( :show_window, :get_report ) +
+      acc.print_pdf( file, true )
+      reply( :window_show, :get_report ) +
         reply( :update, :txt => "Get the report:<br>" +
-        "<a href='/tmp/#{file}'>#{file}</a>")
+          "<a href='#{file}' target='other'>#{file}</a>")
     end
+  end
+  
+  def rpc_button_close( session, data )
+    reply( :window_hide )
   end
 end

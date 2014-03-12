@@ -29,7 +29,7 @@ class AdminInternet < View
   end
 
   def auto_disconnect_get
-    dputs( 0 ){ "Auto disconenct with #{@file_ad} and #{File.exists? @file_ad}" }
+    dputs( 3 ){ "Auto disconenct with #{@file_ad} and #{File.exists? @file_ad}" }
     File.exists?( @file_ad ) ? "Yes" : "No"
   end
 
@@ -74,7 +74,7 @@ class AdminInternet < View
   end
 
   def rpc_list_choice( session, name, *args )
-    dputs( 0 ){ args.inspect }
+    dputs( 3 ){ args.inspect }
     if args[0]['auto_disconnect']
       value = args[0]['auto_disconnect'][0]
       dputs( 3 ){ "Going to set #{value}" }

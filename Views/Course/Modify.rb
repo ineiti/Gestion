@@ -105,7 +105,7 @@ class CourseModify < View
   end
 
   def rpc_button_edit_student( session, data )
-    dputs( 0 ){ "data is: #{data.inspect}" }
+    dputs( 3 ){ "data is: #{data.inspect}" }
     login = data["students"][0]
     reply( "parent",
       reply( :init_values, [ :PersonTabs, { :search => login, :persons => [] } ] ) +

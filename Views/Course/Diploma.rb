@@ -111,7 +111,7 @@ class CourseDiploma < View
         ["000-all.pdf",["All diplomas", "", "", 
             pdf_link("#{course.name}/000-all.pdf")]]]
     else
-      dputs(0){course.get_files.inspect}
+      dputs(3){course.get_files.inspect}
       []
     end
 

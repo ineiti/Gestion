@@ -10,3 +10,4 @@ sleep 10
 logger -s "Killing old Gestion with -9"
 pkill -9 -f ruby.*Gestion
 pkill -9 -f tee.*gestion
+screen -wipe

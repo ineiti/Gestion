@@ -5,7 +5,7 @@
 
 class ComptaCourse < View
   def layout
-    @order = 0
+    @order = 50
     @update = true
     @functions_need = [:accounting_courses]
     

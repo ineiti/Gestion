@@ -66,7 +66,7 @@ class Grades < Entities
       g._means = [ g._mean || 0 ] * course.ctype.tests.to_i
       dputs(4){"means is #{g._means.inspect} - tests are #{course.ctype.tests.inspect}"}
     else
-      dputs(0){"Migrating without ctype for #{g.inspect}..."}
+      dputs(0){"Error: Migrating without ctype for #{g.inspect}..."}
       exit
     end
   end
@@ -123,7 +123,7 @@ class Grade < Entity
   end
   
   def person
-    dputs(0){"Deprecated - use student in #{caller.inspect}"}
+    dputs(0){"Error: Deprecated - use student in #{caller.inspect}"}
     student
   end
   

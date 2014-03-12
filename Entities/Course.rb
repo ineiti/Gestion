@@ -222,7 +222,7 @@ class Courses < Entities
             :mean => Grades.grade_to_mean( grade ), :remark => lines.shift )
         end
       end
-      dputs( 0 ){ "#{course.inspect}" }
+      dputs( 3 ){ "#{course.inspect}" }
     else
       import_old( lines )
     end
@@ -985,7 +985,7 @@ base_gestion
           dputs(4){"Setting grade-random of #{grade.grade_id} to #{random}"}
           grade.random = random
         else
-          dputs(0){"Can't find grade for #{course}-#{student}!"}
+          dputs(0){"Error: Can't find grade for #{course}-#{student}!"}
         end
       }
       @sync_state = sync_s += "OK</li>"

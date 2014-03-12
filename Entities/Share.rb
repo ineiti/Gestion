@@ -74,7 +74,7 @@ class Shares < Entities
       elsif File.exists? "/etc/systemd"
         Command::run( "systemctl restart smbd nmbd" )
       else
-        dputs(0){"Couldn't restart samba as there was no init.d-file"}
+        dputs(0){"Error: Couldn't restart samba as there was no init.d-file"}
       end
     end
   end

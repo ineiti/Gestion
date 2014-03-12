@@ -32,7 +32,7 @@ class CoursePrint < View
   end
   
   def rpc_button_print_presence( session, data )
-    dputs(0){"printing"}
+    dputs(3){"printing"}
     ret = rpc_print( session, :presence, data )
     lp_cmd = cmd_printer( session, :presence )
     if data['name'] and data['name'].length > 0
@@ -51,7 +51,7 @@ class CoursePrint < View
   end
   
   def print_exa( session, data, number )
-    dputs(0){"printing with #{data['courses'].inspect}"}
+    dputs(3){"printing with #{data['courses'].inspect}"}
     exa = "exa_#{number}".to_sym
     lp_cmd = cmd_printer( session, exa )
     ret = rpc_print( session, exa, data )

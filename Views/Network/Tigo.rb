@@ -73,7 +73,7 @@ class NetworkTigo < View
   def rpc_button_recharge( session, data )
     begin
       code = data['code'].gsub( /[^0-9]/, '' )
-      dputs( 0 ){ "Code is #{code}" }
+      dputs( 1 ){ "Code is #{code}" }
       $lib_net.async :isp_tigo_credit_add, code
     rescue NoMethodError
     end
