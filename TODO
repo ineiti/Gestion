@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - When adding teacher, he should show up in CourseModify-list
         - client/server:
           - Course::Grade - Syncing with server when course-type doesn't exist must
             return error

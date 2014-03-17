@@ -97,11 +97,14 @@ class CourseModify < View
   end
 
   def rpc_button_del_student( session, data )
-    course = Courses.match_by_name( data['name'] )
-    data['students'].each{|s|
-      course.students.delete( s )
-    }
-    update_students( course )
+    if course = Courses.match_by_name( data['name'] )
+      data['students'].each{|s|
+        course.students.delete( s )
+      }
+      update_students( course )
+    else
+      dputs(0){"Error: #{session.owner.inspect} managed to press button"}
+    end
   end
 
   def rpc_button_edit_student( session, data )

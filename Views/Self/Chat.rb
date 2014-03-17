@@ -35,6 +35,7 @@ class SelfChat < View
   def rpc_button_send( session, data )
     @@disc.data_str.push( "#{Time.now.strftime('%H:%M')} - " +
         "#{session.owner.login_name}: #{data['talk']}" )
+    log_msg "chat", "#{session.owner.login_name} says - #{data._talk}"
     reply( :empty, [:talk] ) +
       rpc_update( session )
   end

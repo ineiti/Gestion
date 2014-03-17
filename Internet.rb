@@ -44,7 +44,7 @@ module Internet
       if user
         dputs(3) { "Found user #{u}: #{user.full_name}" }
         if not (ag = AccessGroups.allow_user_now(u))[0]
-          dputs(2) { "Kicking user #{u} because of accessgroups: #{ag[1]}" }
+          log_msg "take_money", "Kicking user #{u} because of accessgroups: #{ag[1]}"
           $lib_net.call(:user_disconnect_name,
                         "#{user.login_name}")
         elsif self.free(user)
@@ -55,7 +55,7 @@ module Internet
             dputs(3) { "Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}" }
             user.internet_credit = user.internet_credit.to_i - cost
           else
-            dputs(2) { "User #{u} has not enough money left - kicking" }
+            log_msg "take_money", "User #{u} has not enough money left - kicking"
             $lib_net.call(:user_disconnect_name,
                           "#{user.login_name}")
           end
@@ -63,6 +63,9 @@ module Internet
       else
         dputs(0) { "Error: LibNet said #{u} is connected, but couldn't find that user!" }
       end
+    }
+    $lib_net.call(:users_disconnected).split.each{|u|
+      log_msg "take_money", "Kicked user #{u} because of inactivity"
     }
   end
 
