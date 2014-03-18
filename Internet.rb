@@ -4,7 +4,7 @@ Internet - an interface for the internet-part of Markas-al-Nour.
 
 module Internet
   def self.fetch_users
-    if (server = get_config(nil, :LibNet, :internetCash))
+    if (server = ConfigBase.internet_cash)
       begin
         ret = Net::HTTP.get(server, '/internetCash/fetch_users')
         users = JSON.parse(ret.body)
@@ -117,7 +117,10 @@ module Internet
   def self.free(user)
     isp = $lib_net.isp_params.to_sym
     dputs(3) { "isp is #{isp.inspect}" }
-    if isp._allow_free != "true"
+    case isp._allow_free
+    when /all/
+      return true
+    when /false/
       return false
     end
     if user.class != Person

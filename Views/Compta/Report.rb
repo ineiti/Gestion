@@ -28,7 +28,7 @@ class ComptaReport < View
   
   def rpc_button_report_movements( session, data )
     if acc = data._account_list
-      ddputs(3){"Got account #{acc.path}"}
+      dputs(3){"Got account #{acc.path}"}
       file = "/tmp/report_movs_#{@count += 1}.pdf"
       acc.print_pdf( file, true )
       reply( :window_show, :get_report ) +

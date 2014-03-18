@@ -51,17 +51,17 @@ class CashboxCourse < View
       [data._students != [], "Chose a student first"],
       [data._courses.entries != [], "Course has no account attached"],
       [data._cash.to_i != 0, "Enter an amount"]].each{|t,msg|
-      ddputs(3){"Testing #{t.inspect} - #{msg}"}
+      dputs(3){"Testing #{t.inspect} - #{msg}"}
       t or return reply( :window_show, :error ) +
         reply( :update, :msg => msg )
     }
       
-    ddputs(3){"Data is #{data.inspect}"}
+    dputs(3){"Data is #{data.inspect}"}
     if data._cash.to_i != 0
       log_msg "course-payment", "Paying #{data._cash} to #{data._students.full_name} of " +
         "#{data._courses.name}"
-      ddputs(3){"Owner is #{session.owner.inspect}"}
-      ddputs(3){"Putting from #{session.owner.account_due.path} to " +
+      dputs(3){"Owner is #{session.owner.inspect}"}
+      dputs(3){"Putting from #{session.owner.account_due.path} to " +
           "#{data._courses.entries}"
       }
       Movements.create( "For student #{data._students.login_name}:" +

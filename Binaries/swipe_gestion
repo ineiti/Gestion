@@ -2,11 +2,17 @@
 
 WDIR=$( dirname ${BASH_SOURCE[0]} )
 
-$WDIR/kill_gestion
-sleep 2
-rm -rf $WDIR/../data
-if [ "$1" ]; then
-  $WDIR/restore $1
+if [ "$1" = "-f" ]; then
+  shift
+  $WDIR/kill_gestion
+  sleep 2
+  mv $WDIR/../data /var/tmp/data.$( date +%s )
+  if [ "$1" ]; then
+    $WDIR/restore $1
+  else
+    $WDIR/start_gestion
+  fi
 else
-  $WDIR/start_gestion
+  echo Not doing swipe - use the '-f' parameter
+  exit 1
 fi

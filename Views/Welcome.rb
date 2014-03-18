@@ -20,7 +20,7 @@ class Welcome < View
         return nil
       end
     else
-      if ( version_local = get_config( "", :version_local ) ) != ""
+      if ( version_local = ConfigBase.version_local ) != ""
         version_local = "-#{version_local}"
       end
       super +

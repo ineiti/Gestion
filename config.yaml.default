@@ -7,10 +7,6 @@ StorageHandler:
   Replace:
     LDAP: CSV
 
-#version_local: orig
-
-#locale_force: fr
-
 #autosave: true
 #  timer: 120
 
@@ -32,11 +28,6 @@ Accounting:
 #  cash: Root::Cash
 #  service: Root::Income::Internet
 #  course: Root::Income::IT-Courses
-
-LibNet:
-#  URI: druby://localhost:9000
-#  simulation: false
-#  internetCash: cash.internet.com
 
 Samba:
   simulation: true
@@ -75,8 +66,4 @@ LDAPConfig:
 #  array: host, base, root, group_users, password
 #  ldapscripts: /etc/ldapscripts/ldapscripts.conf
 #  ldapsecret: /etc/ldap.secret
-
-#welcome_text: |
-#  Here you can have some welcome-text
-#  with <a href="http://profeda.org">Links</a>
 

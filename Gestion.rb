@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
-$LOAD_PATH.push( "../QooxView", ".", "../AfriCompta" )
+$LOAD_PATH.push( "../QooxView", ".", "../AfriCompta", "../LibNet" )
 Encoding.default_external = Encoding::UTF_8
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
@@ -31,7 +31,7 @@ def cleanup_data
   end
   puts "Making new backup and deleting everything in data/*"
   %x[ Binaries/backup 1rescue_ ]
-  exec "nohup Binaries/swipe_gestion #{youngest}"
+  exec "nohup Binaries/swipe_gestion -f #{youngest}"
   #FileUtils.rm_rf( "data" )
   #youngest and exec "nohup Binaries/restore #{ youngest } &"
   #%x[ echo Binaries/start_gestion | at now+1min ]
@@ -84,16 +84,6 @@ begin
       'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson', '' )
   Permission.add( 'admin', '.*', '.*' )
 
-  if uri = get_config( false, :LibNet, :URI )
-    dputs(2){ "Making DRB-connection to LibNet with #{uri}" }
-    require 'drb'
-    $lib_net = DRbObject.new nil, uri
-    dputs(1){ "Connection is #{$lib_net.status}" }
-  else
-    require "../LibNet/LibNet.rb"
-    $lib_net = LibNet.new( get_config( true, :LibNet, :simulation ) )
-  end
-
   QooxView::init( 'Entities', 'Views' )
 
   # Look for admin, create if it doesn't exist
@@ -123,14 +113,16 @@ begin
 
 rescue StorageLoadError
   cleanup_data
-rescue DRb::DRbConnError
-  dputs(0){ "Error: Connection to LibNet has been refused!" }
-  dputs(0){ "Error: Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
-  exit
+#rescue DRb::DRbConnError
+#  dputs(0){ "Error: Connection to LibNet has been refused!" }
+#  dputs(0){ "Error: Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
+#  exit
 rescue Exception => e
   case e.to_s
   when /UpdatePot|MakeMo|PrintHelp/
   else
+    puts e.inspect
+    puts e.backtrace
     dputs(0){ "Error: Couldn't load LibNet!" }
     dputs( 0 ){ "#{e.inspect}" }
     dputs( 0 ){ "#{e.to_s}" }
@@ -215,8 +207,6 @@ else
       dputs( 0 ){ "#{e.inspect}" }
       dputs( 0 ){ "#{e.to_s}" }
       puts e.backtrace
-      dputs( 1 ){ "Saving all" }
-      Entities.save_all
     end    
   end
 
@@ -224,7 +214,9 @@ else
     $autosave.kill
   end
   
-  $internet.kill
+  $internet and $internet.kill
+
+  Entities.save_all
 end
 
 

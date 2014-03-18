@@ -81,6 +81,7 @@ class TC_Internet < Test::Unit::TestCase
     @free = Persons.create(:login_name => "free", :internet_credit => 50,
       :groups => ['freesurf'])
     dputs(1) { "#{@test.inspect}" }
+    
   end
 
   def teardown
