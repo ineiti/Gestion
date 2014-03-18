@@ -21,8 +21,8 @@ module Internet
             u.groups = [:freesurf] if free
           else
             u = Persons.create(:login_name => user, :password => pass,
-                               :internet_credit => cash,
-                               :groups => (free ? [:freesurf] : []))
+              :internet_credit => cash,
+              :groups => (free ? [:freesurf] : []))
           end
         }
       rescue
@@ -46,7 +46,7 @@ module Internet
         if not (ag = AccessGroups.allow_user_now(u))[0]
           log_msg "take_money", "Kicking user #{u} because of accessgroups: #{ag[1]}"
           $lib_net.call(:user_disconnect_name,
-                        "#{user.login_name}")
+            "#{user.login_name}")
         elsif self.free(user)
           dputs(2) { "User #{u} goes free" }
         elsif $lib_net.call(:isp_connection_status).to_i >= 3
@@ -57,11 +57,12 @@ module Internet
           else
             log_msg "take_money", "User #{u} has not enough money left - kicking"
             $lib_net.call(:user_disconnect_name,
-                          "#{user.login_name}")
+              "#{user.login_name}")
           end
         end
       else
-        dputs(0) { "Error: LibNet said #{u} is connected, but couldn't find that user!" }
+        dputs(0) { "Error: LibNet said #{u} is connected, but couldn't find that user!" +
+            " Users connected: #{$lib_net.call(:useres_connected).inspect}"}
       end
     }
     $lib_net.call(:users_disconnected).split.each{|u|
@@ -154,24 +155,24 @@ class InternetCash < RPCQooxdooPath
     dputs(4) { "InternetCash: #{req.inspect} - #{req.path} - #{RPCQooxdooHandler.get_ip( req )}" }
     if req.request_method == "GET"
       case req.path
-        when /fetch_users/
-          user_list = []
-          Persons.search_all.each { |p|
-            credit = 0
-            if p.internet_credit.to_i > 0
-              credit = p.internet_credit.to_i
-              p.internet_credit = 0
-            end
-            free = Permission.can_view(p.permissions, "FlagInternetFree") or
-                Internet.active_course_for(p)
-            if free or credit > 0
-              dputs(3) { "Putting #{p.login_name} with credit #{credit} - #{free.inspect}" }
-              user_list.push [p.login_name, p.password, credit, free]
-            end
-          }
-          return user_list.to_json
-        else
-          dputs(0) { "Error: #{req.inspect} is not supported" }
+      when /fetch_users/
+        user_list = []
+        Persons.search_all.each { |p|
+          credit = 0
+          if p.internet_credit.to_i > 0
+            credit = p.internet_credit.to_i
+            p.internet_credit = 0
+          end
+          free = Permission.can_view(p.permissions, "FlagInternetFree") or
+            Internet.active_course_for(p)
+          if free or credit > 0
+            dputs(3) { "Putting #{p.login_name} with credit #{credit} - #{free.inspect}" }
+            user_list.push [p.login_name, p.password, credit, free]
+          end
+        }
+        return user_list.to_json
+      else
+        dputs(0) { "Error: #{req.inspect} is not supported" }
       end
     end
   end
