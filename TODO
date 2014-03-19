@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - CoursNote::sync - doesn't work if remote doesn't have "http://"
         - When adding teacher, he should show up in CourseModify-list
         - client/server:
           - Course::Grade - Syncing with server when course-type doesn't exist must
@@ -229,6 +230,9 @@ To check:
 
 
 ** FIXED **:
+        - B 140319: CoursNote::sync - doesn't use center-credentials as default, in fact
+          uses whatever the course has as center, which is wrong in a course-client
+          setting
         - F 140318: Configure more stuff through ConfigBase, with time only
           hold critical stuff (autologin, profiling, port) in config.yaml
         - B 140312: Archiving was misled under some circumstances

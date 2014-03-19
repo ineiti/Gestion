@@ -69,7 +69,7 @@ class CourseTabs < View
       if not session.can_view( 'FlagAdminCourse' )
         rep += reply( :hide, :delete ) + reply( :hide, :add )
       end
-      rep
+      rep + reply( :hide, :import )
     end    
   end
   

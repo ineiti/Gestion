@@ -14,7 +14,7 @@ class NetworkConnection < View
           show_list_drop :allow_free, "%w( true false all )"
         end
         gui_vbox :nogroup do
-          @multiconf.each{|m| show_str m.capitalize }
+          @multiconf.each{|m| show_str m.capitalize, :width => 200 }
         end
       end
       show_button :save_costs

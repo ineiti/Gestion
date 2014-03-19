@@ -125,10 +125,8 @@ class Courses < Entities
   end
   
   def self.create_ctype( ctype, date, creator = nil )
-    needs_center = ( ( ConfigBase.has_function?( :course_server ) and
-          ( creator and creator.has_permission?( :center ) ) ) or
-        ( ConfigBase.has_function?( :course_client ) and
-          ( ctype.diploma_type.first.to_sym == :accredited ) ) )
+    needs_center = ( ConfigBase.has_function?( :course_server ) and
+        ( creator and creator.has_permission?( :center ) ) )
     dputs(4){"needs_center is #{needs_center.inspect}" }
 
     # Prepare correct name
@@ -869,7 +867,7 @@ base_gestion
   def sync_send_post( field, data )
     path = URI.parse( "#{ctype.get_url}/" )
     post = { :field => field, :data => data }
-    dputs(4){"Sending to #{path.inspect}: #{data.inspect}"}
+    ddputs(3){"Sending to #{path.inspect}: #{data.inspect}"}
     err = ""
     (1..4).each{|i|
       begin
@@ -895,7 +893,7 @@ base_gestion
     end
     if t_array.length > 0
       pos = 0
-      dputs(4){"Going to transfer: #{t_array.inspect}"}
+      ddputs(3){"Going to transfer: #{t_array.inspect}"}
       tid = Digest::MD5.hexdigest( rand.to_s )
       ret = sync_send_post( :start, { :field => field, :chunks => t_array.length,
           :md5 => transfer_md5, :tid => tid,
@@ -919,10 +917,10 @@ base_gestion
   
   def sync_do( slow = false )
     @sync_state = sync_s = ""
-    dputs(3){@sync_state}
+    ddputs(3){@sync_state}
     slow and sleep 3
 
-    dputs(4){"Responsibles"}
+    ddputs(4){"Responsibles"}
     @sync_state = sync_s += "<li>Transferring responsibles: "
     users = [ teacher.login_name, responsible.login_name, center.login_name ]
     assistant and users.push assistant.login_name
@@ -1044,7 +1042,7 @@ base_gestion
     dputs(4){".center is #{_center.inspect}"}
     dputs(4){"Persons.center is #{Persons.find_by_permissions(:center).inspect}"}
     ret = _center || Persons.find_by_permissions( :center )
-    dputs(4){"Center is #{ret.login_name}"}
+    ddputs(4){"Center is #{ret.login_name}"}
     ret
   end
   
