@@ -1,5 +1,14 @@
 Important notices for versions:
 
+- 140319: 1.3.7
+  - Started to move stuff out of config.yaml and into ConfigBase:
+    - libnet_uri
+    - debug_lvl
+    - internet_cash
+    - locale_force
+    - version_local
+    - welcome_text
+
 - 140303: 1.3.6
   - Changes in config.yaml - :log and :terminal_width moved under :DPuts
 

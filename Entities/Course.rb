@@ -802,6 +802,7 @@ base_gestion
       %x[ test -d #{dir_exas} && mv #{dir_exas} /tmp ]
       FileUtils.mkdir dir_exas
 
+      dputs(3){"Opening zip-file #{file}"}
       Zip::File.open( file ){|z|
         students.each{|s|
           dir_zip_student = "#{dir_zip}/#{s}"

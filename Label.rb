@@ -49,6 +49,7 @@ class Label < RPCQooxdooPath
   def self.get_student( center, grade_id )
     dputs(3){"Printing student #{grade_id} of #{center}"}
     if grade = Grades.match_by_random( grade_id )
+      ddputs(3){ "Grade is #{grade.inspect}" }
       center_short = grade.course.name.sub(/_.*/, '' )
       dputs(3){"Center_short is #{center_short}"}
       center = center_short
@@ -59,7 +60,7 @@ class Label < RPCQooxdooPath
         if grade.remark =~ /^http:\/\//
           "Site web: <a href='#{grade.remark}'>#{grade.remark}</a>"
         else
-          "Avec mention: #{grade.remark}"
+          "Remarques: #{grade.remark}"
         end
       else
         ""
