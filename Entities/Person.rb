@@ -25,6 +25,7 @@ end
 
 class Persons < Entities
   attr :print_card, :admin_users
+  attr_reader :resps
   self.needs :Courses
 
   def setup_data
@@ -74,6 +75,7 @@ class Persons < Entities
     @student_card ||= "student_card.odg"
     @print_card = OpenPrint.new(
       "#{ddir}/#{@student_card}", cdir)
+    @resps = []
   end
 
   # Searches for an empty name starting with "login", adding 2, 3, 4, ...
@@ -333,6 +335,23 @@ class Persons < Entities
   def migration_4(p)
     p.gender = %w( n/a )
   end
+  
+  def responsibles( force_update = false )
+    if force_update or @resps.size == 0
+      dputs(3){"Making responsible-cache"}
+      @resps = Persons.search_all.select{|p| 
+        dputs(4){"Person #{p.login_name} has #{p.permissions.inspect}"}
+        p.permissions and Permission.can_view( p.permissions.reject{|perm| 
+            perm.to_s == "admin"}, "FlagResponsible" )
+      }
+      @resps = @resps.collect{|p|
+        [p.person_id, p.full_name]
+      }.sort{|a,b| a.last <=> b.last}
+    else
+      dputs(3){"Lazily using responsible-cache"}
+    end
+    @resps
+  end
 end
 
 
@@ -450,7 +469,12 @@ class Person < Entity
   end
 
   def permissions=(p)
+    has_teacher = self._permissions.concat(p).index( "teacher" )
+    dputs(3){"has_teacher is #{has_teacher} - permissions are #{p}"}
     self._permissions = p
+    if has_teacher
+      Persons.responsibles( true )
+    end
     update_accounts
   end
 

@@ -1,14 +1,16 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - CoursNote::sync - doesn't work if remote doesn't have "http://"
-        - When adding teacher, he should show up in CourseModify-list
         - client/server:
           - Course::Grade - Syncing with server when course-type doesn't exist must
             return error
-          - B 131113: server: when getting new course, ignore "room", check for center-id
+          - B 131113: server: when getting new course, ignore "room", check 
+            for center-id
           - server: error with regard to "assistant" - ??
           - transfert: also get "assistant", "dow" and "hours" - ??
+          - get course-types from server
+          - check for already transmitted documents and transmit one user at
+            the time
         - CoursePrint: error in printing
           - when clicking printer/pdf/printer it gets confused
           - when clicking on the left part of the button it gets ignored
@@ -16,7 +18,8 @@ BUGS:
 
         - when Network::Tigo::update is clicked, it is possible to change
           to Self-tab
-        - Verify correct disabling of tabs when waiting for answer
+          - Verify correct disabling of tabs when waiting for answer
+          - Add async-requests (for Self::Internet and Admin::Tigo)
         - LibNet has concurrency-troubles - use "flock" to mend it:
           ( flock -e 200; locked commands ) 200>/tmp/blah.lockfile
 
@@ -36,10 +39,8 @@ Security:
 UI:
         - Slowness in CourseGrade when saving students
           - don't "update" uidnumber, sn and givenname if not needed
-        - Add async-requests (for Self::Internet and Admin::Tigo)
         - Put adding of students and printing as background-tasks
 
-        - CourseModify::print_presence_sheet doesn't show exactly what is missing
         - Courses::center needs work:
           - it isn't shown in CourseModify, even with center_server
           - it is by default to responsible (at least installation from 130613)
@@ -230,6 +231,8 @@ To check:
 
 
 ** FIXED **:
+        - UI140329: CourseModify::print_presence_sheet doesn't show exactly what is missing
+        - B 140329: When adding teacher, he should show up in CourseModify-list
         - B 140319: CoursNote::sync - doesn't use center-credentials as default, in fact
           uses whatever the course has as center, which is wrong in a course-client
           setting

@@ -868,7 +868,7 @@ base_gestion
   def sync_send_post( field, data )
     path = URI.parse( "#{ctype.get_url}/" )
     post = { :field => field, :data => data }
-    ddputs(3){"Sending to #{path.inspect}: #{data.inspect}"}
+    dputs(3){"Sending to #{path.inspect}: #{data.inspect}"}
     err = ""
     (1..4).each{|i|
       begin
@@ -894,7 +894,7 @@ base_gestion
     end
     if t_array.length > 0
       pos = 0
-      ddputs(3){"Going to transfer: #{t_array.inspect}"}
+      dputs(3){"Going to transfer: #{t_array.inspect}"}
       tid = Digest::MD5.hexdigest( rand.to_s )
       ret = sync_send_post( :start, { :field => field, :chunks => t_array.length,
           :md5 => transfer_md5, :tid => tid,
@@ -918,10 +918,10 @@ base_gestion
   
   def sync_do( slow = false )
     @sync_state = sync_s = ""
-    ddputs(3){@sync_state}
+    dputs(3){@sync_state}
     slow and sleep 3
 
-    ddputs(4){"Responsibles"}
+    dputs(4){"Responsibles"}
     @sync_state = sync_s += "<li>Transferring responsibles: "
     users = [ teacher.login_name, responsible.login_name, center.login_name ]
     assistant and users.push assistant.login_name
@@ -1043,7 +1043,7 @@ base_gestion
     dputs(4){".center is #{_center.inspect}"}
     dputs(4){"Persons.center is #{Persons.find_by_permissions(:center).inspect}"}
     ret = _center || Persons.find_by_permissions( :center )
-    ddputs(4){"Center is #{ret.login_name}"}
+    dputs(4){"Center is #{ret.login_name}"}
     ret
   end
   

@@ -49,7 +49,7 @@ class TC_Person < Test::Unit::TestCase
     @secretary = Entities.Persons.create( :login_name => "secr",
       :permissions => ["secretary"] )
     @teacher = Entities.Persons.create( :login_name => "teacher",
-      :permissions => ["professor"] )
+      :permissions => ["teacher"] )
     @center = Persons.create( :login_name => "foo", :permissions => ["center"] )
 
     Entities.Services.create( :name => "surf", :price => 1000, :duration => 20 )
@@ -69,6 +69,15 @@ class TC_Person < Test::Unit::TestCase
     #permissions_init
     Entities.Persons.save
     Entities.LogActions.save
+  end
+  
+  def test_responsibles
+    resps = Persons.responsibles
+    assert_equal [[6, "foo"], [2, "josue"], [4, "secr"], [5, "teacher"]], resps
+    @surf.permissions = @surf.permissions + ["teacher"]
+    assert_equal [[6, "foo"], [2, "josue"], [4, "secr"], [3, "surf"], [5, "teacher"]],
+      Persons.responsibles
+    assert Persons.resps != []
   end
 
   def test_addcash
@@ -210,12 +219,13 @@ class TC_Person < Test::Unit::TestCase
   end
   
   def test_has_all_rights
-    assert_equal [".*", "FlagAddInternet", "Internet", "PersonModify",
-      "PersonShow", "View", "Welcome"], Permission.views( @josue.permissions )
-    assert_equal ["FlagAddInternet", "Internet", "PersonModify",
+    assert_equal [".*", "FlagAddInternet", "FlagResponsible", "Internet", 
+      "PersonModify", "PersonShow", "View", "Welcome" ], 
+      Permission.views( @josue.permissions )
+    assert_equal ["FlagAddInternet", "FlagResponsible", "Internet", "PersonModify",
       "PersonShow", "View", "Welcome"], Permission.views( @secretary.permissions )
     assert_equal ["View", "Welcome"], Permission.views( @surf.permissions )
-    assert_equal ["Internet", "PersonShow", "View", "Welcome"], 
+    assert_equal ["FlagResponsible", "Internet", "PersonShow", "View", "Welcome"], 
       Permission.views( @teacher.permissions )
     assert_equal true, @admin.has_all_rights_of( @josue )
     assert_equal true, @josue.has_all_rights_of( @admin )
@@ -229,8 +239,8 @@ class TC_Person < Test::Unit::TestCase
   
   def test_permission_sort
     assert_equal ["accountant", "admin", "center", "default", "internet",
-      "professor", "secretary", "student"], 
-      View.PersonAdmin.layout_find( "permissions" ).to_a[3][:list_values]
+      "secretary", "student", "teacher" ], 
+      View.PersonAdmin.layout_find( "permissions" ).to_a[3][:list_values].sort
   end
   
   def test_has_permission

@@ -64,7 +64,6 @@ class CourseModify < View
         show_button :save
       end
     end
-    @resps = nil
   end
 
   def rpc_button_save( session, data )
@@ -207,14 +206,21 @@ class CourseModify < View
     ret = rpc_print( session, :print_presence, data )
     lp_cmd = cmd_printer( session, :print_presence )
     if data['name'] and data['name'].length > 0
-      case rep = Courses.match_by_name( data['name'] ).print_presence( lp_cmd )
+      course = Courses.match_by_name( data['name'] )
+      case rep = course.print_presence( lp_cmd )
       when true
         ret + reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours" ) +
           reply( :hide, :print_next )
       when false
+        str = [ [ course.start, "start-date" ],
+          [ course.end, "end-date" ],
+          [ course.students.count > 0, "students" ] ].select{|t,s| ! t }.
+          collect{|t,s| "<li>#{s}</li>" }.join("")
+
         ret + reply( :window_show, :missing_data ) +
-          reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
+          reply( "update", :missing => "One of the following is missing:<ul>" +
+          "#{str}</ul>" )
       else
         ret + reply( :window_show, :missing_data ) +
           reply( "update", :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>" )
@@ -352,22 +358,11 @@ class CourseModify < View
   end
   
   def update_layout( session )
-    if not @resps
-      dputs(3){"Making responsible-cache"}
-      @resps = Persons.search_all.select{|p| 
-        p.permissions and Permission.can_view( p.permissions.reject{|perm| perm.to_s == "admin"}, 
-          "FlagResponsible" )
+    resps = Persons.responsibles
+    if session.owner.permissions.index( "center" )
+      resps.select!{|p|
+        p.login_name =~ /^#{session.owner.login_name}_/
       }
-      if session.owner.permissions.index( "center" )
-        @resps = resps.select{|p|
-          p.login_name =~ /^#{session.owner.login_name}_/
-        }
-      end
-      @resps = @resps.collect{|p|
-        [p.person_id, p.full_name]
-      }.sort{|a,b| a.last <=> b.last}
-    else
-      dputs(3){"Lazily using responsible-cache"}
     end
     
     fields = %w( teacher assistant responsible )
@@ -376,7 +371,7 @@ class CourseModify < View
       reply( :empty, fields ) +
       reply( :update, :assistant => [[0, "---"]]) +
       fields.collect{|p|
-      reply( :update, p => @resps )
+      reply( :update, p => resps )
     }.flatten
   end
   

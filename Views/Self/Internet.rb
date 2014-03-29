@@ -47,13 +47,18 @@ class SelfInternet < View
       status = $lib_net.call( :isp_connection_status )
       dputs(3){"Connection-status is #{status.inspect}"}
       status = status.to_i
-      status_str = %w( None PPP PAP IP VPN )
-      status_color = %w( ff0000 ff2200 ff5500 ffff88 88ff88 )
-      status_width = %w( 25 30 35 100 150 )
-      connection_status = "<td width='#{status_width[status]}" + 
-        "' bgcolor='" +
-        status_color[status] + "'>" + 
-        status_str[status] + "</td><td bgcolor='ffffff'></td>"
+      if (0..4).include? status.to_i 
+        status_str = %w( None PPP PAP IP VPN )
+        status_color = %w( ff0000 ff2200 ff5500 ffff88 88ff88 )
+        status_width = %w( 25 30 35 100 150 )
+        connection_status = "<td width='#{status_width[status]}" + 
+          "' bgcolor='" +
+          status_color[status] + "'>" + 
+          status_str[status] + "</td><td bgcolor='ffffff'></td>"
+      else
+        dputs(0){"Error: connection-status was #{status.inspect}"}
+        connection_status = "Comm-error"
+      end
 
       ret += reply( :update, :connection_status => 
           "Etat de la connexion:<br>" + 
@@ -133,6 +138,9 @@ class SelfInternet < View
     users = $lib_net.call(:users_connected)
     users_str = SelfInternet.make_users_str( users )
     dputs(4){"session is #{session.inspect}"}
+    if session.class != Session
+      dputs(0){"Called rpc_update without a session! #{caller.inspect}"}
+    end
     ret = reply( :update, update( session ) ) +
       update_button( session, nobutton ) +
       update_connection_status( session ) +

@@ -17,10 +17,11 @@ def permissions_init
   Permission.add( 'admin', '.*', '.*' )
   Permission.add( 'internet', 'Internet,PersonShow', 'default' )
   Permission.add( 'student', '', 'internet' )
-  Permission.add( 'professor', '', 'student' )
-  Permission.add( 'secretary', 'PersonModify,FlagAddInternet', 'professor' )
+  Permission.add( 'teacher', 'FlagResponsible', 'student' )
+  Permission.add( 'secretary', 'PersonModify,FlagAddInternet', 
+    'teacher' )
   Permission.add( 'accountant', 'FlagAccounting' )
-  Permission.add( 'center', 'FlagAddCenter', 'professor')
+  Permission.add( 'center', 'FlagAddCenter', 'teacher')
 end
 permissions_init
 
@@ -31,8 +32,8 @@ $lib_net = LibNet.new( true )
 QooxView.init( '../Entities', '../Views' )
 
 tests = %w( login view tasks internet info course person )
-#tests = %w( compta )
-tests = %w( configbase )
+tests = %w( person )
+#tests = %w( configbase )
 tests.each{|t|
   require "ge_#{t}"
 }
