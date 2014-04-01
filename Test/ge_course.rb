@@ -662,4 +662,28 @@ class TC_Course < Test::Unit::TestCase
     assert_equal [[2, "Admin The - admin2:super123"], 
       [4, "Internet Surfer - surf:super"]], @base.list_students( true )
   end
+  
+  def test_report_pdf
+    ConfigBase.add_function( :accounting_courses )
+    assert @secretaire.account_due
+    
+    ctype = CourseTypes.create( :name => "base" )
+    course = Courses.create_ctype( ctype, "1404" )
+    course.teacher = @admin
+    course.cost_student = 50000
+    stu1 = Persons.create( :login_name => "stu1", :first_name => "Student 1" )
+    stu2 = Persons.create( :login_name => "stu2", :first_name => "Student 2" )
+    course.students = [ "stu1", "stu2" ]
+    assert course.entries
+    
+    date = Date.new( 2014, 4, 10 )
+    Movements.create( "For student stu1:", date - 1, 10, course.entries, @secretaire.account_due )
+    Movements.create( "For student stu2:", date, 20.1, course.entries, @secretaire.account_due )
+    Movements.create( "For student stu1:", date - 2, 30, course.entries, @secretaire.account_due )
+    
+    file = course.report_pdf
+    
+    assert file
+
+  end
 end

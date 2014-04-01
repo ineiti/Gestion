@@ -2,12 +2,13 @@
 
 class CashboxCourse < View
   def layout
-    @order = 0
+    @order = 50
     @update = true
     
     gui_hboxg do
       gui_vbox :nogroup do
         show_entity_course :courses, :single, :name,
+          lambda{|c| c.entries},
           :flexheight => 1, :callback => true, :width => 100
       end
       gui_vbox :nogroup do
@@ -65,7 +66,8 @@ class CashboxCourse < View
           "#{data._courses.entries}"
       }
       Movements.create( "For student #{data._students.login_name}:" +
-          "#{data._students.full_name}", data._payment_date, data._cash.to_f / 1000,
+          "#{data._students.full_name}", 
+        @date_pay.strftime( "%Y-%m-%d" ), data._cash.to_f / 1000,
         session.owner.account_due, data._courses.entries )
     end
     rpc_list_choice_students( session, data )

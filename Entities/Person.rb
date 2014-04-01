@@ -469,7 +469,7 @@ class Person < Entity
   end
 
   def permissions=(p)
-    has_teacher = self._permissions.concat(p).index( "teacher" )
+    has_teacher = self._permissions and self._permissions.concat(p).index( "teacher" )
     dputs(3){"has_teacher is #{has_teacher} - permissions are #{p}"}
     self._permissions = p
     if has_teacher
@@ -533,7 +533,7 @@ class Person < Entity
   def pay_service(credit, msg)
     self.account_total_due = 0
     if @account_due
-      Movements.create("Automatic from Gestion: #{msg}", Time.now.strftime("%Y-%m-%d"),
+      Movements.create("#{msg}", Time.now.strftime("%Y-%m-%d"),
         credit.to_i / 1000.0, @account_due, @account_service)
       self.account_total_due = (@account_due.total.to_f * 1000.0 + 0.5).to_i
     else
@@ -783,5 +783,70 @@ class Person < Entity
     Courses.search_all.select { |c|
       c[:students] and c[:students].index( login_name )
     }
+  end
+  
+  def report_list_movements( from, to = from )
+    account_due.movements.select{|m|
+      ddputs(3){"Date is #{m.date.inspect}"}
+      (from..to).include? m.date
+    }.collect{|m|
+      [ m.date, "#{m.get_other_account(account_due).name}: #{m.desc}", 
+        m.value_form ]
+    }
+  end
+  
+  def report_list( report, date = nil )
+    date ||= Date.today
+    case report
+    when :daily, 1
+      report_list_movements( date )
+    when :weekly, 2
+      week = Date.commercial( date.year, date.cweek, 1 )
+      report_list_movements( week, week + 6 )
+    when :monthly, 3
+      report_list_movements(
+        Date.new( date.year, date.month, 1 ),
+        Date.new( date.year, date.month, - 1 ) )
+    end
+  end
+  
+  def report_pdf( report, date = nil )
+    file = "/tmp/cash_#{login_name}.pdf"
+    Prawn::Document.generate( file,
+      :page_size   => "A4",
+      :page_layout => :portrait,
+      :bottom_margin => 2.cm ) do |pdf|
+
+      sum = 0
+      movs = report_list( report, date ).reverse
+      pdf.text "Report for #{full_name}", :align => :center, :size => 20
+      pdf.font_size 10
+      pdf.text "From #{movs.first.first} to #{movs.last.first}"
+      pdf.text "Account: #{account_due.path}"
+      pdf.move_down 1.cm
+      
+      if movs.length > 0
+        header = [ ["Date", "Description", "Value", "Sum"].collect{|ch|
+            {:content => ch, :align => :center}}]
+        ddputs(3){"Movs is #{movs.inspect}"}
+        pdf.table( header + movs.collect{|m|
+            [ {:content => "#{m[0]}", :align => :center },
+              m[1],
+              {:content => "#{m[2]}", :align => :right}, 
+              {:content => "#{Movement.value_form( 
+                sum += m[2].gsub(',','').to_f / 1000 )}", 
+                :align => :right} ]
+          }, :header => true, :column_widths => [70,300,75,75] )
+        pdf.move_down( 2.cm )
+      end
+
+      pdf.repeat(:all, :dynamic => true) do
+        pdf.draw_text "#{Date.today} - #{account_due.path}",
+          :at => [0, -20], :size => 10
+        pdf.draw_text pdf.page_number, :at => [9.5.cm, -20]
+      end
+    end
+    file
+    
   end
 end

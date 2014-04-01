@@ -1,16 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - client/server:
-          - Course::Grade - Syncing with server when course-type doesn't exist must
-            return error
-          - B 131113: server: when getting new course, ignore "room", check 
-            for center-id
-          - server: error with regard to "assistant" - ??
-          - transfert: also get "assistant", "dow" and "hours" - ??
-          - get course-types from server
-          - check for already transmitted documents and transmit one user at
-            the time
         - CoursePrint: error in printing
           - when clicking printer/pdf/printer it gets confused
           - when clicking on the left part of the button it gets ignored
@@ -37,41 +27,51 @@ BUGS:
 Security:
 
 UI:
-        - Slowness in CourseGrade when saving students
-          - don't "update" uidnumber, sn and givenname if not needed
-        - Put adding of students and printing as background-tasks
+        - client/server:
+          - Course::Grade - Syncing with server when course-type doesn't exist must
+            return error
+          - B 131113: server: when getting new course, ignore "room", check 
+            for center-id
+          - server: error with regard to "assistant" - ??
+          - transfert: also get "assistant", "dow" and "hours" - ??
+          - get course-types from server
+          - check for already transmitted documents and transmit one user at
+            the time
+          - fetch course-description from server
+          - Courses::center needs work:
+            - it isn't shown in CourseModify, even with center_server
+          - CourseGrade::sync - catch timeouts on requests
+          - CourseDiplomas: display random-id if available
+          - only add center-ids when a course is "certified"
 
-        - Courses::center needs work:
-          - it isn't shown in CourseModify, even with center_server
-          - it is by default to responsible (at least installation from 130613)
-        - CourseGrade::sync - catch timeouts on requests
         - CourseGrade - add comment to file-uploads, so people know what to
           upload
         - CourseTabs still very slow for startup
 
         - SelfChat: if on multilogin, propose a "name"-field
-        - CourseDiplomas: display random-id if available
+        - Slowness in CourseGrade when saving students
+          - don't "update" uidnumber, sn and givenname if not needed
+        - Put adding of students and printing as background-tasks
+
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
 
 FEATURES:
+        - make an accounting-module
+          - 140201: add possibility to link courses with accounts
+          - 140205: add payment for students in courses
+          - 140331: create Movements for payments
+          - create daily and weekly reports for cash and courses
+          - add services and other stuff
+
         - add init-script for Gestion to "service gestion restart"
-        - client/server:
-          - only add center-ids when a course is "certified"
         - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
           - send-server: same as synchronize
           - fetch: to do, adding to courseTabs
           - download/upload backup: same as synchronize and fetch
         - CourseType: Add versions
-
-        - make an accounting-module
-          - 140201: add possibility to link courses with accounts
-          - 140205: add payment for students in courses
-          - create Movements for payments
-          - add services and other stuff
-          - create daily and weekly reports
 
         - use multilogin as flag for users
         - configure better print, libnet, uploadwidget, so that it get's correctly
@@ -231,6 +231,11 @@ To check:
 
 
 ** FIXED **:
+        - F 130401: added callback for date
+        - Cashbox:
+          - B 130331: Cashbox is shown if account_cashbox is not active
+          - B 130331: courses without account are shown
+          - B 130331: date-mix: a new entry has a different date-view than an existing entry!
         - UI140329: CourseModify::print_presence_sheet doesn't show exactly what is missing
         - B 140329: When adding teacher, he should show up in CourseModify-list
         - B 140319: CoursNote::sync - doesn't use center-credentials as default, in fact

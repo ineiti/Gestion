@@ -56,7 +56,11 @@ class Courses < Entities
     value_int :salary_assistant
     value_int :students_start
     value_int :students_finish
+    value_int :cost_student
+    value_int :cost_teacher
     value_int :entry_total
+    
+    value_block :account
     value_entity_account :entries
 
     @dir_diplomas ||= "Diplomas"
@@ -87,8 +91,14 @@ class Courses < Entities
     end
     super( id, field, value )
   end
+  
+  def sort_courses( c )
+    c.collect{ |d| [ d.course_id, d.name] }.sort{|a,b|
+      a[1].gsub( /.*([0-9]{4}.*)/, '\1' ) <=> b[1].gsub( /.*([0-9]{4}.*)/, '\1' )
+    }.reverse    
+  end
 
-  def list_courses(session=nil)
+  def list_courses_raw(session=nil)
     ret = search_all
     if session != nil
       user = session.owner
@@ -102,9 +112,15 @@ class Courses < Entities
         }
       end
     end
-    ret.collect{ |d| [ d.course_id, d.name] }.sort{|a,b|
-      a[1].gsub( /.*([0-9]{4}.*)/, '\1' ) <=> b[1].gsub( /.*([0-9]{4}.*)/, '\1' )
-    }.reverse
+    ret
+  end
+    
+  def list_courses( session=nil )
+    sort_courses( list_courses_raw( session ) )
+  end
+  
+  def list_courses_entries( session=nil )
+    sort_courses( list_courses_raw( session ).select{|c| c.entries } )
   end
   
   def list_courses_for_person( person )
@@ -115,9 +131,7 @@ class Courses < Entities
       d[:students] and d[:students].index( ln )
     }
     dputs( 3 ){ "Found courses #{ret.inspect}" }
-    ret.collect{ |d| [ d[:course_id ], d[:name] ] }.sort{|a,b|
-      a[1].gsub( /^[^_]*_/, '' ) <=> b[1].gsub( /^[^_]*_/, '' )
-    }.reverse    
+    sort_courses( ret )
   end
 
   def list_name_base
@@ -162,6 +176,9 @@ class Courses < Entities
         get_config( "Root::Income::Courses", :Accounting, :courses ) +
           "::#{course.name}")
     end
+    
+    course.cost_teacher = ctype.cost_teacher
+    course.cost_student = ctype.cost_student
     
     log_msg :course, "Created new course #{course.inspect}"
     return course
@@ -1068,5 +1085,76 @@ base_gestion
   def students=( s )
     super( s )
     log_msg :course, "Students for #{name} are: #{students.inspect}"
+  end
+  
+  def report_list
+    entries or return []
+    students.collect{|s|
+      entries.movements.select{|m|
+        m.desc =~ / #{s}:/
+      }.collect{|m|
+        [ m.date, m.desc, m.value_form ]
+      }      
+    }.flatten(1)
+  end
+  
+  def report_pdf
+    file = "/tmp/course_#{name}.pdf"
+    Prawn::Document.generate( file,
+      :page_size   => "A4",
+      :page_layout => :portrait,
+      :bottom_margin => 2.cm ) do |pdf|
+
+      sum = 0
+      pdf.text "Report for #{name} (#{ctype.name})", 
+        :align => :center, :size => 20
+      pdf.font_size 10
+      pdf.text "Duration: #{start}-#{self.end} - - Teacher: #{teacher.full_name}" +
+        " - - Hours: #{hours}"
+      pdf.text "Cost per student: #{Movement.value_form( cost_student.to_i / 1000 )} - - " +
+        "Cost per teacher: #{Movement.value_form( cost_teacher.to_i / 1000 )}"
+      pdf.text "Account: #{entries.path}"
+      pdf.move_down 1.cm
+      
+      if students.length > 0
+        header = [ ["Date", "Description", "Value", "Sum"].collect{|ch|
+            {:content => ch, :align => :center}}]
+        table = []
+        students.sort{|a,b|
+          Persons.match_by_login_name(a).full_name <=> 
+            Persons.match_by_login_name(b).full_name
+        }.collect{|s|
+          payments = []
+          sum = 0
+          entries.movements.select{|m|
+            m.desc =~ / #{s}:/
+          }.collect{|m|
+            payments.push [ m.date, m.desc, 
+              {:content => m.value_form, :align => :right } ]
+            sum += m.value
+          }
+          left = if cost_student.to_i > 0
+            sum - cost_student.to_f / 1000
+          else
+            0
+          end
+          table.push [ "", "#{Persons.match_by_login_name(s).full_name} (#{s})",
+            {:content => Movement.value_form( left ), :align => :right }, 
+            {:content => Movement.value_form( sum ), :align => :right } ]
+          payments.size > 0 and table.concat payments
+        }
+        pdf.table( header + 
+            table, 
+          :header => true, :column_widths => [70,300,75,75] )
+        pdf.move_down( 2.cm )
+      end
+
+      pdf.repeat(:all, :dynamic => true) do
+        pdf.draw_text "#{Date.today} - #{entries.path}",
+          :at => [0, -20], :size => 10
+        pdf.draw_text pdf.page_number, :at => [9.5.cm, -20]
+      end
+    end
+    file
   end
 end

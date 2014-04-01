@@ -2,8 +2,8 @@ class CourseStats < View
   def layout
     set_data_class :Courses
     @update = true
-    @order = 40
-    @visible = false
+    @order = 100
+    #@visible = false
 
     gui_hbox do
       gui_vbox :nogroup do
@@ -14,11 +14,22 @@ class CourseStats < View
   end
 
   def rpc_button_save( session, data )
-    course = Courses.match_by_name( data['name'] )
-    if course
-      # BUG: they're already saved, don't save it again
+    if course = Courses.match_by_course_id( data._courses.first )
+      ddputs(3){"Found course #{course.name} with data #{data.inspect}"}
       data.delete( 'students' )
-    course.data_set_hash( data )
+      course.data_set_hash( data )
+    end
+  end
+
+  def rpc_list_choice( session, name, args )
+    dputs( 3 ){ "rpc_list_choice with #{name} - #{args.inspect}" }
+    if name == "courses" and args['courses'].length > 0
+      course_id = args['courses'][0]
+      dputs( 3 ){ "replying for course_id #{course_id}" }
+      course = Courses.match_by_course_id(course_id)
+      reply("empty", [:students]) +
+        update_form_data( course ) +
+        reply("update", {:courses => [course_id] } )
     end
   end
 end

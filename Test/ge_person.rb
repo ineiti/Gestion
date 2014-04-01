@@ -46,6 +46,10 @@ class TC_Person < Test::Unit::TestCase
       :permissions => %w( default admin secretary ), :account_name_due => "Josué" )
     @surf = Entities.Persons.create( :login_name => "surf", :password => "super",
       :permissions => [ "default" ] )
+    @student = Entities.Persons.create( :login_name => "student", :password => "super",
+      :permissions => [ "student" ] )
+    @student2 = Entities.Persons.create( :login_name => "student2", :password => "super",
+      :permissions => [ "student" ] )
     @secretary = Entities.Persons.create( :login_name => "secr",
       :permissions => ["secretary"] )
     @teacher = Entities.Persons.create( :login_name => "teacher",
@@ -294,5 +298,23 @@ class TC_Person < Test::Unit::TestCase
     data["autres_text"] = "électricité"
     data["autres_cfa"] = 1000
     assert_equal "{\"autres_cfa\"=>\"1000\"}", SelfServices.cash_msg( data )
+  end
+  
+  def test_report_pdf
+    ConfigBase.add_function( :accounting_courses )
+    assert @secretary.account_due
+    
+    ctype = CourseTypes.create( :name => "base" )
+    course = Courses.create_ctype( ctype, "1404" )
+    assert course.entries
+    
+    date = Date.new( 2014, 4, 10 )
+    Movements.create( "test", date - 1, 10, course.entries, @secretary.account_due )
+    Movements.create( "test", date, 20.1, course.entries, @secretary.account_due )
+    Movements.create( "test", date - 2, 30, course.entries, @secretary.account_due )
+    
+    file = @secretary.report_pdf( 3 )
+    
+    assert file
   end
 end

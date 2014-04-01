@@ -21,6 +21,10 @@ class CourseTypes < Entities
     value_str :central_host
     value_int :files_needed
     value_list_drop :output, "%w( certificate label )"
+    
+    value_block :accounting
+    value_int :cost_teacher
+    value_int :cost_student
   end
   
   def self.files

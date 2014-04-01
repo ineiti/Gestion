@@ -73,13 +73,15 @@ begin
   Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
       'FlagResponsible', 'assistant' )
   Permission.add( 'secretary', 'SelfServices,CourseModify,FlagPersonAdd,FlagPersonDelete,' + 
-      'PersonModify,CourseDiploma,FlagCourseGradeAll,CashboxCourse', 'assistant' )
+      'PersonModify,CourseDiploma,FlagCourseGradeAll,CashboxCourse,' +
+      'CashboxReport', 'assistant' )
   Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
   Permission.add( 'maintenance', 'Inventory.*', 'default' )
   Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,' +
       'FlagPersonAdd,SelfServices', '' )
   Permission.add( 'director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
-      'PersonAdmin,PersonCourse,NetworkConnection', 'secretary,cybermanager,teacher' )
+      'PersonAdmin,PersonCourse,NetworkConnection,CourseStats', 
+    'secretary,cybermanager,teacher' )
   Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseDiploma,CourseGrade,' +
       'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson', '' )
   Permission.add( 'admin', '.*', '.*' )
@@ -113,10 +115,10 @@ begin
 
 rescue StorageLoadError
   cleanup_data
-#rescue DRb::DRbConnError
-#  dputs(0){ "Error: Connection to LibNet has been refused!" }
-#  dputs(0){ "Error: Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
-#  exit
+  #rescue DRb::DRbConnError
+  #  dputs(0){ "Error: Connection to LibNet has been refused!" }
+  #  dputs(0){ "Error: Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
+  #  exit
 rescue Exception => e
   case e.to_s
   when /UpdatePot|MakeMo|PrintHelp/

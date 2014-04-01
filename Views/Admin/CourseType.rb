@@ -19,6 +19,7 @@ class AdminCourseType < View
         gui_hboxg :nogroup do
           gui_vboxg :nogroup do
             show_block :strings
+            show_block :accounting
           end
           gui_vboxg :nogroup do
             show_block :central
