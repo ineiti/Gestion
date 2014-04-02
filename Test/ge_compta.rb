@@ -57,9 +57,4 @@ class TC_Compta < Test::Unit::TestCase
   def teardown
     permissions_init
   end
-  
-  def test_link
-    @account_foo = AccountLinks.get_account( "foo", "Root::Income::Foo" )
-    assert_equal nil, @account_foo
-  end
 end

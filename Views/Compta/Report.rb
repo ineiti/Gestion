@@ -15,7 +15,7 @@ class ComptaReport < View
       end
       gui_vbox :nogroup do
         show_int :total
-        show_str :desc
+        show_str :desc, :width => 300
         show_button :report_movements
       end
       gui_window :get_report do

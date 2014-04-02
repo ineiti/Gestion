@@ -1,6 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - AfriCompta: error in merging from Nelbe - why?
+
         - CoursePrint: error in printing
           - when clicking printer/pdf/printer it gets confused
           - when clicking on the left part of the button it gets ignored
