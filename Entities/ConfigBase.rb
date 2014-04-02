@@ -2,7 +2,7 @@ class ConfigBases < Entities
   @@functions = %w( network internet share 
     courses course_server course_client internet_simple
     internet_libnet
-    inventory accounting quiz accounting_courses
+    inventory accounting quiz accounting_courses accounting_old
     cashbox ).sort.to_sym
   @@functions_base = { :network => [ :internet, :share, :internet_only ],
     :internet => [ :internet_simple, :internet_libnet ],
@@ -66,7 +66,7 @@ end
 
 class ConfigBase < Entity
   def debug_lvl=( lvl )
-    ddputs(4){"Setting debug-lvl to #{lvl}"}
+    dputs(4){"Setting debug-lvl to #{lvl}"}
     data_set( :_debug_lvl, lvl.to_i )
     Object.send( :remove_const, :DEBUG_LVL )
     Object.const_set( :DEBUG_LVL, lvl.to_i )

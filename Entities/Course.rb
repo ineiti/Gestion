@@ -61,7 +61,7 @@ class Courses < Entities
     value_int :entry_total
     
     value_block :account
-    value_entity_account :entries
+    value_entity_account :entries, :drop, :path
 
     @dir_diplomas ||= "Diplomas"
     @dir_exas ||= "Exas"
@@ -173,8 +173,7 @@ class Courses < Entities
     
     if ConfigBase.get_functions.index :accounting_courses
       course.entries = Accounts.create_path( 
-        get_config( "Root::Income::Courses", :Accounting, :courses ) +
-          "::#{course.name}")
+        "#{ctype.account_base.path}::#{course.name}")
     end
     
     course.cost_teacher = ctype.cost_teacher
@@ -1087,17 +1086,6 @@ base_gestion
     log_msg :course, "Students for #{name} are: #{students.inspect}"
   end
   
-  def report_list
-    entries or return []
-    students.collect{|s|
-      entries.movements.select{|m|
-        m.desc =~ / #{s}:/
-      }.collect{|m|
-        [ m.date, m.desc, m.value_form ]
-      }      
-    }.flatten(1)
-  end
-  
   def report_pdf
     file = "/tmp/course_#{name}.pdf"
     Prawn::Document.generate( file,
@@ -1117,7 +1105,7 @@ base_gestion
       pdf.move_down 1.cm
       
       if students.length > 0
-        header = [ ["Date", "Description", "Value", "Sum"].collect{|ch|
+        header = [ ["Description", "Value", "Sum"].collect{|ch|
             {:content => ch, :align => :center}}]
         table = []
         students.sort{|a,b|
@@ -1126,35 +1114,53 @@ base_gestion
         }.collect{|s|
           payments = []
           sum = 0
-          entries.movements.select{|m|
+          entries.movements.reverse.select{|m|
             m.desc =~ / #{s}:/
           }.collect{|m|
-            payments.push [ m.date, m.desc, 
-              {:content => m.value_form, :align => :right } ]
-            sum += m.value
+            payments.push [ m.date,
+              {:content => m.value_form, :align => :right }, 
+              {:content => Movement.value_form( sum += m.value ), :align => :right } ]
           }
           left = if cost_student.to_i > 0
-            sum - cost_student.to_f / 1000
+            cost_student.to_f / 1000 - sum
           else
             0
           end
-          table.push [ "", "#{Persons.match_by_login_name(s).full_name} (#{s})",
-            {:content => Movement.value_form( left ), :align => :right }, 
-            {:content => Movement.value_form( sum ), :align => :right } ]
+          table.push [ "Rest for #{Persons.match_by_login_name(s).full_name} (#{s})",
+            {:content => Movement.value_form( left ), :align => :right } ]
           payments.size > 0 and table.concat payments
         }
         pdf.table( header + 
             table, 
-          :header => true, :column_widths => [70,300,75,75] )
+          :header => true, :column_widths => [300,75,75] )
         pdf.move_down( 2.cm )
       end
 
       pdf.repeat(:all, :dynamic => true) do
         pdf.draw_text "#{Date.today} - #{entries.path}",
           :at => [0, -20], :size => 10
-        pdf.draw_text pdf.page_number, :at => [9.5.cm, -20]
+        pdf.draw_text pdf.page_number, :at => [18.cm, -20]
       end
     end
     file
+  end
+  
+  def student_payments( student )
+    total = 0
+    entries.movements.reverse.select{|e| e.desc =~ / #{student}:/ }.collect{|e|
+      [ e.date, e.value_form, Movement.value_form( total += e.value ) ]
+    } + [["Reste", Movement.value_form(cost_student.to_f / 1000 - total)]]
+  end
+
+  def report_list
+    entries or return []
+    students.collect{|s|
+      student_payments( s ).reverse.collect{|p|
+        [p[0], 
+          ( p[0] == "Reste" ) ? 
+            "#{Persons.match_by_login_name(s).full_name} (#{s})" : "", 
+          p[1], p[2]]
+      }
+    }.flatten(1)
   end
 end

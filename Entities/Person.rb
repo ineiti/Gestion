@@ -352,6 +352,25 @@ class Persons < Entities
     end
     @resps
   end
+
+  def create_add_course( student, owner, course, check_double = false )
+    prefix = ConfigBase.has_function?( :course_server ) ?
+      "#{owner.login_name}_" : ""
+    login_name = Persons.create_login_name( student )
+    if not ( person = Persons.match_by_login_name( prefix + student ) )
+      if check_double and
+        Persons.search_by_login_name( "^#{prefix}#{login_name}[0-9]*$").length > 0
+        return nil
+      else
+        person = Persons.create( {:first_name => name,
+            :login_name_prefix => prefix,
+            :permissions => %w( student ), :town => @town, :country => @country })
+      end
+    end
+    #person.email = "#{person.login_name}@ndjair.net"
+    person and course.students.push( person.login_name )
+    person
+  end
 end
 
 
@@ -790,7 +809,7 @@ class Person < Entity
   def report_list_movements( from = nil, to = from )
     if from
       account_due.movements.select{|m|
-        ddputs(3){"Date is #{m.date.inspect}"}
+        dputs(3){"Date is #{m.date.inspect}"}
         (from..to).include? m.date
       }
     else
@@ -836,7 +855,7 @@ class Person < Entity
       if movs.length > 0
         header = [ ["Date", "Description", "Value", "Sum"].collect{|ch|
             {:content => ch, :align => :center}}]
-        ddputs(3){"Movs is #{movs.inspect}"}
+        dputs(3){"Movs is #{movs.inspect}"}
         pdf.table( header + movs.collect{|m|
             [ {:content => "#{m[0]}", :align => :center },
               m[1],
@@ -851,7 +870,7 @@ class Person < Entity
       pdf.repeat(:all, :dynamic => true) do
         pdf.draw_text "#{Date.today} - #{account_due.path}",
           :at => [0, -20], :size => 10
-        pdf.draw_text pdf.page_number, :at => [9.5.cm, -20]
+        pdf.draw_text pdf.page_number, :at => [19.cm, -20]
       end
     end
     file

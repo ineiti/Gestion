@@ -16,7 +16,8 @@ class CourseDiploma < View
     gui_hbox do
       gui_vbox :nogroup do
         show_table :diplomas_t, :headings => [:Name, :Grade, :State, :PDF ],
-          :widths => [200, 50, 100], :height => 500, :render_html => [3]
+          :widths => [200, 50, 100], :height => 500, 
+          :columns => [0, 0, 0, :html]
       end
       gui_vbox :nogroup do
         gui_fields do

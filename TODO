@@ -59,24 +59,19 @@ UI:
         - write a good documentation...
 
 FEATURES:
-        - make an accounting-module
-          - 140201: add possibility to link courses with accounts
-          - 140205: add payment for students in courses
-          - 140331: create Movements for payments
-          - create daily and weekly reports for cash and courses
-          - add services and other stuff
+        - CourseType: Add versions
+	-4 Courses::Days - add other days to the list
 
         - add init-script for Gestion to "service gestion restart"
         - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
           - send-server: same as synchronize
           - fetch: to do, adding to courseTabs
           - download/upload backup: same as synchronize and fetch
-        - CourseType: Add versions
+          - import courses from server
 
         - use multilogin as flag for users
         - configure better print, libnet, uploadwidget, so that it get's correctly
           addressed with a configuration
-	- import courses from server
         - when a student logins remotely to a course_sever, don't allow to change
           his name, only address, phone-#, password and e-mail
         - adding a course:
@@ -87,7 +82,6 @@ FEATURES:
           - make connection
           - return stats
         - progression-bar in Administration::Backup::restore
-	-4 Courses::Days - add other days to the list
 	-3 check diploma-templates
 
 Programming:
@@ -231,6 +225,13 @@ To check:
 
 
 ** FIXED **:
+        - F 140402: make an accounting-module
+          - 140201: add possibility to link courses with accounts
+          - 140205: add payment for students in courses
+          - 140331: create Movements for payments
+          - 140402: create daily and weekly reports for cash and courses
+          - 140402: add services and other stuff
+          - 140402: allow for adding courses-inscription already handled
         - F 130401: added callback for date
         - Cashbox:
           - B 130331: Cashbox is shown if account_cashbox is not active

@@ -8,10 +8,11 @@ class ComptaCourse < View
     @order = 50
     @update = true
     @functions_need = [:accounting_courses]
+    @visible = false
     
     gui_hboxg do
       gui_vbox :nogroup do
-        show_entity_course :courses, :single, :name,
+        show_entity_course_lazy :courses, :single, :name,
           :flexheight => 1, :callback => true, :width => 100
       end
       gui_vbox do
@@ -19,8 +20,10 @@ class ComptaCourse < View
         show_button :new_account_path, :save
       end
       gui_window :win_new_account do
-        show_list_single :new_account, :width => 300
-        show_button :assign_new_account, :add_archives, :close
+        gui_vbox :nogroup do
+          show_list_single :new_account, :width => 500, :height => 300
+          show_button :assign_new_account, :add_archives, :close
+        end
       end
     end
     
@@ -41,10 +44,10 @@ class ComptaCourse < View
     reply( :empty, :new_account_path ) +
       if course = data._courses
       if ap = data._account_path and
-        acc = Accounts.find_by_path(ap)
-      dputs(3){"New account at #{ap} is #{acc.inspect} - #{acc.path}"}
-      course.entries = acc
-      reply( :update, :account_path => acc.path )
+          acc = Accounts.find_by_path(ap)
+        dputs(3){"New account at #{ap} is #{acc.inspect} - #{acc.path}"}
+        course.entries = acc
+        reply( :update, :account_path => acc.path )
       elsif course.entries
         reply( :update, :account_path => course.entries.path )
       else
@@ -78,11 +81,16 @@ class ComptaCourse < View
     if course = data._courses
       dputs(3){"Course is #{course.inspect}"}
       reply( :empty, [:account_path] ) +
-        if course.entries
+        if course.entries and course.entries != []
         reply( :update, :account_path => course.entries.path )
       else
         []
       end
     end
+  end
+  
+  def rpc_update( session )
+    reply( :empty, :courses ) +
+      reply( :update, :courses => Courses.list_courses(session))
   end
 end

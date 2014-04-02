@@ -9,19 +9,20 @@ class CashboxReport < View
     
     gui_hbox do
       gui_vbox :nogroup do
-        show_list_single :report_type, :callback => true, :maxheight => 100
+        show_list_single :report_type, :callback => true, :maxheight => 130
         show_date :report_start, :callback => :date
         show_entity_course_lazy :course, :single, :name, 
           lambda{|c| c.entries}, :callback => true, :flexheight => 1
         show_print :print
       end
       gui_vbox :nogroup do
-        show_table :report, :headings => [ :Date, :Desc, :Amount ],
-          :widths => [ 100, 300, 100 ], :height => 400
+        show_table :report, :headings => [ :Date, :Desc, :Amount, :Sum ],
+          :widths => [ 100, 200, 75, 75 ], :height => 400, :width => 470,
+          :columns => [0, 0, :align_right, :align_right]
       end
       
       gui_window :print_status do
-        gui_vbox do
+        gui_vbox :nogroup do
           show_html :status
           show_button :close
         end
@@ -72,7 +73,7 @@ class CashboxReport < View
     if not session.owner.account_due
       return rpc_update( session )
     end
-    ddputs(3){"report is #{data._report_start.inspect}"}
+    dputs(3){"report is #{data._report_start.inspect}"}
     date = Date.parse( data._report_start.to_s )
     ret = reply( :empty_only, :report )
     

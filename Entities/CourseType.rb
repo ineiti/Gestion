@@ -25,6 +25,7 @@ class CourseTypes < Entities
     value_block :accounting
     value_int :cost_teacher
     value_int :cost_student
+    value_entity_account_lazy :account_base, :drop
   end
   
   def self.files

@@ -6,6 +6,7 @@ class AdminCourseType < View
   
   def layout
     set_data_class :CourseTypes
+    @update = :before
     
     @functions_need = [:courses]
     
@@ -20,6 +21,7 @@ class AdminCourseType < View
           gui_vboxg :nogroup do
             show_block :strings
             show_block :accounting
+            show_arg :account_base, :width => 200
           end
           gui_vboxg :nogroup do
             show_block :central
@@ -33,5 +35,9 @@ class AdminCourseType < View
         show_button :save        
       end
     end
+  end
+  
+  def rpc_update( session )
+    reply( :update, :account_base => AccountRoot.actual.listp_path )
   end
 end

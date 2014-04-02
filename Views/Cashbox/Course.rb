@@ -14,13 +14,19 @@ class CashboxCourse < View
       end
       gui_vbox :nogroup do
         show_entity_person_lazy :students, :single, :full_name,
-          :flexheight => 1, :callback => true, :width => 150
+          :flexheight => 1, :callback => true, :width => 300
+        #        show_str :full_name
+        #        show_button :add_student
       end
-      gui_vbox do
+      gui_vbox :nogroup do
+        show_table :payments, :headings => [ :Date, :Money, :Sum ],
+          :widths => [100, 75, 75], :height => 200,
+          :columns => [0, :align_right, :align_right]
         show_date :payment_date
         show_int :cash
         show_str :remark
         show_str :receit_id
+        show_list_drop :old_cash, "%w( No Yes )"
         show_button :pay
       end
       
@@ -40,7 +46,9 @@ class CashboxCourse < View
   
   def rpc_list_choice_students( session, data )
     reply( :empty ) +
-      reply( :update, :payment_date => @date_pay.strftime( "%d.%m.%Y") )
+      reply( :update, :payment_date => @date_pay.strftime( "%d.%m.%Y") ) +
+      reply( :update, :payments => 
+        data._courses.student_payments(data._students.login_name))
   end
   
   def rpc_button_pay( session, data )
@@ -58,7 +66,7 @@ class CashboxCourse < View
         reply( :update, :msg => msg )
     }
       
-    dputs(3){"Data is #{data.inspect}"}
+    ddputs(3){"Data is #{data.inspect}"}
     if data._cash.to_i != 0
       log_msg "course-payment", "Paying #{data._cash} to #{data._students.full_name} of " +
         "#{data._courses.name}"
@@ -70,12 +78,31 @@ class CashboxCourse < View
           "#{data._students.full_name}", 
         @date_pay.strftime( "%Y-%m-%d" ), data._cash.to_f / 1000,
         session.owner.account_due, data._courses.entries )
+      if session.owner.has_permission?( :admin ) and 
+          data._old_cash.first == "Yes"
+        Movements.create( "old_cash for #{data._students.login_name}", 
+          @date_pay.strftime( "%Y-%m-%d" ), data._cash.to_f / 1000,
+          data._courses.entries, session.owner.account_due )
+      end
     end
     rpc_list_choice_students( session, data )
   end
+
+  def rpc_button_add_student( session, data )
+    if ( name = data._full_name ).to_s.length > 0 and
+        ( course = data._courses )
+      Persons.create_add_course( data._full_name, session.owner, course )
+      rpc_list_choice_courses( session, data )
+    end
+  end
   
   def rpc_update( session )
-    reply( :empty, :students )
+    ret = reply( :empty, :students ) +
+    if session.owner and session.owner.has_permission?( :admin )
+      reply( :unhide, :old_cash )
+    else
+      reply( :hide, :old_cash )
+    end
   end
 
 end

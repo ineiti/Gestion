@@ -9,11 +9,11 @@ class ComptaReport < View
       set_data_class :Accounts
     end
     gui_hboxg do
-      gui_vboxg do
+      gui_vboxg :nogroup do
         vtlp_list_entity :account_list, 'Accounts', 'path', 
           :width => 400, :flex => 1
       end
-      gui_vbox do
+      gui_vbox :nogroup do
         show_int :total
         show_str :desc
         show_button :report_movements

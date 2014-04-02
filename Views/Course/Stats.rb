@@ -5,17 +5,21 @@ class CourseStats < View
     @order = 100
     #@visible = false
 
-    gui_hbox do
-      gui_vbox :nogroup do
-        show_block :accounting
-        show_button :save
+    gui_vbox do
+      gui_hbox :nogroup do
+        gui_vbox :nogroup do
+          show_block :accounting
+        end
       end
+      show_block :account
+      show_arg :entries, :width => 400
+      show_button :save
     end
   end
 
   def rpc_button_save( session, data )
     if course = Courses.match_by_course_id( data._courses.first )
-      ddputs(3){"Found course #{course.name} with data #{data.inspect}"}
+      dputs(3){"Found course #{course.name} with data #{data.inspect}"}
       data.delete( 'students' )
       course.data_set_hash( data )
     end
