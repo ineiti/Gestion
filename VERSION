@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 140402: 1.4.0
+  - Working Cashbox-theme
+
 - 140319: 1.3.7
   - Started to move stuff out of config.yaml and into ConfigBase:
     - libnet_uri
