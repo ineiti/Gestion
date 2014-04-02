@@ -4,7 +4,7 @@
 class CashboxTabs < View
   def layout
     @order = 90
-    @functions_need = [:cashbox, :accounting_courses]
+    @functions_need = [:cashbox]
   end
   
 end

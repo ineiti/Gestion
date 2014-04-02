@@ -530,10 +530,12 @@ class Person < Entity
     log_msg("AddCash", "Total due: #{account_total_due}")
   end
 
-  def pay_service(credit, msg)
+  def pay_service(credit, msg, date = nil)
     self.account_total_due = 0
     if @account_due
-      Movements.create("#{msg}", Time.now.strftime("%Y-%m-%d"),
+      date = date ? Date.parse( date ) : Date.today
+
+      Movements.create("#{msg}", date.strftime("%Y-%m-%d"),
         credit.to_i / 1000.0, @account_due, @account_service)
       self.account_total_due = (@account_due.total.to_f * 1000.0 + 0.5).to_i
     else
@@ -785,11 +787,15 @@ class Person < Entity
     }
   end
   
-  def report_list_movements( from, to = from )
-    account_due.movements.select{|m|
-      ddputs(3){"Date is #{m.date.inspect}"}
-      (from..to).include? m.date
-    }.collect{|m|
+  def report_list_movements( from = nil, to = from )
+    if from
+      account_due.movements.select{|m|
+        ddputs(3){"Date is #{m.date.inspect}"}
+        (from..to).include? m.date
+      }
+    else
+      account_due.movements
+    end.collect{|m|
       [ m.date, "#{m.get_other_account(account_due).name}: #{m.desc}", 
         m.value_form ]
     }
@@ -807,6 +813,8 @@ class Person < Entity
       report_list_movements(
         Date.new( date.year, date.month, 1 ),
         Date.new( date.year, date.month, - 1 ) )
+    when :all, 4
+      report_list_movements
     end
   end
   

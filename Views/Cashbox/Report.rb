@@ -4,7 +4,7 @@ class CashboxReport < View
   include PrintButton
   
   def layout
-    @order = 100
+    @order = 30
     @update = true
     
     gui_hbox do
@@ -17,7 +17,7 @@ class CashboxReport < View
       end
       gui_vbox :nogroup do
         show_table :report, :headings => [ :Date, :Desc, :Amount ],
-          :widths => [ 100, 300, 100 ]
+          :widths => [ 100, 300, 100 ], :height => 400
       end
       
       gui_window :print_status do
@@ -37,7 +37,7 @@ class CashboxReport < View
     super( session ) +
       reply( :empty, [ :course, :report_type ] ) +
       reply( :update, :report_type => 
-        %w( Cash_Daily Cash_Weekly Cash_Monthly 
+        %w( Cash_Daily Cash_Weekly Cash_Monthly Cash_All
         Course ).map.with_index{|d,i|
         [ i + 1, d ]} ) +
       reply( :update, :course => Courses.list_courses_entries(session) ) +
@@ -53,7 +53,7 @@ class CashboxReport < View
     end
     date = Date.parse( data._report_start )
     
-    if ( report = data._report_type.first ) < 4
+    if ( report = data._report_type.first ) < 5
       file = session.owner.report_pdf( report, date )
     else
       file = data._course.report_pdf
@@ -77,11 +77,11 @@ class CashboxReport < View
     ret = reply( :empty_only, :report )
     
     case report = data._report_type.first
-    when 1..3
+    when 1..4
       ret += reply( :update, :report => 
           session.owner.report_list( report, date ) )
       show = :report_start
-    when 4
+    when 5
       if data._course != []
         ret += reply( :update, :report => data._course.report_list )
       end

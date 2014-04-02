@@ -73,8 +73,7 @@ begin
   Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
       'FlagResponsible', 'assistant' )
   Permission.add( 'secretary', 'SelfServices,CourseModify,FlagPersonAdd,FlagPersonDelete,' + 
-      'PersonModify,CourseDiploma,FlagCourseGradeAll,CashboxCourse,' +
-      'CashboxReport', 'assistant' )
+      'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*', 'assistant' )
   Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
   Permission.add( 'maintenance', 'Inventory.*', 'default' )
   Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,' +
