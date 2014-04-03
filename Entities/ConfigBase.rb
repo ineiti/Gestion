@@ -65,6 +65,11 @@ class ConfigBases < Entities
 end
 
 class ConfigBase < Entity
+  def setup_instance
+    dputs(4){"Setting up ConfigBase with debug_lvl = #{debug_lvl}"}
+    self.debug_lvl = debug_lvl
+  end
+
   def debug_lvl=( lvl )
     dputs(4){"Setting debug-lvl to #{lvl}"}
     data_set( :_debug_lvl, lvl.to_i )
