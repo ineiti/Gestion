@@ -2,8 +2,6 @@
 
 BUGS:
         - AfriCompta: error in merging from Nelbe - why?
-        - Speed up Course::report_list
-        - ComptaReport: don't show deleted accounts
 
         - CoursePrint: error in printing
           - when clicking printer/pdf/printer it gets confused
@@ -31,6 +29,8 @@ BUGS:
 Security:
 
 UI:
+        - Speed up Course::report_list
+        - ComptaReport: don't show deleted accounts
         - client/server:
           - Course::Grade - Syncing with server when course-type doesn't exist must
             return error
