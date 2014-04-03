@@ -12,7 +12,7 @@ class CourseStats < View
         end
       end
       show_block :account
-      show_arg :entries, :width => 400
+      show_arg :entries, :width => 500
       show_button :save
     end
   end
@@ -31,9 +31,21 @@ class CourseStats < View
       course_id = args['courses'][0]
       dputs( 3 ){ "replying for course_id #{course_id}" }
       course = Courses.match_by_course_id(course_id)
-      reply("empty", [:students]) +
-        update_form_data( course ) +
-        reply("update", {:courses => [course_id] } )
+      reply( :update, :entries => [0] ) +
+        update_form_data( course )
+      #      reply(:empty, [:students]) +
+      #        update_form_data( course ) +
+      #        reply(:update, {:courses => [course_id] } )
     end
+  end
+  
+  def rpc_update_view( session )
+    super( session ) +
+      reply( :update, :entries => 
+        [[0, "None"]].concat( AccountRoot.actual.listp_path ) )
+  end
+  
+  def rpc_update( session )
+    reply( :update, :entries => [0])
   end
 end

@@ -4,6 +4,7 @@ class ComptaReport < View
     @visible = true
     @count = 1
     @rpc_update = true
+    @order = 30
     
     if Module.constants.index :ACQooxView
       set_data_class :Accounts

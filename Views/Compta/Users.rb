@@ -1,6 +1,7 @@
 class ComptaUsers < View
   include VTListPane
   def layout
+    @order = 20
     
     set_data_class :Users
 

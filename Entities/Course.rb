@@ -61,7 +61,7 @@ class Courses < Entities
     value_int :entry_total
     
     value_block :account
-    value_entity_account :entries, :drop, :path
+    value_entity_account_empty_lazy :entries, :drop, :path
 
     @dir_diplomas ||= "Diplomas"
     @dir_exas ||= "Exas"

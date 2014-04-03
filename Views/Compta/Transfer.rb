@@ -5,7 +5,7 @@ class ComptaTransfer < View
   include VTListPane
   def layout
     @update = true
-    @order = 50
+    @order = 10
     
     set_data_class :Persons
 

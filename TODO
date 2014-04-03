@@ -2,6 +2,8 @@
 
 BUGS:
         - AfriCompta: error in merging from Nelbe - why?
+        - ComptaReport: don't show deleted accounts
+        - CourseStats should use AccountRoot.current
 
         - CoursePrint: error in printing
           - when clicking printer/pdf/printer it gets confused
