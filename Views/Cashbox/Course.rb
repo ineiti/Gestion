@@ -66,7 +66,7 @@ class CashboxCourse < View
         reply( :update, :msg => msg )
     }
       
-    ddputs(3){"Data is #{data.inspect}"}
+    dputs(3){"Data is #{data.inspect}"}
     if data._cash.to_i != 0
       log_msg "course-payment", "Paying #{data._cash} to #{data._students.full_name} of " +
         "#{data._courses.name}"
