@@ -107,7 +107,18 @@ class CashboxCourse < View
     if ( gid = data._payments.first ).to_s.length > 0
       if mov = Movements.match_by_global_id( gid )
         log_msg "cashbox_course", "Deleting movement #{mov.inspect}"
+        date, value = mov.date, mov.value
         mov.delete
+        user, id = gid.match(/(.*)-(.*)/)[1..2]
+        ngid = [user, (id.to_i + 1).to_s ].join("-")
+        # If the next movement starts with "old_cash" and has same date
+        # and value, we suppose they go together
+        if mov = Movements.match_by_global_id( ngid ) and
+            mov.desc =~ /^old_cash/ and mov.date == date and
+            mov.value == value
+          log_msg "cashbox_course", "Found old_cash at #{mov.inspect}"
+          mov.delete
+        end
         rpc_list_choice_students( session, data )
       end
     end

@@ -2,9 +2,8 @@
 
 BUGS:
         - AfriCompta: error in merging from Nelbe - why?
+        - Speed up Course::report_list
         - ComptaReport: don't show deleted accounts
-        - CourseStats should use AccountRoot.current
-        - CashboxCourse needs a "delete" button
 
         - CoursePrint: error in printing
           - when clicking printer/pdf/printer it gets confused
@@ -230,6 +229,9 @@ To check:
 
 
 ** FIXED **:
+        - B 140403: When deleting movements in Cashbox.*, check for old_cash dependencies
+        - B 140403: CourseStats should use AccountRoot.current
+        - B 140403: CashboxCourse needs a "delete" button
         - F 140402: make an accounting-module
           - 140201: add possibility to link courses with accounts
           - 140205: add payment for students in courses
