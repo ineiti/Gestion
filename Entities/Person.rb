@@ -359,7 +359,7 @@ class Persons < Entities
     login_name = Persons.create_login_name( student )
     if not ( person = Persons.match_by_login_name( prefix + student ) )
       if check_double and
-        Persons.search_by_login_name( "^#{prefix}#{login_name}[0-9]*$").length > 0
+          Persons.search_by_login_name( "^#{prefix}#{login_name}[0-9]*$").length > 0
         return nil
       else
         person = Persons.create( {:first_name => name,
@@ -815,8 +815,11 @@ class Person < Entity
     else
       account_due.movements
     end.collect{|m|
-      [ m.date, "#{m.get_other_account(account_due).name}: #{m.desc}", 
-        m.value_form ]
+      [ m.global_id, 
+        [ m.date, 
+          "#{m.get_other_account(account_due).name}: #{m.desc}", 
+          m.value_form ] 
+      ]
     }
   end
   

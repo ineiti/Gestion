@@ -172,8 +172,13 @@ class Courses < Entities
     end
     
     if ConfigBase.get_functions.index :accounting_courses
+      if ctype.account_base
       course.entries = Accounts.create_path( 
         "#{ctype.account_base.path}::#{course.name}")
+      else
+        dputs(1){"Trying to create account for #{course.name} but " +
+            " #{ctype.name} has no base-account"}
+      end
     end
     
     course.cost_teacher = ctype.cost_teacher
@@ -1148,18 +1153,26 @@ base_gestion
   def student_payments( student )
     total = 0
     entries.movements.reverse.select{|e| e.desc =~ / #{student}:/ }.collect{|e|
-      [ e.date, e.value_form, Movement.value_form( total += e.value ) ]
-    } + [["Reste", Movement.value_form(cost_student.to_f / 1000 - total)]]
+      [ e.global_id, 
+        [ e.date, e.value_form, Movement.value_form( total += e.value ) ] ]
+    } + [ [ nil, 
+        ["Reste", Movement.value_form(cost_student.to_f / 1000 - total)] ] ]
   end
 
   def report_list
     entries or return []
     students.collect{|s|
       student_payments( s ).reverse.collect{|p|
-        [p[0], 
-          ( p[0] == "Reste" ) ? 
-            "#{Persons.match_by_login_name(s).full_name} (#{s})" : "", 
-          p[1], p[2]]
+        data = p[1]
+        [ p[0], 
+          [
+            data[0],
+            ( data[0] == "Reste" ) ? 
+              "#{Persons.match_by_login_name(s).full_name} (#{s})" : "", 
+            data[1], 
+            data[2]
+          ]
+        ]
       }
     }.flatten(1)
   end

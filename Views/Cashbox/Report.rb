@@ -19,6 +19,7 @@ class CashboxReport < View
         show_table :report, :headings => [ :Date, :Desc, :Amount, :Sum ],
           :widths => [ 100, 200, 75, 75 ], :height => 400, :width => 470,
           :columns => [0, 0, :align_right, :align_right]
+        show_button :delete
       end
       
       gui_window :print_status do
@@ -44,6 +45,7 @@ class CashboxReport < View
       reply( :update, :course => Courses.list_courses_entries(session) ) +
       reply( :hide, [:report_start, :course ] ) +
       reply( :update, :report_start => Date.today.strftime( "%d.%m.%Y") ) +
+      reply_visible( session.owner.has_permission?( :accounting ), :delete ) +
       reply_print( session )
   end
   
@@ -99,5 +101,15 @@ class CashboxReport < View
   
   def rpc_callback_date( session, data )
     rpc_list_choice_report_type( session, data )
+  end
+  
+  def rpc_button_delete( session, data )
+    if ( gid = data._report.first ).to_s.length > 0
+      if mov = Movements.match_by_global_id( gid )
+        log_msg "cashbox_report", "Deleting movement #{mov.inspect}"
+        mov.delete
+        rpc_list_choice_report_type( session, data )
+      end
+    end
   end
 end

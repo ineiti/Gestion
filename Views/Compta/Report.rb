@@ -1,17 +1,13 @@
 class ComptaReport < View
-  include VTListPane
   def layout
-    @visible = true
+    @visible = false
     @count = 1
     @rpc_update = true
     @order = 30
     
-    if Module.constants.index :ACQooxView
-      set_data_class :Accounts
-    end
     gui_hboxg do
       gui_vboxg :nogroup do
-        vtlp_list_entity :account_list, 'Accounts', 'path', 
+        show_entity_account :account_list, 'Accounts', 'path', 
           :width => 400, :flex => 1
       end
       gui_vbox :nogroup do

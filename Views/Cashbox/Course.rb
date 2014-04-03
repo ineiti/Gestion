@@ -8,8 +8,7 @@ class CashboxCourse < View
     
     gui_hboxg do
       gui_vbox :nogroup do
-        show_entity_course :courses, :single, :name,
-          lambda{|c| c.entries},
+        show_entity_course_lazy :courses, :single, :name,
           :flexheight => 1, :callback => true, :width => 100
       end
       gui_vbox :nogroup do
@@ -27,7 +26,7 @@ class CashboxCourse < View
         show_str :remark
         show_str :receit_id
         show_list_drop :old_cash, "%w( No Yes )"
-        show_button :pay
+        show_button :pay, :delete
       end
       
       gui_window :error do
@@ -68,18 +67,15 @@ class CashboxCourse < View
       
     dputs(3){"Data is #{data.inspect}"}
     if data._cash.to_i != 0
-      log_msg "course-payment", "Paying #{data._cash} to #{data._students.full_name} of " +
-        "#{data._courses.name}"
-      dputs(3){"Owner is #{session.owner.inspect}"}
-      dputs(3){"Putting from #{session.owner.account_due.path} to " +
-          "#{data._courses.entries}"
-      }
+      log_msg "course-payment", "#{session.owner.login_name} pays #{data._cash} " +
+        "to #{data._students.full_name} of #{data._courses.name}"
       Movements.create( "For student #{data._students.login_name}:" +
           "#{data._students.full_name}", 
         @date_pay.strftime( "%Y-%m-%d" ), data._cash.to_f / 1000,
         session.owner.account_due, data._courses.entries )
-      if session.owner.has_permission?( :admin ) and 
+      if session.owner.has_permission?( :admin ) && 
           data._old_cash.first == "Yes"
+        log_msg "course-payment", "Oldcash - doing reverse, too"
         Movements.create( "old_cash for #{data._students.login_name}", 
           @date_pay.strftime( "%Y-%m-%d" ), data._cash.to_f / 1000,
           data._courses.entries, session.owner.account_due )
@@ -89,7 +85,7 @@ class CashboxCourse < View
   end
 
   def rpc_button_add_student( session, data )
-    if ( name = data._full_name ).to_s.length > 0 and
+    if ( name = data._full_name ).to_s.length > 0 &&
         ( course = data._courses )
       Persons.create_add_course( data._full_name, session.owner, course )
       rpc_list_choice_courses( session, data )
@@ -97,12 +93,23 @@ class CashboxCourse < View
   end
   
   def rpc_update( session )
-    ret = reply( :empty, :students ) +
-    if session.owner and session.owner.has_permission?( :admin )
-      reply( :unhide, :old_cash )
+    if owner = session.owner
+      reply_visible( owner.has_permission?( :admin ), :old_cash )
     else
-      reply( :hide, :old_cash )
+      []
+    end +
+      reply( :empty, :students ) +
+      reply( :empty, :courses ) +
+      reply( :update, :courses => Courses.list_courses_entries )
+  end
+  
+  def rpc_button_delete( session, data )
+    if ( gid = data._payments.first ).to_s.length > 0
+      if mov = Movements.match_by_global_id( gid )
+        log_msg "cashbox_course", "Deleting movement #{mov.inspect}"
+        mov.delete
+        rpc_list_choice_students( session, data )
+      end
     end
   end
-
 end
