@@ -13,7 +13,7 @@ class CourseStats < View
       end
       show_block :account
       show_arg :entries, :width => 500
-      show_button :save
+      show_button :create_account, :save
     end
   end
 
@@ -22,6 +22,14 @@ class CourseStats < View
       dputs(3){"Found course #{course.name} with data #{data.inspect}"}
       data.delete( 'students' )
       course.data_set_hash( data )
+    end
+  end
+  
+  def rpc_button_create_account( session, data )
+    if course = Courses.match_by_course_id(data._courses.first) 
+      course.create_account
+      rpc_update_view( session ) +
+        rpc_list_choice( session, "courses", data )
     end
   end
 
@@ -33,12 +41,14 @@ class CourseStats < View
       course = Courses.match_by_course_id(course_id)
       reply( :empty ) +
         reply( :update, :entries => [0] ) +
-        update_form_data( course )
+        update_form_data( course ) +
+        reply_visible( course.entries.class != Account, :create_account )
     end
   end
   
   def rpc_update_view( session )
-    dp super( session ) +
+    super( session ) +
+      reply( :empty, :entries ) +
       reply( :update, :entries => 
         [[0, "None"]].concat( AccountRoot.actual.listp_path ) )
   end

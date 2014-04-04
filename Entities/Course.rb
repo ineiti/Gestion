@@ -172,13 +172,7 @@ class Courses < Entities
     end
     
     if ConfigBase.get_functions.index :accounting_courses
-      if ctype.account_base
-      course.entries = Accounts.create_path( 
-        "#{ctype.account_base.path}::#{course.name}")
-      else
-        dputs(1){"Trying to create account for #{course.name} but " +
-            " #{ctype.name} has no base-account"}
-      end
+      course.create_account
     end
     
     course.cost_teacher = ctype.cost_teacher
@@ -1175,5 +1169,15 @@ base_gestion
         ]
       }
     }.flatten(1)
+  end
+  
+  def create_account
+    if ctype.account_base
+      self.entries = Accounts.create_path( 
+        "#{ctype.account_base.path}::#{name}")
+    else
+      dputs(1){"Trying to create account for #{name} but " +
+          " #{ctype.name} has no base-account"}
+    end
   end
 end
