@@ -863,7 +863,7 @@ class Person < Entity
             [ {:content => "#{m[0]}", :align => :center },
               m[1],
               {:content => "#{m[2]}", :align => :right}, 
-              {:content => "#{Movement.value_form( 
+              {:content => "#{Account.total_form( 
                 sum += m[2].gsub(',','').to_f / 1000 )}", 
                 :align => :right} ]
           }, :header => true, :column_widths => [70,300,75,75] )

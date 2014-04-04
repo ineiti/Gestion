@@ -7,8 +7,8 @@ class ComptaReport < View
     
     gui_hboxg do
       gui_vboxg :nogroup do
-        show_entity_account :account_list, 'Accounts', 'path', 
-          :width => 400, :flex => 1
+        show_entity_account_lazy :account_list, :single, 
+          :width => 400, :flex => 1, :callback => true
       end
       gui_vbox :nogroup do
         show_int :total
@@ -25,7 +25,7 @@ class ComptaReport < View
   
   def rpc_button_report_movements( session, data )
     if acc = data._account_list
-      dputs(3){"Got account #{acc.path}"}
+      ddputs(3){"Got account #{acc.path}"}
       file = "/tmp/report_movs_#{@count += 1}.pdf"
       acc.print_pdf( file, true )
       reply( :window_show, :get_report ) +
@@ -36,5 +36,20 @@ class ComptaReport < View
   
   def rpc_button_close( session, data )
     reply( :window_hide )
+  end
+  
+  def rpc_update_view( session )
+    super( session ) +
+      reply( :update, :account_list => AccountRoot.current.listp_path )
+  end
+  
+  def rpc_list_choice_account_list( session, data )
+    reply( :empty ) +
+      if ( acc = data._account_list ) != []
+        reply( :update, :total => acc.total_form ) +
+          reply( :update, :desc => acc.desc )
+      else
+        []
+      end
   end
 end

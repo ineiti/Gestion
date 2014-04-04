@@ -1104,8 +1104,8 @@ base_gestion
       pdf.font_size 10
       pdf.text "Duration: #{start}-#{self.end} - - Teacher: #{teacher.full_name}" +
         " - - Hours: #{hours}"
-      pdf.text "Cost per student: #{Movement.value_form( cost_student.to_i / 1000 )} - - " +
-        "Cost per teacher: #{Movement.value_form( cost_teacher.to_i / 1000 )}"
+      pdf.text "Cost per student: #{Account.total_form( cost_student.to_i / 1000 )} - - " +
+        "Cost per teacher: #{Account.total_form( cost_teacher.to_i / 1000 )}"
       pdf.text "Account: #{entries.path}"
       pdf.move_down 1.cm
       
@@ -1124,7 +1124,7 @@ base_gestion
           }.collect{|m|
             payments.push [ m.date,
               {:content => m.value_form, :align => :right }, 
-              {:content => Movement.value_form( sum += m.value ), :align => :right } ]
+              {:content => Account.total_form( sum += m.value ), :align => :right } ]
           }
           left = if cost_student.to_i > 0
             cost_student.to_f / 1000 - sum
@@ -1132,7 +1132,7 @@ base_gestion
             0
           end
           table.push [ "Rest for #{Persons.match_by_login_name(s).full_name} (#{s})",
-            {:content => Movement.value_form( left ), :align => :right } ]
+            {:content => Account.total_form( left ), :align => :right } ]
           payments.size > 0 and table.concat payments
         }
         pdf.table( header + 
@@ -1154,9 +1154,9 @@ base_gestion
     total = 0
     entries.movements.reverse.select{|e| e.desc =~ / #{student}:/ }.collect{|e|
       [ e.global_id, 
-        [ e.date, e.value_form, Movement.value_form( total += e.value ) ] ]
+        [ e.date, e.value_form, Account.total_form( total += e.value ) ] ]
     } + [ [ nil, 
-        ["Reste", Movement.value_form(cost_student.to_f / 1000 - total)] ] ]
+        ["Reste", Account.total_form(cost_student.to_f / 1000 - total)] ] ]
   end
 
   def report_list
