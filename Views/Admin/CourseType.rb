@@ -17,15 +17,18 @@ class AdminCourseType < View
       end
       
       gui_vboxg do
-        gui_hboxg :nogroup do
+        gui_hbox :nogroup do
           gui_vboxg :nogroup do
             show_block :strings
             show_block :accounting
-            show_arg :account_base, :width => 200
           end
           gui_vboxg :nogroup do
             show_block :central
           end
+        end
+        gui_vbox :nogroup do
+          show_field :account_base
+          show_arg :account_base, :width => 400
         end
         gui_vboxg :nogroup do
           show_block :long, :width => 200
@@ -37,7 +40,8 @@ class AdminCourseType < View
     end
   end
   
-  def rpc_update( session )
-    reply( :update, :account_base => AccountRoot.actual.listp_path )
+  def rpc_update_view( session )
+    reply( :empty, :account_base ) +
+      reply( :update, :account_base => AccountRoot.actual.listp_path )
   end
 end
