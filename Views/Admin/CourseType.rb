@@ -44,4 +44,8 @@ class AdminCourseType < View
     reply( :empty, :account_base ) +
       reply( :update, :account_base => AccountRoot.actual.listp_path )
   end
+  
+  def rpc_update( session )
+    reply( :update, :account_base => [0] )
+  end
 end
