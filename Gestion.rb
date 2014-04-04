@@ -9,7 +9,7 @@ Encoding.default_external = Encoding::UTF_8
 #          - for students
 
 DEBUG_LVL=0
-VERSION_GESTION="1.4.0"
+VERSION_GESTION="1.4.1"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
