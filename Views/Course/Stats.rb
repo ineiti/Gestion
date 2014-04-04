@@ -38,7 +38,7 @@ class CourseStats < View
   end
   
   def rpc_update_view( session )
-    super( session ) +
+    dp super( session ) +
       reply( :update, :entries => 
         [[0, "None"]].concat( AccountRoot.actual.listp_path ) )
   end

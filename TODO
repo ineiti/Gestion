@@ -2,7 +2,6 @@
 
 BUGS:
         - AfriCompta: error in merging from Nelbe - why?
-        - CourseStats: when changing "entries" to "none", error is displayed
 
         - CoursePrint: error in printing
           - when clicking printer/pdf/printer it gets confused
@@ -31,6 +30,8 @@ Security:
 
 UI:
         - Speed up Course::report_list
+          - 140404: show AccountRoot.current by default
+          - add drop-box for eventual Archives
         - ComptaReport: don't show deleted accounts
         - client/server:
           - Course::Grade - Syncing with server when course-type doesn't exist must
@@ -230,6 +231,7 @@ To check:
 
 
 ** FIXED **:
+        - B 140404: CourseStats: when changing "entries" to "none", error is displayed
         - B 140403: When deleting movements in Cashbox.*, check for old_cash dependencies
         - B 140403: CourseStats should use AccountRoot.current
         - B 140403: CashboxCourse needs a "delete" button

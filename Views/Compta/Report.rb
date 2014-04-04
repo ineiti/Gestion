@@ -13,7 +13,7 @@ class ComptaReport < View
       gui_vbox :nogroup do
         show_int :total
         show_str :desc, :width => 300
-        show_button :report_movements
+        show_button :account_update, :report_movements
       end
       gui_window :get_report do
         show_html :txt
@@ -34,12 +34,15 @@ class ComptaReport < View
     end
   end
   
-  def rpc_button_close( session, data )
-    reply( :window_hide )
+  def rpc_button_account_update( session, data )
+    if ( acc = data._account_list ).class == Account
+      acc.update_total
+    end
   end
   
   def rpc_update_view( session )
     super( session ) +
+      reply( :empty, :account_list ) +
       reply( :update, :account_list => AccountRoot.current.listp_path )
   end
   
