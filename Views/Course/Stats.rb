@@ -34,10 +34,10 @@ class CourseStats < View
   end
 
   def rpc_list_choice( session, name, args )
-    ddputs( 3 ){ "rpc_list_choice with #{name} - #{args.inspect}" }
+    dputs( 3 ){ "rpc_list_choice with #{name} - #{args.inspect}" }
     if name == "courses" and args['courses'].length > 0
       course_id = args['courses'][0]
-      ddputs( 3 ){ "replying for course_id #{course_id}" }
+      dputs( 3 ){ "replying for course_id #{course_id}" }
       course = Courses.match_by_course_id(course_id)
       reply( :empty ) +
         reply( :update, :entries => [0] ) +
