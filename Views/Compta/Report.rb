@@ -1,6 +1,6 @@
 class ComptaReport < View
   def layout
-    @visible = false
+    @visible = true
     @count = 1
     @rpc_update = true
     @order = 30

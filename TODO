@@ -2,6 +2,7 @@
 
 BUGS:
         - AfriCompta: error in merging from Nelbe - why?
+        - CourseStats: when changing "entries" to "none", error is displayed
 
         - CoursePrint: error in printing
           - when clicking printer/pdf/printer it gets confused
