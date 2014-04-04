@@ -2,6 +2,9 @@
 
 BUGS:
         - AfriCompta: error in merging from Nelbe - why?
+        - CourseStats: whenn adding a course, account_entries is not updated
+          -> should probably do a "watch account-changes and update if changed"
+            thingie
 
         - CoursePrint: error in printing
           - when clicking printer/pdf/printer it gets confused

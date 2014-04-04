@@ -13,7 +13,7 @@ class CourseStats < View
       end
       show_block :account
       show_arg :entries, :width => 500
-      show_button :create_account, :save
+      show_button :save, :create_account
     end
   end
 
