@@ -55,6 +55,8 @@ class TC_Person < Test::Unit::TestCase
     @teacher = Entities.Persons.create( :login_name => "teacher",
       :permissions => ["teacher"] )
     @center = Persons.create( :login_name => "foo", :permissions => ["center"] )
+    @accountant = Persons.create( :login_name => "accountant",
+    :permissions => "accountant")
 
     Entities.Services.create( :name => "surf", :price => 1000, :duration => 20 )
     Entities.Services.create( :name => "solar", :price => 1000, :duration => 20 )
@@ -282,9 +284,9 @@ class TC_Person < Test::Unit::TestCase
     end
   end
 
-#  def test_multilogin
-#    assert_equal nil, Views.Welcome.rpc_show( nil )
-#  end
+  #  def test_multilogin
+  #    assert_equal nil, Views.Welcome.rpc_show( nil )
+  #  end
 
   def test_cash_msg
     data = {"copies_laser"=>"0", "heures_groupe_grand"=>"", "CDs"=>nil, 
@@ -316,5 +318,26 @@ class TC_Person < Test::Unit::TestCase
     file = @secretary.report_pdf( 3 )
     
     assert file
+  end
+  
+  def test_get_all_due
+    ConfigBase.add_function( :accounting_courses )
+    
+    assert_equal 0, @secretary.account_due.total.to_f
+    assert_equal 0, @secretary.account_due_paid.total.to_f
+    assert_equal 0, @secretary.account_service.total.to_f
+    assert_equal 0, @accountant.account_cash.total.to_f
+
+    @secretary.pay_service( 10000, "test1" )
+    @secretary.pay_service( 1000, "test2" )
+    assert_equal 11.0, @secretary.account_due.total.to_f
+    assert_equal 0, @secretary.account_due_paid.total.to_f
+    assert_equal 11.0, @secretary.account_service.total.to_f
+    
+    @accountant.get_all_due( @secretary )
+    assert_equal 11.0, @accountant.account_cash.total.to_f
+    assert_equal 0, @secretary.account_due.total.to_f
+    assert_equal 0, @secretary.account_due_paid.total.to_f
+    assert_equal 11.0, @secretary.account_service.total.to_f
   end
 end

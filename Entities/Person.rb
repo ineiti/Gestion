@@ -379,7 +379,8 @@ end
 #
 
 class Person < Entity
-  attr_accessor :account_due, :account_cash
+  attr_accessor :account_due, :account_due_paid, 
+    :account_cash, :account_service
 
   def setup_instance
     dputs(3) { "Data is #{@proxy.data[@id].inspect}" }
@@ -419,6 +420,8 @@ class Person < Entity
       dputs(2) { "Searching accounts for #{full_name} with "+
           "lending: #{lending} - service: #{service}" }
       @account_due = Accounts.get_by_path_or_create(lending,
+        acc, false, -1, true)
+      @account_due_paid = Accounts.get_by_path_or_create("#{lending}::Paid",
         acc, false, -1, true)
       @account_service = Accounts.get_by_path_or_create(service,
         acc, false, 1, false)
@@ -711,9 +714,23 @@ class Person < Entity
     dputs(3) { "Transferring #{amount} from #{@account_cash.get_path} to " +
         "#{person.account_due.get_path}"
     }
-    Movements.create("Payement au comptable", Date.today,
+    Movements.create("Transfert au comptable", Date.today,
       amount / 1000.0, @account_cash, person.account_due)
     return true
+  end
+  
+  def get_all_due( person )
+    if person.account_due && @account_cash
+      value = 0
+      person.account_due.movements.each{|m|
+        dputs(3){"Moving #{m.inspect}"}
+        value += m.get_value( person.account_due )
+        m.move_from_to( person.account_due, person.account_due_paid )
+      }
+      dputs(3){"Value is #{value}"}
+      Movements.create("Transfert au comptable", Date.today,
+        value, @account_cash, person.account_due_paid )
+    end
   end
 
   def can_view(v)
@@ -806,18 +823,18 @@ class Person < Entity
     }
   end
   
-  def report_list_movements( from = nil, to = from )
+  def report_list_movements( from = nil, to = from, account = account_due )
     if from
-      account_due.movements.select{|m|
+      account.movements.select{|m|
         dputs(3){"Date is #{m.date.inspect}"}
         (from..to).include? m.date
       }
     else
-      account_due.movements
+      account.movements
     end.collect{|m|
       [ m.global_id, 
         [ m.date, 
-          "#{m.get_other_account(account_due).name}: #{m.desc}", 
+          "#{m.get_other_account(account).name}: #{m.desc}", 
           m.value_form ] 
       ]
     }
@@ -837,6 +854,8 @@ class Person < Entity
         Date.new( date.year, date.month, - 1 ) )
     when :all, 4
       report_list_movements
+    when :all_paid, 5
+      report_list_movements( nil, nil, account_due_paid )
     end
   end
   

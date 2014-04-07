@@ -40,6 +40,7 @@ def cleanup_data
 end
 
 begin
+  HAS_CONFIGBASE=true
   require 'QooxView'
   require 'Internet'
   require 'Info'
@@ -75,7 +76,8 @@ begin
   Permission.add( 'secretary', 'SelfServices,CourseModify,FlagPersonAdd,FlagPersonDelete,' + 
       'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
       'FlagAddInternet', 'assistant' )
-  Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting', 'internet' )
+  Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting,' +
+      'ComptaReport,ComptaShow', 'internet' )
   Permission.add( 'maintenance', 'Inventory.*', 'default' )
   Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,' +
       'FlagPersonAdd,SelfServices', '' )

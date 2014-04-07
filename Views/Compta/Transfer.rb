@@ -27,7 +27,7 @@ class ComptaTransfer < View
     amount = ( other.account_due.total.to_f * 1000 ).to_i
     log_msg :comptatransfer, "#{session.owner.login_name} gets #{amount} from " +
       "#{other.login_name}"
-    session.owner.get_cash( other, amount )
+    session.owner.get_all_due( other )
     
     vtlp_update_list( session ) + rpc_update( session )
   end

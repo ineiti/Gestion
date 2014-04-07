@@ -1,10 +1,15 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
+ON TUESDAY:
+        - check whether error in ACAccess:121 persists by updating local man
+
 BUGS:
         - AfriCompta: error in merging from Nelbe - why?
         - CourseStats: whenn adding a course, account_entries is not updated
           -> should probably do a "watch account-changes and update if changed"
             thingie
+        - Entities::Person.account_service should be replaced by
+          ConfigBase.account_service
 
         - CoursePrint: error in printing
           - when clicking printer/pdf/printer it gets confused
@@ -32,7 +37,7 @@ BUGS:
 Security:
 
 UI:
-        - Speed up Course::report_list
+        - Speed up Compta::report_list
           - 140404: show AccountRoot.current by default
           - add drop-box for eventual Archives
         - ComptaReport: don't show deleted accounts
@@ -94,6 +99,9 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - Add 'match_key_*' and 'create_key_*' to Entities and use that to
+          speed up things
+        - replace all 'undefined' variables with class-variables
         - Add flag to CSV-storage so that a new element doesn't involve writing
           down of all elements
         - Change ConfigBase functions_base: all functions are evaluated with

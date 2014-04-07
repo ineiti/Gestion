@@ -1,25 +1,24 @@
-class ConfigBases < Entities
-  @@functions = %w( network internet share 
-    courses course_server course_client internet_simple
-    internet_libnet
-    inventory accounting quiz accounting_courses accounting_old
-    cashbox ).sort.to_sym
-  @@functions_base = { :network => [ :internet, :share, :internet_only ],
-    :internet => [ :internet_simple, :internet_libnet ],
-    :courses => [ :course_server, :course_client, :accounting_courses ],
-    :accounting => [ :accounting_courses ],
-    :cashbox => [ :accounting_courses ]
-  }
-  @@functions_conflict = [ [:course_server, :course_client] ]
-  
+class ConfigBases < Entities  
   def add_config
     value_block :vars
     value_str :libnet_uri
     value_int :debug_lvl
     value_str :internet_cash
-    value_str :locale_force
     value_str :version_local
-    value_text :welcome_text
+    
+    @@functions = %w( network internet share 
+    courses course_server course_client internet_simple
+    internet_libnet
+    inventory accounting quiz accounting_courses accounting_old
+    cashbox ).sort.to_sym
+    @@functions_base = { :network => [ :internet, :share, :internet_only ],
+      :internet => [ :internet_simple, :internet_libnet ],
+      :courses => [ :course_server, :course_client, :accounting_courses ],
+      :accounting => [ :accounting_courses ],
+      :cashbox => [ :accounting_courses ]
+    }
+    @@functions_conflict = [ [:course_server, :course_client] ]
+
   end
   
   def migration_1( c )
