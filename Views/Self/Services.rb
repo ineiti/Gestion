@@ -4,6 +4,7 @@ class SelfServices < View
     @update = true
     @order = 30
     @functions_need = [:accounting]
+    @visible = false
     
     gui_hbox do
       gui_vbox do

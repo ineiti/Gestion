@@ -878,7 +878,7 @@ class Person < Entity
         header = [ ["Date", "Description", "Value", "Sum"].collect{|ch|
             {:content => ch, :align => :center}}]
         dputs(3){"Movs is #{movs.inspect}"}
-        pdf.table( header + movs.collect{|m|
+        pdf.table( header + movs.collect{|m_id, m|
             [ {:content => "#{m[0]}", :align => :center },
               m[1],
               {:content => "#{m[2]}", :align => :right}, 

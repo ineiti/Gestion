@@ -56,7 +56,7 @@ class TC_Person < Test::Unit::TestCase
       :permissions => ["teacher"] )
     @center = Persons.create( :login_name => "foo", :permissions => ["center"] )
     @accountant = Persons.create( :login_name => "accountant",
-    :permissions => "accountant")
+      :permissions => ["accountant"])
 
     Entities.Services.create( :name => "surf", :price => 1000, :duration => 20 )
     Entities.Services.create( :name => "solar", :price => 1000, :duration => 20 )
@@ -79,9 +79,9 @@ class TC_Person < Test::Unit::TestCase
   
   def test_responsibles
     resps = Persons.responsibles
-    assert_equal [[6, "foo"], [2, "josue"], [4, "secr"], [5, "teacher"]], resps
+    assert_equal [[8, "foo"], [2, "josue"], [6, "secr"], [7, "teacher"]], resps
     @surf.permissions = @surf.permissions + ["teacher"]
-    assert_equal [[6, "foo"], [2, "josue"], [4, "secr"], [3, "surf"], [5, "teacher"]],
+    assert_equal [[8, "foo"], [2, "josue"], [6, "secr"], [3, "surf"], [7, "teacher"]],
       Persons.responsibles
     assert Persons.resps != []
   end
@@ -306,7 +306,8 @@ class TC_Person < Test::Unit::TestCase
     ConfigBase.add_function( :accounting_courses )
     assert @secretary.account_due
     
-    ctype = CourseTypes.create( :name => "base" )
+    ctype = CourseTypes.create( :name => "base",
+      :account_base => Accounts.create_path( "Root::Income::Courses" ))
     course = Courses.create_ctype( ctype, "1404" )
     assert course.entries
     
@@ -318,6 +319,7 @@ class TC_Person < Test::Unit::TestCase
     file = @secretary.report_pdf( 3 )
     
     assert file
+    ConfigBase.del_function( :accounting_courses )
   end
   
   def test_get_all_due
@@ -339,5 +341,7 @@ class TC_Person < Test::Unit::TestCase
     assert_equal 0, @secretary.account_due.total.to_f
     assert_equal 0, @secretary.account_due_paid.total.to_f
     assert_equal 11.0, @secretary.account_service.total.to_f
+
+    ConfigBase.del_function( :accounting_courses )
   end
 end

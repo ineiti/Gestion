@@ -73,14 +73,14 @@ begin
   Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
   Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
       'FlagResponsible', 'assistant' )
-  Permission.add( 'secretary', 'SelfServices,CourseModify,FlagPersonAdd,FlagPersonDelete,' + 
+  Permission.add( 'secretary', 'CourseModify,FlagPersonAdd,FlagPersonDelete,' + 
       'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
       'FlagAddInternet', 'assistant' )
-  Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,SelfCash,FlagAccounting,' +
-      'ComptaReport,ComptaShow', 'internet' )
+  Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
+      'ComptaReport,ComptaShow,Cashbox.*', 'internet' )
   Permission.add( 'maintenance', 'Inventory.*', 'default' )
-  Permission.add( 'cybermanager', 'SelfCash,PersonCredit,NetworkTigo,FlagAddInternet,' +
-      'FlagPersonAdd,SelfServices', '' )
+  Permission.add( 'cybermanager', 'PersonCredit,NetworkTigo,FlagAddInternet,' +
+      'FlagPersonAdd,CashboxService', '' )
   Permission.add( 'director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
       'PersonAdmin,PersonCourse,NetworkConnection,CourseStats', 
     'secretary,cybermanager,teacher' )

@@ -5,6 +5,7 @@ class SelfCash < View
     @cache_payments = {}
     @order = 20
     @functions_need = [:accounting]
+    @visible = false
 
     gui_vbox do
         show_int_ro :account_total_due, :width => 100

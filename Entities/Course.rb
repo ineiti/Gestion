@@ -129,7 +129,7 @@ class Courses < Entities
     ret = @data.values.select{|d|
       dputs( 3 ){ "Searching #{ln} in #{d.inspect} - #{d[:students].index(ln)}" }
       d[:students] and d[:students].index( ln )
-    }
+    }.collect{|c| Courses.match_by_course_id( c._course_id ) }
     dputs( 3 ){ "Found courses #{ret.inspect}" }
     sort_courses( ret )
   end

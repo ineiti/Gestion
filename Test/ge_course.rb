@@ -26,7 +26,8 @@ class TC_Course < Test::Unit::TestCase
     @maint_t = Entities.CourseTypes.create( :name => "maint", :duration => 72,
       :desciption => "maintenance", :contents => "lots of work",
       :filename => ['base_gestion.odt'], :output => "certificate",
-      :diploma_type => ["simple"])
+      :diploma_type => ["simple"], 
+      :account_base => Accounts.create_path("Root::Income::Courses"))
     @maint_2 = Courses.create( :name => "maint_1210", :start => "1.10.2012",
       :end => "1.1.2013", :sign => "2.1.2012", :teacher => @secretaire,
       :contents => "lots of work", :description => "maintenance",
@@ -156,7 +157,8 @@ class TC_Course < Test::Unit::TestCase
   def test_new_course
     nmaint = Courses.create_ctype( @maint_t, "1201" )
     assert_equal( {:duration=>72, :course_id=>6, :contents=>"lots of work", 
-        :students=>[], :name=>"maint_1201", :ctype => [1] },
+        :students=>[], :name=>"maint_1201", :ctype => [1],
+        :cost_teacher => nil, :cost_student => nil },
       nmaint.to_hash )
     
     nmaint2 = Courses.create_ctype( @maint_t, "1201" )
@@ -169,7 +171,8 @@ class TC_Course < Test::Unit::TestCase
         :students=>[],
         :name=>"it-101_1202",
         :contents => "it-101",
-        :description=>"windows, word, excel"}, it_101.to_hash)
+        :description=>"windows, word, excel",
+        :cost_teacher => nil, :cost_student => nil }, it_101.to_hash)
 
     it_101 = Courses.create_ctype( @it_101_t, "1202", @center )
     assert_equal( {:ctype=>[2],
@@ -178,7 +181,8 @@ class TC_Course < Test::Unit::TestCase
         :center=>[@center.id],
         :name=>"foo_it-101_1202",
         :contents => "it-101",
-        :description=>"windows, word, excel"}, it_101.to_hash)
+        :description=>"windows, word, excel",
+        :cost_teacher => nil, :cost_student => nil }, it_101.to_hash)
   end
 	
   def test_create_account

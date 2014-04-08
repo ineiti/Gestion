@@ -2,6 +2,7 @@
 
 ON TUESDAY:
         - check whether error in ACAccess:121 persists by updating local man
+        - check all Tests
 
 BUGS:
         - AfriCompta: error in merging from Nelbe - why?

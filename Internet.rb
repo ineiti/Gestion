@@ -62,7 +62,7 @@ module Internet
         end
       else
         dputs(0) { "Error: LibNet said #{u} is connected, but couldn't find that user!" +
-            " Users connected: #{$lib_net.call(:useres_connected).inspect}"}
+            " Users connected: #{$lib_net.call(:users_connected).inspect}"}
       end
     }
     $lib_net.call(:users_disconnected).split.each{|u|
