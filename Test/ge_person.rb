@@ -178,6 +178,7 @@ class TC_Person < Test::Unit::TestCase
       @admin.log_list[-1].undate.unlogid )
   end
   
+  # Problem with test_permissions
   def test_account_due
     @secretary = Entities.Persons.create( :login_name => "secretary",
       :permissions => ["secretary"] )

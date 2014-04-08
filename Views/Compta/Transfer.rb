@@ -2,7 +2,8 @@
 # and open the template in the editor.
 
 class ComptaTransfer < View
-  include VTListPane
+  include PrintButton
+
   def layout
     @update = true
     @order = 10
@@ -11,16 +12,21 @@ class ComptaTransfer < View
 
     gui_hbox  do
       gui_vbox :nogroup do
-        vtlp_list :person_list, :account_due, :maxheight => 250
-        show_button :empty
+        show_entity_person_lazy :persons, :single, :callback => true
+        show_button :do_transfer
       end
       gui_vbox :nogroup do
-        show_int_ro :account_cash
+        show_table :report, :headings => [ :Date, :Desc, :Amount, :Sum ],
+          :widths => [ 100, 300, 75, 75 ], :height => 400, :width => 570,
+          :columns => [0, 0, :align_right, :align_right]
+        show_print :print
       end
+      
+      window_print_status
     end
   end
   
-  def rpc_button_empty( session, data )
+  def rpc_button_do_transfer( session, data )
     dputs(3){"data is #{data.inspect} with owner #{session.owner.full_name}"}
     other = Persons.match_by_person_id( data["person_list"][0] )
     dputs(3){"Other is #{other.inspect}, id is #{data["person_list"].to_s.inspect}"}
@@ -34,6 +40,19 @@ class ComptaTransfer < View
   
   def rpc_update( session )
     dputs(3){"rpc_update with #{session.inspect}"}
-    reply( :update, :account_cash => session.owner.account_total_due )
+    reply( :empty, :persons ) +
+      reply( :update, :persons => Persons.listp_account_due ) +
+      reply_print( session )
+  end
+  
+  def rpc_list_choice_persons( session, data )
+    dp data
+    reply( :empty, :report ) +
+      reply( :update, :report => data._persons.report_list( :all ))
+  end
+  
+  def rpc_button_print( session, data )
+    send_printer_reply( session, :print, data,
+      data._persons.report_pdf( :all ) )
   end
 end

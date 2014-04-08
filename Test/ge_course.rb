@@ -671,7 +671,8 @@ class TC_Course < Test::Unit::TestCase
     ConfigBase.add_function( :accounting_courses )
     assert @secretaire.account_due
     
-    ctype = CourseTypes.create( :name => "base" )
+    ctype = CourseTypes.create( :name => "base",
+    :account_base => Accounts.create_path( "Root::Income::Courses" ) )
     course = Courses.create_ctype( ctype, "1404" )
     course.teacher = @admin
     course.cost_student = 50000

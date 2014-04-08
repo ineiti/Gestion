@@ -9,7 +9,7 @@ Encoding.default_external = Encoding::UTF_8
 #          - for students
 
 DEBUG_LVL=0
-VERSION_GESTION="1.4.1"
+VERSION_GESTION="1.4.2"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -75,7 +75,7 @@ begin
       'FlagResponsible', 'assistant' )
   Permission.add( 'secretary', 'CourseModify,FlagPersonAdd,FlagPersonDelete,' + 
       'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
-      'FlagAddInternet', 'assistant' )
+      'FlagAddInternet,CourseStats', 'assistant' )
   Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
       'ComptaReport,ComptaShow,Cashbox.*', 'internet' )
   Permission.add( 'maintenance', 'Inventory.*', 'default' )

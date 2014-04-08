@@ -371,6 +371,11 @@ class Persons < Entities
     person and course.students.push( person.login_name )
     person
   end
+  
+  def delete_all( local_only = false )
+    super( local_only )
+    @resps = []
+  end
 end
 
 
@@ -870,7 +875,7 @@ class Person < Entity
       movs = report_list( report, date ).reverse
       pdf.text "Report for #{full_name}", :align => :center, :size => 20
       pdf.font_size 10
-      pdf.text "From #{movs.first.first} to #{movs.last.first}"
+      pdf.text "From #{movs.first[1][0]} to #{movs.last[1][0]}"
       pdf.text "Account: #{account_due.path}"
       pdf.move_down 1.cm
       

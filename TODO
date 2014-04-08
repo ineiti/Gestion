@@ -1,29 +1,23 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
-ON TUESDAY:
-        - check whether error in ACAccess:121 persists by updating local man
-        - check all Tests
-
 BUGS:
-        - AfriCompta: error in merging from Nelbe - why?
-        - CourseStats: whenn adding a course, account_entries is not updated
-          -> should probably do a "watch account-changes and update if changed"
-            thingie
-        - Entities::Person.account_service should be replaced by
-          ConfigBase.account_service
-
-        - CoursePrint: error in printing
-          - when clicking printer/pdf/printer it gets confused
-          - when clicking on the left part of the button it gets ignored
-          - clicking "PDF" doesn't work when there is no printer
-
         - when Network::Tigo::update is clicked, it is possible to change
           to Self-tab
           - Verify correct disabling of tabs when waiting for answer
           - Add async-requests (for Self::Internet and Admin::Tigo)
         - LibNet has concurrency-troubles - use "flock" to mend it:
           ( flock -e 200; locked commands ) 200>/tmp/blah.lockfile
+          - also check LibNet.rb and put some mutex in it
 
+        - CourseStats: whenn adding a course, account_entries is not updated
+          -> should probably do a "watch account-changes and update if changed"
+            thingie
+        - Entities::Person.account_service should be replaced by
+          ConfigBase.account_service
+        - CoursePrint: error in printing
+          - when clicking printer/pdf/printer it gets confused
+          - when clicking on the left part of the button it gets ignored
+          - clicking "PDF" doesn't work when there is no printer
         - AC: correctly show differing accounts in "check"
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
@@ -38,6 +32,7 @@ BUGS:
 Security:
 
 UI:
+        - ComptaTransfer: add table with movements for each user
         - Speed up Compta::report_list
           - 140404: show AccountRoot.current by default
           - add drop-box for eventual Archives
@@ -243,6 +238,13 @@ To check:
 
 
 ** FIXED **:
+        - B 140408: AfriCompta: error in merging from Nelbe - why?
+          - concurrency-error in SQLite-storage
+          - error when creating one of the accounts - why?
+        - B 140408: Add CourseStats to secretary
+        - B 140408: ComptaTransfert: change "vider" for "transfert"
+        - B 140408: check whether error in ACAccess:121 persists by updating local man
+        - B 140408: check all Tests
         - B 140404: CourseStats: when changing "entries" to "none", error is displayed
         - B 140403: When deleting movements in Cashbox.*, check for old_cash dependencies
         - B 140403: CourseStats should use AccountRoot.current
