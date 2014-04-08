@@ -829,6 +829,7 @@ class Person < Entity
   end
   
   def report_list_movements( from = nil, to = from, account = account_due )
+    total = 0
     if from
       account.movements.select{|m|
         dputs(3){"Date is #{m.date.inspect}"}
@@ -840,7 +841,8 @@ class Person < Entity
       [ m.global_id, 
         [ m.date, 
           "#{m.get_other_account(account).name}: #{m.desc}", 
-          m.value_form ] 
+          m.value_form,
+          Account.total_form( total += m.value )] 
       ]
     }
   end
