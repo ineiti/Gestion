@@ -7,6 +7,7 @@ class ComptaReport < View
     
     gui_hboxg do
       gui_vboxg :nogroup do
+        show_entity_account_lazy :account_archive, :drop, :callback => true
         show_entity_account_lazy :account_list, :single, 
           :width => 400, :flex => 1, :callback => true
       end
@@ -40,19 +41,41 @@ class ComptaReport < View
     end
   end
   
+  def update_list( account = [] )
+    account.class == Account or account = AccountRoot.current
+
+    reply( :empty, :account_list ) +
+      reply( :update, :account_list => account.listp_path )
+  end
+  
+  def update_archive
+    reply( :empty, :account_archive ) +
+      reply( :update, :account_archive => [[0, "Actual"]].concat( 
+        if archive = AccountRoot.archive
+          archive.accounts.collect{|a|
+            [a.id, a.path] }
+        else
+          []
+        end ) )
+  end
+  
   def rpc_update_view( session )
     super( session ) +
-      reply( :empty, :account_list ) +
-      reply( :update, :account_list => AccountRoot.current.listp_path )
+      update_list +
+      update_archive
   end
   
   def rpc_list_choice_account_list( session, data )
     reply( :empty ) +
       if ( acc = data._account_list ) != []
-        reply( :update, :total => acc.total_form ) +
-          reply( :update, :desc => acc.desc )
-      else
-        []
-      end
+      reply( :update, :total => acc.total_form ) +
+        reply( :update, :desc => acc.desc )
+    else
+      []
+    end
+  end
+  
+  def rpc_list_choice_account_archive( session, data )
+    update_list( data._account_archive )
   end
 end

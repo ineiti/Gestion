@@ -837,14 +837,15 @@ class Person < Entity
       }
     else
       account.movements
-    end.collect{|m|
+    end.reverse.collect{|m|
+      v = m.get_value( account )
       [ m.global_id, 
         [ m.date, 
           "#{m.get_other_account(account).name}: #{m.desc}", 
-          m.value_form,
-          Account.total_form( total += m.value )] 
+          Account.total_form( v ),
+          Account.total_form( total += v )] 
       ]
-    }
+    }.reverse
   end
   
   def report_list( report, date = nil )
@@ -902,7 +903,6 @@ class Person < Entity
         pdf.draw_text pdf.page_number, :at => [19.cm, -20]
       end
     end
-    file
-    
+    file    
   end
 end

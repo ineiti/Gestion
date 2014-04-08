@@ -1146,7 +1146,12 @@ base_gestion
   
   def student_payments( student )
     total = 0
-    entries.movements.reverse.select{|e| e.desc =~ / #{student}:/ }.collect{|e|
+    movs = entries.movements
+    if archives = entries.get_archives
+      movs.concat archives.collect{|a| a.movements}.flatten
+    end
+      
+    movs.reverse.select{|e| e.desc =~ / #{student}:/ }.collect{|e|
       [ e.global_id, 
         [ e.date, e.value_form, Account.total_form( total += e.value ) ] ]
     } + [ [ nil, 
@@ -1178,6 +1183,21 @@ base_gestion
     else
       dputs(1){"Trying to create account for #{name} but " +
           " #{ctype.name} has no base-account"}
+    end
+  end
+  
+  def payment( secretary, student, amount, date, oldcash = false )
+    log_msg "course-payment", "#{secretary} pays #{amount} " +
+      "to #{student.full_name} of #{name}"
+    Movements.create( "For student #{student.login_name}:" +
+        "#{student.full_name}", 
+      date.strftime( "%Y-%m-%d" ), amount.to_f / 1000,
+      secretary.account_due, entries )
+    if secretary.has_permission?( :admin ) && oldcash
+      log_msg "course-payment", "Oldcash - doing reverse, too"
+      Movements.create( "old_cash for #{student.login_name}", 
+        date.strftime( "%Y-%m-%d" ), amount.to_f / 1000,
+        entries, secretary.account_due )
     end
   end
 end

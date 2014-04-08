@@ -14,14 +14,7 @@ class ComptaAdmin < View
   end
 	
   def rpc_button_archive( session, data )
-    dputs(1){"Before archiving: "}
-    Accounts.get_by_path( "Archive::2012" ).dump true
-
     Accounts.archive
-
-    dputs(1){"After archiving: "}
-    Accounts.get_by_path( "Archive::2012" ).dump true
-    #Accounts.archive
   end
 	
   def rpc_button_update_totals( session, data )

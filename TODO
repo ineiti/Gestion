@@ -5,10 +5,9 @@ BUGS:
           to Self-tab
           - Verify correct disabling of tabs when waiting for answer
           - Add async-requests (for Self::Internet and Admin::Tigo)
+
         - LibNet has concurrency-troubles - use "flock" to mend it:
           ( flock -e 200; locked commands ) 200>/tmp/blah.lockfile
-          - also check LibNet.rb and put some mutex in it
-
         - CourseStats: whenn adding a course, account_entries is not updated
           -> should probably do a "watch account-changes and update if changed"
             thingie
@@ -32,11 +31,10 @@ BUGS:
 Security:
 
 UI:
-        - ComptaTransfer: add table with movements for each user
-        - Speed up Compta::report_list
-          - 140404: show AccountRoot.current by default
-          - add drop-box for eventual Archives
-        - ComptaReport: don't show deleted accounts
+        - CourseGrade - add comment to file-uploads, so people know what to
+          upload
+        - CourseTabs still very slow for startup
+
         - client/server:
           - Course::Grade - Syncing with server when course-type doesn't exist must
             return error
@@ -53,10 +51,6 @@ UI:
           - CourseGrade::sync - catch timeouts on requests
           - CourseDiplomas: display random-id if available
           - only add center-ids when a course is "certified"
-
-        - CourseGrade - add comment to file-uploads, so people know what to
-          upload
-        - CourseTabs still very slow for startup
 
         - SelfChat: if on multilogin, propose a "name"-field
         - Slowness in CourseGrade when saving students
@@ -95,8 +89,6 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
-        - Add 'match_key_*' and 'create_key_*' to Entities and use that to
-          speed up things
         - replace all 'undefined' variables with class-variables
         - Add flag to CSV-storage so that a new element doesn't involve writing
           down of all elements
@@ -119,9 +111,8 @@ Programming:
 
 Documentation:
 
-> 1.0
+> 2.0
 Features:
-        - Add accounting for students-money and service-money
         - Add a cookie to log in automatically
         -2 Rename course
         -3 Add a status-bar on bottom for progresses and information like:
@@ -131,8 +122,6 @@ Features:
 	-4 make an asynchronous printing-module
 	- Using data from solar on local account without failing
 	- Make a dropbox when using _find
-        - AfriCompta-support:
-		-4 Define reports
 	-2 Make internet.wifi with Self::Internet only, and a link which allows
 	  to do the infamous internet.wifi/?pass=&user=
         -3 take Admin::ControlAccess from Rooms-definition
@@ -141,7 +130,6 @@ Features:
           - vérifier si la sim est expirée
           - Montrer le log des derniers communications avec le Modem
 	-3 Inventory of screens, mice, routers
-	-4 Double-users: merge them
 	- CourseHistory - what should go in there?
 
 Programming:
@@ -238,6 +226,16 @@ To check:
 
 
 ** FIXED **:
+        - P 140408: Add 'match_key_*' and 'create_key_*' to Entities and use that to
+          speed up things - also added a link from "match_by"
+        - UI140408: Speed up Compta::report_list
+          - 140404: show AccountRoot.current by default
+          - 140408: add drop-box for eventual Archives
+        - B 140408: also check LibNet.rb and put some mutex in it
+        - B 140408: ComptaReport: don't show deleted accounts
+        - B 140408: Course.report_list doesn't look at archives
+        - UI140408: ComptaTransfer: add table with movements for each user
+        - B 140408: Person.report_list_movements has values in wrong direction sometimes
         - B 140408: AfriCompta: error in merging from Nelbe - why?
           - concurrency-error in SQLite-storage
           - error when creating one of the accounts - why?

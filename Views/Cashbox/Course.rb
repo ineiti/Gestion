@@ -67,19 +67,8 @@ class CashboxCourse < View
       
     dputs(3){"Data is #{data.inspect}"}
     if data._cash.to_i != 0
-      log_msg "course-payment", "#{session.owner.login_name} pays #{data._cash} " +
-        "to #{data._students.full_name} of #{data._courses.name}"
-      Movements.create( "For student #{data._students.login_name}:" +
-          "#{data._students.full_name}", 
-        @date_pay.strftime( "%Y-%m-%d" ), data._cash.to_f / 1000,
-        session.owner.account_due, data._courses.entries )
-      if session.owner.has_permission?( :admin ) && 
-          data._old_cash.first == "Yes"
-        log_msg "course-payment", "Oldcash - doing reverse, too"
-        Movements.create( "old_cash for #{data._students.login_name}", 
-          @date_pay.strftime( "%Y-%m-%d" ), data._cash.to_f / 1000,
-          data._courses.entries, session.owner.account_due )
-      end
+      data._courses.payment( session.owner, data._students, data._cash, @date_pay,
+      session.owner.has_permission?( :admin ) && data._old_cash.first == "Yes" )
     end
     rpc_list_choice_students( session, data )
   end

@@ -501,7 +501,7 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.sync_do
     
     foo_maint = Courses.find_by_name( "^#{cname}" )
-    foo_grade = Grades.match_by_course( foo_maint.course_id )
+    foo_grade = Grades.match_by_course_person( foo_maint, "foo_secretaire" )
     names = Persons.search_by_login_name( "^#{cname}" ).collect{|p|
       p.login_name
     }
@@ -672,7 +672,7 @@ class TC_Course < Test::Unit::TestCase
     assert @secretaire.account_due
     
     ctype = CourseTypes.create( :name => "base",
-    :account_base => Accounts.create_path( "Root::Income::Courses" ) )
+      :account_base => Accounts.create_path( "Root::Income::Courses" ) )
     course = Courses.create_ctype( ctype, "1404" )
     course.teacher = @admin
     course.cost_student = 50000
@@ -689,6 +689,36 @@ class TC_Course < Test::Unit::TestCase
     file = course.report_pdf
     
     assert file
+  end
+  
+  def test_payment
+    ConfigBase.add_function( :accounting_courses )
+    course = Courses.create_ctype( @maint_t, "1312" )
+    assert_equal 0, @secretaire.account_due.total
+    
+    course.payment( @secretaire, @surf, 10000, Date.today )
+    assert_equal 10, @secretaire.account_due.total
 
+    course.payment( @secretaire, @surf, 10000, Date.today, true )
+    assert_equal 10, @secretaire.account_due.total
+  end
+  
+  def test_report_list_archive
+    ConfigBase.add_function( :accounting_courses )
+    course = Courses.create_ctype( @maint_t, "1312" )
+    course.students = ["surf"]
+    
+    course.payment( @secretaire, @surf, 10000, Date.new( 2013 ) )
+    course.payment( @secretaire, @surf, 10000, Date.new( 2014 ) )
+    assert_equal 20, @secretaire.account_due.total
+    assert_equal 20, course.entries.total
+    list = course.report_list
+    assert_equal 3, list.length
+    
+    Accounts.archive( 1, 2014 )
+    assert_equal 20, @secretaire.account_due.total
+    assert_equal 10, course.entries.total
+    list = course.report_list
+    assert_equal 3, list.length
   end
 end
