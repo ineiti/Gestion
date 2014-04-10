@@ -1103,34 +1103,13 @@ base_gestion
       pdf.move_down 1.cm
       
       if students.length > 0
-        header = [ ["Description", "Value", "Sum"].collect{|ch|
-            {:content => ch, :align => :center}}]
-        table = []
-        students.sort{|a,b|
-          Persons.match_by_login_name(a).full_name <=> 
-            Persons.match_by_login_name(b).full_name
-        }.collect{|s|
-          dp s
-          payments = []
-          sum = 0
-          entries.movements.reverse.select{|m|
-            m.desc =~ / #{s}:/
-          }.collect{|m|
-            payments.push [ m.date,
-              {:content => m.value_form, :align => :right }, 
-              {:content => Account.total_form( sum += m.value ), :align => :right } ]
-          }
-          left = if cost_student.to_i > 0
-            cost_student.to_f / 1000 - sum
-          else
-            0
-          end
-          table.push [ "Rest for #{Persons.match_by_login_name(s).full_name} (#{s})",
-            {:content => Account.total_form( left ), :align => :right } ]
-          payments.size > 0 and table.concat payments
-        }
-        pdf.table( header + 
-            table, 
+        pdf.table( [ ["Description", "Value", "Sum"].collect{|ch|
+              {:content => ch, :align => :center}}] + 
+            report_list.collect{|id, t|
+            [ t[0] == "Reste" ? t[1] : t[0],
+              t[2],
+              t[3] ]
+          }, 
           :header => true, :column_widths => [300,75,75] )
         pdf.move_down( 2.cm )
       end
