@@ -635,6 +635,10 @@ class Person < Entity
     ret.length == 0 and ret.push login_name
     ret.join(" ")
   end
+  
+  def full_login
+    "#{full_name} (#{login_name})"
+  end
 
   def replace(orig, field, str)
     fields.each { |f|

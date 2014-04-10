@@ -1173,7 +1173,7 @@ base_gestion
   end
   
   def payment( secretary, student, amount, date, oldcash = false )
-    log_msg "course-payment", "#{secretary} pays #{amount} " +
+    log_msg "course-payment", "#{secretary.full_login} pays #{amount} " +
       "to #{student.full_name} of #{name}"
     Movements.create( "For student #{student.login_name}:" +
         "#{student.full_name}", 
