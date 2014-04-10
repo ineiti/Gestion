@@ -57,7 +57,6 @@ class Courses < Entities
     value_int :students_start
     value_int :students_finish
     value_int :cost_student
-    value_int :cost_teacher
     value_int :entry_total
     
     value_block :account
@@ -175,7 +174,7 @@ class Courses < Entities
       course.create_account
     end
     
-    course.cost_teacher = ctype.cost_teacher
+    course.salary_teacher = ctype.salary_teacher
     course.cost_student = ctype.cost_student
     
     log_msg :course, "Created new course #{course.inspect}"
@@ -1160,8 +1159,27 @@ base_gestion
 
   def report_list
     entries or return []
+    movs = entries.movements
+    if archives = entries.get_archives
+      movs.concat archives.collect{|a| a.movements}.flatten
+    end
+      
     students.collect{|s|
-      student_payments( s ).reverse.collect{|p|
+      total = 0
+      ( movs.select{|e| e.desc =~ / #{s}:/ }.collect{|e|
+          [ e.global_id, 
+            [ e.date, 
+              "",
+              e.value_form, 
+              Account.total_form( total += e.value ) ] ]
+        } + [ [ nil, 
+            ["#{Persons.match_by_login_name(s).full_name} (#{s})", 
+              Account.total_form(cost_student.to_f / 1000 - total),
+              "",
+              ""] ] ] )
+    }.flatten(1)
+=begin      
+        reverse.collect{|p|
         data = p[1]
         [ p[0], 
           [
@@ -1174,6 +1192,7 @@ base_gestion
         ]
       }
     }.flatten(1)
+=end
   end
   
   def create_account

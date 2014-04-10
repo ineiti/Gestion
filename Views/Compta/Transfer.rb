@@ -28,14 +28,14 @@ class ComptaTransfer < View
   
   def rpc_button_do_transfer( session, data )
     dputs(3){"data is #{data.inspect} with owner #{session.owner.full_name}"}
-    other = Persons.match_by_person_id( data["person_list"][0] )
-    dputs(3){"Other is #{other.inspect}, id is #{data["person_list"].to_s.inspect}"}
-    amount = ( other.account_due.total.to_f * 1000 ).to_i
-    log_msg :comptatransfer, "#{session.owner.login_name} gets #{amount} from " +
-      "#{other.login_name}"
-    session.owner.get_all_due( other )
-    
-    vtlp_update_list( session ) + rpc_update( session )
+    if ( other = data._persons ).class == Person
+      dputs(3){"Other is #{other.inspect}, id is #{data["person_list"].to_s.inspect}"}
+      amount = ( other.account_due.total.to_f * 1000 ).to_i
+      log_msg :comptatransfer, "#{session.owner.login_name} gets #{amount} from " +
+        "#{other.login_name}"
+      session.owner.get_all_due( other )
+    end
+    rpc_update( session )
   end
   
   def rpc_update( session )

@@ -497,7 +497,7 @@ class Person < Entity
 
   def permissions=(p)
     has_teacher = self._permissions and self._permissions.concat(p).index( "teacher" )
-    dputs(3){"has_teacher is #{has_teacher} - permissions are #{p}"}
+    dputs(3){"#{self.login_name}: has_teacher is #{has_teacher} - permissions are #{p}"}
     self._permissions = p
     if has_teacher
       Persons.responsibles( true )
@@ -830,6 +830,7 @@ class Person < Entity
   
   def report_list_movements( from = nil, to = from, account = account_due )
     total = 0
+    account or return [[]]
     if from
       account.movements.select{|m|
         dputs(3){"Date is #{m.date.inspect}"}

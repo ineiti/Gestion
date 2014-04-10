@@ -28,9 +28,9 @@ class CashboxService < View
           show_int_ro :account_total_due
         end
         gui_vbox :nogroup do
-          show_table :report, :headings => [ :Date, :Desc, :Amount ],
-            :widths => [ 100, 300, 100 ], :height => 400, 
-            :columns => [0, 0, :align_right]
+          show_table :report, :headings => [ :Date, :Desc, :Amount, :Sum ],
+            :widths => [ 100, 300, 75, 75 ], :height => 400, 
+            :columns => [0, 0, :align_right, :align_right ]
         end
       end
     end

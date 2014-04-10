@@ -23,7 +23,7 @@ class CourseTypes < Entities
     value_list_drop :output, "%w( certificate label )"
     
     value_block :accounting
-    value_int :cost_teacher
+    value_int :salary_teacher
     value_int :cost_student
     
     value_block :account
