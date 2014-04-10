@@ -1,8 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - CashboxReport:: course-reports are sloooooow
-
         - when Network::Tigo::update is clicked, it is possible to change
           to Self-tab
           - Verify correct disabling of tabs when waiting for answer
@@ -228,6 +226,7 @@ To check:
 
 
 ** FIXED **:
+        - B 140408: CashboxReport:: course-reports are sloooooow
         - P 140408: Add 'match_key_*' and 'create_key_*' to Entities and use that to
           speed up things - also added a link from "match_by"
         - UI140408: Speed up Compta::report_list
