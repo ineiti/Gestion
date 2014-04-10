@@ -39,7 +39,7 @@ class CashboxReport < View
     super( session ) +
       reply( :empty, [ :course, :report_type ] ) +
       reply( :update, :report_type => 
-        %w( Course Due_Daily Due_Weekly Due_Monthly Due_All Paid_All ).
+        %w( Course Due_Daily Due_All Paid_All ).
         map.with_index{|d,i|
         [ i + 1, d ]} ) +
       reply( :update, :course => Courses.list_courses_entries(session) ) +
@@ -51,13 +51,14 @@ class CashboxReport < View
   
   def rpc_button_print( session, data )
     ret = rpc_print( session, :print, data )
-    if not session.owner.account_due or data._report_type == []
-      return rpc_update( session )
+    if data._report_type == []
+      return ret
     end
     date = Date.parse( data._report_start )
     
     if ( report = data._report_type.first ) > 1
-      file = session.owner.report_pdf( report - 1, date )
+      file = session.owner.report_pdf( 
+        [ :daily, :all, :all_paid ][report - 2], date )
     else
       file = data._course.report_pdf
     end
@@ -72,9 +73,6 @@ class CashboxReport < View
   end
   
   def rpc_list_choice_report_type( session, data )
-    if not session.owner.account_due
-      return rpc_update( session )
-    end
     dputs(3){"report is #{data._report_start.inspect}"}
     date = Date.parse( data._report_start.to_s )
     ret = reply( :empty_only, :report )
@@ -85,9 +83,10 @@ class CashboxReport < View
         ret += reply( :update, :report => data._course.report_list )
       end
       show = :course
-    when 2..6
+    when 2..4
       ret += reply( :update, :report => 
-          session.owner.report_list( report - 1, date ) )
+          session.owner.report_list(
+          [ :daily, :all, :all_paid ][report - 2], date ) )
       show = :report_start
     end
     

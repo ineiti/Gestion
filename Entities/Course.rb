@@ -1098,7 +1098,7 @@ base_gestion
       pdf.text "Duration: #{start}-#{self.end} - - Teacher: #{teacher.full_name}" +
         " - - Hours: #{hours}"
       pdf.text "Cost per student: #{Account.total_form( cost_student.to_i / 1000 )} - - " +
-        "Cost per teacher: #{Account.total_form( cost_teacher.to_i / 1000 )}"
+        "Cost per teacher: #{Account.total_form( salary_teacher.to_i / 1000 )}"
       pdf.text "Account: #{entries.path}"
       pdf.move_down 1.cm
       
@@ -1110,6 +1110,7 @@ base_gestion
           Persons.match_by_login_name(a).full_name <=> 
             Persons.match_by_login_name(b).full_name
         }.collect{|s|
+          dp s
           payments = []
           sum = 0
           entries.movements.reverse.select{|m|
@@ -1164,35 +1165,22 @@ base_gestion
       movs.concat archives.collect{|a| a.movements}.flatten
     end
       
-    students.collect{|s|
+    students.sort{|a,b| 
+      Persons.match_by_login_name(a).full_name <=>
+        Persons.match_by_login_name(b).full_name }.collect{|s|
       total = 0
       ( movs.select{|e| e.desc =~ / #{s}:/ }.collect{|e|
-          [ e.global_id, 
+          [ e.global_id,
             [ e.date, 
               "",
               e.value_form, 
               Account.total_form( total += e.value ) ] ]
         } + [ [ nil, 
-            ["#{Persons.match_by_login_name(s).full_name} (#{s})", 
+            ["Reste",
+              "#{Persons.match_by_login_name(s).full_name} (#{s})", 
               Account.total_form(cost_student.to_f / 1000 - total),
-              "",
-              ""] ] ] )
+              ""] ] ] ).reverse
     }.flatten(1)
-=begin      
-        reverse.collect{|p|
-        data = p[1]
-        [ p[0], 
-          [
-            data[0],
-            ( data[0] == "Reste" ) ? 
-              "#{Persons.match_by_login_name(s).full_name} (#{s})" : "", 
-            data[1], 
-            data[2]
-          ]
-        ]
-      }
-    }.flatten(1)
-=end
   end
   
   def create_account

@@ -87,7 +87,7 @@ class CashboxService < View
     dputs(3){"Updating time"}
     ret += reply( :update, :date => Date.today.strftime("%d.%m.%Y"))
     dputs(3){"Getting report_list"}
-    ret += reply( :update, :report => session.owner.report_list( :weekly ) )
+    ret += reply( :update, :report => session.owner.report_list( :all ) )
     dputs(3){"Done"}
     ret
   end

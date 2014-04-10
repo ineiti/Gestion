@@ -158,7 +158,7 @@ class TC_Course < Test::Unit::TestCase
     nmaint = Courses.create_ctype( @maint_t, "1201" )
     assert_equal( {:duration=>72, :course_id=>6, :contents=>"lots of work", 
         :students=>[], :name=>"maint_1201", :ctype => [1],
-        :cost_teacher => nil, :cost_student => nil },
+        :salary_teacher => nil, :cost_student => nil },
       nmaint.to_hash )
     
     nmaint2 = Courses.create_ctype( @maint_t, "1201" )
@@ -172,7 +172,7 @@ class TC_Course < Test::Unit::TestCase
         :name=>"it-101_1202",
         :contents => "it-101",
         :description=>"windows, word, excel",
-        :cost_teacher => nil, :cost_student => nil }, it_101.to_hash)
+        :salary_teacher => nil, :cost_student => nil }, it_101.to_hash)
 
     it_101 = Courses.create_ctype( @it_101_t, "1202", @center )
     assert_equal( {:ctype=>[2],
@@ -182,7 +182,7 @@ class TC_Course < Test::Unit::TestCase
         :name=>"foo_it-101_1202",
         :contents => "it-101",
         :description=>"windows, word, excel",
-        :cost_teacher => nil, :cost_student => nil }, it_101.to_hash)
+        :salary_teacher => nil, :cost_student => nil }, it_101.to_hash)
   end
 	
   def test_create_account
