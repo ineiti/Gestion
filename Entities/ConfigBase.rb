@@ -2,9 +2,7 @@ class ConfigBases < Entities
   def add_config
     value_block :vars
     value_str :libnet_uri
-    value_int :debug_lvl
     value_str :internet_cash
-    value_str :version_local
     
     @@functions = %w( network internet share 
     courses course_server course_client internet_simple
@@ -18,21 +16,17 @@ class ConfigBases < Entities
       :cashbox => [ :accounting_courses ]
     }
     @@functions_conflict = [ [:course_server, :course_client] ]
-
   end
+
   
-  def migration_1( c )
+  def migration_2( c )
     dputs(3){"Migrating in: #{c.inspect} - #{get_config(true, :LibNet, :simulation ).inspect}"}
     if get_config( true, :LibNet, :simulation ) == false
       dputs(3){"Adding LibNet"}
       c._functions += [:internet_libnet]
     end
     c._libnet_uri = get_config( "", :LibNet, :URI )
-    c._debug_lvl = DEBUG_LVL
     c._internet_cash = get_config( nil, :LibNet, :internetCash )
-    c._locale_force = get_config( nil, :locale_force )
-    c._version_local = get_config( "orig", :version_local )
-    c._welcome_text = get_config( false, :welcome_text )
     dputs(3){"Migrating out: #{c.inspect}"}
   end
 
@@ -60,20 +54,6 @@ class ConfigBases < Entities
         dputs(2){ "Loading LibNet in simulation-mode" }
       end
     end
-  end
-end
-
-class ConfigBase < Entity
-  def setup_instance
-    dputs(4){"Setting up ConfigBase with debug_lvl = #{debug_lvl}"}
-    self.debug_lvl = debug_lvl
-  end
-
-  def debug_lvl=( lvl )
-    dputs(4){"Setting debug-lvl to #{lvl}"}
-    data_set( :_debug_lvl, lvl.to_i )
-    Object.send( :remove_const, :DEBUG_LVL )
-    Object.const_set( :DEBUG_LVL, lvl.to_i )
   end
 end
 

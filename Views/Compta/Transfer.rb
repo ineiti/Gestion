@@ -46,7 +46,6 @@ class ComptaTransfer < View
   end
   
   def rpc_list_choice_persons( session, data )
-    dp data
     reply( :empty, :report ) +
       reply( :update, :report => data._persons.report_list( :all ))
   end

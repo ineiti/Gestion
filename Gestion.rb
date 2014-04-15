@@ -8,7 +8,6 @@ Encoding.default_external = Encoding::UTF_8
 # - Login: - for payable laptop web-access
 #          - for students
 
-DEBUG_LVL=0
 VERSION_GESTION="1.4.2"
 require 'fileutils'
 
