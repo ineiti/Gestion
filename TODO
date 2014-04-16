@@ -1,6 +1,11 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - account_base is visible in Admin:CourseType, even when
+          account_courses is not set in ConfigBase
+        - When new is saved (like Admin:CourseType, Network:Share), the
+          fields are not filled in
+
         - when Network::Tigo::update is clicked, it is possible to change
           to Self-tab
           - Verify correct disabling of tabs when waiting for answer

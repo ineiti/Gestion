@@ -42,10 +42,12 @@ class AdminCourseType < View
   
   def rpc_update_view( session )
     reply( :empty, :account_base ) +
-      reply( :update, :account_base => AccountRoot.actual.listp_path )
+      reply( :update, :account_base => AccountRoot.actual.listp_path ) +
+      reply_visible( ConfigBase.has_function?( :accounting_courses ),
+      :account_base )
   end
   
-  def rpc_update( session )
+  def rpc_updates( session )
     reply( :update, :account_base => [0] )
   end
 end

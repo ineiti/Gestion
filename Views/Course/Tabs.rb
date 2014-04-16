@@ -138,7 +138,7 @@ class CourseTabs < View
 
     reply( :window_hide ) +
       View.CourseTabs.rpc_update( session ) +
-      reply( :update, { :courses => [ course.course_id ] } )
+      reply( :update_callback, :courses => [ course.course_id ] )
   end
     
   def rpc_button_add( session, data )

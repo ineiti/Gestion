@@ -1172,9 +1172,9 @@ base_gestion
     end
   end
   
-  def payment( secretary, student, amount, date, oldcash = false )
-    log_msg "course-payment", "#{secretary.full_login} pays #{amount} " +
-      "to #{student.full_name} of #{name}"
+  def payment( secretary, student, amount, date = Date.today, oldcash = false )
+    log_msg "course-payment", "#{secretary.full_login} got #{amount} " +
+      "of #{student.full_name} in #{name}"
     Movements.create( "For student #{student.login_name}:" +
         "#{student.full_name}", 
       date.strftime( "%Y-%m-%d" ), amount.to_f / 1000,

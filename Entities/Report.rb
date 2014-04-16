@@ -15,8 +15,10 @@ class Reports < Entities
 end
 
 class Report < Entity
-  def print_list( start, stop )
-    dp Entities.Reports.inspect
+  def print_list( start = Date.today, stop = Date.today + 365 )
+    accounts.each{|acc|
+      
+    }
   end
   
   def print( start = Date.today, stop = Date.today + 365 )
