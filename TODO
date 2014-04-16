@@ -1,11 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - account_base is visible in Admin:CourseType, even when
-          account_courses is not set in ConfigBase
-        - When new is saved (like Admin:CourseType, Network:Share), the
-          fields are not filled in
-
         - when Network::Tigo::update is clicked, it is possible to change
           to Self-tab
           - Verify correct disabling of tabs when waiting for answer
@@ -231,6 +226,11 @@ To check:
 
 
 ** FIXED **:
+        - F 140416: CourseModify: transfer student while keeping accounts updated
+        - B 140416: account_base is visible in Admin:CourseType, even when
+          account_courses is not set in ConfigBase
+        - B 140416: When new is saved (like Admin:CourseType, Network:Share), the
+          fields are not filled in
         - B 140408: CashboxReport:: course-reports are sloooooow
         - P 140408: Add 'match_key_*' and 'create_key_*' to Entities and use that to
           speed up things - also added a link from "match_by"

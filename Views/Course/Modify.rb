@@ -36,7 +36,8 @@ class CourseModify < View
             gui_vboxg do
               gui_fields do
                 show_list :students, :width => 300, :flexheight => 1
-                show_button :bulk_add, :del_student, :edit_student
+                show_button :bulk_add, :del_student, :edit_student, 
+                  :transfer_student
               end
               show_print :print_student
             end
@@ -59,6 +60,10 @@ class CourseModify < View
             show_html :msg_print
             show_int_hidden :step
             show_button :print_next, :close
+          end
+          gui_window :transfer do
+            show_entity_course_lazy :transfer_course, :drop, :name
+            show_button :do_transfer, :close
           end
         end
         show_button :save
@@ -91,8 +96,8 @@ class CourseModify < View
   end
 
   def update_students( course )
-    reply( "empty_only", [:students] ) +
-      reply( "update", { :students => course.list_students } )
+    reply( :empty_only, :students ) +
+      reply( :update, :students => course.list_students )
   end
 
   def rpc_button_del_student( session, data )
@@ -113,6 +118,24 @@ class CourseModify < View
       reply( :init_values, [ :PersonTabs, { :search => login, :persons => [] } ] ) +
         reply( :switch_tab, :PersonTabs ) ) + 
       reply( :switch_tab, :PersonModify )
+  end
+  
+  def rpc_button_transfer_student( session, data )
+    return if data._students.length == 0
+    
+    reply( :window_show, :transfer ) +
+      reply( :empty_only, :transfer_course ) +
+      reply( :update, :transfer_course => Courses.listp_name )
+  end
+  
+  def rpc_button_do_transfer( session, data )
+    reply( :window_hide ) +
+      if course = Courses.match_by_name( data._name )
+      data._students.each{|s|
+        course.transfer_student(s, data._transfer_course)
+      }
+      update_students( course )
+    end
   end
   
   def rpc_button_print_next( session, data )
@@ -220,7 +243,7 @@ class CourseModify < View
 
         ret + reply( :window_show, :missing_data ) +
           reply( "update", :missing => "One of the following is missing:<ul>" +
-          "#{str}</ul>" )
+            "#{str}</ul>" )
       else
         ret + reply( :window_show, :missing_data ) +
           reply( "update", :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>" )

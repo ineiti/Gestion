@@ -1186,4 +1186,28 @@ base_gestion
         entries, secretary.account_due )
     end
   end
+  
+  def transfer_student( student, new_course )
+    return if ! students.index( student )
+    return if ! new_course.entries
+    
+    log_msg "course", "Transferring #{student} from #{name} to #{new_course.name}"
+    self.students = students - [student]
+    new_course.students = new_course.students + [student]
+
+    entries.movements.select{|m|
+      m.desc =~ / #{student}:/
+    }.each{|m|
+      other = m.get_other_account( entries )
+      if other.get_path =~ /::Paid$/
+        Movements.create( "Transfert of student #{student}:",
+          m.date, m.get_value(entries), entries, new_course.entries )
+      else
+        value = m.get_value( entries )
+        m.value = 0
+        m.account_dst_id = new_course.entries
+        m.value = value
+      end
+    }
+  end
 end

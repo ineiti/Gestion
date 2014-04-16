@@ -61,6 +61,9 @@ class TC_Course < Test::Unit::TestCase
     @center.password = @center.password_plain = "1234"
     
     @admin_session = Sessions.create( @admin, "default" )
+    
+    @accountant = Persons.create( :login_name => "accountant",
+      :permissions => ["accountant"])
   end
   
   def teardown
@@ -705,20 +708,53 @@ class TC_Course < Test::Unit::TestCase
   
   def test_report_list_archive
     ConfigBase.add_function( :accounting_courses )
-    course = Courses.create_ctype( @maint_t, "1312" )
-    course.students = ["surf"]
+    @course_acc = Courses.create_ctype( @maint_t, "1312" )
+    @course_acc.students = ["surf"]
     
-    course.payment( @secretaire, @surf, 10000, Date.new( 2013 ) )
-    course.payment( @secretaire, @surf, 10000, Date.new( 2014 ) )
+    @course_acc.payment( @secretaire, @surf, 10000, Date.new( 2013 ) )
+    @course_acc.payment( @secretaire, @surf, 10000, Date.new( 2014 ) )
     assert_equal 20, @secretaire.account_due.total
-    assert_equal 20, course.entries.total
-    list = course.report_list
+    assert_equal 20, @course_acc.entries.total
+    list = @course_acc.report_list
     assert_equal 3, list.length
     
     Accounts.archive( 1, 2014 )
     assert_equal 20, @secretaire.account_due.total
-    assert_equal 10, course.entries.total
-    list = course.report_list
+    assert_equal 10, @course_acc.entries.total
+    list = @course_acc.report_list
     assert_equal 3, list.length
+  end
+  
+  def test_transfer_student
+    ConfigBase.add_function( :accounting_courses )
+    @course_acc = Courses.create_ctype( @maint_t, "1312" )
+    @course_acc2 = Courses.create_ctype( @maint_t, "1401" )
+    @course_acc.students = ["surf"]
+    
+    @course_acc.payment( @secretaire, @surf, 10000, Date.new( 2014,1 ) )
+    
+    assert_equal 10, @secretaire.account_due.total
+    assert_equal 10, @course_acc.entries.total
+    @course_acc.transfer_student( "surfs", @course_acc2 )
+    assert_equal 10, @course_acc.entries.total
+    @course_acc.transfer_student( "surf", @course_acc2 )
+    assert( ! @course_acc.students.index("surf") )
+    assert( @course_acc2.students.index( "surf" ) )
+    assert_equal 0, @course_acc.entries.total
+    assert_equal 10, @course_acc2.entries.total
+    assert_equal 0, @course_acc.entries.movements.size
+    assert_equal 1, @course_acc2.entries.movements.size
+    
+    Accounts.find_by_path( "Root::Income::Courses").dump_rec( true )
+    
+    @accountant.get_all_due( @secretaire )
+    @course_acc2.payment( @secretaire, @surf, 10000, Date.new( 2014,1,2 ) )
+    @course_acc2.transfer_student( "surf", @course_acc )
+    assert_equal 20, @course_acc.entries.total
+    assert_equal 0, @course_acc2.entries.total
+    assert_equal 2, @course_acc.entries.movements.size
+    assert_equal 2, @course_acc2.entries.movements.size
+
+    Accounts.find_by_path( "Root::Income::Courses").dump_rec( true )
   end
 end
