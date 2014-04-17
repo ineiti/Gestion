@@ -36,7 +36,7 @@ class ConfigBases < Entities
     
     super
     
-    if not $lib_net
+    if ! $lib_net
       if ConfigBase.has_function? :internet_libnet
         if ( uri = ConfigBase.libnet_uri ).length > 0
           dputs(2){ "Making DRB-connection to LibNet with #{uri}" }

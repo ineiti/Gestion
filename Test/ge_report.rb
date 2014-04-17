@@ -32,28 +32,38 @@ class TC_Report < Test::Unit::TestCase
     
     @report_simple = Reports.create( :name => "basic",
       :accounts => [
-        ReportAccounts.create( :root => @root, :level => 1,
+        ReportAccounts.create( :root => @root, :level => 2,
           :account => Accounts.find_by_path( "Root::Income")),
       ] )
-    @report_double = Reports.create( :name => "basic",
+    @report_double = Reports.create( :name => "double",
       :accounts => [
         ReportAccounts.create( :root => @root, :level => 1,
           :account => Accounts.find_by_path( "Root::Income")),
-        ReportAccounts.create( :root => @root, :level => 1,
+        ReportAccounts.create( :root => @root, :level => 0,
           :account => Accounts.find_by_path( "Root::Lending"))
       ] )
+
+    [[0,10000], [0, 5000], [1, 5000]].each{|s,c|
+      @maint.payment( @secretary, @students[s], c )
+    }
+
+    #Accounts.dump( true )
   end
   
   def teardown
   end
   
   def test_report_list
-    dp @secretary
-    [[0,10000], [0, 5000], [1, 5000]].each{|s,c|
-      @maint.payment( @secretary, @students[s], c )
-    }
-    #Accounts.dump( true )
-    
-    dp @report_simple.print_list
+    dp @report_simple.print_list_monthly
+    dp @report_double.print_list_monthly
+  end
+  
+  def test_heading
+    dp @report_simple.print_heading_monthly.flatten
+  end
+  
+  def test_report_pdf
+    @report_simple.print_pdf_monthly
+    @report_double.print_pdf_monthly
   end
 end

@@ -63,6 +63,8 @@ UI:
         - write a good documentation...
 
 FEATURES:
+        - Add reports for accounting
+
         - CourseType: Add versions
 	-4 Courses::Days - add other days to the list
 
