@@ -125,7 +125,7 @@ class CourseModify < View
     
     reply( :window_show, :transfer ) +
       reply( :empty_only, :transfer_course ) +
-      reply( :update, :transfer_course => Courses.listp_name )
+      reply( :update, :transfer_course => Courses.list_courses( session ) )
   end
   
   def rpc_button_do_transfer( session, data )

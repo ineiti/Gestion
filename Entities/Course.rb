@@ -1190,6 +1190,7 @@ base_gestion
   def transfer_student( student, new_course )
     return if ! students.index( student )
     return if ! new_course.entries
+    return if new_course.students.index( student )
     
     log_msg "course", "Transferring #{student} from #{name} to #{new_course.name}"
     self.students = students - [student]

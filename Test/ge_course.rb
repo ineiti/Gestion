@@ -756,5 +756,13 @@ class TC_Course < Test::Unit::TestCase
     assert_equal 2, @course_acc2.entries.movements.size
 
     Accounts.find_by_path( "Root::Income::Courses").dump_rec( true )
+    
+    @course_acc2.students = ["surf"]
+    @course_acc2.payment( @secretaire, @surf, 10000, Date.new( 2014,1,2 ) )
+    @course_acc2.transfer_student( "surf", @course_acc )
+    assert_equal 1, @course_acc2.students.size
+    assert_equal 10, @course_acc2.entries.total
+    assert_equal 1, @course_acc.students.size
+    assert_equal 20, @course_acc.entries.total
   end
 end
