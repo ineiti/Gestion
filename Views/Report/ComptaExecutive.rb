@@ -156,7 +156,8 @@ class ReportComptaExecutive < View
     when /print/
       if data._reports.class == Report
         send_printer_reply( session, :print, data, 
-          data._reports.print( Date.new( data._year, data._month ) ) )
+          data._reports.print_pdf_monthly( 
+            Date.new( data._year.first.to_i, data._month.first.to_i ) ) )
       end
     when /close/
       reply( :window_hide )

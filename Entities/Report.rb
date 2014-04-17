@@ -22,8 +22,9 @@ class Report < Entity
   
   def print_account_monthly( acc, start, stop, level )
     line = []
-    acc.account.get_tree( acc.level ){|acc_sub, depth|
-      dp "Doing #{acc_sub.path} - #{depth}"
+    zeros = false
+    acc.account.get_tree( acc.level.to_i ){|acc_sub, depth|
+      dp "Doing #{acc_sub.path} - #{depth.inspect}"
       sum = Array.new(months(start, stop)){0}
       acc_sub.get_tree( depth > 0 ? 0 : -1 ){|acc_sum|
         acc_sum.movements.each{|m|
@@ -32,18 +33,26 @@ class Report < Entity
           end
         }
       }
-      line.push [acc_sub.path, sum]
+      if sum.inject(false){|m,o| m |= o != 0} or line.size == 0
+        if line.size == 0
+          zeros = true
+        elsif zeros
+          line = []
+          zeros = false
+        end
+        line.push [acc_sub.path, sum]
+      end
     }
     line    
   end
   
-  def print_heading_monthly( start = Date.today, stop = Date.today >> 12 )
+  def print_heading_monthly( start = Date.today, stop = start >> 11 )
     ["Period", (0...months(start, stop)).collect{|m|
         ( start >> m ).strftime( "%Y/%m" )
       }]
   end
   
-  def print_list_monthly( start = Date.today, stop = Date.today >> 12 )
+  def print_list_monthly( start = Date.today, stop = start >> 11 )
     list = accounts.collect{|acc|
       line = print_account_monthly( acc, start, stop, acc.level )
       if line.size > 1
@@ -64,7 +73,7 @@ class Report < Entity
     end
   end
   
-  def print( start = Date.today, stop = Date.today >> 12 )
+  def print( start = Date.today, stop = start >> 11 )
     
   end
   
@@ -74,7 +83,7 @@ class Report < Entity
     }
   end
   
-  def print_pdf_monthly( start = Date.today, stop = Date.today >> 11 )
+  def print_pdf_monthly( start = Date.today, stop = start >> 11 )
     file = "/tmp/report_#{name}.pdf"
     Prawn::Document.generate( file,
       :page_size   => "A4",
@@ -94,8 +103,10 @@ class Report < Entity
             [a] + values.collect{|v| Account.total_form( v ) } 
           }
         }.flatten(1).collect{|line|
-          line.collect{|v| {:content => v, 
-              :align => ( v =~ /::/ ? :left : :right)}}
+          a, s = ( line[0] =~ /::/ ? [:left, :normal] : [:right, :bold] )
+          [{:content => line.shift, :align => a, :font_style => s }] +
+            line.collect{|v|
+            {:content => v, :align => :right, :font_style => s } }
         },
         :header => true )
       pdf.move_down( 2.cm )
