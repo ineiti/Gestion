@@ -83,8 +83,8 @@ begin
   Permission.add( 'director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
       'PersonAdmin,PersonCourse,NetworkConnection,CourseStats', 
     'secretary,cybermanager,teacher' )
-  Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseDiploma,CourseGrade,' +
-      'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson', '' )
+  Permission.add( 'center', 'FlagAdminCourse,CourseGrade,' +
+      'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson', 'secretary' )
   Permission.add( 'admin', '.*', '.*' )
 
   QooxView::init( 'Entities', 'Views' )
