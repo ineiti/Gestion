@@ -582,16 +582,19 @@ base_gestion
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match( doc )
           dputs( 2 ){"QRcode-image is #{qrcode[1]}"}
           qr = RQRCode::QRCode.new( grade.get_url_label )
-          png = qr.as_png
+          png = qr.as_png( :border_modules => 0 )
           z.get_output_stream(qrcode[1]){ |f|
             png.write( f )
           }
         end
+        
+        cont = contents + 
+          ( grade.remark.to_s.length > 0 ? "\n#{grade.remark}" : "" )
         if desc_p_match = /-DESC1-(.*)-DESC2-/.match( doc )
           desc_p = desc_p_match[1]
           dputs( 3 ){ "desc_p is #{desc_p}" }
           doc.gsub!( /-DESC1-.*-DESC2-/,
-            contents.split("\n").join( desc_p ))
+            cont.split("\n").join( desc_p ))
         end
         doc.gsub!( /-TEACHER-/, teacher.full_name )
         role_diploma = "Enseignant informatique"
@@ -611,7 +614,7 @@ base_gestion
         show_year = start.gsub(/.*\./, '' ) != self.end.gsub(/.*\./, '' )
         doc.gsub!( /-FROM-/, date_fr( start, show_year ) )
         doc.gsub!( /-TO-/, date_fr( self.end ) )
-        doc.gsub!( /-SPECIAL-/, grade.remark || "" )
+        doc.gsub!( /-SPECIAL-/, "" )
         doc.gsub!( /-GRADE-/, grade.mention )
         doc.gsub!( /-DATE-/, date_fr( sign ) )
         doc.gsub!( /-COURSE_TYPE-/, ctype.name )
