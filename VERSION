@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 140428: 1.4.3
+  - Important update due to bad reworking of reply( :update, ... )
+
 - 140402: 1.4.0
   - Working Cashbox-theme
   - Replaced Config::Acounting::Courses by entry in CourseType

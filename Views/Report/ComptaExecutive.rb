@@ -5,23 +5,23 @@ class ReportComptaExecutive < View
     @order = 20
     @update = true
     
-    gui_hbox do
-      gui_vboxg :nogroup do
+    gui_hboxg do
+      gui_vbox :nogroup do
         gui_vboxg :nogroup do
           show_entity_report :reports, :single, :callback => true,
             :flexheight => 1
           show_button :report_add, :report_delete
         end
         gui_vbox :nogroup do
-          show_list_drop :year, "2014.downto(2004)"
-          show_list_drop :month, "(1..12)"
+          show_date :start
+          show_int :months
           show_print :print
         end
       end
       gui_vboxg :nogroup do
         show_str :name
         show_entity_reportAccount_lazy :accounts, :single,
-          :flexheight => 1
+          :flexheight => 1, :width => 300
         show_button :account_add, :account_del, :account_edit
         show_button :account_up, :account_down
       end
@@ -57,7 +57,7 @@ class ReportComptaExecutive < View
   
   def update_root( root = AccountRoot.actual )
     reply( :empty_only, :root ) +
-      reply( :update, :root => [
+      reply( :update_silent, :root => [
         [AccountRoot.actual.id, "Actual"]].concat(
         AccountRoot.archive.listp_path( 1 )[1..-1]).concat(
         [( root.class == Account ) ? root.id : 0]))
@@ -77,8 +77,11 @@ class ReportComptaExecutive < View
   end
   
   def rpc_update( session )
-    #TODO: look after first year in accounting
-    update_reports
+    td = Date.today
+    start = Date.new( td.year, ( td.month / 6.0 ).floor * 6 + 1 )
+    update_reports +
+      reply( :update, :start => start.to_web ) +
+      reply( :update, :months => 6 )
   end
   
   def button_account( session, name, data )
@@ -157,7 +160,7 @@ class ReportComptaExecutive < View
       if data._reports.class == Report
         send_printer_reply( session, :print, data, 
           data._reports.print_pdf_monthly( 
-            Date.new( data._year.first.to_i, data._month.first.to_i ) ) )
+            Date.from_web( data._start ), data._months.to_i ) )
       end
     when /close/
       reply( :window_hide )
@@ -171,6 +174,6 @@ class ReportComptaExecutive < View
   end
   
   def rpc_list_choice_root( session, data )
-    update_account( data._root, data._accounts.account )
+    update_account( data._root )
   end
 end

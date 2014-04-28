@@ -1,10 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - View:Course:Diplomas, View:Admin:CourseType, View:Course:Diplomas,
-          and no focus -> need to click on course to have focus again
-          -> because of non-auto-callback in lists? Then switch it on per default
-           and add non-auto-callback-list instead of auto-callback
         - View:Admin:CourseType:filename is not sorted
         - "Center"-person has also to be able to change the "attestation_function"
           of a teacher or responsible
@@ -250,6 +246,12 @@ To check:
 
 
 ** FIXED **:
+        - B 140428: View:Course:Diplomas, View:Admin:CourseType, View:Course:Diplomas,
+          and no focus -> need to click on course to have focus again
+          -> because of non-auto-callback in lists? Then switch it on per default
+           and add non-auto-callback-list instead of auto-callback
+           -> reply( :update, ... ) updates with callback
+           -> reply( :update_silent, ... ) updates w/o callback
         - F 140416: CourseModify: transfer student while keeping accounts updated
         - B 140416: account_base is visible in Admin:CourseType, even when
           account_courses is not set in ConfigBase

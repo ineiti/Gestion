@@ -16,16 +16,14 @@ end
 
 class Report < Entity
   
-  def months( start, stop )
-    months = ( stop.year - start.year ) * 12 + stop.month - start.month + 1    
-  end
-  
-  def print_account_monthly( acc, start, stop, level )
+  def print_account_monthly( acc, start, months, level )
+    stop = start >> ( months - 1 )
+
     line = []
     zeros = false
     acc.account.get_tree( acc.level.to_i ){|acc_sub, depth|
       dp "Doing #{acc_sub.path} - #{depth.inspect}"
-      sum = Array.new(months(start, stop)){0}
+      sum = Array.new(months){0}
       acc_sub.get_tree( depth > 0 ? 0 : -1 ){|acc_sum|
         acc_sum.movements.each{|m|
           if (start..stop).include? m.date
@@ -46,17 +44,18 @@ class Report < Entity
     line    
   end
   
-  def print_heading_monthly( start = Date.today, stop = start >> 11 )
-    ["Period", (0...months(start, stop)).collect{|m|
+  def print_heading_monthly( start = Date.today, months = 12 )
+    ["Period", (0...months).collect{|m|
         ( start >> m ).strftime( "%Y/%m" )
       }]
   end
   
-  def print_list_monthly( start = Date.today, stop = start >> 11 )
+  def print_list_monthly( start = Date.today, months = 12 )
+    stop = start >> ( months - 1 )
     list = accounts.collect{|acc|
-      line = print_account_monthly( acc, start, stop, acc.level )
+      line = print_account_monthly( acc, start, months, acc.level )
       if line.size > 1
-        line.push ["Sum", line.reduce( Array.new(months(start, stop), 0) ){|memo, obj|
+        line.push ["Sum", line.reduce( Array.new(months, 0) ){|memo, obj|
             dp "#{memo}, #{obj.inspect}"
             memo = memo.zip( obj[1] ).map{|a,b| a + b}
           }]
@@ -64,7 +63,7 @@ class Report < Entity
       line
     }
     if list.size > 1
-      list + [[[ "Total", list.reduce( Array.new(months(start, stop), 0)){|memo, obj|
+      list + [[[ "Total", list.reduce( Array.new(months, 0)){|memo, obj|
               dp "#{memo}, #{obj.inspect}"
               memo = memo.zip( obj.last.last ).map{|a,b| a + b }
             } ]]]
@@ -73,7 +72,7 @@ class Report < Entity
     end
   end
   
-  def print( start = Date.today, stop = start >> 11 )
+  def print( start = Date.today, months = 12 )
     
   end
   
@@ -83,7 +82,8 @@ class Report < Entity
     }
   end
   
-  def print_pdf_monthly( start = Date.today, stop = start >> 11 )
+  def print_pdf_monthly( start = Date.today, months = 12 )
+    stop = start >> ( months - 1 )
     file = "/tmp/report_#{name}.pdf"
     Prawn::Document.generate( file,
       :page_size   => "A4",
@@ -92,13 +92,13 @@ class Report < Entity
 
       pdf.text "Report for #{name}", 
         :align => :center, :size => 20
-      pdf.font_size 10
+      pdf.font_size 8
       pdf.text "From #{start.strftime('%Y/%m')} to #{stop.strftime('%Y/%m')}"
       pdf.move_down 1.cm
 
-      pdf.table( [ print_heading_monthly( start, stop ).flatten.collect{|ch|
+      pdf.table( [ print_heading_monthly( start, months ).flatten.collect{|ch|
             {:content => ch, :align => :center}}] + 
-          print_list_monthly( start, stop ).collect{|acc|
+          print_list_monthly( start, months ).collect{|acc|
           acc.collect{|a, values| 
             [a] + values.collect{|v| Account.total_form( v ) } 
           }
