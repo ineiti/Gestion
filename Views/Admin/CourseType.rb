@@ -33,7 +33,7 @@ class AdminCourseType < View
         gui_vboxg :nogroup do
           show_block :long, :width => 200
           show_field :page_format
-          show_list_drop :filename, 'CourseTypes.files'
+          show_list_drop :filename, 'CourseTypes.files.sort'
         end
         show_button :save        
       end

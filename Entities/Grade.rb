@@ -75,6 +75,12 @@ class Grades < Entities
     g._course = g._course_id
     g._student = g._person_id
   end
+  
+  def self.create( data )
+    grade = super( data )
+    data._means and grade.means = data._means
+    grade
+  end
 end
 
 class Grade < Entity
@@ -101,9 +107,9 @@ class Grade < Entity
     when "P" then "Passable"
     when "AB" then "Assez bien"
     when "B" then "Bien"
-    when "TB" then "Très bien"
+    when "TB" then "Tr√®s bien"
     when "E" then "Excellent"
-    else "PAS PASSÉ"
+    else "PAS PASS√â"
     end
   end
   
@@ -128,22 +134,24 @@ class Grade < Entity
   end
   
   def means=(m)
-    if _means != m
-      self._means = m.collect{|v| v.to_f}
-      self._mean = means.reduce(:+) / m.count
-
+    if m != self._means
       if ConfigBase.has_function? :course_client
         self.random = nil
       end
+    end
+    if m
+      self._means = m.collect{|v| [ 20.0, [ 0.0, v.to_f ].max ].min }
+      self._mean = means.reduce(:+) / m.count
+
     end
   end
   
   def remark=(r)
-    if _remark != r
-      self._remark = r
+    if r != self._remark
       if ConfigBase.has_function? :course_client
         self.random = nil
       end
     end
+    self._remark = r
   end
 end

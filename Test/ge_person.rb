@@ -79,9 +79,9 @@ class TC_Person < Test::Unit::TestCase
   
   def test_responsibles
     resps = Persons.responsibles
-    assert_equal [[8, "foo"], [2, "josue"], [6, "secr"], [7, "teacher"]], resps
+    assert_equal [[8, "Foo"], [2, "Josue"], [6, "Secr"], [7, "Teacher"]], resps
     @surf.permissions = @surf.permissions + ["teacher"]
-    assert_equal [[8, "foo"], [2, "josue"], [6, "secr"], [3, "surf"], [7, "teacher"]],
+    assert_equal [[8, "Foo"], [2, "Josue"], [6, "Secr"], [3, "Surf"], [7, "Teacher"]],
       Persons.responsibles
     assert Persons.resps != []
   end
@@ -173,7 +173,7 @@ class TC_Person < Test::Unit::TestCase
         :data_value=>"Super",
         :data_class=>"Person",
         :undo_function=>:undo_set_entry,
-        :data_old=>"admin",
+        :data_old=>"Admin",
         :msg=>nil},
       @admin.log_list[-1].undate.unlogid )
   end
@@ -192,15 +192,15 @@ class TC_Person < Test::Unit::TestCase
   end
   
   def test_account_cash
-    @accountant = Entities.Persons.create( :login_name => "accountant", :password => "super",
+    @accountant = Persons.create( :login_name => "acc", :password => "super",
       :permissions => [ "accountant" ] )
-    @accountant2 = Entities.Persons.create( :login_name => "accountant2", :password => "super",
+    @accountant2 = Persons.create( :login_name => "acc2", :password => "super",
       :permissions => [ "accountant" ] )
     
-    assert_equal "Accountant", @accountant.account_name_cash
+    assert_equal "Acc", @accountant.account_name_cash
 
     assert_not_nil @accountant.account_cash
-    assert_equal "Root::Cash::Accountant", @accountant.account_cash.get_path
+    assert_equal "Root::Cash::Acc", @accountant.account_cash.get_path
     assert_equal 0, @accountant.total_cash.to_f
     assert_equal 0, @accountant2.total_cash.to_f
     

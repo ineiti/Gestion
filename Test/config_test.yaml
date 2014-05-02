@@ -21,3 +21,5 @@ LibNet:
 Entities:
   Persons:
     admin_users: false
+#  LogActions:
+#    logging: false

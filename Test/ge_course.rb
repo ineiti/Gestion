@@ -99,7 +99,7 @@ class TC_Course < Test::Unit::TestCase
   end
 
   COURSE_STR = "base_gestion\nAdmin The\nLe Secretaire\n72\nCours de base\nWord\nExcel\nLinux\n\n"+
-    "1er février 03\n4 mai 03\n4 juin 03\n" +
+    "1er f√©vrier 03\n4 mai 03\n4 juin 03\n" +
     "P Admin The\n\nNP Internet Surfer\nhttp://ndjair.net\n" 
   
   # Check different assertions of missing stuff and students
@@ -119,7 +119,7 @@ class TC_Course < Test::Unit::TestCase
     assert_nil @net.export_check
     
     assert_equal "base_gestion\nAdmin The\nLe Secretaire\n72\nCours de base\nWord\nExcel\nLinux\n\n"+
-      "1er février 03\n4 mai 03\n4 juin 03\n", 
+      "1er f√©vrier 03\n4 mai 03\n4 juin 03\n", 
       @net.export_diploma
     
     @net.students = %w( admin surf )
@@ -614,7 +614,7 @@ class TC_Course < Test::Unit::TestCase
   def tes_bulk
     ConfigBase.set_functions([])
     names = [ "Dmin A","Zero","One Two","Ten Eleven Twelve","A B C D",
-      "Hélène Méyère","Äeri Soustroup" ]
+      "H√©l√®ne M√©y√®re","√Ñeri Soustroup" ]
     reply = ""
     while names.length > 0
       dputs(4){"Doing #{names.inspect}"}
@@ -624,7 +624,7 @@ class TC_Course < Test::Unit::TestCase
       names.shift
     end
     bulk = [ [ "zero", "Zero", "" ], %w( tone One Two ), [ "eten", "Ten", "Eleven Twelve" ],
-      ["ca", "A B", "C D"], %w( mhelene Hélène Méyère ) ]
+      ["ca", "A B", "C D"], %w( mhelene H√©l√®ne M√©y√®re ) ]
     bulk.each{|b|
       login, first, family = b
       dputs( 1 ){ "Doing #{b.inspect}" }
@@ -764,5 +764,27 @@ class TC_Course < Test::Unit::TestCase
     assert_equal 10, @course_acc2.entries.total
     assert_equal 1, @course_acc.students.size
     assert_equal 20, @course_acc.entries.total
+  end
+  
+  def test_grades
+    grade = Grades.create({:student => @secretaire, :course => @maint_2})
+
+    grade = Grades.create({:student => @secretaire, :course => @maint_2, 
+        :means => [11]})
+    assert_equal 11.0, grade.mean
+
+    grade = Grades.create({:student => @secretaire, :course => @maint_2, 
+        :means => [21]})
+    assert_equal 20.0, grade.mean
+    assert_equal [20.0], grade.means
+    
+    grade.means = [10, 30]
+    assert_equal [10.0, 20.0], grade.means
+    assert_equal 15.0, grade.mean
+
+    grade = Grades.create({:student => @secretaire, :course => @maint_2, 
+        :means => [10, 30]})
+    assert_equal 15.0, grade.mean
+    assert_equal [10.0, 20.0], grade.means
   end
 end

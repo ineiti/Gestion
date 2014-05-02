@@ -22,7 +22,7 @@ class Report < Entity
     line = []
     zeros = false
     acc.account.get_tree( acc.level.to_i ){|acc_sub, depth|
-      dp "Doing #{acc_sub.path} - #{depth.inspect}"
+      dputs(2){"Doing #{acc_sub.path} - #{depth.inspect}"}
       sum = Array.new(months){0}
       acc_sub.get_tree( depth > 0 ? 0 : -1 ){|acc_sum|
         acc_sum.movements.each{|m|
@@ -56,7 +56,7 @@ class Report < Entity
       line = print_account_monthly( acc, start, months, acc.level )
       if line.size > 1
         line.push ["Sum", line.reduce( Array.new(months, 0) ){|memo, obj|
-            dp "#{memo}, #{obj.inspect}"
+            dputs(2){"#{memo}, #{obj.inspect}"}
             memo = memo.zip( obj[1] ).map{|a,b| a + b}
           }]
       end
@@ -64,7 +64,7 @@ class Report < Entity
     }
     if list.size > 1
       list + [[[ "Total", list.reduce( Array.new(months, 0)){|memo, obj|
-              dp "#{memo}, #{obj.inspect}"
+              dputs(2){"#{memo}, #{obj.inspect}"}
               memo = memo.zip( obj.last.last ).map{|a,b| a + b }
             } ]]]
     else

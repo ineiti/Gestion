@@ -1,15 +1,15 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - View:Admin:CourseType:filename is not sorted
-        - "Center"-person has also to be able to change the "attestation_function"
-          of a teacher or responsible
+        - bizarre "kicked ... because of inactivity"
         - Error in Persons:787 (if r and r.login_name == login_name) when
           deleting person that is in some course as responsible
-        - When adding a student in "CourseModify" as "center" and with
-          "CourseServer", the "label"/center/random doesn't work and says
-          "no such id" - after restart it works...
         - center-persons: 
+          - when adding a student in "CourseModify" and with
+            "CourseServer", the "label"/center/random doesn't work and says
+            "no such id" - after restart it works...
+          - has also to be able to change the "attestation_function"
+            of a teacher or responsible
           - when CourseModify is selected and no responsible
             chosen, should pop up an "add"-window
           - should be able to modify/delete the persons they
@@ -78,11 +78,10 @@ UI:
         - write a good documentation...
 
 FEATURES:
-        - Add reports for accounting
-          - put number of months
-          - resolve when longer names for path
-          - add number of months to print
-
+        - Progression-meter for Report::Executive
+        - Add 'usage meter' for internet: current_usage * 100 / fastest_possible
+          where current_usage and fastest_possible are measured every 5 minutes if
+          people are online, else every hour
         - CourseType: Add versions
 	-4 Courses::Days - add other days to the list
 
@@ -246,6 +245,13 @@ To check:
 
 
 ** FIXED **:
+        - B 140429: Check that grades are kept in 0 <= grade <= 20
+        - B 140502: When using Entities.create, method= are not called
+        - F 140428: Add reports for accounting
+          - put number of months
+          - resolve when longer names for path
+          - add number of months to print
+        - B 140428: View:Admin:CourseType:filename is not sorted
         - B 140428: View:Course:Diplomas, View:Admin:CourseType, View:Course:Diplomas,
           and no focus -> need to click on course to have focus again
           -> because of non-auto-callback in lists? Then switch it on per default

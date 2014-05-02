@@ -34,40 +34,44 @@ module Internet
   end
 
   def self.take_money
-    $lib_net.call(:users_connected).split.each { |u|
-      dputs(3) { "User is #{u}" }
-      cost = $lib_net.call(:user_cost_now).to_i
+    if users_connected = $lib_net.call(:users_connected)
+      users_connected.split.each { |u|
+        dputs(3) { "User is #{u}" }
+        cost = $lib_net.call(:user_cost_now).to_i
 
-      isp = $lib_net.isp_params.to_sym
-      dputs(3) { "ISP-params is #{isp.inspect} and conn_type is #{isp._conn_type}" }
-      user = Persons.match_by_login_name(u)
-      if user
-        dputs(3) { "Found user #{u}: #{user.full_name}" }
-        if not (ag = AccessGroups.allow_user_now(u))[0]
-          log_msg "take_money", "Kicking user #{u} because of accessgroups: #{ag[1]}"
-          $lib_net.call(:user_disconnect_name,
-            "#{user.login_name}")
-        elsif self.free(user)
-          dputs(2) { "User #{u} goes free" }
-        elsif $lib_net.call(:isp_connection_status).to_i >= 3
-          dputs(3) { "User #{u} will pay #{cost}" }
-          if user.internet_credit.to_i >= cost
-            dputs(3) { "Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}" }
-            user.internet_credit = user.internet_credit.to_i - cost
-          else
-            log_msg "take_money", "User #{u} has not enough money left - kicking"
+        isp = $lib_net.isp_params.to_sym
+        dputs(3) { "ISP-params is #{isp.inspect} and conn_type is #{isp._conn_type}" }
+        user = Persons.match_by_login_name(u)
+        if user
+          dputs(3) { "Found user #{u}: #{user.full_name}" }
+          if not (ag = AccessGroups.allow_user_now(u))[0]
+            log_msg "take_money", "Kicking user #{u} because of accessgroups: #{ag[1]}"
             $lib_net.call(:user_disconnect_name,
               "#{user.login_name}")
+          elsif self.free(user)
+            dputs(2) { "User #{u} goes free" }
+          elsif $lib_net.call(:isp_connection_status).to_i >= 3
+            dputs(3) { "User #{u} will pay #{cost}" }
+            if user.internet_credit.to_i >= cost
+              dputs(3) { "Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}" }
+              user.internet_credit = user.internet_credit.to_i - cost
+            else
+              log_msg "take_money", "User #{u} has not enough money left - kicking"
+              $lib_net.call(:user_disconnect_name,
+                "#{user.login_name}")
+            end
           end
+        else
+          dputs(0) { "Error: LibNet said #{u} is connected, but couldn't find that user!" +
+              " Users connected: #{$lib_net.call(:users_connected).inspect}"}
         end
-      else
-        dputs(0) { "Error: LibNet said #{u} is connected, but couldn't find that user!" +
-            " Users connected: #{$lib_net.call(:users_connected).inspect}"}
-      end
-    }
-    $lib_net.call(:users_disconnected).split.each{|u|
-      log_msg "take_money", "Kicked user #{u} because of inactivity"
-    }
+      }
+    end
+    if users_disconnected = $lib_net.call(:users_disconnected)
+      users_disconnected.split.each{|u|
+        log_msg "take_money", "Kicked user #{u} because of inactivity"
+      }
+    end
   end
 
   def self.check_services

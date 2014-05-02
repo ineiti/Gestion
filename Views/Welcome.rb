@@ -47,7 +47,7 @@ class Welcome < View
       dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
       dputs( 3 ){ "Session is #{session.inspect}" }
       log_msg "Welcome", "Authenticated person #{person.login_name} from " +
-       "#{session.client_ip} with session #{session.inspect}"
+       "#{session.client_ip}"
       return reply( :session_id, person.session_id ) +
         reply( :list, View.list( session ) )
     else

@@ -347,18 +347,32 @@ class Persons < Entities
   def self.responsibles_sort( resps )
     resps.collect{|p|
       [p.person_id, p.full_name]
-    }.sort{|a,b| a.last <=> b.last}
+    }.uniq.sort{|a,b| a.last <=> b.last}
   end
   
   def responsibles( force_update = false )
     if force_update or @resps.size == 0
-      dputs(3){"Making responsible-cache"}
+      dputs(3){"Making responsible-cache with #{@data.size} entities"}
       @resps = Persons.responsibles_raw
       @resps = Persons.responsibles_sort( @resps )
     else
       dputs(3){"Lazily using responsible-cache"}
     end
     @resps
+  end
+  
+  def responsibles_add( p )
+    e = [[p.person_id, p.full_name]]
+    if not @resps.index( e )
+      @resps = ( @resps + e ).sort{|a,b| a.last <=> b.last }
+    end
+  end
+
+  def responsibles_del( p )
+    e = [[p.person_id, p.full_name]]
+    if @resps.index( e ) 
+      @resps = ( @resps - e ).sort{|a,b| a.last <=> b.last }
+    end
   end
 
   def create_add_course( student, owner, course, check_double = false )
@@ -399,11 +413,9 @@ class Person < Entity
     dputs(3) { "Data is #{@proxy.data[@id].inspect}" }
 
     self.internet_credit = internet_credit.to_i
-    #data_set( :internet_credit, data_get( :internet_credit ).to_i )
     @account_service = @account_due = @account_cash = nil
-
-    update_account_due
-    update_account_cash
+    
+    update_accounts
   end
 
   # This is only for testing - don't use in real life!
@@ -416,16 +428,15 @@ class Person < Entity
 
   def update_account_due
     if can_view :FlagAddInternet and login_name != "admin"
-      if login_name.to_s == ""
-        dputs(0){"Error: Login-name is empty! Not good! #{self.inspect}"}
-        return
-      end
       dputs(3){"Adding account_due to -#{login_name.inspect}-"}
       #acc = data_get( :account_name_due )
       acc = account_name_due
       if acc.to_s.length == 0
+        if login_name.to_s == ""
+          dputs(0){"Error: account_name_due empty and no login_name #{self.inspect}"}
+          return
+        end
         acc = (full_name || login_name).capitalize
-        #data_set( :account_name_due, acc )
         self.account_name_due = acc
       end
       lending = "#{get_config('Root::Lending', :Accounting, :lending)}::#{acc}"
@@ -508,7 +519,12 @@ class Person < Entity
     dputs(3){"#{self.login_name}: has_teacher is #{has_teacher} - permissions are #{p}"}
     self._permissions = p
     if has_teacher
-      Persons.responsibles( true )
+      if Permission.can_view( p.reject{|perm| 
+            perm.to_s == "admin"}, "FlagResponsible" )
+        Persons.responsibles_add( self )
+      else
+        Persons.responsibles_del( self )
+      end
     end
     update_accounts
   end
@@ -891,7 +907,9 @@ class Person < Entity
       movs = report_list( report, date ).reverse
       pdf.text "Report for #{full_name}", :align => :center, :size => 20
       pdf.font_size 10
-      pdf.text "From #{movs.first[1][0]} to #{movs.last[1][0]}"
+      if movs.length > 0
+        pdf.text "From #{movs.first[1][0]} to #{movs.last[1][0]}"
+      end
       pdf.text "Account: #{account_due.path}"
       pdf.move_down 1.cm
       
