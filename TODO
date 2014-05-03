@@ -1,43 +1,22 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - bizarre "kicked ... because of inactivity"
-        - Error in Persons:787 (if r and r.login_name == login_name) when
-          deleting person that is in some course as responsible
-        - center-persons: 
-          - when adding a student in "CourseModify" and with
-            "CourseServer", the "label"/center/random doesn't work and says
-            "no such id" - after restart it works...
-          - has also to be able to change the "attestation_function"
-            of a teacher or responsible
-          - when CourseModify is selected and no responsible
-            chosen, should pop up an "add"-window
-          - should be able to modify/delete the persons they
-            create
-          - add a "CenterFlag" instead of testing for "center",
-            then it could depend on secretary
-        - when Network::Tigo::update is clicked, it is possible to change
-          to Self-tab
-          - Verify correct disabling of tabs when waiting for answer
-          - Add async-requests (for Self::Internet and Admin::Tigo)
+        - client/server:
+          - B 131113: server: when getting new course, ignore "room", check 
+            for center-id
+          - Course::Grade - Syncing with server when course-type doesn't exist must
+            return error
+          - server: error with regard to "assistant" - ??
+          - transfert: also get "assistant", "dow" and "hours" - ??
+          - CourseGrade::sync - catch timeouts on requests
 
-        - LibNet has concurrency-troubles - use "flock" to mend it:
-          ( flock -e 200; locked commands ) 200>/tmp/blah.lockfile
-        - CourseStats: whenn adding a course, account_entries is not updated
-          -> should probably do a "watch account-changes and update if changed"
-            thingie
         - Entities::Person.account_service should be replaced by
           ConfigBase.account_service
-        - CoursePrint: error in printing
-          - when clicking printer/pdf/printer it gets confused
-          - when clicking on the left part of the button it gets ignored
-          - clicking "PDF" doesn't work when there is no printer
         - AC: correctly show differing accounts in "check"
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
-        - why is Entity::get_value always called three times?
         - When CourseAdd is first tab and course is added, LTab.js:174 can't
           find getActiveForm, as it is not drawn yet...
 	- 10 crashes when not operating "properly"
@@ -46,31 +25,16 @@ BUGS:
 Security:
 
 UI:
-        - CourseGrade - add comment to file-uploads, so people know what to
-          upload
-        - CourseTabs still very slow for startup
+        - when Network::Tigo::update is clicked, it is possible to change
+          to Self-tab
+          - Verify correct disabling of tabs when waiting for answer
 
-        - client/server:
-          - Course::Grade - Syncing with server when course-type doesn't exist must
-            return error
-          - B 131113: server: when getting new course, ignore "room", check 
-            for center-id
-          - server: error with regard to "assistant" - ??
-          - transfert: also get "assistant", "dow" and "hours" - ??
-          - get course-types from server
-          - check for already transmitted documents and transmit one user at
-            the time
-          - fetch course-description from server
-          - Courses::center needs work:
-            - it isn't shown in CourseModify, even with center_server
-          - CourseGrade::sync - catch timeouts on requests
-          - CourseDiplomas: display random-id if available
-          - only add center-ids when a course is "certified"
+        - bizarre "kicked ... because of inactivity"
+        - CourseTabs still very slow for startup
 
         - SelfChat: if on multilogin, propose a "name"-field
         - Slowness in CourseGrade when saving students
           - don't "update" uidnumber, sn and givenname if not needed
-        - Put adding of students and printing as background-tasks
 
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
@@ -78,6 +42,19 @@ UI:
         - write a good documentation...
 
 FEATURES:
+        - Add async-requests (for Self::Internet and Admin::Tigo)
+        - Put adding of students and printing as background-tasks
+        - CourseGrade - add comment to file-uploads, so people know what to
+          upload
+
+        - client/server:
+          - get course-types from server
+            - fetch course-description from server
+          - check for already transmitted documents and transmit one user at
+            the time
+          - CourseDiplomas: display random-id if available
+          - only add center-ids when a course is "certified"
+
         - Progression-meter for Report::Executive
         - Add 'usage meter' for internet: current_usage * 100 / fastest_possible
           where current_usage and fastest_possible are measured every 5 minutes if
@@ -108,6 +85,12 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - CourseStats: whenn adding a course, account_entries is not updated
+          -> should probably do a "watch account-changes and update if changed"
+            thingie
+        - LibNet has concurrency-troubles - use "flock" to mend it:
+          ( flock -e 200; locked commands ) 200>/tmp/blah.lockfile
+        - why is Entity::get_value always called three times?
         - replace all 'undefined' variables with class-variables
         - Add flag to CSV-storage so that a new element doesn't involve writing
           down of all elements
@@ -245,6 +228,20 @@ To check:
 
 
 ** FIXED **:
+        - B 140503: CoursePrint: error in printing
+          - when clicking printer/pdf/printer it gets confused
+          - when clicking on the left part of the button it gets ignored
+          - clicking "PDF" doesn't work when there is no printer
+        - D 140503: center-persons: 
+          - B 140503: when adding a student in "CourseModify" and with
+            "CourseServer", the "label"/center/random doesn't work and says
+            "no such id" - after restart it works...
+          - F 140502: has also to be able to change the "attestation_function"
+            of a teacher or responsible
+          - F 140502: when CourseModify is selected and no responsible
+            chosen, should pop up an "add"-window
+          - B 140503: when creating courses, the teacher and responsible is 
+            not correctly taken
         - B 140429: Check that grades are kept in 0 <= grade <= 20
         - B 140502: When using Entities.create, method= are not called
         - F 140428: Add reports for accounting

@@ -33,30 +33,30 @@ class CoursePrint < View
   
   def rpc_button_print_presence( session, data )
     dputs(3){"printing"}
-    ret = rpc_print( session, :presence, data )
-    lp_cmd = cmd_printer( session, :presence )
-    if data['name'] and data['name'].length > 0
-      case rep = Courses.match_by_name( data['name'] ).print_presence( lp_cmd )
+    ret = rpc_print( session, :print_presence, data )
+    lp_cmd = cmd_printer( session, :print_presence )
+    if data._courses and data._courses.length > 0
+      case rep = Courses.match_by_course_id( data._courses[0] ).print_presence( lp_cmd )
       when true
         ret + reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Impression - de la fiche de présence pour<br>#{data['name']} en cours" )
       when false
-        ret + reply( "window_show", "missing_data" ) +
+        ret + reply( :window_show, :missing_data ) +
           reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
       else
-        ret + reply( "window_show", "missing_data" ) +
-          reply( "update", :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>" )
+        ret + reply( :window_show, :missing_data ) +
+          reply( :update, :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>" )
       end
     end
   end
   
   def print_exa( session, data, number )
-    dputs(3){"printing with #{data['courses'].inspect}"}
-    exa = "exa_#{number}".to_sym
-    lp_cmd = cmd_printer( session, exa )
+    dputs(3){"printing with #{data._courses.inspect}"}
+    exa = "print_exa_#{number}".to_sym
     ret = rpc_print( session, exa, data )
-    if data['courses'] and data['courses'].length > 0
-      case rep = Courses.match_by_course_id( data['courses'][0] ).print_exa( lp_cmd, number )
+    lp_cmd = cmd_printer( session, exa )
+    if data._courses && data._courses.length > 0
+      case rep = Courses.match_by_course_id( data._courses[0] ).print_exa( lp_cmd, number )
       when true
         ret += reply( :window_show, :printing ) +
           reply( :update, :msg_print => "Impression de la fiche d'évaluation pour<br>#{data['name']} en cours" )

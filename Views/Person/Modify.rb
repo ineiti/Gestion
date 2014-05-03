@@ -38,10 +38,13 @@ class PersonModify < View
     dputs( 2 ){ "Pressed button #{name} with #{data.inspect}" }
     person = Persons.match_by_person_id( data['person_id'] )
     rep = [] #reply( 'empty' )
+    owner = session.owner
     if person
       case name
       when "change_password"
-        if session.owner.has_all_rights_of( person )
+        if owner.has_all_rights_of( person ) ||
+            ( owner.permissions.index( :center ) && 
+              person.login_name =~ /^#{owner.login_name}_/ )
           person.password = data['new_password']
           rep = reply( :empty_only, [:new_password] ) +
             reply( :update, :password_plain => person.password_plain )

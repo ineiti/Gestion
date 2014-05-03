@@ -493,6 +493,9 @@ base_gestion
   end
   
   def print_exa( lp_cmd, number )
+    if ! self.start || ! self.end
+      return false
+    end
     stud_nr = 1
     studs = students.sort.collect{|s|
       stud = Entities.Persons.match_by_login_name( s )

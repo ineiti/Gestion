@@ -179,6 +179,17 @@ class Persons < Entities
   def self.create_empty
     Entities.Persons.create([])
   end
+  
+  def create_person( full_name, creator = nil, login_prop = nil )
+    new_data = { :login_name => login_prop,
+      :complete_name => full_name }
+    perms = ["internet"]
+    if creator and creator.permissions.index( "center" )
+      new_data.merge!( {:login_name_prefix => "#{creator.login_name}_"} )
+      perms.push( "teacher" )
+    end
+    Persons.create( new_data.merge( :permissions => perms ) )
+  end
 
   def update(session)
     super(session).merge({:account_total_due => session.owner.internet_credit})
@@ -517,7 +528,7 @@ class Person < Entity
   def permissions=(p)
     has_teacher = self._permissions and self._permissions.concat(p).index( "teacher" )
     dputs(3){"#{self.login_name}: has_teacher is #{has_teacher} - permissions are #{p}"}
-    self._permissions = p
+    self._permissions = p.uniq
     if has_teacher
       if Permission.can_view( p.reject{|perm| 
             perm.to_s == "admin"}, "FlagResponsible" )
@@ -639,8 +650,10 @@ class Person < Entity
       dputs(2) { "Hashed password for #{self.login_name} is: #{pass}" }
     end
     update_smb_passwd(pass)
-    log_msg :person, "Setting password (#{pass}) for #{self.login_name} to #{p}"
-    self._password = p
+    if self._password != p
+      log_msg :person, "Setting password (#{pass}) for #{self.login_name} to #{p}"
+      self._password = p
+    end
     if (permissions and permissions.index("center")) or
         (groups and groups.index("share")) or
         (not self.password_plain or self.password_plain == "" or

@@ -361,7 +361,7 @@ class TC_Course < Test::Unit::TestCase
     end
   end
   
-  def tes_get_url_label
+  def test_get_url_label
     ConfigBase.add_function :course_server
 
     @grade0 = Grades.create({:student => @secretaire,
@@ -372,6 +372,16 @@ class TC_Course < Test::Unit::TestCase
     assert @grade0.get_url_label =~ /^http:\/\//
     dputs(1){"URL-label is #{@grade0.get_url_label}"}
     assert @grade0.random
+  end
+  
+  def test_random_match
+    ConfigBase.add_function :course_server
+
+    @grade0 = Grades.create({:student => @secretaire,
+        :course => @maint_2, :mean => 11, :means => [11]})
+
+    assert @grade0.random
+    assert_equal @grade0, Grades.match_by_random( @grade0.random )
   end
   
   def test_print_label

@@ -345,4 +345,22 @@ class TC_Person < Test::Unit::TestCase
 
     ConfigBase.del_function( :accounting_courses )
   end
+  
+  def test_create_person
+    person = Persons.create_person( "Foo bar" )
+    assert_equal "bfoo", person.login_name
+    
+    person = Persons.create_person( "Foo bar", @secretary )
+    assert_equal "bfoo2", person.login_name
+    
+    person = Persons.create_person( "Foo bar", @secretary, "foobar" )
+    assert_equal "foobar", person.login_name
+    
+    person = Persons.create_person( "Foo bar", @center )
+    assert_equal "foo_bfoo", person.login_name
+    
+    person = Persons.create_person( "Foo bar", @center, "foobar" )
+    assert_equal "foo_foobar", person.login_name
+    
+  end
 end

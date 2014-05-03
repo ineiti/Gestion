@@ -52,8 +52,12 @@ class CourseTabs < View
     if Rooms.search_all.size > 0
       hide.push :new_room
     end
-    if Persons.search_by_permissions( "teacher" ).size > 0
-      hide.push :new_teacher
+    if ( teachers = Persons.list_teachers ).size > 0
+      dp session.owner.permissions
+      if ( ! session.owner.permissions.index( "center" ) ) ||
+          teachers.select{|t| t =~ /^#{session.owner.login_name}_/}.length > 0
+        hide.push :new_teacher
+      end
     end
     if Persons.find_by_permissions( :center )
       hide.push :new_center
@@ -91,7 +95,7 @@ class CourseTabs < View
     end
     if args._new_teacher and args._new_teacher.size > 0
       dputs(3){"Creating Teacher"}
-      teacher = Persons.create( :complete_name => args._new_teacher )
+      teacher = Persons.create_person( args._new_teacher, session.owner )
       teacher.permissions = ["teacher"]
       dputs(1){"New teacher #{teacher.inspect}"}
     end
@@ -130,9 +134,14 @@ class CourseTabs < View
     course = Courses.create_ctype( data['new_ctype'], data['name_date'], 
       session.owner )
     
-    course.teacher = Persons.find_by_permissions( "teacher" )
-    course.responsible = Persons.find_by_permissions( "director" ) || 
-      course.teacher
+    if session.owner.permissions.index( "center" )
+      course.teacher = course.responsible = Persons.responsibles_raw.select{|p|
+        p.login_name =~ /^#{session.owner.login_name}_/ }.first
+    else
+      course.teacher = Persons.find_by_permissions( "teacher" )
+      course.responsible = Persons.find_by_permissions( "director" ) || 
+        course.teacher
+    end
 
     log_msg :coursetabs, "Adding new course #{course.inspect}"
 

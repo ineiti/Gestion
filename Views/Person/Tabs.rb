@@ -158,23 +158,12 @@ class PersonTabs < View
   def rpc_button_add_person( session, data )
     data.to_sym!
     dputs( 3 ){ "Pressed button accept with #{data.inspect}" }
-    login_prop = data._login_prop || Persons.create_login_name( data._complete_name )
-    dputs(3){"login_prop is #{login_prop.inspect}"}
+    person = Persons.create_person( data._complete_name, session.owner,
+      data._login_prop )
 
-    if login_prop
-      new_data = { :login_name => login_prop,
-        :complete_name => data._complete_name }
-      perms = ["internet"]
-      if session.owner.permissions.index( "center" )
-        new_data.merge!( {:login_name_prefix => "#{session.owner.login_name}_"} )
-        perms.push( "teacher" )
-      end
-      person = Persons.create( new_data )
-      person.permissions = perms
-      reply( :window_hide ) +
-        #reply( :child, reply( :switch_tab, :PersonModify ) ) +
+    reply( :window_hide ) +
       rpc_callback_search( session, "search" => person.login_name)
-    end
+    #reply( :child, reply( :switch_tab, :PersonModify ) ) +
   end
 
 end

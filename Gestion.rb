@@ -72,6 +72,7 @@ begin
   Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
   Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
       'FlagResponsible', 'assistant' )
+  Permission.add( 'center_director', '', 'center' )
   Permission.add( 'secretary', 'CourseModify,FlagPersonAdd,FlagPersonDelete,' + 
       'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
       'FlagAddInternet,CourseStats', 'assistant' )
@@ -85,7 +86,8 @@ begin
     'secretary,cybermanager,teacher' )
   Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseGrade,' +
       'FlagPersonAdd,FlagPersonDelete,PersonModify,CourseDiploma,' +
-      'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson', '' )
+      'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson,' +
+      'PersonCenter,FlagDeletePerson', '' )
   Permission.add( 'admin', '.*', '.*' )
 
   QooxView::init( 'Entities', 'Views' )
