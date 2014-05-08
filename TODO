@@ -4,15 +4,8 @@ BUGS:
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check 
             for center-id
-          - Course::Grade - Syncing with server when course-type doesn't exist must
-            return error
-          - server: error with regard to "assistant" - ??
-          - transfert: also get "assistant", "dow" and "hours" - ??
           - CourseGrade::sync - catch timeouts on requests
 
-        - Entities::Person.account_service should be replaced by
-          ConfigBase.account_service
-        - AC: correctly show differing accounts in "check"
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
@@ -25,40 +18,50 @@ BUGS:
 Security:
 
 UI:
-        - when Network::Tigo::update is clicked, it is possible to change
-          to Self-tab
-          - Verify correct disabling of tabs when waiting for answer
-
-        - bizarre "kicked ... because of inactivity"
+        - Internet: bizarre "kicked ... because of inactivity"
         - CourseTabs still very slow for startup
-
-        - SelfChat: if on multilogin, propose a "name"-field
         - Slowness in CourseGrade when saving students
           - don't "update" uidnumber, sn and givenname if not needed
 
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
-        - clean up the interface, mostly the tabs and sub-tabs
-        - write a good documentation...
 
 FEATURES:
         - Add async-requests (for Self::Internet and Admin::Tigo)
+
+        - /etc/gestion.conf - bash file for very basic configuration
+          - BASE=/opt/profeda
+          - LIBNET=$BASE/LibNet
+          - VPN=profeda-man
+        - Add 'usage meter' for internet: current_usage * 100 / fastest_possible
+          where current_usage and fastest_possible are measured every 5 minutes if
+          people are online, else every hour
+        - Entities::Person.account_service should be replaced by
+          ConfigBase.account_service
+        - Rethink CourseTypes:
+          - versioning of coursetypes
+          - CourseServer: changing of label/attestation by course_directors
+          - CourseGrade - add comment to file-uploads, so people know what to
+            upload
+          - adding files to be print by teachers, like exams and others?
+
         - Put adding of students and printing as background-tasks
-        - CourseGrade - add comment to file-uploads, so people know what to
-          upload
 
         - client/server:
           - get course-types from server
             - fetch course-description from server
+            - Course::Grade - Syncing with server when course-type doesn't exist must
+              return error -> only sync with CourseTypes fetched from server
           - check for already transmitted documents and transmit one user at
             the time
           - CourseDiplomas: display random-id if available
           - only add center-ids when a course is "certified"
 
         - Progression-meter for Report::Executive
-        - Add 'usage meter' for internet: current_usage * 100 / fastest_possible
-          where current_usage and fastest_possible are measured every 5 minutes if
-          people are online, else every hour
+        - SelfChat: if on multilogin, propose a "name"-field
+        - clean up the interface, mostly the tabs and sub-tabs
+        - write a good documentation...
+        - AC: correctly show differing accounts in "check"
         - CourseType: Add versions
 	-4 Courses::Days - add other days to the list
 
@@ -228,6 +231,9 @@ To check:
 
 
 ** FIXED **:
+        - B 140508: when Network::Tigo::update is clicked, it is possible to change
+          to Self-tab
+          - Verify correct disabling of tabs when waiting for answer
         - B 140503: CoursePrint: error in printing
           - when clicking printer/pdf/printer it gets confused
           - when clicking on the left part of the button it gets ignored

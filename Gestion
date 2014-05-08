@@ -6,6 +6,15 @@ if [ "$( which ruby )" -a "$1" != "--install" ]; then
     mkdir -p data
     cp db.emptyAC data/compta.db
   fi
+  if [ ! -f /etc/gestion.conf ]; then
+    if [ "$( gid -u )" = 0 ]; then
+      echo "Copying gestion.conf to /etc - please edit to your needs"
+      BASE=$( pwd | sed -e "s/.Gestion$//" )
+      sed -e "s/.opt.profeda/$(BASE)/ gestion.conf > /etc/gestion.conf"
+    else
+      echo "Not started as root, doing nothing"
+    fi
+  fi
   ./Gestion.rb $@
 else
   if [ "$1" = "--install" ]; then
@@ -13,9 +22,9 @@ else
   fi
 
   if echo _$MACHTYPE | grep -q darwin; then
-    echo Cant automatically install stuff for you - Try to get a hold on
+    echo "Can't automatically install stuff for you - Try to get a hold on"
     echo "  ** ruby - rubygems - libreoffice - pdftk - psutils - sqlite - java - gettext"
-    echo Good luck!
+    echo "Good luck!"
   elif echo _$MACHTYPE | grep -q linux; then
     OOFFICE=libreoffice
     #if [ ! -f /etc/lsb-release ]; then
