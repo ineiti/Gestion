@@ -5,6 +5,13 @@ BUGS:
           - B 131113: server: when getting new course, ignore "room", check 
             for center-id
           - CourseGrade::sync - catch timeouts on requests
+        - Make LibNet working at least on ArchLinux
+          - think about connections / Provider / Hardware / Others
+            { PPP { Tigo, Airtel } { E330, E303 },
+              CDMA { Tawali } { Modem, ZTE },
+              PPPoE { Prestabist } { eth[0-9] },
+              Router { Simple, LibNet } { eth[0-9] } { address } }
+          - Feature: rewrite in Ruby
 
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
@@ -27,12 +34,12 @@ UI:
          tabs can be added
 
 FEATURES:
-        - Add async-requests (for Self::Internet and Admin::Tigo)
-
         - /etc/gestion.conf - bash file for very basic configuration
           - BASE=/opt/profeda
           - LIBNET=$BASE/LibNet
           - VPN=profeda-man
+        - Have a simple interface that can act as a "monthly subscriber frontend"
+          with MAC-identification
         - Add 'usage meter' for internet: current_usage * 100 / fastest_possible
           where current_usage and fastest_possible are measured every 5 minutes if
           people are online, else every hour
@@ -231,6 +238,7 @@ To check:
 
 
 ** FIXED **:
+        - UI140508: Add async-requests (for Self::Internet and Admin::Tigo)
         - B 140508: when Network::Tigo::update is clicked, it is possible to change
           to Self-tab
           - Verify correct disabling of tabs when waiting for answer

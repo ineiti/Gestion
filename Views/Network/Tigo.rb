@@ -1,12 +1,12 @@
 class NetworkTigo < View
   def layout
     @update = true
-    @auto_update = 10
+    @auto_update_async = 10
     @auto_update_send_values = false
     @order = 20
     @tigo_number = Entities.Statics.get( :AdminTigo )
     @functions_need = [:internet]
-    @values_need = { :isp => [:tigo] }
+    #@values_need = { :isp => [:tigo] }
 
     gui_vbox do
       gui_hbox :nogroup do
@@ -45,9 +45,12 @@ class NetworkTigo < View
         show_button :close
       end
     end
-
   end
 
+  def rpc_update_async( session )
+    reply( :update, update( session ).reject{|k,v| k == :tigo_number } )
+  end
+  
   def rpc_update( session )
     reply( :update, update( session ) )
   end

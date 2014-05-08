@@ -3,7 +3,7 @@ class SelfInternet < View
     set_data_class :Persons
     @order = 10
     @update = true
-    @auto_update_async = 10
+    @auto_update_async = 2
     @auto_update_send_values = false
     @functions_need = [:internet]
     @functions_reject = [:internet_simple]
@@ -132,6 +132,10 @@ class SelfInternet < View
     }
     users_str[-1] = users_str.last.join(", ")
     users_str.join(",<br>")
+  end
+  
+  def rpc_update_async( session )
+    rpc_update( session )
   end
 
   def rpc_update( session, nobutton = false )

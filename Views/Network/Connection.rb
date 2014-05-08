@@ -39,10 +39,14 @@ class NetworkConnection < View
   end
   
   def rpc_update( session )
-    isps = /^.(.*).$/.match( $lib_net.print(:ISPs) )[1].split
-    dputs(3){"ISPs is #{isps}"}
-    reply( :empty_only, :connection ) +
-      reply( :update, :connection => isps ) +
+    if isps = /^.(.*).$/.match( $lib_net.print(:ISPs) )
+      isps = isps[1].split
+      dputs(3){"ISPs is #{isps}"}
+      reply( :empty_only, :connection ) +
+        reply( :update, :connection => isps ) +
+        super
+    else
       super
+    end
   end
 end
