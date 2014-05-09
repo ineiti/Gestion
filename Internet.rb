@@ -76,8 +76,8 @@ module Internet
 
   def self.check_services
     if false
-      groups_all = Entities.Services.search_all.collect { |s| s[:group] }
-      Entities.Persons.search_all.each { |p|
+      groups_all = Services.search_all.collect { |s| s[:group] }
+      Persons.search_all.each { |p|
         dputs(4) { "For #{p.login_name}" }
         groups_add = p.services_active.collect { |s| s[:group] }
         groups_del = groups_all.select { |g| groups_add.index(g) }

@@ -28,6 +28,8 @@ UI:
         - Internet: bizarre "kicked ... because of inactivity"
         - Slowness in UI
           - 140509: misuse of search_all is logged now
+          - 140509: most very slow occurences (Persons.search_all) are removed
+          - check Log.search_all occurences
           - CourseTabs still very slow for startup
           - Slowness in CourseGrade when saving students
             - don't "update" uidnumber, sn and givenname if not needed
