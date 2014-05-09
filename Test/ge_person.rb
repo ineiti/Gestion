@@ -43,7 +43,7 @@ class TC_Person < Test::Unit::TestCase
     @admin = Entities.Persons.create( :login_name => "admin", :password => "super123",
       :permissions => [ "admin" ], :account_name_due => "Linus" )
     @josue = Entities.Persons.create( :login_name => "josue", :password => "super",
-      :permissions => %w( default admin secretary ), :account_name_due => "Josué" )
+      :permissions => %w( default director secretary ), :account_name_due => "Josué" )
     @surf = Entities.Persons.create( :login_name => "surf", :password => "super",
       :permissions => [ "default" ] )
     @student = Entities.Persons.create( :login_name => "student", :password => "super",
@@ -222,11 +222,11 @@ class TC_Person < Test::Unit::TestCase
   
   def test_listp_account_due
     list = Persons.listp_account_due
-    assert list
+    assert_equal [[6, "     0 - Secr"], [2, "     0 - Josue"]], list
   end
   
   def test_has_all_rights
-    assert_equal [".*", "FlagAddInternet", "FlagResponsible", "Internet", 
+    assert_equal ["FlagAddCenter", "FlagAddInternet", "FlagResponsible", "Internet", 
       "PersonModify", "PersonShow", "View", "Welcome" ], 
       Permission.views( @josue.permissions )
     assert_equal ["FlagAddInternet", "FlagResponsible", "Internet", "PersonModify",
@@ -235,7 +235,7 @@ class TC_Person < Test::Unit::TestCase
     assert_equal ["FlagResponsible", "Internet", "PersonShow", "View", "Welcome"], 
       Permission.views( @teacher.permissions )
     assert_equal true, @admin.has_all_rights_of( @josue )
-    assert_equal true, @josue.has_all_rights_of( @admin )
+    assert_equal false, @josue.has_all_rights_of( @admin )
     assert_equal true, @admin.has_all_rights_of( @secretary )
     assert_equal false, @secretary.has_all_rights_of( @admin )
     assert_equal true, @josue.has_all_rights_of( @secretary )
@@ -245,8 +245,8 @@ class TC_Person < Test::Unit::TestCase
   end
   
   def test_permission_sort
-    assert_equal ["accountant", "admin", "center", "default", "internet",
-      "secretary", "student", "teacher" ], 
+    assert_equal ["accountant", "admin", "center", "default", "director", 
+      "internet", "secretary", "student", "teacher" ], 
       View.PersonAdmin.layout_find( "permissions" ).to_a[3][:list_values].sort
   end
   
@@ -362,5 +362,11 @@ class TC_Person < Test::Unit::TestCase
     person = Persons.create_person( "Foo bar", @center, "foobar" )
     assert_equal "foo_foobar", person.login_name
     
+  end
+  
+  def test_responsibles_raw
+    resps = Persons.responsibles_raw
+    assert_equal ["josue", "teacher"], 
+      resps.collect{|p| p.login_name }
   end
 end

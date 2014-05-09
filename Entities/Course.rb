@@ -98,7 +98,7 @@ class Courses < Entities
   end
 
   def list_courses_raw(session=nil)
-    ret = search_all
+    ret = search_all_
     if session != nil
       user = session.owner
       if not session.can_view( "FlagCourseGradeAll" )
@@ -246,7 +246,7 @@ class Courses < Entities
     if name.class == Array
       name = name.join
     end
-    dputs(4){"Converting for name #{name} with #{Rooms.search_all.inspect}"}
+    dputs(4){"Converting for name #{name} with #{Rooms.data.inspect}"}
     r = Rooms.match_by_name( name )
     if ( not r ) and ( not r = Rooms.match_by_name( "" ) )
       r = nil

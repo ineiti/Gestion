@@ -238,9 +238,9 @@ class Persons < Entities
   end
 
   def listp_account_due
-    search_all.select { |p|
+    search_by_account_name_due( ".+" ).select { |p|
       p.account_due and p.login_name != "admin"
-    }.collect { |p|
+    }.collect{ |p|
       dputs(4) { "p is #{p.full_name}" }
       dputs(4) { "account is #{p.account_due.get_path}" }
       amount = (p.account_due.total.to_f * 1000).to_i
@@ -348,11 +348,16 @@ class Persons < Entities
   end
   
   def self.responsibles_raw
+    return Persons.search_by_permissions( "director" ) +
+      Persons.search_by_permissions( "teacher" ) +
+      Persons.search_by_permissions( "center_director")
+=begin
     Persons.search_all.select{|p| 
       dputs(4){"Person #{p.login_name} has #{p.permissions.inspect}"}
       p.permissions and Permission.can_view( p.permissions.reject{|perm| 
           perm.to_s == "admin"}, "FlagResponsible" )
     }
+=end
   end
   
   def self.responsibles_sort( resps )

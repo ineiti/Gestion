@@ -26,9 +26,11 @@ Security:
 
 UI:
         - Internet: bizarre "kicked ... because of inactivity"
-        - CourseTabs still very slow for startup
-        - Slowness in CourseGrade when saving students
-          - don't "update" uidnumber, sn and givenname if not needed
+        - Slowness in UI
+          - 140509: misuse of search_all is logged now
+          - CourseTabs still very slow for startup
+          - Slowness in CourseGrade when saving students
+            - don't "update" uidnumber, sn and givenname if not needed
 
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
@@ -238,6 +240,7 @@ To check:
 
 
 ** FIXED **:
+        - B 140508: Error: Nobody listens to rpc_list_choice_courses in CoursePrint 
         - UI140508: Add async-requests (for Self::Internet and Admin::Tigo)
         - B 140508: when Network::Tigo::update is clicked, it is possible to change
           to Self-tab

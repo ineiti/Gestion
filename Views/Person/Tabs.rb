@@ -2,7 +2,7 @@ class PersonTabs < View
   def layout
     @order = 10
     @update = true
-    @persons_total = Persons.search_all.count
+    @persons_total = Persons.data.count
 
     gui_vbox :nogroup do
       #gui_fields do

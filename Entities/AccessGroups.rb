@@ -11,7 +11,7 @@ class AccessGroups < Entities
   end
   
   def listp_name
-    search_all.sort{|a,b|
+    search_all_.sort{|a,b|
       b.priority.to_i <=> a.priority.to_i
     }.collect{|ag|
       ag.priority ||= "10"
@@ -24,7 +24,7 @@ class AccessGroups < Entities
     if user.class == Person
       user = user.login_name
     end
-    search_all().sort{|a,b| 
+    search_all_.sort{|a,b| 
       b.priority.to_i <=> a.priority.to_i 
     }.each{|ag|
       match_user = true

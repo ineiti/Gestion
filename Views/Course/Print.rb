@@ -84,5 +84,9 @@ class CoursePrint < View
   def rpc_button_close( session, data )
     reply( :window_hide )
   end
+  
+  def rpc_list_choice_courses( session, data )
+    dputs(3){"Not used here"}
+  end
 
 end
