@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - with new search_all, passwords of persons get overriden with new
+          password! Not good when the password is stored as hash in LDAP...
+
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check 
             for center-id
