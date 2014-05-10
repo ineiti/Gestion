@@ -1,5 +1,8 @@
 # Uncomment to automatically login admin
 #autologin: admin
+# Together with autologin, allows for more than one at the same time,
+# for example for chat
+#multilogin: true
 
 title: "Gestion avec Profeda"
 
