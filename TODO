@@ -1,9 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - with new search_all, passwords of persons get overriden with new
-          password! Not good when the password is stored as hash in LDAP...
-
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check 
             for center-id
@@ -245,6 +242,8 @@ To check:
 
 
 ** FIXED **:
+        - B 140512: with new search_all, passwords of persons get overriden with new
+          password! Not good when the password is stored as hash in LDAP...
         - B 140508: Error: Nobody listens to rpc_list_choice_courses in CoursePrint 
         - UI140508: Add async-requests (for Self::Internet and Admin::Tigo)
         - B 140508: when Network::Tigo::update is clicked, it is possible to change

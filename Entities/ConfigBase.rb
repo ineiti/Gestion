@@ -44,9 +44,14 @@ class ConfigBases < Entities
           $lib_net = DRbObject.new nil, uri
           dputs(1){ "Connection is #{$lib_net.status}" }
         else
-          dputs(2){ "Loading LibNet in live-mode" }
           require "LibNet.rb"
-          $lib_net = LibNet.new( false )
+          if get_config( false, :LibNet, :simulation )
+            dputs(2){ "Loading simulated LibNet" }
+            $lib_net = LibNet.new( true )
+          else
+            dputs(2){ "Loading LibNet in live-mode" }
+            $lib_net = LibNet.new( false )
+          end
         end
       else
         require "LibNet.rb"
