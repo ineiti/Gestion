@@ -13,12 +13,12 @@ class SelfChat < View
     @auto_update_send_values = false
     @functions_need = [:network]
 
-    gui_vbox do
+    gui_vboxg do
       show_html :replace
       show_str :email
       show_str :talk
       show_button :send
-      show_text :discussion, :width => 400, :flexheight => 1
+      show_text :discussion, :width => 400, :flexheight => 1, :flexwidth => 1
     end
   end
 
@@ -47,8 +47,8 @@ class SelfChat < View
   def rpc_button_send( session, data )
     name, ret = if get_config( false, :multilogin ) 
       [data._email, if data._email != "anonyme@profeda.org"
-        reply( :hide, :replace )
-      end.to_a]
+          reply( :hide, :replace )
+        end.to_a]
     else
       [session.owner.login_name, []]
     end

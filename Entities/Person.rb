@@ -648,6 +648,8 @@ class Person < Entity
   end
 
   def password=(pass)
+    @pre_init and return
+    
     p = pass
     if @proxy.has_storage? :LDAP
       dputs(2) { "Changing password for #{self.login_name}: #{pass}" }
