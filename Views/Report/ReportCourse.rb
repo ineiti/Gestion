@@ -15,7 +15,7 @@ class ReportCourse < View
         show_print :print
       end
       gui_vbox :nogroup do
-        show_table :report, :headings => [ :Date, :Desc, :Amount, :Sum ],
+        show_table :report, :headings => [ :Date, :Desc, :Amount, :Rest ],
           :widths => [ 100, 200, 75, 75 ], :height => 400, :width => 470,
           :columns => [0, 0, :align_right, :align_right]
       end

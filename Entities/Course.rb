@@ -1155,16 +1155,19 @@ base_gestion
         Persons.match_by_login_name(b).full_name }.collect{|s|
       total = 0
       ( movs.select{|e| e.desc =~ / #{s}:/ }.collect{|e|
+          total += e.value
           [ e.global_id,
             [ e.date, 
               "",
-              e.value_form, 
-              Account.total_form( total += e.value ) ] ]
-        } + [ [ nil, 
+              e.value_form,
+              ""
+            ] ] } + 
+          [ [ nil, 
             ["Reste",
               "#{Persons.match_by_login_name(s).full_name} (#{s})", 
-              Account.total_form(cost_student.to_f / 1000 - total),
-              ""] ] ] ).reverse
+              Account.total_form( total ),
+              Account.total_form(cost_student.to_f / 1000 - total)
+            ] ] ] ).reverse
     }.flatten(1)
   end
   

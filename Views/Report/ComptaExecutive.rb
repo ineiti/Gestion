@@ -81,7 +81,8 @@ class ReportComptaExecutive < View
     start = Date.new( td.year, ( td.month / 6.0 ).floor * 6 + 1 )
     update_reports +
       reply( :update, :start => start.to_web ) +
-      reply( :update, :months => 6 )
+      reply( :update, :months => 6 ) +
+      reply_print( session )
   end
   
   def button_account( session, name, data )

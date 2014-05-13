@@ -1,7 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
-        - ACAccess still fails when searching movements!
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check 
             for center-id
@@ -26,7 +25,6 @@ BUGS:
 Security:
 
 UI:
-        - Re-nice ReportCourse so that rest of money to be paid is better visible
         - Internet: bizarre "kicked ... because of inactivity"
         - Slowness in UI
           - 140509: misuse of search_all is logged now
@@ -103,6 +101,7 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - Move Gestion::Reports to AfriCompta
         - CourseStats: whenn adding a course, account_entries is not updated
           -> should probably do a "watch account-changes and update if changed"
             thingie
@@ -246,6 +245,11 @@ To check:
 
 
 ** FIXED **:
+        - UI140513: ReportComptaFlat gets update twice with all accounts - SLOW
+        - B 140513: ReportComptaExecutive: print-button doesn't get updated correctly
+        - UI140513: Re-nice ReportCourse so that rest of money to be paid is better visible
+        - B 140513: ACAccess fails when adding changed movements
+        - B 140513: ACAccess still fails when searching movements!
         - B 140513: catch uncomplete value_entity-definitions
         - B 140512: with new search_all, passwords of persons get overriden with new
           password! Not good when the password is stored as hash in LDAP...
