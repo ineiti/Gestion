@@ -8,8 +8,8 @@ class ReportCourse < View
     @update = true
     @functions_need = [:cashbox]
     
-    gui_hbox do
-      gui_vbox :nogroup do
+    gui_hboxg do
+      gui_vboxg :nogroup do
         show_entity_course_lazy :course, :single, :name, 
           lambda{|c| c.entries}, :callback => true, :flexheight => 1
         show_print :print

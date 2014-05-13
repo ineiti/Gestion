@@ -245,6 +245,7 @@ To check:
 
 
 ** FIXED **:
+        - UI140513: ReportCourse: Course-list doesn't reach bottom...
         - UI140513: ReportComptaFlat gets update twice with all accounts - SLOW
         - B 140513: ReportComptaExecutive: print-button doesn't get updated correctly
         - UI140513: Re-nice ReportCourse so that rest of money to be paid is better visible
