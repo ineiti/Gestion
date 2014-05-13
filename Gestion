@@ -7,7 +7,7 @@ if [ "$( which ruby )" -a "$1" != "--install" ]; then
     cp db.emptyAC data/compta.db
   fi
   if [ ! -f /etc/gestion.conf ]; then
-    if [ "$( gid -u )" = 0 ]; then
+    if [ "$( whoami )" = "root" ]; then
       echo "Copying gestion.conf to /etc - please edit to your needs"
       BASE=$( pwd | sed -e "s/.Gestion$//" )
       sed -e "s/.opt.profeda/$(BASE)/ gestion.conf > /etc/gestion.conf"
