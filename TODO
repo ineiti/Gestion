@@ -6,12 +6,12 @@ BUGS:
             for center-id
           - CourseGrade::sync - catch timeouts on requests
         - Make LibNet working at least on ArchLinux
+          - Network/Connections doesn't show variables
           - think about connections / Provider / Hardware / Others
             { PPP { Tigo, Airtel } { E330, E303 },
               CDMA { Tawali } { Modem, ZTE },
               PPPoE { Prestabist } { eth[0-9] },
               Router { Simple, LibNet } { eth[0-9] } { address } }
-          - Feature: rewrite in Ruby
 
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
@@ -25,6 +25,7 @@ BUGS:
 Security:
 
 UI:
+        - Re-nice ReportCourse so that rest of money to be paid is better visible
         - Internet: bizarre "kicked ... because of inactivity"
         - Slowness in UI
           - 140509: misuse of search_all is logged now
@@ -44,6 +45,8 @@ FEATURES:
           - VPN=profeda-man
         - Have a simple interface that can act as a "monthly subscriber frontend"
           with MAC-identification
+        - LibNet:
+          - Feature: rewrite in Ruby
         - Add 'usage meter' for internet: current_usage * 100 / fastest_possible
           where current_usage and fastest_possible are measured every 5 minutes if
           people are online, else every hour
@@ -242,6 +245,7 @@ To check:
 
 
 ** FIXED **:
+        - B 140513: catch uncomplete value_entity-definitions
         - B 140512: with new search_all, passwords of persons get overriden with new
           password! Not good when the password is stored as hash in LDAP...
         - B 140508: Error: Nobody listens to rpc_list_choice_courses in CoursePrint 

@@ -125,7 +125,7 @@ rescue StorageLoadError
   #  exit
 rescue Exception => e
   case e.to_s
-  when /UpdatePot|MakeMo|PrintHelp/
+  when /UpdatePot|MakeMo|PrintHelp|value_entity_uncomplete/
   else
     puts e.inspect
     puts e.backtrace

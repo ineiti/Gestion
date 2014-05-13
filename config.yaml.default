@@ -58,6 +58,8 @@ Entities:
 #    adduser_cmd: Binaries/adduser_to_buzz
 #    cmd_after_new: Binaries/update_users
 #    admin_users: false
+  LogActions:
+#    logging: false
 
 #DPuts:
 #  terminal_width: 160

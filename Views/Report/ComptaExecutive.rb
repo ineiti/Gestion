@@ -8,7 +8,7 @@ class ReportComptaExecutive < View
     gui_hboxg do
       gui_vbox :nogroup do
         gui_vboxg :nogroup do
-          show_entity_report :reports, :single, :callback => true,
+          show_entity_report :reports, :single, :name, :callback => true,
             :flexheight => 1
           show_button :report_add, :report_delete
         end

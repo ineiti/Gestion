@@ -1,7 +1,7 @@
 class ReportAccounts < Entities
   def setup_data
-    value_entity_account :root, :drop
-    value_entity_account :account, :drop
+    value_entity_account :root, :drop, :path
+    value_entity_account :account, :drop, :path
     value_int :level
   end
 end
