@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 BUGS:
+        - ACAccess still fails when searching movements!
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check 
             for center-id
