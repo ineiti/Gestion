@@ -18,7 +18,7 @@ class CashboxCourse < View
         #        show_button :add_student
       end
       gui_vbox :nogroup do
-        show_table :payments, :headings => [ :Date, :Money, :Sum ],
+        show_table :payments, :headings => [ :Date, :Money, :Rest ],
           :widths => [100, 75, 75], :height => 200,
           :columns => [0, :align_right, :align_right]
         show_date :payment_date

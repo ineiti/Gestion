@@ -52,7 +52,7 @@ class ReportComptaFlat < View
       reply( :update_silent, :account_archive => [[0, "Actual"]].concat( 
         if archive = AccountRoot.archive
           archive.accounts.collect{|a|
-            [a.id, a.path] }
+            [a.id, a.path] }.sort_by{|a| a[1]}
         else
           []
         end ) )

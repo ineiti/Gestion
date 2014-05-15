@@ -38,10 +38,12 @@ UI:
          tabs can be added
 
 FEATURES:
+        - Show what student payed all in CourseDiploma
         - /etc/gestion.conf - bash file for very basic configuration
           - BASE=/opt/profeda
           - LIBNET=$BASE/LibNet
           - VPN=profeda-man
+          - search for all hard-coded paths and replace with /etc/gestion.conf
         - Have a simple interface that can act as a "monthly subscriber frontend"
           with MAC-identification
         - LibNet:
@@ -245,6 +247,8 @@ To check:
 
 
 ** FIXED **:
+        - UI150415: Sort ReportComptaFlat::account_archive
+        - UI150415: Arrange display of course-payments to have the rest indented
         - UI140513: ReportCourse: Course-list doesn't reach bottom...
         - UI140513: ReportComptaFlat gets update twice with all accounts - SLOW
         - B 140513: ReportComptaExecutive: print-button doesn't get updated correctly

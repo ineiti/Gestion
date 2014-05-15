@@ -1137,10 +1137,12 @@ base_gestion
     end
       
     movs.reverse.select{|e| e.desc =~ / #{student}:/ }.collect{|e|
+      total += e.value
       [ e.global_id, 
-        [ e.date, e.value_form, Account.total_form( total += e.value ) ] ]
+        [ e.date, e.value_form, "" ] ]
     } + [ [ nil, 
-        ["Reste", Account.total_form(cost_student.to_f / 1000 - total)] ] ]
+        ["Reste", Account.total_form( total ), 
+          Account.total_form(cost_student.to_f / 1000 - total)] ] ]
   end
 
   def report_list
