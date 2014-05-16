@@ -38,6 +38,8 @@ UI:
          tabs can be added
 
 FEATURES:
+        - LibNet:
+          - Feature: rewrite in Ruby
         - Show what student payed all in CourseDiploma
         - /etc/gestion.conf - bash file for very basic configuration
           - BASE=/opt/profeda
@@ -46,8 +48,6 @@ FEATURES:
           - search for all hard-coded paths and replace with /etc/gestion.conf
         - Have a simple interface that can act as a "monthly subscriber frontend"
           with MAC-identification
-        - LibNet:
-          - Feature: rewrite in Ruby
         - Add 'usage meter' for internet: current_usage * 100 / fastest_possible
           where current_usage and fastest_possible are measured every 5 minutes if
           people are online, else every hour

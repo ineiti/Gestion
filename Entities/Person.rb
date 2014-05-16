@@ -808,7 +808,7 @@ class Person < Entity
   end
 
   def delete
-    Courses.search_all.each { |course|
+    Courses.search_all_.each { |course|
       dputs(3) { "Checking course #{course.name}" }
       [:teacher, :assistant, :responsible, :center].each { |role|
         begin
@@ -831,10 +831,10 @@ class Person < Entity
         d[:students] -= [login_name]
       end
     }
-    Shares.search_all.each { |s|
+    Shares.search_all_.each { |s|
       s.acl.delete login_name
     }
-    AccessGroups.search_all.each { |ag|
+    AccessGroups.search_all_.each { |ag|
       ag.members and ag.members.delete login_name
     }
     Grades.search_by_student(self).each { |g|

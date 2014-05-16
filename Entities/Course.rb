@@ -1087,7 +1087,7 @@ base_gestion
   
   def students=( s )
     super( s )
-    log_msg :course, "Students for #{name} are: #{students.inspect}"
+    @pre_init or log_msg :course, "Students for #{name} are: #{students.inspect}"
   end
   
   def report_pdf

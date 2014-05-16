@@ -53,7 +53,7 @@ class CourseTabs < View
       hide.push :new_room
     end
     if ( teachers = Persons.list_teachers ).size > 0
-      dp session.owner.permissions
+      session.owner.permissions
       if ( ! session.owner.permissions.index( "center" ) ) ||
           teachers.select{|t| t =~ /^#{session.owner.login_name}_/}.length > 0
         hide.push :new_teacher
