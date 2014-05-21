@@ -82,7 +82,7 @@ begin
   Permission.add( 'cybermanager', 'PersonCredit,NetworkTigo,FlagAddInternet,' +
       'FlagPersonAdd,CashboxService', '' )
   Permission.add( 'director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
-      'PersonAdmin,PersonCourse,NetworkConnection,CourseStats', 
+      'PersonAdmin,PersonCourse,NetworkConnection,CourseStats,Report.*', 
     'secretary,cybermanager,teacher' )
   Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseGrade,' +
       'FlagPersonAdd,FlagPersonDelete,PersonModify,CourseDiploma,' +
