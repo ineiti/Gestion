@@ -11,7 +11,12 @@ class Info < RPCQooxdooPath
     dputs( 2 ){ "in QVInfo: #{m.inspect} - #{p} - #{q.inspect} - #{ip}" }
     method = p.gsub( /^.info./, '' )
     dputs( 3 ){ "Calling method #{method}" }
-    self.send( method, q.to_sym, ip )
+    if self.respond_to? method.to_sym
+      self.send( method, q.to_sym, ip )
+    else
+      dputs(0){ "Error: method #{method} not in Info" }
+      ""
+    end
   end
 
   def self.date(args)
@@ -35,8 +40,8 @@ class Info < RPCQooxdooPath
     Internet.free( user ) ? "yes" : "no"
   end
   
-  def self.isAllowed( args )
-    dputs(3){"isAllowed for #{args.inspect}"}
+  def self.isAllowed( args, ip )
+    dputs(3){"isAllowed for #{args.inspect} in #{ip}"}
     return "yes"
   end
   
@@ -50,8 +55,8 @@ class Info < RPCQooxdooPath
     end
     return "nothing"
   end
-  
-  def self.clientUse( args )
+
+  def self.clientUse( args, ip )
     #return "nopay"
     dputs(3){"Client use with #{args.inspect}"}
     user = Persons.match_by_login_name( args[:user] )
@@ -71,12 +76,12 @@ class Info < RPCQooxdooPath
     return 0
   end
 
-  def self.autoConnect( args )
+  def self.autoConnect( args, ip )
     #return "yes"
     dputs(3){"AutoConnecting for #{args.inspect}"}
     user = Persons.match_by_login_name( args[:user] )
     if user 
-      cu = self.clientUse( args )
+      cu = self.clientUse( args, ip )
       cost_max = $lib_net.print( :USER_COST_MAX ).to_i
       dputs(4){ "clientUse is #{cu.inspect} - cost_max is #{cost_max.inspect}" }
       case cu
@@ -97,13 +102,13 @@ class Info < RPCQooxdooPath
     dputs(3){"Querying with #{args.inspect}"}
     case args[:action]
     when /isAllowed/
-      return self.isAllowed( args )
+      return self.isAllowed( args, ip )
     when /login/
       return self.login( args, ip )
     when /clientUse/
-      return self.clientUse( args )
+      return self.clientUse( args, ip )
     when /autoConnect/
-      return self.autoConnect( args )
+      return self.autoConnect( args, ip )
     end
   end
 end

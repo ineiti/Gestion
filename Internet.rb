@@ -154,12 +154,18 @@ module Internet
     $lib_net.call(:user_connect, "#{ip} #{name} " +
         "#{self.free(name) ? 'yes' : 'no'}")
   end
+
+  def self.update_connection( ip, name )
+    return "From #{ip} user #{name}"
+  end
 end
 
 
 class InternetCash < RPCQooxdooPath
   def self.parse_req_res(req, res)
-    dputs(4) { "InternetCash: #{req.inspect} - #{req.path} - #{RPCQooxdooHandler.get_ip( req )}" }
+    ip = RPCQooxdooHandler.get_ip( req )
+    query = req.query
+    dputs(4) { "InternetCash: #{req.inspect} - #{req.path} - #{ip}" }
     if req.request_method == "GET"
       case req.path
       when /fetch_users/
@@ -178,9 +184,12 @@ class InternetCash < RPCQooxdooPath
           end
         }
         return user_list.to_json
+      when /update_connection/
+        return Internet.update_connection( ip, query._user )
       else
         dputs(0) { "Error: #{req.inspect} is not supported" }
       end
     end
   end
 end
+

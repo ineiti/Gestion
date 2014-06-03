@@ -78,7 +78,8 @@ class ReportComptaExecutive < View
   
   def rpc_update( session )
     td = Date.today
-    start = Date.new( td.year, ( td.month / 6.0 ).floor * 6 + 1 )
+    # Start in beginning of semester
+    start = Date.new( td.year, ( td.month / 7.0 ).floor * 6 + 1 )
     update_reports +
       reply( :update, :start => start.to_web ) +
       reply( :update, :months => 6 ) +

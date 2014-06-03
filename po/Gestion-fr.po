@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.5\n"
-"POT-Creation-Date: 2014-04-08 11:20+0100\n"
-"PO-Revision-Date: 2014-04-08 11:22+0100\n"
+"POT-Creation-Date: 2014-06-03 09:11+0100\n"
+"PO-Revision-Date: 2014-06-03 09:14+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: French <fr@profeda.org>\n"
 "Language: \n"
@@ -26,6 +26,8 @@ msgstr ""
 #.
 #. Comes from file Entities/CourseType.rb and line is     value_str :name
 #.
+#. Comes from file Entities/Report.rb and line is     value_str :name
+#.
 #. Comes from file Entities/Room.rb and line is     value_str :name
 #.
 #. Comes from file Entities/Service.rb and line is     value_str :name
@@ -37,17 +39,21 @@ msgstr ""
 #. Comes from file Views/Course/Modify.rb and line is             show_arg :name, :ro => true
 #.
 #. Comes from file Views/Network/Access.rb and line is         show_field :name
+#.
+#. Comes from file Views/Report/ComptaExecutive.rb and line is         show_str :name
 #: ../Entities/AccessGroups.rb:5
 #: ../Entities/Classroom.rb:7
 #: ../Entities/Client.rb:4
 #: ../Entities/Course.rb:23
 #: ../Entities/CourseType.rb:11
+#: ../Entities/Report.rb:12
 #: ../Entities/Room.rb:6
 #: ../Entities/Service.rb:3
 #: ../Entities/Share.rb:6
 #: ../Views/Compta/Users.rb:14
 #: ../Views/Course/Modify.rb:28
 #: ../Views/Network/Access.rb:16
+#: ../Views/Report/ComptaExecutive.rb:22
 msgid "name"
 msgstr "Nom"
 
@@ -132,10 +138,13 @@ msgstr "Prix expert"
 #.
 #. Comes from file Entities/Quiz.rb and line is     value_str :email
 #.
+#. Comes from file Views/Self/Chat.rb and line is       show_str :email
+#.
 #. Comes from file Views/Self/Concours.rb and line is         show_str :email, :width => 300
 #: ../Entities/Client.rb:16
 #: ../Entities/Person.rb:40
 #: ../Entities/Quiz.rb:3
+#: ../Views/Self/Chat.rb:18
 #: ../Views/Self/Concours.rb:12
 msgid "email"
 msgstr "Courriel"
@@ -196,20 +205,10 @@ msgstr "Commentaires"
 msgid "libnet_uri"
 msgstr "URI de LibNet"
 
-#. Comes from file Entities/ConfigBase.rb and line is     value_int :debug_lvl
-#: ../Entities/ConfigBase.rb:5
-msgid "debug_lvl"
-msgstr "DEBUG_LVL"
-
 #. Comes from file Entities/ConfigBase.rb and line is     value_str :internet_cash
-#: ../Entities/ConfigBase.rb:6
+#: ../Entities/ConfigBase.rb:5
 msgid "internet_cash"
 msgstr "Compte Internet"
-
-#. Comes from file Entities/ConfigBase.rb and line is     value_str :version_local
-#: ../Entities/ConfigBase.rb:7
-msgid "version_local"
-msgstr "Ajout local"
 
 #. Comes from file Entities/Course.rb and line is     value_entity_courseType_ro :ctype, :drop, :name
 #.
@@ -224,9 +223,12 @@ msgstr "Genre cours"
 #. Comes from file Entities/Worker.rb and line is     value_date :start
 #.
 #. Comes from file Views/Admin/Report.rb and line is         show_date :start
+#.
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_date :start
 #: ../Entities/Course.rb:26
 #: ../Entities/Worker.rb:9
 #: ../Views/Admin/Report.rb:9
+#: ../Views/Report/ComptaExecutive.rb:16
 msgid "start"
 msgstr "Date début"
 
@@ -326,7 +328,10 @@ msgid "contents"
 msgstr "Contenu"
 
 #. Comes from file Entities/Course.rb and line is     value_int :salary_teacher
+#.
+#. Comes from file Entities/CourseType.rb and line is     value_int :salary_teacher
 #: ../Entities/Course.rb:55
+#: ../Entities/CourseType.rb:26
 msgid "salary_teacher"
 msgstr "Salaire enseignant"
 
@@ -353,23 +358,15 @@ msgstr "Étudiants à la fin"
 msgid "cost_student"
 msgstr "Coût étudiant"
 
-#. Comes from file Entities/Course.rb and line is     value_int :cost_teacher
-#.
-#. Comes from file Entities/CourseType.rb and line is     value_int :cost_teacher
-#: ../Entities/Course.rb:60
-#: ../Entities/CourseType.rb:26
-msgid "cost_teacher"
-msgstr "Coût enseignant"
-
 #. Comes from file Entities/Course.rb and line is     value_int :entry_total
-#: ../Entities/Course.rb:61
+#: ../Entities/Course.rb:60
 msgid "entry_total"
 msgstr "Entrée totale"
 
 #. Comes from file Entities/Course.rb and line is     value_entity_account_empty_lazy :entries, :drop, :path
 #.
 #. Comes from file Views/Course/Stats.rb and line is       show_arg :entries, :width => 500
-#: ../Entities/Course.rb:64
+#: ../Entities/Course.rb:63
 #: ../Views/Course/Stats.rb:15
 msgid "entries"
 msgstr "Entrées"
@@ -384,7 +381,7 @@ msgstr "Format de page"
 
 #. Comes from file Entities/CourseType.rb and line is     value_str :filename
 #.
-#. Comes from file Views/Admin/CourseType.rb and line is           show_list_drop :filename, 'CourseTypes.files'
+#. Comes from file Views/Admin/CourseType.rb and line is           show_list_drop :filename, 'CourseTypes.files.sort'
 #: ../Entities/CourseType.rb:8
 #: ../Views/Admin/CourseType.rb:36
 msgid "filename"
@@ -415,7 +412,7 @@ msgstr "Nombre fichiers"
 msgid "output"
 msgstr "Sortie"
 
-#. Comes from file Entities/CourseType.rb and line is     value_entity_account_lazy :account_base, :drop
+#. Comes from file Entities/CourseType.rb and line is     value_entity_account_lazy :account_base, :drop, :path
 #.
 #. Comes from file Views/Admin/CourseType.rb and line is           show_field :account_base
 #.
@@ -428,9 +425,12 @@ msgstr "Compte de base"
 
 #. Comes from file Entities/Grade.rb and line is     value_entity_course :course
 #.
-#. Comes from file Views/Cashbox/Report.rb and line is         show_entity_course_lazy :course, :single, :name,
+#. Comes from file Views/Cashbox/Cashbox.rb and line is         show_entity_course_lazy :course, :single, :name,
+#.
+#. Comes from file Views/Report/ReportCourse.rb and line is         show_entity_course_lazy :course, :single, :name,
 #: ../Entities/Grade.rb:4
-#: ../Views/Cashbox/Report.rb:14
+#: ../Views/Cashbox/Cashbox.rb:15
+#: ../Views/Report/ReportCourse.rb:13
 msgid "course"
 msgstr "Cours"
 
@@ -467,9 +467,9 @@ msgstr "Ajout"
 
 #. Comes from file Entities/Payment.rb and line is     value_str :desc
 #.
-#. Comes from file Views/Compta/Report.rb and line is         show_str :desc, :width => 300
+#. Comes from file Views/Report/ComptaFlat.rb and line is         show_str :desc, :width => 300
 #: ../Entities/Payment.rb:3
-#: ../Views/Compta/Report.rb:15
+#: ../Views/Report/ComptaFlat.rb:15
 msgid "desc"
 msgstr "Description"
 
@@ -545,15 +545,21 @@ msgid "account_name_cash"
 msgstr "Compte caisse"
 
 #. Comes from file Entities/Person.rb and line is     value_str :role_diploma
+#.
+#. Comes from file Views/Person/Center.rb and line is         show_field :role_diploma
 #: ../Entities/Person.rb:48
+#: ../Views/Person/Center.rb:13
 msgid "role_diploma"
 msgstr "Fonction sur attestation"
 
 #. Comes from file Entities/Person.rb and line is     value_list :permissions, "Permission.list.sort"
 #.
 #. Comes from file Views/Person/Admin.rb and line is               show_arg :permissions, :flexheight => 1
+#.
+#. Comes from file Views/Person/Center.rb and line is         show_list :permissions, "%w( teacher center_director )"
 #: ../Entities/Person.rb:49
 #: ../Views/Person/Admin.rb:17
+#: ../Views/Person/Center.rb:14
 msgid "permissions"
 msgstr "Permissions"
 
@@ -581,6 +587,8 @@ msgstr "Sans internet"
 #.
 #. Comes from file Views/Person/Admin.rb and line is               show_str_ro :login_name
 #.
+#. Comes from file Views/Person/Center.rb and line is         show_str_ro :login_name
+#.
 #. Comes from file Views/Person/Credit.rb and line is       show_str_ro :login_name
 #.
 #. Comes from file Views/Person/Modify.rb and line is           show_str_ro :login_name, :width => 150
@@ -588,6 +596,7 @@ msgstr "Sans internet"
 #: ../Entities/Worker.rb:5
 #: ../Views/Network/Access.rb:26
 #: ../Views/Person/Admin.rb:14
+#: ../Views/Person/Center.rb:11
 #: ../Views/Person/Credit.rb:10
 #: ../Views/Person/Modify.rb:13
 msgid "login_name"
@@ -642,10 +651,13 @@ msgstr "Mot de passe initial"
 #.
 #. Comes from file Views/Person/Admin.rb and line is               show_str_ro :person_id
 #.
+#. Comes from file Views/Person/Center.rb and line is         show_str_ro :person_id
+#.
 #. Comes from file Views/Person/Modify.rb and line is           show_str_ro :person_id
 #: ../Entities/Person.rb:66
 #: ../Entities/Worker.rb:4
 #: ../Views/Person/Admin.rb:15
+#: ../Views/Person/Center.rb:12
 #: ../Views/Person/Modify.rb:14
 msgid "person_id"
 msgstr "# utilisateur"
@@ -667,6 +679,38 @@ msgstr "Réponse"
 #: ../Entities/Quiz.rb:6
 msgid "score"
 msgstr "Points"
+
+#. Comes from file Entities/Report.rb and line is     value_entity_account :root, :drop, :path
+#.
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_entity_account_lazy :root, :drop, :width => 400,
+#: ../Entities/Report.rb:3
+#: ../Views/Report/ComptaExecutive.rb:31
+msgid "root"
+msgstr "Année"
+
+#. Comes from file Entities/Report.rb and line is     value_entity_account :account, :drop, :path
+#.
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_entity_account_lazy :account, :drop
+#: ../Entities/Report.rb:4
+#: ../Views/Report/ComptaExecutive.rb:33
+msgid "account"
+msgstr "Compte"
+
+#. Comes from file Entities/Report.rb and line is     value_int :level
+#.
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_int :level
+#: ../Entities/Report.rb:5
+#: ../Views/Report/ComptaExecutive.rb:34
+msgid "level"
+msgstr "Sous-comptes"
+
+#. Comes from file Entities/Report.rb and line is     value_list_entity_reportAccounts :accounts
+#.
+#. Comes from file Views/Report/ComptaExecutive.rb and line is         show_entity_reportAccount_lazy :accounts, :single,
+#: ../Entities/Report.rb:13
+#: ../Views/Report/ComptaExecutive.rb:23
+msgid "accounts"
+msgstr "Rapports"
 
 #. Comes from file Entities/Room.rb and line is     value_int :size
 #.
@@ -870,9 +914,9 @@ msgstr "Nouveau ticket"
 #.
 #. Comes from file Views/Admin/CourseType.rb and line is         show_button :new, :delete
 #.
-#. Comes from file Views/Cashbox/Course.rb and line is         show_button :pay, :delete
+#. Comes from file Views/Cashbox/Cashbox.rb and line is         show_button :delete
 #.
-#. Comes from file Views/Cashbox/Report.rb and line is         show_button :delete
+#. Comes from file Views/Cashbox/Course.rb and line is         show_button :pay, :delete
 #.
 #. Comes from file Views/Course/Responsible.rb and line is         show_button :new, :delete, :save
 #.
@@ -898,8 +942,8 @@ msgstr "Nouveau ticket"
 #: ../Entities/Ticket.rb:49
 #: ../Entities/Ticket.rb:51
 #: ../Views/Admin/CourseType.rb:16
+#: ../Views/Cashbox/Cashbox.rb:23
 #: ../Views/Cashbox/Course.rb:29
-#: ../Views/Cashbox/Report.rb:22
 #: ../Views/Course/Responsible.rb:13
 #: ../Views/Course/Tabs.rb:10
 #: ../Views/Inventory/Computer.rb:9
@@ -943,6 +987,8 @@ msgstr "Enregistrer"
 #.
 #. Comes from file Views/Person/Admin.rb and line is         show_button :save
 #.
+#. Comes from file Views/Person/Center.rb and line is         show_button :save
+#.
 #. Comes from file Views/Person/Modify.rb and line is           show_print :save, :print_student
 #.
 #. Comes from file Views/Self/Show.rb and line is       show_button :save
@@ -953,17 +999,18 @@ msgstr "Enregistrer"
 #.
 #. Comes from file Views/Task/Worker.rb and line is         show_button :new, :save
 #: ../Entities/Ticket.rb:67
-#: ../Views/Admin/Function.rb:18
+#: ../Views/Admin/Function.rb:19
 #: ../Views/Compta/Course.rb:20
 #: ../Views/Compta/Users.rb:19
 #: ../Views/Course/Grade.rb:34
-#: ../Views/Course/Modify.rb:64
+#: ../Views/Course/Modify.rb:69
 #: ../Views/Course/Responsible.rb:13
 #: ../Views/Course/Stats.rb:16
 #: ../Views/Inventory/Computer.rb:16
 #: ../Views/Inventory/Room.rb:14
 #: ../Views/Network/Access.rb:22
 #: ../Views/Person/Admin.rb:26
+#: ../Views/Person/Center.rb:15
 #: ../Views/Person/Modify.rb:18
 #: ../Views/Self/Show.rb:11
 #: ../Views/Task/Client.rb:17
@@ -1003,16 +1050,16 @@ msgstr "Restaurer"
 #.
 #. Comes from file Views/Compta/Admin.rb and line is         show_html :txt
 #.
-#. Comes from file Views/Compta/Report.rb and line is         show_html :txt
-#.
 #. Comes from file Views/Course/Grade.rb and line is         show_html :txt
+#.
+#. Comes from file Views/Report/ComptaFlat.rb and line is         show_html :txt
 #.
 #. Comes from file Views/Self/Concours.rb and line is         show_html :txt
 #: ../Views/Admin/Backup.rb:15
 #: ../Views/Admin/Power.rb:18
 #: ../Views/Compta/Admin.rb:10
-#: ../Views/Compta/Report.rb:19
 #: ../Views/Course/Grade.rb:37
+#: ../Views/Report/ComptaFlat.rb:19
 #: ../Views/Self/Concours.rb:53
 msgid "txt"
 msgstr "Texte"
@@ -1114,7 +1161,7 @@ msgid "functions"
 msgstr "Fonctions"
 
 #. Comes from file Views/Admin/Function.rb and line is           show_arg :welcome_text, :width => 400, :flexheight => 1
-#: ../Views/Admin/Function.rb:15
+#: ../Views/Admin/Function.rb:16
 msgid "welcome_text"
 msgstr "Bienvenue"
 
@@ -1199,9 +1246,9 @@ msgstr "Rapport"
 
 #. Comes from file Views/Admin/Report.rb and line is         show_list_single :report_type, "View.AdminReport.list_types", :callback => true
 #.
-#. Comes from file Views/Cashbox/Report.rb and line is         show_list_single :report_type, :callback => true, :maxheight => 160
+#. Comes from file Views/Cashbox/Cashbox.rb and line is         show_list_single :report_type, :callback => true, :maxheight => 160
 #: ../Views/Admin/Report.rb:8
-#: ../Views/Cashbox/Report.rb:12
+#: ../Views/Cashbox/Cashbox.rb:13
 msgid "report_type"
 msgstr "Rapport"
 
@@ -1209,6 +1256,144 @@ msgstr "Rapport"
 #: ../Views/Admin/Tabs.rb:1
 msgid "AdminTabs"
 msgstr "Administration"
+
+#. Comes from file Views/Cashbox/Cashbox.rb and line is class CashboxReport < View
+#: ../Views/Cashbox/Cashbox.rb:3
+msgid "CashboxReport"
+msgstr "Rapports"
+
+#. Comes from file Views/Cashbox/Cashbox.rb and line is         show_date :report_start, :callback => :date
+#: ../Views/Cashbox/Cashbox.rb:14
+msgid "report_start"
+msgstr "Date du rapport"
+
+#. Comes from file Views/Cashbox/Cashbox.rb and line is         show_print :print
+#.
+#. Comes from file Views/Compta/Transfer.rb and line is         show_print :print
+#.
+#. Comes from file Views/Course/Diploma.rb and line is         show_print :print
+#.
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_print :print
+#.
+#. Comes from file Views/Report/ReportCourse.rb and line is         show_print :print
+#: ../Views/Cashbox/Cashbox.rb:17
+#: ../Views/Compta/Transfer.rb:22
+#: ../Views/Course/Diploma.rb:27
+#: ../Views/Report/ComptaExecutive.rb:18
+#: ../Views/Report/ReportCourse.rb:15
+msgid "print"
+msgstr "Imprimer"
+
+#. Comes from file Views/Cashbox/Cashbox.rb and line is         show_table :report, :headings => [ :Date, :Desc, :Amount, :Sum ],
+#.
+#. Comes from file Views/Cashbox/Service.rb and line is           show_table :report, :headings => [ :Date, :Desc, :Amount, :Sum ],
+#.
+#. Comes from file Views/Compta/Transfer.rb and line is         show_table :report, :headings => [ :Date, :Desc, :Amount, :Sum ],
+#.
+#. Comes from file Views/Report/ReportCourse.rb and line is         show_table :report, :headings => [ :Date, :Desc, :Amount, :Rest ],
+#: ../Views/Cashbox/Cashbox.rb:20
+#: ../Views/Cashbox/Service.rb:31
+#: ../Views/Compta/Transfer.rb:19
+#: ../Views/Report/ReportCourse.rb:18
+msgid "report"
+msgstr "Rapport"
+
+#. Comes from file Views/Cashbox/Cashbox.rb and line is           show_html :status
+#.
+#. Comes from file Views/Course/Diploma.rb and line is           show_info :status
+#.
+#. Comes from file Views/Network/Tigo.rb and line is           show_html :status
+#: ../Views/Cashbox/Cashbox.rb:28
+#: ../Views/Course/Diploma.rb:24
+#: ../Views/Network/Tigo.rb:35
+msgid "status"
+msgstr "État"
+
+#. Comes from file Views/Cashbox/Cashbox.rb and line is           show_button :close
+#.
+#. Comes from file Views/Cashbox/Course.rb and line is         show_button :close
+#.
+#. Comes from file Views/Compta/Admin.rb and line is         show_button :close
+#.
+#. Comes from file Views/Compta/Course.rb and line is           show_button :assign_new_account, :add_archives, :close
+#.
+#. Comes from file Views/Course/Diploma.rb and line is         show_button :close
+#.
+#. Comes from file Views/Course/Diploma.rb and line is         show_button :close
+#.
+#. Comes from file Views/Course/Grade.rb and line is         show_button :close
+#.
+#. Comes from file Views/Course/Grade.rb and line is         show_button :close
+#.
+#. Comes from file Views/Course/Grade.rb and line is         show_button :close
+#.
+#. Comes from file Views/Course/Modify.rb and line is             show_button :bulk_students, :close
+#.
+#. Comes from file Views/Course/Modify.rb and line is             show_button :close
+#.
+#. Comes from file Views/Course/Modify.rb and line is             show_button :print_next, :close
+#.
+#. Comes from file Views/Course/Modify.rb and line is             show_button :do_transfer, :close
+#.
+#. Comes from file Views/Course/Print.rb and line is         show_button :close
+#.
+#. Comes from file Views/Course/Print.rb and line is         show_button :close
+#.
+#. Comes from file Views/Course/Tabs.rb and line is       show_button :close
+#.
+#. Comes from file Views/Course/Tabs.rb and line is         show_button :add_missing, :close
+#.
+#. Comes from file Views/Course/Tabs.rb and line is           show_button :new_course, :close
+#.
+#. Comes from file Views/Network/Share.rb and line is         show_button :close
+#.
+#. Comes from file Views/Network/Tigo.rb and line is         show_button :close
+#.
+#. Comes from file Views/Person/Course.rb and line is         show_button :add_course, :close
+#.
+#. Comes from file Views/Person/Modify.rb and line is         show_button :close
+#.
+#. Comes from file Views/Person/Tabs.rb and line is         show_button :add_person, :close
+#.
+#. Comes from file Views/Person/Tabs.rb and line is         show_button :close
+#.
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_button :account_add_win, :account_save_win, :close
+#.
+#. Comes from file Views/Report/ComptaExecutive.rb and line is         show_button :report_add_win, :close
+#.
+#. Comes from file Views/Report/ComptaFlat.rb and line is         show_button :close
+#.
+#. Comes from file Views/Self/Concours.rb and line is         show_button :close
+#: ../Views/Cashbox/Cashbox.rb:29
+#: ../Views/Cashbox/Course.rb:34
+#: ../Views/Compta/Admin.rb:11
+#: ../Views/Compta/Course.rb:25
+#: ../Views/Course/Diploma.rb:31
+#: ../Views/Course/Diploma.rb:35
+#: ../Views/Course/Grade.rb:39
+#: ../Views/Course/Grade.rb:44
+#: ../Views/Course/Grade.rb:58
+#: ../Views/Course/Modify.rb:47
+#: ../Views/Course/Modify.rb:57
+#: ../Views/Course/Modify.rb:62
+#: ../Views/Course/Modify.rb:66
+#: ../Views/Course/Print.rb:20
+#: ../Views/Course/Print.rb:24
+#: ../Views/Course/Tabs.rb:15
+#: ../Views/Course/Tabs.rb:32
+#: ../Views/Course/Tabs.rb:41
+#: ../Views/Network/Share.rb:46
+#: ../Views/Network/Tigo.rb:45
+#: ../Views/Person/Course.rb:19
+#: ../Views/Person/Modify.rb:31
+#: ../Views/Person/Tabs.rb:18
+#: ../Views/Person/Tabs.rb:23
+#: ../Views/Report/ComptaExecutive.rb:35
+#: ../Views/Report/ComptaExecutive.rb:41
+#: ../Views/Report/ComptaFlat.rb:20
+#: ../Views/Self/Concours.rb:54
+msgid "close"
+msgstr "Fermer"
 
 #. Comes from file Views/Cashbox/Course.rb and line is class CashboxCourse < View
 #: ../Views/Cashbox/Course.rb:3
@@ -1229,7 +1414,7 @@ msgstr "Cours"
 msgid "courses"
 msgstr "Cours"
 
-#. Comes from file Views/Cashbox/Course.rb and line is         show_table :payments, :headings => [ :Date, :Money, :Sum ],
+#. Comes from file Views/Cashbox/Course.rb and line is         show_table :payments, :headings => [ :Date, :Money, :Rest ],
 #.
 #. Comes from file Views/Self/Cash.rb and line is         show_list_single :payments, :width => 500, :callback => true,
 #: ../Views/Cashbox/Course.rb:21
@@ -1264,120 +1449,6 @@ msgstr "Payer"
 #: ../Views/Network/Tigo.rb:44
 msgid "msg"
 msgstr "Erreur"
-
-#. Comes from file Views/Cashbox/Course.rb and line is         show_button :close
-#.
-#. Comes from file Views/Cashbox/Report.rb and line is           show_button :close
-#.
-#. Comes from file Views/Compta/Admin.rb and line is         show_button :close
-#.
-#. Comes from file Views/Compta/Course.rb and line is           show_button :assign_new_account, :add_archives, :close
-#.
-#. Comes from file Views/Compta/Report.rb and line is         show_button :close
-#.
-#. Comes from file Views/Course/Diploma.rb and line is         show_button :close
-#.
-#. Comes from file Views/Course/Diploma.rb and line is         show_button :close
-#.
-#. Comes from file Views/Course/Grade.rb and line is         show_button :close
-#.
-#. Comes from file Views/Course/Grade.rb and line is         show_button :close
-#.
-#. Comes from file Views/Course/Grade.rb and line is         show_button :close
-#.
-#. Comes from file Views/Course/Modify.rb and line is             show_button :bulk_students, :close
-#.
-#. Comes from file Views/Course/Modify.rb and line is             show_button :close
-#.
-#. Comes from file Views/Course/Modify.rb and line is             show_button :print_next, :close
-#.
-#. Comes from file Views/Course/Print.rb and line is         show_button :close
-#.
-#. Comes from file Views/Course/Print.rb and line is         show_button :close
-#.
-#. Comes from file Views/Course/Tabs.rb and line is       show_button :close
-#.
-#. Comes from file Views/Course/Tabs.rb and line is         show_button :add_missing, :close
-#.
-#. Comes from file Views/Course/Tabs.rb and line is           show_button :new_course, :close
-#.
-#. Comes from file Views/Network/Share.rb and line is         show_button :close
-#.
-#. Comes from file Views/Network/Tigo.rb and line is         show_button :close
-#.
-#. Comes from file Views/Person/Course.rb and line is         show_button :add_course, :close
-#.
-#. Comes from file Views/Person/Modify.rb and line is         show_button :close
-#.
-#. Comes from file Views/Person/Tabs.rb and line is         show_button :add_person, :close
-#.
-#. Comes from file Views/Person/Tabs.rb and line is         show_button :close
-#.
-#. Comes from file Views/Self/Concours.rb and line is         show_button :close
-#: ../Views/Cashbox/Course.rb:34
-#: ../Views/Cashbox/Report.rb:28
-#: ../Views/Compta/Admin.rb:11
-#: ../Views/Compta/Course.rb:25
-#: ../Views/Compta/Report.rb:20
-#: ../Views/Course/Diploma.rb:31
-#: ../Views/Course/Diploma.rb:35
-#: ../Views/Course/Grade.rb:39
-#: ../Views/Course/Grade.rb:44
-#: ../Views/Course/Grade.rb:58
-#: ../Views/Course/Modify.rb:46
-#: ../Views/Course/Modify.rb:56
-#: ../Views/Course/Modify.rb:61
-#: ../Views/Course/Print.rb:20
-#: ../Views/Course/Print.rb:24
-#: ../Views/Course/Tabs.rb:15
-#: ../Views/Course/Tabs.rb:32
-#: ../Views/Course/Tabs.rb:41
-#: ../Views/Network/Share.rb:46
-#: ../Views/Network/Tigo.rb:45
-#: ../Views/Person/Course.rb:19
-#: ../Views/Person/Modify.rb:31
-#: ../Views/Person/Tabs.rb:18
-#: ../Views/Person/Tabs.rb:23
-#: ../Views/Self/Concours.rb:54
-msgid "close"
-msgstr "Fermer"
-
-#. Comes from file Views/Cashbox/Report.rb and line is class CashboxReport < View
-#: ../Views/Cashbox/Report.rb:3
-msgid "CashboxReport"
-msgstr "Rapports"
-
-#. Comes from file Views/Cashbox/Report.rb and line is         show_date :report_start, :callback => :date
-#: ../Views/Cashbox/Report.rb:13
-msgid "report_start"
-msgstr "Date du rapport"
-
-#. Comes from file Views/Cashbox/Report.rb and line is         show_print :print
-#.
-#. Comes from file Views/Course/Diploma.rb and line is         show_print :print
-#: ../Views/Cashbox/Report.rb:16
-#: ../Views/Course/Diploma.rb:27
-msgid "print"
-msgstr "Imprimer"
-
-#. Comes from file Views/Cashbox/Report.rb and line is         show_table :report, :headings => [ :Date, :Desc, :Amount, :Sum ],
-#.
-#. Comes from file Views/Cashbox/Service.rb and line is           show_table :report, :headings => [ :Date, :Desc, :Amount ],
-#: ../Views/Cashbox/Report.rb:19
-#: ../Views/Cashbox/Service.rb:31
-msgid "report"
-msgstr "Rapport"
-
-#. Comes from file Views/Cashbox/Report.rb and line is           show_html :status
-#.
-#. Comes from file Views/Course/Diploma.rb and line is           show_info :status
-#.
-#. Comes from file Views/Network/Tigo.rb and line is           show_html :status
-#: ../Views/Cashbox/Report.rb:27
-#: ../Views/Course/Diploma.rb:24
-#: ../Views/Network/Tigo.rb:35
-msgid "status"
-msgstr "État"
 
 #. Comes from file Views/Cashbox/Service.rb and line is class CashboxService < View
 #: ../Views/Cashbox/Service.rb:1
@@ -1454,11 +1525,6 @@ msgstr "Administration"
 
 #. Comes from file Views/Compta/Admin.rb and line is       show_button :archive, :update_totals, :clean_up
 #: ../Views/Compta/Admin.rb:8
-msgid "clean_up"
-msgstr "Nettoyage"
-
-#. Comes from file Views/Compta/Admin.rb and line is       show_button :archive, :update_totals, :clean_up
-#: ../Views/Compta/Admin.rb:8
 msgid "archive"
 msgstr "Archiver"
 
@@ -1466,6 +1532,11 @@ msgstr "Archiver"
 #: ../Views/Compta/Admin.rb:8
 msgid "update_totals"
 msgstr "Mise à jour des totaux"
+
+#. Comes from file Views/Compta/Admin.rb and line is       show_button :archive, :update_totals, :clean_up
+#: ../Views/Compta/Admin.rb:8
+msgid "clean_up"
+msgstr "Nettoyage"
 
 #. Comes from file Views/Compta/Course.rb and line is class ComptaCourse < View
 #: ../Views/Compta/Course.rb:6
@@ -1497,31 +1568,6 @@ msgstr "Définir compte"
 msgid "add_archives"
 msgstr "Archiver"
 
-#. Comes from file Views/Compta/Report.rb and line is class ComptaReport < View
-#: ../Views/Compta/Report.rb:1
-msgid "ComptaReport"
-msgstr "Rapport"
-
-#. Comes from file Views/Compta/Report.rb and line is         show_entity_account_lazy :account_list, :single,
-#: ../Views/Compta/Report.rb:10
-msgid "account_list"
-msgstr "Comptes"
-
-#. Comes from file Views/Compta/Report.rb and line is         show_int :total
-#: ../Views/Compta/Report.rb:14
-msgid "total"
-msgstr "Total"
-
-#. Comes from file Views/Compta/Report.rb and line is         show_button :account_update, :report_movements
-#: ../Views/Compta/Report.rb:16
-msgid "report_movements"
-msgstr "Créer rapport"
-
-#. Comes from file Views/Compta/Report.rb and line is         show_button :account_update, :report_movements
-#: ../Views/Compta/Report.rb:16
-msgid "account_update"
-msgstr "Mise à jour des totaux"
-
 #. Comes from file Views/Compta/Show.rb and line is class ComptaShow < View
 #: ../Views/Compta/Show.rb:1
 msgid "ComptaShow"
@@ -1537,20 +1583,27 @@ msgstr "Comptabilité"
 msgid "ComptaTransfer"
 msgstr "Transfert"
 
-#. Comes from file Views/Compta/Transfer.rb and line is         vtlp_list :person_list, :account_due, :maxheight => 250
-#: ../Views/Compta/Transfer.rb:14
-msgid "person_list"
-msgstr "Utilisateurs"
+#. Comes from file Views/Compta/Transfer.rb and line is         show_entity_person_lazy :persons, :single, :callback => true
+#.
+#. Comes from file Views/Course/Responsible.rb and line is         vtlp_list :persons, 'login_name', 'listp_responsible'
+#.
+#. Comes from file Views/Person/Tabs.rb and line is       show_list_single :persons, "[]", :callback => true
+#.
+#. Comes from file Views/Person/Tabs.rb and line is       show_arg :persons, :flexheight => 1
+#: ../Views/Compta/Transfer.rb:15
+#: ../Views/Course/Responsible.rb:12
+#: ../Views/Person/Tabs.rb:10
+#: ../Views/Person/Tabs.rb:11
+msgid "persons"
+msgstr "Personnes"
 
 #. Comes from file Views/Compta/Transfer.rb and line is         show_button :do_transfer
-#: ../Views/Compta/Transfer.rb:15
+#.
+#. Comes from file Views/Course/Modify.rb and line is             show_button :do_transfer, :close
+#: ../Views/Compta/Transfer.rb:16
+#: ../Views/Course/Modify.rb:66
 msgid "do_transfer"
 msgstr "Effectuer transfert"
-
-#. Comes from file Views/Compta/Transfer.rb and line is         show_int_ro :account_cash
-#: ../Views/Compta/Transfer.rb:18
-msgid "account_cash"
-msgstr "Doit à la comptabilité"
 
 #. Comes from file Views/Compta/Users.rb and line is class ComptaUsers < View
 #: ../Views/Compta/Users.rb:1
@@ -1603,7 +1656,7 @@ msgstr "Créer attestations"
 #.
 #. Comes from file Views/Course/Print.rb and line is         show_html :missing
 #: ../Views/Course/Diploma.rb:30
-#: ../Views/Course/Modify.rb:55
+#: ../Views/Course/Modify.rb:56
 #: ../Views/Course/Print.rb:19
 msgid "missing"
 msgstr "Manquant"
@@ -1616,7 +1669,7 @@ msgstr "Manquant"
 #.
 #. Comes from file Views/Person/Modify.rb and line is         show_html :msg_print
 #: ../Views/Course/Diploma.rb:34
-#: ../Views/Course/Modify.rb:59
+#: ../Views/Course/Modify.rb:60
 #: ../Views/Course/Print.rb:23
 #: ../Views/Person/Modify.rb:30
 msgid "msg_print"
@@ -1634,8 +1687,8 @@ msgstr "Dernières synchronisation"
 
 #. Comes from file Views/Course/Grade.rb and line is         show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
 #: ../Views/Course/Grade.rb:22
-msgid "prepare_files"
-msgstr "Préparation partage"
+msgid "sync_server"
+msgstr "Synchronisation serveur"
 
 #. Comes from file Views/Course/Grade.rb and line is         show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
 #: ../Views/Course/Grade.rb:22
@@ -1644,8 +1697,8 @@ msgstr "Transfert partage"
 
 #. Comes from file Views/Course/Grade.rb and line is         show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
 #: ../Views/Course/Grade.rb:22
-msgid "sync_server"
-msgstr "Synchronisation serveur"
+msgid "prepare_files"
+msgstr "Préparation partage"
 
 #. Comes from file Views/Course/Grade.rb and line is         show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
 #: ../Views/Course/Grade.rb:22
@@ -1760,70 +1813,75 @@ msgstr "Modifier"
 msgid "print_presence"
 msgstr "Imprimer fiche de présence sur "
 
-#. Comes from file Views/Course/Modify.rb and line is                 show_button :bulk_add, :del_student, :edit_student
-#: ../Views/Course/Modify.rb:39
-msgid "del_student"
-msgstr "Effacer"
-
-#. Comes from file Views/Course/Modify.rb and line is                 show_button :bulk_add, :del_student, :edit_student
+#. Comes from file Views/Course/Modify.rb and line is                 show_button :bulk_add, :del_student, :edit_student,
 #: ../Views/Course/Modify.rb:39
 msgid "bulk_add"
 msgstr "Ajouter étudiants"
 
-#. Comes from file Views/Course/Modify.rb and line is                 show_button :bulk_add, :del_student, :edit_student
+#. Comes from file Views/Course/Modify.rb and line is                 show_button :bulk_add, :del_student, :edit_student,
 #: ../Views/Course/Modify.rb:39
 msgid "edit_student"
 msgstr "Modifier"
 
+#. Comes from file Views/Course/Modify.rb and line is                 show_button :bulk_add, :del_student, :edit_student,
+#: ../Views/Course/Modify.rb:39
+msgid "del_student"
+msgstr "Effacer"
+
 #. Comes from file Views/Course/Modify.rb and line is               show_print :print_student
-#: ../Views/Course/Modify.rb:41
+#: ../Views/Course/Modify.rb:42
 msgid "print_student"
 msgstr "Imprimer sur "
 
 #. Comes from file Views/Course/Modify.rb and line is             show_text :names
-#: ../Views/Course/Modify.rb:45
+#: ../Views/Course/Modify.rb:46
 msgid "names"
 msgstr "Noms"
 
 #. Comes from file Views/Course/Modify.rb and line is             show_button :bulk_students, :close
-#: ../Views/Course/Modify.rb:46
+#: ../Views/Course/Modify.rb:47
 msgid "bulk_students"
 msgstr "Ajouter"
 
 #. Comes from file Views/Course/Modify.rb and line is             show_str :double_name
-#: ../Views/Course/Modify.rb:49
+#: ../Views/Course/Modify.rb:50
 msgid "double_name"
 msgstr "Doublure"
 
 #. Comes from file Views/Course/Modify.rb and line is             show_entity_person_lazy :double_proposition, :single, :full_name,
-#: ../Views/Course/Modify.rb:50
+#: ../Views/Course/Modify.rb:51
 msgid "double_proposition"
 msgstr "Proposition"
 
 #. Comes from file Views/Course/Modify.rb and line is             show_button :accept, :create_new, :cancel
-#: ../Views/Course/Modify.rb:52
-msgid "create_new"
-msgstr "Ajouter nouveau"
-
-#. Comes from file Views/Course/Modify.rb and line is             show_button :accept, :create_new, :cancel
-#: ../Views/Course/Modify.rb:52
+#: ../Views/Course/Modify.rb:53
 msgid "accept"
 msgstr "Prendre existant"
 
 #. Comes from file Views/Course/Modify.rb and line is             show_button :accept, :create_new, :cancel
-#: ../Views/Course/Modify.rb:52
+#: ../Views/Course/Modify.rb:53
 msgid "cancel"
 msgstr "Annuler"
 
+#. Comes from file Views/Course/Modify.rb and line is             show_button :accept, :create_new, :cancel
+#: ../Views/Course/Modify.rb:53
+msgid "create_new"
+msgstr "Ajouter nouveau"
+
 #. Comes from file Views/Course/Modify.rb and line is             show_int_hidden :step
-#: ../Views/Course/Modify.rb:60
+#: ../Views/Course/Modify.rb:61
 msgid "step"
 msgstr "Step"
 
 #. Comes from file Views/Course/Modify.rb and line is             show_button :print_next, :close
-#: ../Views/Course/Modify.rb:61
+#: ../Views/Course/Modify.rb:62
 msgid "print_next"
 msgstr "Imprimer suite"
+
+#. Comes from file Views/Course/Modify.rb and line is             show_entity_course_lazy :transfer_course, :drop, :name
+#: ../Views/Course/Modify.rb:65
+msgid "transfer_course"
+msgstr "Transfert"
 
 #. Comes from file Views/Course/Print.rb and line is class CoursePrint < View
 #: ../Views/Course/Print.rb:3
@@ -1849,17 +1907,6 @@ msgstr "Imprimer exa 3"
 #: ../Views/Course/Responsible.rb:1
 msgid "CourseResponsible"
 msgstr "Responsable"
-
-#. Comes from file Views/Course/Responsible.rb and line is         vtlp_list :persons, 'login_name', 'listp_responsible'
-#.
-#. Comes from file Views/Person/Tabs.rb and line is       show_list_single :persons, "[]", :callback => true
-#.
-#. Comes from file Views/Person/Tabs.rb and line is       show_arg :persons, :flexheight => 1
-#: ../Views/Course/Responsible.rb:12
-#: ../Views/Person/Tabs.rb:10
-#: ../Views/Person/Tabs.rb:11
-msgid "persons"
-msgstr "Personnes"
 
 #. Comes from file Views/Course/Stats.rb and line is class CourseStats < View
 #: ../Views/Course/Stats.rb:1
@@ -2109,13 +2156,13 @@ msgstr "Partages"
 
 #. Comes from file Views/Network/Share.rb and line is           show_button :share_save, :change_path, :add_htaccess
 #: ../Views/Network/Share.rb:27
-msgid "add_htaccess"
-msgstr "Créer .htaccess"
+msgid "share_save"
+msgstr "Enregistrer"
 
 #. Comes from file Views/Network/Share.rb and line is           show_button :share_save, :change_path, :add_htaccess
 #: ../Views/Network/Share.rb:27
-msgid "share_save"
-msgstr "Enregistrer"
+msgid "add_htaccess"
+msgstr "Créer .htaccess"
 
 #. Comes from file Views/Network/Share.rb and line is           show_button :share_save, :change_path, :add_htaccess
 #: ../Views/Network/Share.rb:27
@@ -2129,8 +2176,8 @@ msgstr "Utilisateurs"
 
 #. Comes from file Views/Network/Share.rb and line is           show_button :no_access, :read_write, :read_only
 #: ../Views/Network/Share.rb:31
-msgid "no_access"
-msgstr "Pas d'accès"
+msgid "read_only"
+msgstr "seulement lire"
 
 #. Comes from file Views/Network/Share.rb and line is           show_button :no_access, :read_write, :read_only
 #: ../Views/Network/Share.rb:31
@@ -2139,8 +2186,8 @@ msgstr "lire et écrire"
 
 #. Comes from file Views/Network/Share.rb and line is           show_button :no_access, :read_write, :read_only
 #: ../Views/Network/Share.rb:31
-msgid "read_only"
-msgstr "seulement lire"
+msgid "no_access"
+msgstr "Pas d'accès"
 
 #. Comes from file Views/Network/Share.rb and line is           show_str :domain, :width => 200
 #: ../Views/Network/Share.rb:36
@@ -2226,6 +2273,11 @@ msgstr "Montrer toutes"
 #: ../Views/Person/Admin.rb:3
 msgid "PersonAdmin"
 msgstr "Admin"
+
+#. Comes from file Views/Person/Center.rb and line is class PersonCenter < View
+#: ../Views/Person/Center.rb:3
+msgid "PersonCenter"
+msgstr "Droits"
 
 #. Comes from file Views/Person/Course.rb and line is class PersonCourse < View
 #: ../Views/Person/Course.rb:3
@@ -2323,6 +2375,116 @@ msgstr "Ajouter"
 msgid "info"
 msgstr "info"
 
+#. Comes from file Views/Report/ComptaExecutive.rb and line is class ReportComptaExecutive < View
+#: ../Views/Report/ComptaExecutive.rb:1
+msgid "ReportComptaExecutive"
+msgstr "Executive"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_entity_report :reports, :single, :name, :callback => true,
+#: ../Views/Report/ComptaExecutive.rb:11
+msgid "reports"
+msgstr "Rapport"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_button :report_add, :report_delete
+#: ../Views/Report/ComptaExecutive.rb:13
+msgid "report_delete"
+msgstr "Effacer"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_button :report_add, :report_delete
+#: ../Views/Report/ComptaExecutive.rb:13
+msgid "report_add"
+msgstr "Ajouter"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_int :months
+#: ../Views/Report/ComptaExecutive.rb:17
+msgid "months"
+msgstr "Mois"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is         show_button :account_add, :account_del, :account_edit
+#: ../Views/Report/ComptaExecutive.rb:25
+msgid "account_del"
+msgstr "Effacer"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is         show_button :account_add, :account_del, :account_edit
+#: ../Views/Report/ComptaExecutive.rb:25
+msgid "account_add"
+msgstr "Ajouter"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is         show_button :account_add, :account_del, :account_edit
+#: ../Views/Report/ComptaExecutive.rb:25
+msgid "account_edit"
+msgstr "Modifier"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is         show_button :account_up, :account_down
+#: ../Views/Report/ComptaExecutive.rb:26
+msgid "account_up"
+msgstr "Monter"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is         show_button :account_up, :account_down
+#: ../Views/Report/ComptaExecutive.rb:26
+msgid "account_down"
+msgstr "Descendre"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_button :account_add_win, :account_save_win, :close
+#: ../Views/Report/ComptaExecutive.rb:35
+msgid "account_save_win"
+msgstr "Enregistrer"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is           show_button :account_add_win, :account_save_win, :close
+#: ../Views/Report/ComptaExecutive.rb:35
+msgid "account_add_win"
+msgstr "Ajouter"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is         show_str :report_name
+#: ../Views/Report/ComptaExecutive.rb:40
+msgid "report_name"
+msgstr "Nom"
+
+#. Comes from file Views/Report/ComptaExecutive.rb and line is         show_button :report_add_win, :close
+#: ../Views/Report/ComptaExecutive.rb:41
+msgid "report_add_win"
+msgstr "Ajouter"
+
+#. Comes from file Views/Report/ComptaFlat.rb and line is class ReportComptaFlat < View
+#: ../Views/Report/ComptaFlat.rb:1
+msgid "ReportComptaFlat"
+msgstr "Complet"
+
+#. Comes from file Views/Report/ComptaFlat.rb and line is         show_entity_account_lazy :account_archive, :drop, :callback => true
+#: ../Views/Report/ComptaFlat.rb:9
+msgid "account_archive"
+msgstr "Année"
+
+#. Comes from file Views/Report/ComptaFlat.rb and line is         show_entity_account_lazy :account_list, :single,
+#: ../Views/Report/ComptaFlat.rb:10
+msgid "account_list"
+msgstr "Comptes"
+
+#. Comes from file Views/Report/ComptaFlat.rb and line is         show_int :total
+#: ../Views/Report/ComptaFlat.rb:14
+msgid "total"
+msgstr "Total"
+
+#. Comes from file Views/Report/ComptaFlat.rb and line is         show_button :account_update, :report_movements
+#: ../Views/Report/ComptaFlat.rb:16
+msgid "account_update"
+msgstr "Mise à jour des totaux"
+
+#. Comes from file Views/Report/ComptaFlat.rb and line is         show_button :account_update, :report_movements
+#: ../Views/Report/ComptaFlat.rb:16
+msgid "report_movements"
+msgstr "Créer rapport"
+
+#. Comes from file Views/Report/ReportCourse.rb and line is class ReportCourse < View
+#: ../Views/Report/ReportCourse.rb:3
+msgid "ReportCourse"
+msgstr "Cours"
+
+#. Comes from file Views/Report/Tabs.rb and line is class ReportTabs < View
+#: ../Views/Report/Tabs.rb:4
+msgid "ReportTabs"
+msgstr "Rapports"
+
 #. Comes from file Views/Self/Cash.rb and line is class SelfCash < View
 #: ../Views/Self/Cash.rb:1
 msgid "SelfCash"
@@ -2341,18 +2503,23 @@ msgstr "Mise à jour"
 msgid "SelfChat"
 msgstr "Discuter"
 
-#. Comes from file Views/Self/Chat.rb and line is       show_str :talk
+#. Comes from file Views/Self/Chat.rb and line is       show_html :replace
 #: ../Views/Self/Chat.rb:17
+msgid "replace"
+msgstr "Identification"
+
+#. Comes from file Views/Self/Chat.rb and line is       show_str :talk
+#: ../Views/Self/Chat.rb:19
 msgid "talk"
 msgstr "Parole"
 
 #. Comes from file Views/Self/Chat.rb and line is       show_button :send
-#: ../Views/Self/Chat.rb:18
+#: ../Views/Self/Chat.rb:20
 msgid "send"
 msgstr "Envoyer"
 
-#. Comes from file Views/Self/Chat.rb and line is       show_text :discussion, :width => 400, :flexheight => 1
-#: ../Views/Self/Chat.rb:19
+#. Comes from file Views/Self/Chat.rb and line is       show_text :discussion, :width => 400, :flexheight => 1, :flexwidth => 1
+#: ../Views/Self/Chat.rb:21
 msgid "discussion"
 msgstr "Discussion"
 
@@ -2492,13 +2659,13 @@ msgstr "Maintenant vous pouvez attendre les résultats"
 
 #. Comes from file Views/Self/Concours.rb and line is         show_button :yes, :no
 #: ../Views/Self/Concours.rb:50
-msgid "yes"
-msgstr "Oui"
+msgid "no"
+msgstr "Non"
 
 #. Comes from file Views/Self/Concours.rb and line is         show_button :yes, :no
 #: ../Views/Self/Concours.rb:50
-msgid "no"
-msgstr "Non"
+msgid "yes"
+msgstr "Oui"
 
 #. Comes from file Views/Self/Internet.rb and line is class SelfInternet < View
 #: ../Views/Self/Internet.rb:1
@@ -2645,14 +2812,28 @@ msgstr "Numéro de Version"
 msgid "direct_connect"
 msgstr "Connexion Internet"
 
-#. Comes from file Entities/AccountLink.rb and line is     value_entity_account :account
-#~ msgid "account"
-#~ msgstr "Compte"
+#. Comes from file Entities/ConfigBase.rb and line is     value_int :debug_lvl
+#~ msgid "debug_lvl"
+#~ msgstr "DEBUG_LVL"
 
-#. Comes from file Entities/ConfigBase.rb and line is     value_str :locale_force
-#~ msgid "locale_force"
-#~ msgstr "Imposer langue"
+#. Comes from file Entities/ConfigBase.rb and line is     value_str :version_local
+#~ msgid "version_local"
+#~ msgstr "Ajout local"
 
-#. Comes from file Views/Compta/Transfer.rb and line is         show_button :empty
-#~ msgid "empty"
-#~ msgstr "Vider"
+#. Comes from file Entities/Course.rb and line is     value_int :cost_teacher
+#. 
+#. Comes from file Entities/CourseType.rb and line is     value_int :cost_teacher
+#~ msgid "cost_teacher"
+#~ msgstr "Coût enseignant"
+
+#. Comes from file Views/Compta/Report.rb and line is class ComptaReport < View
+#~ msgid "ComptaReport"
+#~ msgstr "Rapport"
+
+#. Comes from file Views/Compta/Transfer.rb and line is         vtlp_list :person_list, :account_due, :maxheight => 250
+#~ msgid "person_list"
+#~ msgstr "Utilisateurs"
+
+#. Comes from file Views/Compta/Transfer.rb and line is         show_int_ro :account_cash
+#~ msgid "account_cash"
+#~ msgstr "Doit à la comptabilité"
