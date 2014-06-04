@@ -13,7 +13,7 @@ module SMScontrol
   @state_goal = MODEM_DISCONNECTED
   @state_error = 0
   @state_traffic = nil
-  @max_traffic = 1000000
+  @max_traffic = 3000000
   @phone_main = 99836457
 
   def state_to_s
@@ -54,9 +54,9 @@ module SMScontrol
         @state_error += 1
         @modem.connection_stop
 	sleep 2
-        if @state_error > 5
-          @state_goal = MODEM_DISCONNECTED
-        end
+        #if @state_error > 5
+        #  @state_goal = MODEM_DISCONNECTED
+        #end
       end
       if @state_goal == MODEM_DISCONNECTED
         @modem.connection_stop
@@ -71,6 +71,8 @@ module SMScontrol
         @state_goal = MODEM_DISCONNECTED
         check_connection
       end
+    else
+      @state_error = 0
     end
   end
 
@@ -84,7 +86,7 @@ module SMScontrol
             log_msg :SMScontrol, "Sending to #{sms._Phone} - #{ret.inspect}"
             @modem.sms_send(sms._Phone, ret.join('::'))
           end
-        when /150.*cfa/i
+        when /160.*cfa/i
 	  log_msg :SMScontrol, "Getting internet-credit"
 	  @modem.sms_send( 100, "internet" )
         when /souscription reussie/i

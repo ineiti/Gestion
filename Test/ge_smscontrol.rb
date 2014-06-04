@@ -11,12 +11,14 @@ if ! SMScontrol.modem
 end
 
 SMScontrol.make_connection
+#SMScontrol.modem.sms_send( 100, "internet" )
+SMScontrol.modem.set_2g
 
 loop do
   SMScontrol.check_sms
   SMScontrol.check_connection
   dputs(0){ SMScontrol.state_to_s }
-  sleep 10
+  sleep 30
 end
 
 exit
