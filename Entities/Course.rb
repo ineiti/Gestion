@@ -124,12 +124,12 @@ class Courses < Entities
   
   def list_courses_for_person( person )
     ln = person.class == String ? person : person.login_name
-    dputs( 3 ){ "Searching courses for person #{ln}" }
+    ddputs( 3 ){ "Searching courses for person #{ln}" }
     ret = @data.values.select{|d|
-      dputs( 3 ){ "Searching #{ln} in #{d.inspect} - #{d[:students].index(ln)}" }
+      ddputs( 3 ){ "Searching #{ln} in #{d.inspect} - #{d[:students].index(ln)}" }
       d[:students] and d[:students].index( ln )
     }.collect{|c| Courses.match_by_course_id( c._course_id ) }
-    dputs( 3 ){ "Found courses #{ret.inspect}" }
+    ddputs( 3 ){ "Found courses #{ret.inspect}" }
     sort_courses( ret )
   end
 
@@ -279,17 +279,17 @@ end
 class Course < Entity
   attr_reader :sync_state, :make_pdfs_state
   attr :thread
-  
+
   def setup_instance
     if not self.students.class == Array
       self.students = []
     end
-    
+
     check_students_dir
     @make_pdfs_state = {"0" => 'undefined'}
     @only_psnup = false
   end
-  
+
   def update_state
     if @make_pdfs_state["0"] == "undefined"
       @make_pdfs_state = {}
@@ -301,13 +301,13 @@ class Course < Entity
       @make_pdfs_state["0"] = 'done'
     end
   end
-  
+
   def check_dir
     [ dir_diplomas, dir_exas, dir_exas_share ].each{|d|
       (! File.exists? d ) and FileUtils.mkdir_p( d )
-    }    
+    }
   end
-  
+
   def check_students_dir
     check_dir
     students.each{|s|
@@ -320,22 +320,22 @@ class Course < Entity
   def dir_diplomas
     @proxy.dir_diplomas + "/#{self.name}"
   end
-  
+
   def dir_exas
     @proxy.dir_exas + "/#{self.name}"
   end
-  
+
   def dir_exas_share
     @proxy.dir_exas_share + "/#{self.name}"
   end
-  
+
   def list_students( by_id = false )
     dputs( 3 ){ "Students for #{self.name} are: #{self.students.inspect}" }
     ret = []
     if self.students
       ret = self.students.collect{|s|
         if person = Persons.match_by_login_name( s )
-          [ ( by_id ? person.person_id : s ), 
+          [ ( by_id ? person.person_id : s ),
             "#{person.full_name} - #{person.login_name}:#{person.password_plain}" ]
         end
       }.select{|s| s }.sort{|a,b| a[1] <=> b[1] }
@@ -414,28 +414,28 @@ base_gestion
 
   def get_files
     if File::directory?( dir_diplomas )
-      files = if ctype.output[0] == "certificate" 
+      files = if ctype.output[0] == "certificate"
         Dir::glob( "#{dir_diplomas}/*pdf" )
       else
         Dir::glob( "#{dir_diplomas}/*png" ) +
           Dir::glob( "#{dir_diplomas}/*zip" )
       end
-      files.collect{|f| 
-        File::basename( f ) 
+      files.collect{|f|
+        File::basename( f )
       }.sort
     else
       []
     end
   end
-  
+
   def dstart
     Date.strptime( start, '%d.%m.%Y' )
   end
-  
+
   def dend
     Date.strptime( data_get( :end ), '%d.%m.%Y' )
   end
-  
+
   def get_duration_adds
     return [0,0] if not start or not data_get( :end )
     dputs(4){"start is: #{start} - end is #{data_get(:end)} - dow is #{dow}"}
@@ -453,7 +453,7 @@ base_gestion
       }
     }.flatten( 1 )
     dputs( 4 ){"dow_adds is now #{dow_adds.inspect}"}
-    
+
     [ days_per_week * weeks, dow_adds ]
   end
 
@@ -491,7 +491,7 @@ base_gestion
         [ /321/, duration ],
       ] )
   end
-  
+
   def print_exa( lp_cmd, number )
     if ! self.start || ! self.end
       return false
@@ -529,7 +529,7 @@ base_gestion
         [ /321/, duration ],
       ] )
   end
-  
+
   def get_grade_args( student, update = false )
     grade = Grades.match_by_course_person( course_id, student )
     dputs(3){"Course is #{name} - student is #{student} - ctype is #{ctype.inspect} and grade is " +
@@ -560,14 +560,14 @@ base_gestion
     dputs(4){"State is #{state}"}
     ln = student.login_name
     @make_pdfs_state[ln] = [ mean, state, get_diploma_filename( ln, "pdf", false ) ]
-    
+
     [ grade, state ]
   end
-	
+
   def update_student_diploma( file, student )
     grade, state = get_grade_args( student )
 
-    #if grade and grade.to_s != "NP" and 
+    #if grade and grade.to_s != "NP" and
     #    ( ( ctype.diploma_type[0] == "simple" ) or
     #      ( exam_files( student ).count >= ctype.files_needed.to_i ) ) and
     #    ( ( ctype.diploma_type[0] == "accredited" ) and grade.random )
@@ -590,8 +590,8 @@ base_gestion
             png.write( f )
           }
         end
-        
-        cont = contents + 
+
+        cont = contents +
           ( grade.remark.to_s.length > 0 ? "\n#{grade.remark}" : "" )
         if desc_p_match = /-DESC1-(.*)-DESC2-/.match( doc )
           desc_p = desc_p_match[1]
@@ -635,7 +635,7 @@ base_gestion
       }
     end
   end
-  
+
   def get_diploma_filename( student, ext = "odt", diplomadir = true )
     digits = students.size.to_s.size
     counter = students.index( student ) + 1
@@ -648,14 +648,14 @@ base_gestion
       dputs( 2 ){ "Thread is here, killing" }
       begin
         abort_pdfs
-      rescue Exception => e  
+      rescue Exception => e
         dputs( 0 ){ "Error while killing: #{e.message}" }
         dputs( 0 ){ "#{e.inspect}" }
         dputs( 0 ){ "#{e.to_s}" }
         puts e.backtrace
       end
     end
-    
+
     dputs( 2 ){ "Starting new thread" }
     @thread = Thread.new{
       begin
@@ -668,21 +668,21 @@ base_gestion
               dputs( 4 ){"Is #{s} == #{student.login_name}?"}
               student_file = get_diploma_filename( s )
               dputs( 2 ){ "Doing #{counter}: #{s} - file: #{student_file}" }
-              FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}", 
+              FileUtils.cp( "#{Courses.dir_diplomas}/#{ctype.filename.join}",
                 student_file )
               update_student_diploma( student_file, student )
             end
             counter += 1
           }
         end
-        
+
         dputs( 3 ){ "Convert is #{convert.inspect}" }
         if convert
           @make_pdfs_state["0"] = "converting"
           old = Dir.glob( dir_diplomas + "/content.xml*" )
           list = Dir.glob( dir_diplomas + "/*odt" )
           format = ctype.output[0].to_sym
-          
+
           dputs(4){"old is #{old.inspect}"}
           dputs(4){"list is #{list.inspect}"}
 
@@ -744,7 +744,7 @@ base_gestion
             dputs(3){"Making a zip-file"}
             Zip::File.open("#{dir}/all.zip", Zip::File::CREATE){|z|
               Dir.glob( "#{dir}/*" ).each{|image|
-                z.get_output_stream(image.sub(".*/", "")) { |f| 
+                z.get_output_stream(image.sub(".*/", "")) { |f|
                   File.open(image){|fi|
                     f.write fi.read
                   }
@@ -753,7 +753,7 @@ base_gestion
             }
           end
         end
-      rescue Exception => e  
+      rescue Exception => e
         dputs( 0 ){ "Error in thread: #{e.message}" }
         dputs( 0 ){ "#{e.inspect}" }
         dputs( 0 ){ "#{e.to_s}" }
@@ -776,7 +776,7 @@ base_gestion
     #@make_pdfs_state = {}
     make_pdfs( convert )
   end
-  
+
   # This prepares a zip-file as a skeleton for the center to copy the
   # files over.
   # The name of the zip-file is different from the directory-name, so that the
@@ -786,7 +786,7 @@ base_gestion
     dir = "exa-#{pre}#{name}"
     file = "#{pre}#{name}.zip"
     tmp_file = "/tmp/#{file}"
-      
+
     if students and students.size > 0
       File.exists?( tmp_file ) and FileUtils.rm( tmp_file )
       Zip::File.open(tmp_file, Zip::File::CREATE){|z|
@@ -809,14 +809,14 @@ base_gestion
     end
     return nil
   end
-  
+
   def zip_read( f = nil )
     name.length == 0 and return
-    
+
     dir_zip = "exa-#{name.sub(/^#{center}_/, '')}"
     dir_exas = @proxy.dir_exas + "/#{name}"
     file = f || "/tmp/#{dir_zip}.zip"
-    
+
     if File.exists?( file ) and students
       %x[ rm -rf /tmp/#{name} ]
       %x[ test -d #{dir_exas} && mv #{dir_exas} /tmp ]
@@ -827,7 +827,7 @@ base_gestion
         students.each{|s|
           dir_zip_student = "#{dir_zip}/#{s}"
           dir_exas_student = "#{dir_exas}/#{s}"
-          
+
           if ( files_student = z.dir.entries( dir_zip_student ) ).size > 0
             FileUtils.mkdir( dir_exas_student )
             files_student.each{|fs|
@@ -839,7 +839,7 @@ base_gestion
       FileUtils.rm file
     end
   end
-  
+
   def exam_files( student )
     student_name = student.class == Person ? student.login_name : student
     dputs(4){"Student-name is #{student_name.inspect}"}
@@ -848,13 +848,13 @@ base_gestion
     File.exists?( dir_student ) ?
       Dir.entries( dir_student ).select{|f| ! ( f =~ /^\./ ) } : []
   end
-  
+
   def exas_prepare_files
     name.length == 0 and return
     if File.exists? dir_exas_share
       %x[ rm -rf #{dir_exas_share} ]
     end
-      
+
     FileUtils.mkdir dir_exas_share
     students.each{|s|
       dir_s_exas = "#{dir_exas}/#{s}"
@@ -866,7 +866,7 @@ base_gestion
     }
     %x[ rm -rf #{dir_exas} ]
   end
-  
+
   def exas_fetch_files
     name.length == 0 and return
     dputs(3){"Starting to fetch files for #{name}"}
@@ -884,7 +884,7 @@ base_gestion
     end
     %x[ rm -rf #{dir_exas_share} ]
   end
-  
+
   def sync_send_post( field, data )
     path = URI.parse( "#{ctype.get_url}/" )
     post = { :field => field, :data => data }
@@ -902,7 +902,7 @@ base_gestion
     }
     return err
   end
-  
+
   def sync_transfer( field, transfer, slow = false )
     ss = @sync_state
     block_size = 4096
@@ -935,7 +935,7 @@ base_gestion
       return nil
     end
   end
-  
+
   def sync_do( slow = false )
     @sync_state = sync_s = ""
     dputs(3){@sync_state}
@@ -946,7 +946,7 @@ base_gestion
     users = [ teacher.login_name, responsible.login_name, center.login_name ]
     assistant and users.push assistant.login_name
     ret = sync_transfer( :users, users.collect{|s|
-        Persons.match_by_login_name( s ) 
+        Persons.match_by_login_name( s )
       }.to_json, slow )
     @sync_state += ret
     if ret =~ /^Error:/
@@ -960,7 +960,7 @@ base_gestion
       @sync_state = sync_s += "<li>Transferring users: "
       users = students + [ teacher.login_name, responsible.login_name ]
       ret = sync_transfer( :users, users.collect{|s|
-          Persons.match_by_login_name( s ) 
+          Persons.match_by_login_name( s )
         }.to_json, slow )
       @sync_state += ret
       if ret =~ /^Error:/
@@ -982,13 +982,13 @@ base_gestion
 
     dputs(4){"Grades"}
     if ( grades = Grades.matches_by_course( self.course_id ) ).length > 0
-      dputs(4){"Grades - go"}      
+      dputs(4){"Grades - go"}
       @sync_state = sync_s += "<li>Transferring grades: "
       ret = sync_transfer( :grades, grades.select{|g|
           g.course and g.student
-        }.collect{|g| 
+        }.collect{|g|
           dputs(4){"Found grade with #{g.course.inspect} and #{g.student.inspect}"}
-          g.to_hash( true ).merge( :course => g.course.name, 
+          g.to_hash( true ).merge( :course => g.course.name,
             :person => g.student.login_name )
         }.to_json, slow )
       @sync_state += ret
@@ -1028,13 +1028,13 @@ base_gestion
     dputs(3){@sync_state}
     return true
   end
-  
+
   def sync_start
     if @thread
       dputs( 2 ){ "Thread is here, killing" }
       begin
         abort_pdfs
-      rescue Exception => e  
+      rescue Exception => e
         dputs( 0 ){ "Error while killing: #{e.message}" }
         dputs( 0 ){ "#{e.inspect}" }
         dputs( 0 ){ "#{e.to_s}" }
@@ -1046,7 +1046,7 @@ base_gestion
     @thread = Thread.new{
       begin
         sync_do
-      rescue Exception => e  
+      rescue Exception => e
         dputs( 0 ){ "Error in thread: #{e.message}" }
         dputs( 0 ){ "#{e.inspect}" }
         dputs( 0 ){ "#{e.to_s}" }
@@ -1054,11 +1054,11 @@ base_gestion
       end
     }
   end
-  
+
   def get_unique
     name
   end
-  
+
   def center
     dputs(4){".center is #{_center.inspect}"}
     dputs(4){"Persons.center is #{Persons.find_by_permissions(:center).inspect}"}
@@ -1066,30 +1066,30 @@ base_gestion
     dputs(4){"Center is #{ret.login_name}"}
     ret
   end
-  
+
   def abort_pdfs
     if @thread
       dputs(3){"Killing thread #{@thread}"}
       @thread.kill
       @thread.join
       dputs(3){"Joined thread"}
-    end    
+    end
   end
-  
+
   def delete
     abort_pdfs
-    
+
     [ dir_diplomas, dir_exas, dir_exas_share ].each{|d|
-      FileUtils.remove_entry_secure( d, true )      
+      FileUtils.remove_entry_secure( d, true )
     }
     super
   end
-  
+
   def students=( s )
     super( s )
     @pre_init or log_msg :course, "Students for #{name} are: #{students.inspect}"
   end
-  
+
   def report_pdf
     file = "/tmp/course_#{name}.pdf"
     Prawn::Document.generate( file,
@@ -1098,7 +1098,7 @@ base_gestion
       :bottom_margin => 2.cm ) do |pdf|
 
       sum = 0
-      pdf.text "Report for #{name} (#{ctype.name})", 
+      pdf.text "Report for #{name} (#{ctype.name})",
         :align => :center, :size => 20
       pdf.font_size 10
       pdf.text "Duration: #{start}-#{self.end} - - Teacher: #{teacher.full_name}" +
@@ -1107,15 +1107,15 @@ base_gestion
         "Cost per teacher: #{Account.total_form( salary_teacher.to_i / 1000 )}"
       pdf.text "Account: #{entries.path}"
       pdf.move_down 1.cm
-      
+
       if students.length > 0
         pdf.table( [ ["Description", "Value", "Sum"].collect{|ch|
-              {:content => ch, :align => :center}}] + 
+              {:content => ch, :align => :center}}] +
             report_list.collect{|id, t|
             [ t[0] == "Reste" ? t[1] : t[0],
               t[2],
               t[3] ]
-          }, 
+          },
           :header => true, :column_widths => [300,75,75] )
         pdf.move_down( 2.cm )
       end
@@ -1128,20 +1128,29 @@ base_gestion
     end
     file
   end
-  
+
+  def student_paid( student )
+    movs = entries.movements
+    if archives = entries.get_archives
+      movs.concat archives.collect{|a| a.movements}.flatten
+    end
+
+    movs.select{|e| e.desc =~ / #{student}:/ }
+  end
+
   def student_payments( student )
     total = 0
     movs = entries.movements
     if archives = entries.get_archives
       movs.concat archives.collect{|a| a.movements}.flatten
     end
-      
+
     movs.reverse.select{|e| e.desc =~ / #{student}:/ }.collect{|e|
       total += e.value
-      [ e.global_id, 
+      [ e.global_id,
         [ e.date, e.value_form, "" ] ]
-    } + [ [ nil, 
-        ["Reste", Account.total_form( total ), 
+    } + [ [ nil,
+        ["Reste", Account.total_form( total ),
           Account.total_form(cost_student.to_f / 1000 - total)] ] ]
   end
 
@@ -1151,58 +1160,58 @@ base_gestion
     if archives = entries.get_archives
       movs.concat archives.collect{|a| a.movements}.flatten
     end
-      
-    students.sort{|a,b| 
+
+    students.sort{|a,b|
       Persons.match_by_login_name(a).full_name <=>
         Persons.match_by_login_name(b).full_name }.collect{|s|
       total = 0
       ( movs.select{|e| e.desc =~ / #{s}:/ }.collect{|e|
           total += e.value
           [ e.global_id,
-            [ e.date, 
+            [ e.date,
               "",
               e.value_form,
               ""
-            ] ] } + 
-          [ [ nil, 
+            ] ] } +
+          [ [ nil,
             ["Reste",
-              "#{Persons.match_by_login_name(s).full_name} (#{s})", 
+              "#{Persons.match_by_login_name(s).full_name} (#{s})",
               Account.total_form( total ),
               Account.total_form(cost_student.to_f / 1000 - total)
             ] ] ] ).reverse
     }.flatten(1)
   end
-  
+
   def create_account
     if ctype.account_base
-      self.entries = Accounts.create_path( 
+      self.entries = Accounts.create_path(
         "#{ctype.account_base.path}::#{name}")
     else
       dputs(1){"Trying to create account for #{name} but " +
           " #{ctype.name} has no base-account"}
     end
   end
-  
+
   def payment( secretary, student, amount, date = Date.today, oldcash = false )
     log_msg "course-payment", "#{secretary.full_login} got #{amount} " +
       "of #{student.full_name} in #{name}"
     Movements.create( "For student #{student.login_name}:" +
-        "#{student.full_name}", 
+        "#{student.full_name}",
       date.strftime( "%Y-%m-%d" ), amount.to_f / 1000,
       secretary.account_due, entries )
     if secretary.has_permission?( :admin ) && oldcash
       log_msg "course-payment", "Oldcash - doing reverse, too"
-      Movements.create( "old_cash for #{student.login_name}", 
+      Movements.create( "old_cash for #{student.login_name}",
         date.strftime( "%Y-%m-%d" ), amount.to_f / 1000,
         entries, secretary.account_due )
     end
   end
-  
+
   def transfer_student( student, new_course )
     return if ! students.index( student )
     return if ! new_course.entries
     return if new_course.students.index( student )
-    
+
     log_msg "course", "Transferring #{student} from #{name} to #{new_course.name}"
     self.students = students - [student]
     new_course.students = new_course.students + [student]
@@ -1213,12 +1222,34 @@ base_gestion
       other = m.get_other_account( entries )
       if other.get_path =~ /::Paid$/
         Movements.create( "Transfert of student #{student}:",
-          m.date, m.get_value(entries), entries, new_course.entries )
+                          m.date, m.get_value(entries), entries, new_course.entries )
       else
         value = m.get_value( entries )
         m.value = 0
         m.account_dst_id = new_course.entries
         m.value = value
+      end
+    }
+  end
+
+  def move_payment( src, dst )
+    return if ! students.index( src )
+    return if ! students.index( dst )
+
+    log_msg :Course, "Transferring payments from #{src} to #{dst}"
+
+    entries.movements.select{|m|
+      m.desc =~ / #{src}:/
+    }.each{|m|
+      other = m.get_other_account( entries )
+      if other.get_path =~ /::Paid$/
+        value = m.get_value( entries )
+        Movements.create( "For student #{src} - move",
+                          m.date, m.get_value(entries), entries, other )
+        Movements.create( "For student #{dst} - move",
+                          m.date, m.get_value(entries), other, entries )
+      else
+        m.desc = "For student #{dst}:#{Persons.match_by_login_name(dst).full_name}"
       end
     }
   end

@@ -1,5 +1,17 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
+MELFI:
+        - get SMS working
+        - add rate left
+        - check internet left
+        - add 200CFAs charge
+        - add openvpn
+        - add e-mail with squirrelmail
+        - find out why disconnecting/connecting usb-key is not working
+
+WORKING:
+        - Views/Courses/Modify/move_student
+
 BUGS:
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check 
@@ -28,8 +40,8 @@ UI:
         - Internet: bizarre "kicked ... because of inactivity"
         - Slowness in UI
           - 140509: misuse of search_all is logged now
-          - 140509: most very slow occurences (Persons.search_all) are removed
-          - check Log.search_all occurences
+          - 140509: most very slow occurrences (Persons.search_all) are removed
+          - check Log.search_all occurrences
           - CourseTabs still very slow for startup
           - Slowness in CourseGrade when saving students
             - don't "update" uidnumber, sn and givenname if not needed
@@ -38,6 +50,7 @@ UI:
          tabs can be added
 
 FEATURES:
+        - Move money from one student to another
         - LibNet:
           - Feature: rewrite in Ruby
         - Show what student payed all in CourseDiploma
@@ -247,8 +260,11 @@ To check:
 
 
 ** FIXED **:
-        - UI150415: Sort ReportComptaFlat::account_archive
-        - UI150415: Arrange display of course-payments to have the rest indented
+        - P 140604: took away search_all remark in QV/Helpers/Value.rb
+        - B 140604: login not possible if uppercased name
+        - B 140604: Nobody listens to rpc_list_choice_ct_filename in CoursePrint
+        - UI140415: Sort ReportComptaFlat::account_archive
+        - UI140415: Arrange display of course-payments to have the rest indented
         - UI140513: ReportCourse: Course-list doesn't reach bottom...
         - UI140513: ReportComptaFlat gets update twice with all accounts - SLOW
         - B 140513: ReportComptaExecutive: print-button doesn't get updated correctly

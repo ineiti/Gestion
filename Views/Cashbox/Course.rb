@@ -14,8 +14,8 @@ class CashboxCourse < View
       gui_vbox :nogroup do
         show_entity_person_lazy :students, :single, :full_name,
           :flexheight => 1, :callback => true, :width => 300
-        #        show_str :full_name
-        #        show_button :add_student
+          show_str :full_name
+          show_button :add_student
       end
       gui_vbox :nogroup do
         show_table :payments, :headings => [ :Date, :Money, :Rest ],
@@ -26,12 +26,17 @@ class CashboxCourse < View
         show_str :remark
         show_str :receit_id
         show_list_drop :old_cash, "%w( No Yes )"
-        show_button :pay, :delete
+        show_button :pay, :delete, :move
       end
       
       gui_window :error do
         show_html :msg
         show_button :close
+      end
+
+      gui_window :win_move do
+        show_entity_person_lazy :move_students, :drop, :full_name, :width => 300
+        show_button :close, :do_move
       end
     end
     
@@ -79,6 +84,23 @@ class CashboxCourse < View
       Persons.create_add_course( data._full_name, session.owner, course )
       rpc_list_choice_courses( session, data )
     end
+  end
+
+  def rpc_button_move( session, data )
+    if data._students && data._courses
+      reply( :empty_only, :move_students ) +
+          reply( :window_show, :win_move ) +
+          reply( :update, :move_students => data._courses.list_students( true ) )
+    end
+  end
+
+  def rpc_button_do_move( session, data )
+    if ( src = data._students ) &&
+        ( dst = data._move_students ) &&
+        src != dst
+      dputs(0){"Moving student #{src}, #{dst}"}
+    end
+    reply( :window_hide )
   end
   
   def rpc_update( session )

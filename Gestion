@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo ""
+mkdir -p Backups
 if [ "$( which ruby )" -a "$1" != "--install" ]; then
   if [ ! -f data/compta.db ]; then
     mkdir -p data

@@ -32,7 +32,7 @@ class CoursePrint < View
   end
   
   def rpc_button_print_presence( session, data )
-    dputs(3){"printing"}
+    dputs(3){'printing'}
     ret = rpc_print( session, :print_presence, data )
     lp_cmd = cmd_printer( session, :print_presence )
     if data._courses and data._courses.length > 0
@@ -42,7 +42,7 @@ class CoursePrint < View
           reply( :update, :msg_print => "Impression - de la fiche de présence pour<br>#{data['name']} en cours" )
       when false
         ret + reply( :window_show, :missing_data ) +
-          reply( "update", :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
+          reply( :update, :missing => "One of the following is missing:<ul><li>date</li><li>students</li><li>teacher</li></ul>" )
       else
         ret + reply( :window_show, :missing_data ) +
           reply( :update, :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>" )
@@ -84,9 +84,4 @@ class CoursePrint < View
   def rpc_button_close( session, data )
     reply( :window_hide )
   end
-  
-  def rpc_list_choice_courses( session, data )
-    dputs(3){"Not used here"}
-  end
-
 end

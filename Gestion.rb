@@ -8,7 +8,7 @@ Encoding.default_external = Encoding::UTF_8
 # - Login: - for payable laptop web-access
 #          - for students
 
-VERSION_GESTION="1.5.0"
+VERSION_GESTION="1.5.1"
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)

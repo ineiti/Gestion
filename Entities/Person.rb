@@ -400,7 +400,7 @@ class Persons < Entities
           Persons.search_by_login_name( "^#{prefix}#{login_name}[0-9]*$").length > 0
         return nil
       else
-        person = Persons.create( {:first_name => name,
+        person = Persons.create( {:first_name => student,
             :login_name_prefix => prefix,
             :permissions => %w( student ), :town => @town, :country => @country })
       end
@@ -705,6 +705,7 @@ class Person < Entity
     fname = "#{person_id.to_s.rjust(6, '0')}-#{full_name.gsub(/ /, '_')}"
     courses = ["", ""]
     Courses.list_courses_for_person(self).each { |c|
+      ddputs(3){"Course #{c}"}
       courses.unshift(Courses.match_by_course_id(c.first).ctype.description)
     }
     replace = [[/--NAME1--/, first_name],

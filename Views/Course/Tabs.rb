@@ -166,6 +166,10 @@ class CourseTabs < View
       reply( :fade_in, :parent_child )
   end
 
+  def rpc_list_choice_sub( session, name, args )
+    dputs(3){"Sub-tab called with #{name}"}
+  end
+
   def rpc_update_view( session, args = nil )
     super( session, args ) +
       reply( :fade_in, "parent,windows" )
