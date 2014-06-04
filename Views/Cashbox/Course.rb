@@ -97,10 +97,13 @@ class CashboxCourse < View
   def rpc_button_do_move( session, data )
     if ( src = data._students ) &&
         ( dst = data._move_students ) &&
-        src != dst
-      dputs(0){"Moving student #{src}, #{dst}"}
+        src != dst &&
+        data._courses
+      ddputs(3){"Moving student #{src.inspect}, #{dst.inspect}"}
+      data._courses.move_payment( src.login_name, dst.login_name )
     end
-    reply( :window_hide )
+    reply( :window_hide ) +
+        rpc_list_choice_students( session, data )
   end
   
   def rpc_update( session )

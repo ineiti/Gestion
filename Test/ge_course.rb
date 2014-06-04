@@ -805,7 +805,7 @@ class TC_Course < Test::Unit::TestCase
     @course_acc = Courses.create_ctype(@maint_t, '1312')
     @course_acc.students = %w(surf surf2)
 
-    @course_acc.payment(@secretaire, @surf, 10000, Date.new(2014, 1))
+    @course_acc.payment(@secretaire, @surf, 10000, Date.new(2013, 1))
 
     assert_equal 10, @secretaire.account_due.total
     assert_equal 10, @course_acc.entries.total
@@ -829,8 +829,22 @@ class TC_Course < Test::Unit::TestCase
     @course_acc.move_payment( 'surf2', 'surf' )
 
     assert_equal 10, @course_acc.entries.total
+    assert_equal 1, @course_acc.student_paid('surf').length
+    assert_equal 10, @course_acc.student_paid('surf').first.value
+    assert_equal 0, @course_acc.student_paid('surf2').length
+
+    Accounts.archive( 1, 2014 )
+
+    assert_equal 10, @course_acc.entries.total
+    assert_equal 10, @course_acc.student_paid('surf').first.value
+    assert_equal 0, @course_acc.student_paid('surf2').length
+
+    @course_acc.move_payment( 'surf', 'surf2' )
+
+    assert_equal 10, @course_acc.entries.total
     assert_equal 10, @course_acc.student_paid('surf2').first.value
     assert_equal 0, @course_acc.student_paid('surf').length
 
+    #puts AccountRoot.archive.dump_rec( true ).join("\n")
   end
 end

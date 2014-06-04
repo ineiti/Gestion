@@ -705,8 +705,8 @@ class Person < Entity
     fname = "#{person_id.to_s.rjust(6, '0')}-#{full_name.gsub(/ /, '_')}"
     courses = ["", ""]
     Courses.list_courses_for_person(self).each { |c|
-      ddputs(3){"Course #{c}"}
-      courses.unshift(Courses.match_by_course_id(c.first).ctype.description)
+      ddputs(3){"Course #{c.inspect}"}
+      courses.unshift(Courses.match_by_course_id(c.first).description)
     }
     replace = [[/--NAME1--/, first_name],
       [/--NAME2--/, family_name],

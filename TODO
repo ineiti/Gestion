@@ -10,7 +10,6 @@ MELFI:
         - find out why disconnecting/connecting usb-key is not working
 
 WORKING:
-        - Views/Courses/Modify/move_student
 
 BUGS:
         - client/server:
@@ -260,6 +259,9 @@ To check:
 
 
 ** FIXED **:
+        - B 140604: Course::Modifiy::Print_student doesn't fill in course-desc and has
+         multiple lines
+        - F 140604: Views/Courses/Modify/move_student
         - P 140604: took away search_all remark in QV/Helpers/Value.rb
         - B 140604: login not possible if uppercased name
         - B 140604: Nobody listens to rpc_list_choice_ct_filename in CoursePrint
