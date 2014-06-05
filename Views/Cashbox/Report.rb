@@ -4,7 +4,7 @@ class CashboxReport < View
   include PrintButton
   
   def layout
-    @order = 10
+    @order = 30
     @update = true
     @functions_need = [:cashbox]
     

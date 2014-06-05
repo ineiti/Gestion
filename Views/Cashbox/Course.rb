@@ -2,7 +2,7 @@
 
 class CashboxCourse < View
   def layout
-    @order = 20
+    @order = 10
     @update = true
     @functions_need = [:cashbox]
     

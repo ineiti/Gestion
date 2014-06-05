@@ -12,6 +12,8 @@ MELFI:
 WORKING:
 
 BUGS:
+        - Admin::CourseType - when changing something and pressing "enter",
+          the current coursetype is disabled - should stay enabled
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check 
             for center-id

@@ -2,7 +2,7 @@ class CashboxService < View
   def layout
     set_data_class :Persons
     @update = true
-    @order = 10
+    @order = 20
     
     gui_hbox do
       gui_vbox :nogroup do
