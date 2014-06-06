@@ -1,0 +1,87 @@
+<DOCTYPE html  "-//W3C//DTD  1.0 //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Référence Profeda pour un étudiant</title>
+  <style>
+      body {
+          background-color: #607860;
+      }
+
+      .center {
+          text-align: center;
+      }
+
+      .right {
+          text-align: right;
+      }
+
+      .main {
+          margin-left: auto;
+          margin-right: auto;
+          padding: 10px;
+          width: 70%;
+          background-color: #b0deb0;
+      }
+
+      a:link {
+          text-decoration: none;
+          color: #000000;
+      }
+
+      a:visited {
+          text-decoration: none;
+          color: #000000;
+      }
+
+      a:hover {
+          text-decoration: underline;
+      }
+
+      a:active {
+          text-decoration: underline;
+      }
+
+      .big {
+          font-size: 30px;
+      }
+
+      .medium {
+          font-size: 20px;
+      }
+
+      .small {
+          font-size: 10px;
+      }
+  </style>
+</head>
+<body>
+<div class="main">
+  <h1>Information about SMS-control</h1>
+
+  <ul>
+    <li>Internet is
+      <%= SMScontrol.is_connected ? 'CONNECTED' : 'disconnected' %></li>
+    <li>Promotion used: <%= SMScontrol.state_traffic / 1000 %>k /
+      <%= SMScontrol.max_traffic / 1000 %>k
+    </li>
+    <li>Last SMS received:
+      <ul>
+        <%
+           SMSs.last(5).each { |sms|
+             "<li>#{sms.date}-#{sms.phone}-#{sms.text}</li>"
+           }
+        %></ul>
+    </li>
+    <li>
+      <%= if mails = /.* ([0-9]+) Requests.*/.match(%x[ postqueue -p | tail -n 1 ])
+           "#{mails} mails in queue"
+         else
+           'No mails in queue'
+         end
+      %></li>
+  </ul>
+</div>
+</body>
+</html>

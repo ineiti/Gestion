@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
-$LOAD_PATH.push( "../QooxView", ".", "../AfriCompta", "../LibNet" )
+$LOAD_PATH.push("../QooxView", ".", "../AfriCompta", "../LibNet",
+                "../Network/lib", "../Hilink/lib", "HelperClasses/lib")
 Encoding.default_external = Encoding::UTF_8
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
@@ -45,6 +46,7 @@ begin
   require 'Info'
   require 'Label'
   require 'GetDiplomas'
+  require 'SMScontrol'
   require 'ACQooxView'
   ACQooxView.load_entities
 rescue StorageLoadError
@@ -55,101 +57,101 @@ rescue Exception => e
   puts e.backtrace
 
   puts "Couldn't start QooxView - perhaps missing libraries?"
-  print "Trying to run the installer? [Y/n] "
-  if gets.chomp.downcase != "n"
-    puts "Running installer"
-    exec "./Gestion --install -p"
+  print 'Trying to run the installer? [Y/n] '
+  if gets.chomp.downcase != 'n'
+    puts 'Running installer'
+    exec './Gestion --install -p'
   end
   exit
 end
 
 begin
   # Our default-permission is to only login!
-  Permission.add( 'default', ',Welcome,SelfShow' )
-  Permission.add( 'quiz', 'SelfChat,SelfConcours,SelfResults', '' )
-  Permission.add( 'internet', 'SelfInternet,SelfChat', 'default' )
-  Permission.add( 'student', '', 'internet' )
-  Permission.add( 'assistant', 'TaskEdit,FlagInternetFree', 'student' )
-  Permission.add( 'teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
-      'FlagResponsible', 'assistant' )
-  Permission.add( 'center_director', '', 'center' )
-  Permission.add( 'secretary', 'CourseModify,FlagPersonAdd,FlagPersonDelete,' + 
+  Permission.add('default', ',Welcome,SelfShow')
+  Permission.add('quiz', 'SelfChat,SelfConcours,SelfResults', '')
+  Permission.add('internet', 'SelfInternet,SelfChat', 'default')
+  Permission.add('student', '', 'internet')
+  Permission.add('assistant', 'TaskEdit,FlagInternetFree', 'student')
+  Permission.add('teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
+      'FlagResponsible', 'assistant')
+  Permission.add('center_director', '', 'center')
+  Permission.add('secretary', 'CourseModify,FlagPersonAdd,FlagPersonDelete,' +
       'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
-      'FlagAddInternet,CourseStats', 'assistant' )
-  Permission.add( 'accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
-      'ComptaReport,ComptaShow,Cashbox.*,Report.*', 'internet' )
-  Permission.add( 'maintenance', 'Inventory.*', 'default' )
-  Permission.add( 'cybermanager', 'PersonCredit,NetworkTigo,FlagAddInternet,' +
-      'FlagPersonAdd,CashboxService', '' )
-  Permission.add( 'director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
-      'PersonAdmin,PersonCourse,NetworkConnection,CourseStats,Report.*', 
-    'secretary,cybermanager,teacher' )
-  Permission.add( 'center', 'CourseModify,FlagAdminCourse,CourseGrade,' +
+      'FlagAddInternet,CourseStats', 'assistant')
+  Permission.add('accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
+      'ComptaReport,ComptaShow,Cashbox.*,Report.*', 'internet')
+  Permission.add('maintenance', 'Inventory.*', 'default')
+  Permission.add('cybermanager', 'PersonCredit,NetworkTigo,FlagAddInternet,' +
+      'FlagPersonAdd,CashboxService', '')
+  Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
+      'PersonAdmin,PersonCourse,NetworkConnection,CourseStats,Report.*',
+                 'secretary,cybermanager,teacher')
+  Permission.add('center', 'CourseModify,FlagAdminCourse,CourseGrade,' +
       'FlagPersonAdd,FlagPersonDelete,PersonModify,CourseDiploma,' +
       'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson,' +
-      'PersonCenter,FlagDeletePerson', '' )
-  Permission.add( 'admin', '.*', '.*' )
+      'PersonCenter,FlagDeletePerson', '')
+  Permission.add('admin', '.*', '.*')
 
-  QooxView::init( 'Entities', 'Views' )
+  QooxView::init('Entities', 'Views')
 
   # Look for admin, create if it doesn't exist
-  admin = Entities.Persons.match_by_login_name( "admin" )
+  admin = Entities.Persons.match_by_login_name('admin')
   if not admin
-    dputs( 1 ){ "OK, creating admin" }
-    admin = Entities.Persons.create( :login_name => "admin", :password => "super123", :permissions => [ "admin" ] ,
-      :internet_credit => "100" )
+    dputs(1) { 'OK, creating admin' }
+    admin = Entities.Persons.create(:login_name => 'admin', :password => 'super123', :permissions => ["admin"],
+                                    :internet_credit => '100')
   else
-    admin.permissions = ["admin"];
+    admin.permissions = ['admin'];
   end
 
-  dputs( 1 ){ "Loading database" }
+  dputs(1) { 'Loading database' }
   ACQooxView::check_db
-  
-  if not Entities.Services.match_by_name( "Free solar" )
-    dputs( 1 ){ "Creating services" }
-    Entities.Services.create( :name => "CCC", :group => "ccc", 
-      :price => 1000, :duration => 0 )
-    Entities.Services.create( :name => "CCC active", :group => "ccc_active", 
-      :price => 5000, :duration => 30 )
-    Entities.Services.create( :name => "Free solar", :group => "free_solar", 
-      :price => 10000, :duration => 30 )
-    Entities.Services.create( :name => "Free internet", :group => "free_internet", 
-      :price => 25000, :duration => 30 )
+
+  if not Entities.Services.match_by_name('Free solar')
+    dputs(1) { 'Creating services' }
+    Entities.Services.create(:name => 'CCC', :group => 'ccc',
+                             :price => 1000, :duration => 0)
+    Entities.Services.create(:name => 'CCC active', :group => 'ccc_active',
+                             :price => 5000, :duration => 30)
+    Entities.Services.create(:name => 'Free solar', :group => 'free_solar',
+                             :price => 10000, :duration => 30)
+    Entities.Services.create(:name => 'Free internet', :group => 'free_internet',
+                             :price => 25000, :duration => 30)
   end
 
 rescue StorageLoadError
   cleanup_data
-  #rescue DRb::DRbConnError
-  #  dputs(0){ "Error: Connection to LibNet has been refused!" }
-  #  dputs(0){ "Error: Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
-  #  exit
+    #rescue DRb::DRbConnError
+    #  dputs(0){ "Error: Connection to LibNet has been refused!" }
+    #  dputs(0){ "Error: Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
+    #  exit
 rescue Exception => e
   case e.to_s
-  when /UpdatePot|MakeMo|PrintHelp|value_entity_uncomplete/
-  else
-    puts e.inspect
-    puts e.backtrace
-    dputs(0){ "Error: Couldn't load LibNet!" }
-    dputs( 0 ){ "#{e.inspect}" }
-    dputs( 0 ){ "#{e.to_s}" }
-    puts e.backtrace
+    when /UpdatePot|MakeMo|PrintHelp|value_entity_uncomplete/
+    else
+      puts e.inspect
+      puts e.backtrace
+      dputs(0) { "Error: Couldn't load LibNet!" }
+      dputs(0) { "#{e.inspect}" }
+      dputs(0) { "#{e.to_s}" }
+      puts e.backtrace
   end
   exit
 end
 
-webrick_port = get_config( 3302, :Webrick, :port )
-dputs(2){"Starting at port #{webrick_port}" }
+webrick_port = get_config(3302, :Webrick, :port)
+dputs(2) { "Starting at port #{webrick_port}" }
 
-$profiling = get_config( nil, :profiling )
+$profiling = get_config(nil, :profiling)
 if $profiling
-  dputs(1){"Starting Profiling"}
+  dputs(1) { 'Starting Profiling' }
   require 'rubygems'
   require 'perftools'
   PerfTools::CpuProfiler.start("/tmp/#{$profiling}") do
-    QooxView::startWeb webrick_port, get_config( 30, :profiling, :duration )
-    dputs(1){"Finished profiling"}
+    QooxView::startWeb webrick_port, get_config(30, :profiling, :duration)
+    dputs(1) { 'Finished profiling' }
   end
-  
+
   if $profiling
     puts "Now run the following:
 pprof.rb --pdf /tmp/#{$profiling} > /tmp/#{$profiling}.pdf
@@ -159,20 +161,20 @@ CPUPROFILE_FREQUENCY=500
   end
 else
   # Autosave every 2 minutes
-  if get_config( true, :autosave )
-    dputs(1){"Starting autosave"}
-    $autosave = Thread.new{
+  if get_config(true, :autosave)
+    dputs(1) { 'Starting autosave' }
+    $autosave = Thread.new {
       loop {
         Entities.save_all
-        Internet::check_services    
-        sleep get_config( 2 * 60, :autosave, :timer )
+        Internet::check_services
+        sleep get_config(2 * 60, :autosave, :timer)
       }
     }
   end
 
   if ConfigBase.has_function? :internet
-    dputs(1){"Starting internet"}
-    $internet = Thread.new{
+    dputs(1) { 'Starting internet' }
+    $internet = Thread.new {
       loop {
         begin
           sleep 60
@@ -181,26 +183,45 @@ else
           end
           Internet::take_money
         rescue Exception => e
-          dputs( 0 ){ "Error: couldn't take internet-money" }
-          dputs( 0 ){ "#{e.inspect}" }
-          dputs( 0 ){ "#{e.to_s}" }
+          dputs(0) { "Error: couldn't take internet-money" }
+          dputs(0) { "#{e.inspect}" }
+          dputs(0) { "#{e.to_s}" }
           puts e.backtrace
         end
       }
     }
   end
-  
-  if get_config( false, :showTime )
-    dputs(1){"Showing time"}
-    $internet = Thread.new{
+
+  if ConfigBase.has_function? :sms_control
+    dputs(1) { 'Starting sms-control' }
+    $sms_control = Thread.new {
       loop {
-        sleep 60
-        dputs( 1 ){ "It is now: " + Time.now.strftime( "%Y-%m-%d %H:%M" ) }
+        begin
+          sleep 30
+          SMScontrol.check_connection
+          SMScontrol.check_sms
+          dputs(0){ SMScontrol.state_to_s }
+        rescue Exception => e
+          dputs(0) { 'Error in SMScontrol' }
+          dputs(0) { "#{e.inspect}" }
+          dputs(0) { "#{e.to_s}" }
+          puts e.backtrace
+        end
       }
     }
   end
 
-  trap("SIGINT") { 
+  if get_config(false, :showTime)
+    dputs(1) { 'Showing time' }
+    $show_time = Thread.new {
+      loop {
+        sleep 60
+        dputs(1) { 'It is now: ' + Time.now.strftime('%Y-%m-%d %H:%M') }
+      }
+    }
+  end
+
+  trap('SIGINT') {
     throw :ctrl_c
   }
 
@@ -209,18 +230,20 @@ else
       log_msg :main, "Started Gestion on port #{webrick_port}"
       QooxView::startWeb webrick_port
     rescue Exception => e
-      dputs( 0 ){ "Error: QooxView aborted" }
-      dputs( 0 ){ "#{e.inspect}" }
-      dputs( 0 ){ "#{e.to_s}" }
+      dputs(0) { 'Error: QooxView aborted' }
+      dputs(0) { "#{e.inspect}" }
+      dputs(0) { "#{e.to_s}" }
       puts e.backtrace
-    end    
+    end
   end
 
-  if get_config( true, :autosave )
+  if get_config(true, :autosave)
     $autosave.kill
   end
-  
+
   $internet and $internet.kill
+  $sms_control and $sms_control.kill
+  $show_time and $show_time.kill
 
   Entities.save_all
 end

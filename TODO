@@ -1,23 +1,24 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 MELFI:
-        - get SMS working
+        - add e-mail with squirrelmail
         - add rate left
         - check internet left
-        - add 200CFAs charge
+        near ok
         - add openvpn
-        - add e-mail with squirrelmail
-        - find out why disconnecting/connecting usb-key is not working
+        - add 200CFAs charge
+        - get SMS working
+
 
 WORKING:
+        - find out why disconnecting/connecting usb-key is not working
 
 BUGS:
-        - Admin::CourseType - when changing something and pressing "enter",
-          the current coursetype is disabled - should stay enabled
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check 
             for center-id
-          - CourseGrade::sync - catch timeouts on requests
+          - B 140605: CourseGrade::sync - catch timeouts on requests and ECONNRESET
+          - B 140605: A nil-user is transferred for site_2_1402
         - Make LibNet working at least on ArchLinux
           - Network/Connections doesn't show variables
           - think about connections / Provider / Hardware / Others

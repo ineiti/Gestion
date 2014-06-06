@@ -888,15 +888,18 @@ base_gestion
     path = URI.parse("#{ctype.get_url}/")
     post = {:field => field, :data => data}
     dputs(3) { "Sending to #{path.inspect}: #{data.inspect}" }
-    err = ""
+    err = ''
     (1..4).each { |i|
       begin
         ret = Net::HTTP.post_form(path, post)
         dputs(4) { "Return-value is #{ret.inspect}, body is #{ret.body}" }
         return ret.body
       rescue Timeout::Error
-        dputs(2) { "Timeout occured" }
-        err = "Error Timeout occured"
+        dputs(2) { 'Timeout occured' }
+        err = 'Error Timeout occured'
+      rescue ECONNRESET
+        dputs(2){ 'Connection reset' }
+        err = 'Error - connection reset'
       end
     }
     return err
@@ -946,7 +949,7 @@ base_gestion
     assistant and users.push assistant.login_name
     ret = sync_transfer(:users, users.collect { |s|
       Persons.match_by_login_name(s)
-    }.to_json, slow)
+    }.compact.to_json, slow)
     @sync_state += ret
     if ret =~ /^Error:/
       return false

@@ -1,8 +1,10 @@
 require 'network'
 require 'helperclasses'
+require 'erb'
 
 module SMScontrol
-  attr_accessor :modem, :state_now, :state_goal, :state_error, :state_traffic
+  attr_accessor :modem, :state_now, :state_goal, :state_error, :state_traffic,
+                :max_traffic
   extend self
   include Network
   extend HelperClasses::DPuts
@@ -12,9 +14,13 @@ module SMScontrol
   @state_now = MODEM_DISCONNECTED
   @state_goal = MODEM_DISCONNECTED
   @state_error = 0
-  @state_traffic = nil
+  @state_traffic = 0
   @max_traffic = 3000000
   @phone_main = 99836457
+
+  def is_connected
+    @state_now == MODEM_CONNECTED
+  end
 
   def state_to_s
     "#{@state_now}-#{@state_goal}-#{@state_error}-#{@state_traffic}"
@@ -24,7 +30,7 @@ module SMScontrol
     ret = []
     msg.sub(/^cmd:/, '').split("::").each { |cmd|
       log_msg :SMScontrol, "Got command #{cmd.inspect}"
-      case /^ *(.+?) *$/.match( cmd )[1].downcase
+      case /^ *(.+?) *$/.match(cmd)[1].downcase
         when /^status$/
           disk_usage = %x[ df -h / | tail -n 1 ].gsub(/ +/, ' ').chomp
           ret.push "#{state_to_s} :: #{disk_usage} :: #{Time.now}"
@@ -53,7 +59,7 @@ module SMScontrol
       if @state_now == MODEM_CONNECTION_ERROR
         @state_error += 1
         @modem.connection_stop
-	sleep 2
+        sleep 2
         #if @state_error > 5
         #  @state_goal = MODEM_DISCONNECTED
         #end
@@ -65,7 +71,7 @@ module SMScontrol
       end
     elsif @state_now == MODEM_CONNECTED
       traffic = @modem.traffic_stats
-      dputs(3){ "#{traffic.inspect}" }
+      dputs(3) { "#{traffic.inspect}" }
       @state_traffic = traffic._rx.to_i + traffic._tx.to_i
       if @state_traffic > @max_traffic
         @state_goal = MODEM_DISCONNECTED
@@ -87,15 +93,22 @@ module SMScontrol
             @modem.sms_send(sms._Phone, ret.join('::'))
           end
         when /160.*cfa/i
-	  log_msg :SMScontrol, "Getting internet-credit"
-	  @modem.sms_send( 100, "internet" )
+          log_msg :SMScontrol, "Getting internet-credit"
+          @modem.sms_send(100, "internet")
         when /souscription reussie/i
           @modem.traffic_reset
           make_connection
-	  log_msg :SMScontrol, "Making connection"
-	  @modem.sms_send( @phone_main, interpret_commands( "cmd:status" ).join("::") )
+          log_msg :SMScontrol, "Making connection"
+          @modem.sms_send(@phone_main, interpret_commands("cmd:status").join("::"))
       end
       @modem.sms_delete(sms._Index)
     }
+  end
+end
+
+class SMSinfo < RPCQooxdooPath
+  def self.parse(method, path, query)
+    ddputs(3) { "Got #{method} - #{path} - #{query}" }
+    ERB.new(File.open('Files/smsinfo.erb') { |f| f.read }).result(binding)
   end
 end

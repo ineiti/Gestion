@@ -27,7 +27,7 @@ class Label < RPCQooxdooPath
         if ( tr._chunks -= 1 ) == 0
           if Digest::MD5.hexdigest( tr._data ) == tr._md5
             dputs(2){"Successfully received field #{tr._field}"}
-            ret = "OK: #{self.field_save( tr )}"
+            ret = self.field_save( tr )
           else
             dputs(2){"Field #{tr._field} transmitted with errors"}
             ret = "Error: wrong MD5"
@@ -105,7 +105,7 @@ class Label < RPCQooxdooPath
           Persons.create( s )
         end
       }
-      "Got users #{users.collect{|u| u._login_name}.join(':')}"
+      "OK: Got users #{users.collect{|u| u._login_name}.join(':')}"
     when /course/
       course = JSON.parse( tr._data ).to_sym
       dputs(3){"Course is #{course.inspect}"}
@@ -119,6 +119,7 @@ class Label < RPCQooxdooPath
         "#{tr._user}_#{course._assistant}" )
       course._students = course._students.collect{|s| "#{tr._user}_#{s}"}
       course._ctype = CourseTypes.match_by_name( course._ctype )
+      return "Error: could't make course of type #{course.ctype}" unless course._ctype
       course._center = Persons.match_by_login_name( tr._user )
       course._room = Rooms.find_by_name( "" )
       dputs(3){"Course is now #{course.inspect}"}
@@ -129,9 +130,9 @@ class Label < RPCQooxdooPath
         dputs(3){"Creating course #{course._name}"}
         Courses.create( course )
       end
-      "Updated course #{course._name}"
+      "OK: Updated course #{course._name}"
     when /grades/
-      JSON.parse( tr._data ).collect{|grade|
+      'OK: ' + JSON.parse( tr._data ).collect{|grade|
         grade.to_sym!
         ret = [ grade._course, grade._student ]
         dputs(3){"Grades is #{grade.inspect}"}
@@ -141,7 +142,7 @@ class Label < RPCQooxdooPath
           Persons.match_by_login_name( "#{tr._user}_#{grade._student}" )
         grade.delete :grade_id
         grade.delete :random
-        if g = Grades.match_by_course_person( grade._course, 
+        if g = Grades.match_by_course_person( grade._course,
             grade._student )
           dputs(3){"Updating grade #{g.inspect} with #{grade.inspect}"}
           g.data_set_hash( grade )
@@ -160,7 +161,7 @@ class Label < RPCQooxdooPath
         dputs(3){"Updating exams"}
         course.zip_read( file )
       end
-      "Read file #{file}"
+      "OK: Read file #{file}"
     end
   end
 end
