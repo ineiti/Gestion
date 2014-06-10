@@ -1,17 +1,21 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 MELFI:
+        near ok
+        - check correct usage of postfix/fetchmail
+        - send some status-messages
+        - set correct hostname for status-messages
+        - fix SMSs not getting up
         - add e-mail with squirrelmail
         - add rate left
         - check internet left
-        near ok
         - add openvpn
         - add 200CFAs charge
         - get SMS working
-
+        - find out why disconnecting/connecting usb-key is not working
+            -> don't use netctl-ifplugd@eth2, but only ifplugd@eth2
 
 WORKING:
-        - find out why disconnecting/connecting usb-key is not working
 
 BUGS:
         - client/server:

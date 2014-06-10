@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
 $LOAD_PATH.push("../QooxView", ".", "../AfriCompta", "../LibNet",
-                "../Network/lib", "../Hilink/lib", "HelperClasses/lib")
+                "../Network/lib", "../Hilink/lib", "../HelperClasses/lib")
 Encoding.default_external = Encoding::UTF_8
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
@@ -197,10 +197,10 @@ else
     $sms_control = Thread.new {
       loop {
         begin
-          sleep 30
           SMScontrol.check_connection
           SMScontrol.check_sms
-          dputs(0){ SMScontrol.state_to_s }
+          dputs(2){ SMScontrol.state_to_s }
+          sleep 30
         rescue Exception => e
           dputs(0) { 'Error in SMScontrol' }
           dputs(0) { "#{e.inspect}" }

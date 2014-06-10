@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>Référence Profeda pour un étudiant</title>
+  <meta http-equiv="refresh" content="15" />
+  <title>Statistiques sur la clé Internet</title>
   <style>
       body {
           background-color: #607860;
@@ -61,6 +62,8 @@
   <h1>Information about SMS-control</h1>
 
   <ul>
+    <li>Modem is 
+      <%= SMScontrol.modem ? "present" : "MISSING" %></li>
     <li>Internet is
       <%= SMScontrol.is_connected ? 'CONNECTED' : 'disconnected' %></li>
     <li>Promotion used: <%= SMScontrol.state_traffic / 1000 %>k /
@@ -68,15 +71,15 @@
     </li>
     <li>Last SMS received:
       <ul>
-        <%
-           SMSs.last(5).each { |sms|
-             "<li>#{sms.date}-#{sms.phone}-#{sms.text}</li>"
-           }
+        <%=
+           SMSs.last(5).reverse.collect { |sms|
+             "<li>#{sms.date}::#{sms.phone}:: ::#{sms.text}</li>"
+           }.join
         %></ul>
     </li>
     <li>
-      <%= if mails = /.* ([0-9]+) Requests.*/.match(%x[ postqueue -p | tail -n 1 ])
-           "#{mails} mails in queue"
+      <%= if mails = /.* ([0-9]+) Request.*/.match(%x[ postqueue -p | tail -n 1 ])
+           "#{mails[1]} mails in queue"
          else
            'No mails in queue'
          end
