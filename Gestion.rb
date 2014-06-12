@@ -202,7 +202,7 @@ else
           dputs(2){ SMScontrol.state_to_s }
           sleep 30
         rescue Exception => e
-          dputs(0) { 'Error in SMScontrol' }
+          dputs(0) { 'Error in SMScontrol.rb' }
           dputs(0) { "#{e.inspect}" }
           dputs(0) { "#{e.to_s}" }
           puts e.backtrace

@@ -30,7 +30,7 @@ module SMScontrol
   def interpret_commands(msg)
     ret = []
     msg.sub(/^cmd:/i, '').split("::").each { |cmdstr|
-      log_msg :SMScontrol, "Got command-str #{cmdstr.inspect}"
+      log_msg :'SMScontrol.rb', "Got command-str #{cmdstr.inspect}"
       cmd, attr = /^ *([^ ]*) *(.*) *$/.match(cmdstr)[1..2]
       case cmd.downcase
         when /^status$/
@@ -45,8 +45,8 @@ module SMScontrol
         when /^ping/
           ret.push 'pong'
         when /^sms/
-          number, text = attr.split( ";", 2 )
-          @modem.sms_send( number, text )
+          number, text = attr.split(";", 2)
+          @modem.sms_send(number, text)
       end
     }
     ret.length == 0 ? nil : ret
@@ -79,7 +79,7 @@ module SMScontrol
       elsif @state_goal == MODEM_CONNECTED
         if @state_traffic > @max_traffic
           @state_goal = MODEM_DISCONNECTED
-	else
+        else
           @modem.connection_start
         end
       end
@@ -98,42 +98,42 @@ module SMScontrol
   def check_sms
     return unless @modem
     if @send_status
-      @modem.sms_send( @phone_main, interpret_commands( "cmd:status" ).join("::") )
+      @modem.sms_send(@phone_main, interpret_commands("cmd:status").join("::"))
       @send_status = false
     end
     @modem.sms_list.each { |sms|
-      SMSs.create( sms )
-      log_msg :SMScontrol, "Working on SMS #{sms.inspect}"
+      SMSs.create(sms)
+      log_msg :'SMScontrol.rb', "Working on SMS #{sms.inspect}"
       case sms._Content
         when /^cmd:/i
           if ret = interpret_commands(sms._Content)
-            log_msg :SMScontrol, "Sending to #{sms._Phone} - #{ret.inspect}"
+            log_msg :'SMScontrol.rb', "Sending to #{sms._Phone} - #{ret.inspect}"
             @modem.sms_send(sms._Phone, ret.join('::'))
           end
         when /160.*cfa/i
-	  log_msg :SMScontrol, "Getting internet-credit"
-	  @modem.sms_send( 100, "internet" )
+          log_msg :'SMScontrol.rb', "Getting internet-credit"
+          @modem.sms_send(100, "internet")
         when /310.*cfa/i
-	  log_msg :SMScontrol, "Getting internet-credit"
-	  @modem.sms_send( 200, "internet" )
+          log_msg :'SMScontrol.rb', "Getting internet-credit"
+          @modem.sms_send(200, "internet")
         when /810.*cfa/i
-	  log_msg :SMScontrol, "Getting internet-credit"
-	  @modem.sms_send( 1111, "internet" )
+          log_msg :'SMScontrol.rb', "Getting internet-credit"
+          @modem.sms_send(1111, "internet")
         when /souscription reussie/i
           @modem.traffic_reset
           case sms._Content
-          when /100/
-            @max_traffic = 3000000
-          when /200/
-            @max_traffic = 6000000
-          when /800/
-            @max_traffic = 30000000
+            when /100/
+              @max_traffic = 3000000
+            when /200/
+              @max_traffic = 6000000
+            when /800/
+              @max_traffic = 30000000
           end
-	  if Date.today.wday % 6 == 0
-	    @max_traffic *= 2
+          if Date.today.wday % 6 == 0
+            @max_traffic *= 2
           end
           make_connection
-	  log_msg :SMScontrol, "Making connection"
+          log_msg :'SMScontrol.rb', "Making connection"
           @send_status = true
       end
       @modem.sms_delete(sms._Index)

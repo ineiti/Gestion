@@ -1,21 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
-MELFI:
-        near ok
-        - check correct usage of postfix/fetchmail
-        - send some status-messages
-        - set correct hostname for status-messages
-        - fix SMSs not getting up
-        - add e-mail with squirrelmail
-        - add rate left
-        - check internet left
-        - add openvpn
-        - add 200CFAs charge
-        - get SMS working
-        - find out why disconnecting/connecting usb-key is not working
-            -> don't use netctl-ifplugd@eth2, but only ifplugd@eth2
-
 WORKING:
+        - Inject sms into SMScontrol
+        - Add SMS-control panel
 
 BUGS:
         - client/server:
@@ -56,7 +43,7 @@ UI:
          tabs can be added
 
 FEATURES:
-        - Move money from one student to another
+        - Inject sms into SMScontrol
         - LibNet:
           - Feature: rewrite in Ruby
         - Show what student payed all in CourseDiploma
@@ -266,6 +253,8 @@ To check:
 
 
 ** FIXED **:
+        - F 140611: SMScontrol gets going
+        - F 140604: Move money from one student to another
         - B 140604: Course::Modifiy::Print_student doesn't fill in course-desc and has
          multiple lines
         - F 140604: Views/Courses/Modify/move_student
