@@ -14,6 +14,7 @@ class SelfInternet < View
       show_int_ro :internet_credit
       show_int_ro :users_connected
       show_int_ro :bytes_left
+      show_html :connection, :width => 100
       show_button :connect, :disconnect
     end
   end
@@ -41,6 +42,8 @@ class SelfInternet < View
   end
 	
   def update_connection_status( session )
+    return reply( :hide, :connection_status) unless
+        session.owner.has_role( :cybermanager )
     ret = reply( Internet.free( session.owner ) ? :hide : :unhide, :internet_credit )
     case (cc = can_connect( session ))
     when 0
@@ -103,10 +106,12 @@ class SelfInternet < View
     end
     if show_button == :connect
       return reply( :unhide, :connect ) +
-        reply( :hide, :disconnect )
+        reply( :hide, :disconnect ) +
+          reply( :update, :connection => '<img src="/Images/connection_no.png" height="50">')
     else
       return reply( :hide, :connect ) +
-        reply( :unhide, :disconnect )
+        reply( :unhide, :disconnect ) +
+          reply( :update, :connection => '<img src="/Images/connection_yes.png" height="50">')
     end
   end
   

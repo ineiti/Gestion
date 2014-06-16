@@ -157,9 +157,8 @@ class Grade < Entity
       end
     end
     if m
-      self._means = m.collect { |v| [20.0, [0.0, v.to_f].max].min }
-      self._mean = means.reduce(:+) / m.count
-
+      self._means = m.collect{|v| [ 20.0, [ 0.0, v.to_f ].max ].min }
+      self._mean = means.reduce(:+).to_f / m.count.to_f
     end
   end
 

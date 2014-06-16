@@ -12,7 +12,7 @@ end
 
 SMScontrol.modem.set_2g
 SMScontrol.make_connection
-#SMScontrol.rb.modem.sms_send( 100, "internet" )
+#SMS.rb.modem.sms_send( 100, "internet" )
 
 loop do
   SMScontrol.check_sms

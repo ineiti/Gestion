@@ -199,10 +199,10 @@ else
         begin
           SMScontrol.check_connection
           SMScontrol.check_sms
-          dputs(2){ SMScontrol.state_to_s }
+          dputs(2) { SMScontrol.state_to_s }
           sleep 30
         rescue Exception => e
-          dputs(0) { 'Error in SMScontrol.rb' }
+          dputs(0) { 'Error in SMS.rb' }
           dputs(0) { "#{e.inspect}" }
           dputs(0) { "#{e.to_s}" }
           puts e.backtrace
@@ -228,6 +228,8 @@ else
   catch :ctrl_c do
     begin
       log_msg :main, "Started Gestion on port #{webrick_port}"
+      images_path = File.join(File.expand_path(File.dirname(__FILE__)), 'Images')
+      RPCQooxdooHandler.add_file_path(:Images, images_path)
       QooxView::startWeb webrick_port
     rescue Exception => e
       dputs(0) { 'Error: QooxView aborted' }
