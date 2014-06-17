@@ -13,8 +13,7 @@ BUGS:
         - Make LibNet working at least on ArchLinux
           - Network/Connections doesn't show variables
           - think about connections / Provider / Hardware / Others
-            { PPP { Tigo, Airtel } { E330, E303 },
-              CDMA { Tawali } { Modem, ZTE },
+            { PPP { Tigo, Airtel, Tawali } { E330, E303, Modem, ZTE },
               PPPoE { Prestabist } { eth[0-9] },
               Router { Simple, LibNet } { eth[0-9] } { address } }
 
