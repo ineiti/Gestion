@@ -1,10 +1,13 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - Inject sms into SMScontrol
-        - Add SMS-control panel
+        - Change course-type and name
 
 BUGS:
+        - Fetchmail
+            - When no email at all, fetchmailrc is not rewritten
+            - fetchmail should fetch things in small portions
+            - add "limit" to fetchmail
         - client/server:
           - B 131113: server: when getting new course, ignore "room", check 
             for center-id
@@ -42,7 +45,7 @@ UI:
          tabs can be added
 
 FEATURES:
-        - Inject sms into SMScontrol
+        - Change course-type and name
         - LibNet:
           - Feature: rewrite in Ruby
         - Show what student payed all in CourseDiploma
@@ -252,6 +255,8 @@ To check:
 
 
 ** FIXED **:
+        - F 140620: Inject sms into SMScontrol
+        - F 140620: Add SMS-control panel
         - F 140611: SMScontrol gets going
         - F 140604: Move money from one student to another
         - B 140604: Course::Modifiy::Print_student doesn't fill in course-desc and has

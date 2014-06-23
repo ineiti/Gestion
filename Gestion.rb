@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
-$LOAD_PATH.push("../QooxView", ".", "../AfriCompta", "../LibNet",
-                "../Network/lib", "../Hilink/lib", "../HelperClasses/lib")
+$LOAD_PATH.push('../QooxView', '.', '../AfriCompta', '../LibNet',
+                '../Network/lib', '../Hilink/lib', '../HelperClasses/lib')
 Encoding.default_external = Encoding::UTF_8
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
@@ -9,27 +9,27 @@ Encoding.default_external = Encoding::UTF_8
 # - Login: - for payable laptop web-access
 #          - for students
 
-VERSION_GESTION="1.5.1"
+VERSION_GESTION='1.5.2'
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
 CONFIG_FILE="config.yaml"
 if not FileTest.exists? CONFIG_FILE
   puts "Config-file doesn't exist"
-  print "Do you want me to copy a standard one? [Y/n] "
-  if gets.chomp.downcase != "n"
-    FileUtils.cp "config.yaml.default", "config.yaml"
+  puts 'Do you want me to copy a standard one? [Y/n] '
+  if gets.chomp.downcase != 'n'
+    FileUtils.cp 'config.yaml.default', 'config.yaml'
   end
 end
 
 def cleanup_data
-  puts "Oups - looking what to do"
+  puts 'Oups - looking what to do'
   youngest = nil
-  if File.exists? "Backups"
+  if File.exists? 'Backups'
     youngest = %x[ ls Backups | sort | tail -n 1 ]
     puts "Backups are here - trying youngest: #{ youngest }"
   end
-  puts "Making new backup and deleting everything in data/*"
+  puts 'Making new backup and deleting everything in data/*'
   %x[ Binaries/backup 1rescue_ ]
   exec "nohup Binaries/swipe_gestion -f #{youngest}"
   #FileUtils.rm_rf( "data" )
@@ -82,7 +82,7 @@ begin
       'ComptaReport,ComptaShow,Cashbox.*,Report.*', 'internet')
   Permission.add('maintenance', 'Inventory.*', 'default')
   Permission.add('cybermanager', 'PersonCredit,NetworkTigo,FlagAddInternet,' +
-      'FlagPersonAdd,CashboxService', '')
+      'FlagPersonAdd,CashboxService,NetworkSMS', '')
   Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
       'PersonAdmin,PersonCourse,NetworkConnection,CourseStats,Report.*',
                  'secretary,cybermanager,teacher')
@@ -91,6 +91,7 @@ begin
       'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson,' +
       'PersonCenter,FlagDeletePerson', '')
   Permission.add('admin', '.*', '.*')
+  Permission.add('email', 'SelfEmail', '')
 
   QooxView::init('Entities', 'Views')
 
@@ -200,7 +201,7 @@ else
           SMScontrol.check_connection
           SMScontrol.check_sms
           dputs(2) { SMScontrol.state_to_s }
-          sleep 30
+          sleep 10
         rescue Exception => e
           dputs(0) { 'Error in SMS.rb' }
           dputs(0) { "#{e.inspect}" }

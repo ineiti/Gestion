@@ -32,38 +32,45 @@ class Persons < Entities
     add_new_storage :LDAP
 
     value_block :address
-    value_str_LDAP :first_name, :ldap_name => "sn"
-    value_str_LDAP :family_name, :ldap_name => "givenname"
+    value_str_LDAP :first_name, :ldap_name => 'sn'
+    value_str_LDAP :family_name, :ldap_name => 'givenname'
     value_date :birthday
     value_str :address
-    value_str_LDAP :phone, :ldap_name => "mobile"
-    value_str_LDAP :email, :ldap_name => "mail"
-    value_str_LDAP :town, :ldap_name => "l"
-    value_str_LDAP :country, :ldap_name => "st"
-    value_list_drop :gender, "%w( male female n/a )"
+    value_str_LDAP :phone, :ldap_name => 'mobile'
+    value_str_LDAP :email, :ldap_name => 'mail'
+    value_str_LDAP :town, :ldap_name => 'l'
+    value_str_LDAP :country, :ldap_name => 'st'
+    value_list_drop :gender, '%w( male female n/a )'
 
     value_block :admin
     value_str :account_name_due
     value_str :account_name_cash
     value_str :role_diploma
-    value_list :permissions, "Permission.list.sort"
+    value_list :permissions, 'Permission.list.sort'
 
     value_block :internet
-    value_list :groups, "%w( freesurf sudo print localonly share ).sort"
-    value_list_single :internet_none, "[]"
+    value_list :groups, '%w( freesurf sudo print localonly share ).sort'
+    value_list_single :internet_none, '[]'
 
     value_block :read_only
-    value_str_ro_LDAP :login_name, :ldap_name => "uid"
+    value_str_ro_LDAP :login_name, :ldap_name => 'uid'
     # credit -> internet_credit
     # credit_due -> account_total_due
     value_int_ro :internet_credit
     value_int_ro :account_total_due
 
+    value_block :email_account
+    value_str :acc_remote
+    value_str :acc_pass
+    value_list_drop :acc_proto, '%w( POP3 IMAP )'
+    value_list_drop :acc_port, '%w( 110 993 995 )'
+    value_list_drop :acc_supp, '["ssl keep", "ssl", "keep", ""]'
+
     value_block :hidden
     value_str :session_id
-    value_str_LDAP :password, :ldap_name => "userPassword"
+    value_str_LDAP :password, :ldap_name => 'userPassword'
     value_str :password_plain
-    value_int_LDAP :person_id, :ldap_name => "uidnumber"
+    value_int_LDAP :person_id, :ldap_name => 'uidnumber'
 
     ddir = Courses.dir_diplomas
     cdir = "#{ddir}/cartes"
@@ -71,8 +78,8 @@ class Persons < Entities
       FileUtils::mkdir(cdir)
     end
 
-    defined? @admin_users or @admin_users = true
-    @student_card ||= "student_card.odg"
+    @admin_users = true unless defined? @admin_users
+    @student_card ||= 'student_card.odg'
     @print_card = OpenPrint.new(
         "#{ddir}/#{@student_card}", cdir)
     @resps = []
@@ -414,8 +421,43 @@ class Persons < Entities
     super(local_only)
     @resps = []
   end
-end
 
+  def self.update_fetchmailrc
+    begin
+      File.open('/etc/fetchmailrc', 'w') { |f|
+        f.write <<-start
+        set daemon 600
+
+        start
+        Persons.search_by_permissions(:email).each { |p|
+          if p.acc_proto.class == Array &&
+              p.acc_port.class == Array &&
+              p.acc_supp.class == Array &&
+              p.email && p.acc_pass
+            proto, port, supp =
+                p.acc_proto.join, p.acc_port.join, p.acc_supp.join
+            if proto.length * port.length * p.email.length * p.acc_pass.length > 0
+              dputs(2) { "Adding #{p.login_name} to fetchmailrc" }
+              f.write <<-person
+                poll #{p.acc_remote} uidl with proto #{p.acc_proto.join}
+                auth password port #{p.acc_port.join}
+                user '#{p.email}' there with password '#{p.acc_pass}'
+                    is #{p.login_name} here
+                mimedecode #{p.acc_supp.join}
+
+              person
+            end
+          end
+        }
+
+        f.chmod 0700
+      }
+      FileUtils.chown 'fetchmail', 'nobody', '/etc/fetchmailrc'
+    rescue Errno::EACCES => e
+      dputs(0) { "Can't write fetchmailrc here..." }
+    end
+  end
+end
 
 #
 ### One person only
@@ -542,7 +584,46 @@ class Person < Entity
         Persons.responsibles_del(self)
       end
     end
+    if has_role(:email)
+      if login_name == 'admin' && !permissions.index('email')
+        log_msg :Persons, "Won't add e-mail to admin without explicit email-flag"
+      else
+        add_local_email
+      end
+    end
     update_accounts
+  end
+
+  def update_local_passwd(pass)
+    if Permission.has_role permissions, :email
+      if login_name == 'admin' && !permissions.index('email')
+        log_msg :Persons, "Won't add e-mail to admin without explicit email-flag"
+      else
+        ddputs(2) { "Updating password #{pass} for #{login_name}" }
+        %x[ echo -e "#{pass}\n#{pass}" | passwd #{login_name} ]
+      end
+    end
+  end
+
+  def add_local_email
+    add_user_account
+    dir = "/home/#{login_name}/Maildir"
+    if !File.exists? dir
+      Dir.mkdir dir
+      %w( new cur tmp ).each { |d|
+        Dir.mkdir File.join(dir, d)
+      }
+      FileUtils.chown login_name, login_name, Dir.glob("/home/#{login_name}/**/**")
+    end
+    squirrel_pref = "/srv/http/squirrelmail/config/var/data/#{login_name}.pref"
+    if !File.exists? squirrel_pref
+      File.open(squirrel_pref, 'w') { |f|
+        f.write("full_name=#{full_name}\nemail_address=#{email}")
+      }
+      FileUtils.chown 'http', 'http', squirrel_pref
+    end
+    Persons.update_fetchmailrc
+    update_local_passwd(password)
   end
 
   def account_name_due=(a)
@@ -555,14 +636,21 @@ class Person < Entity
     update_account_cash
   end
 
-  def update_smb_passwd(pass = password)
-    if ConfigBase.has_function?(:share) and (groups and groups.index("share"))
-      if not @proxy.has_storage? :LDAP
-        if Persons.admin_users
+  def add_user_account
+    if not @proxy.has_storage? :LDAP
+      if Persons.admin_users
+        if !File.exist? "/home/#{login_name}"
+          log_msg :Person, "Adding user-account for #{login_name} with #{permissions.inspect}"
           %x[ if which adduser; then adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name};
-            else useradd #{self.login_name}; fi ]
+            else useradd -m #{self.login_name}; fi ]
         end
       end
+    end
+  end
+
+  def update_smb_passwd(pass = password)
+    if ConfigBase.has_function?(:share) and (groups and groups.index("share"))
+      add_user_account
       log_msg :person, "Changing password in Samba to #{pass}"
       dputs(3) { "( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name}" }
       %x[ ( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name} ]
@@ -657,6 +745,7 @@ class Person < Entity
       dputs(2) { "Hashed password for #{self.login_name} is: #{pass}" }
     end
     update_smb_passwd(pass)
+    update_local_passwd(pass)
     if self._password != p
       log_msg :person, "Setting password (#{pass}) for #{self.login_name} to #{p}"
       self._password = p
