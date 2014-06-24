@@ -69,6 +69,7 @@ class CourseModify < View
           gui_window :win_edit_name do
             show_entity_courseType_lazy :wen_ctype, :drop, :name
             show_str :wen_name, :width => 200
+            show_list_drop :wen_overwrite, '%w( no yes )'
             show_button :wen_save, :close
           end
         end
@@ -441,6 +442,12 @@ class CourseModify < View
     dputs(2){"data._wen_name is now #{data._wen_name}"}
     course.ctype = data._wen_ctype
     course.name = data._wen_name
+    if course.entries
+      course.entries.name = course.name
+    end
+    if data._wen_overwrite.first == 'yes'
+      course.data_set_hash(data._wen_ctype.to_hash.except(:name), true)
+    end
     reply(:window_hide) +
         reply(:parent, reply(:empty, [:courses]) +
             reply(:update, :courses => Entities.Courses.list_courses(session) +

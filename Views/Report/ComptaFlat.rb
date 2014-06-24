@@ -24,7 +24,7 @@ class ReportComptaFlat < View
   end
   
   def rpc_button_report_movements( session, data )
-    if acc = data._account_list
+    if ( acc = data._account_list ).length > 0
       dputs(3){"Got account #{acc.path}"}
       file = "/tmp/report_movs_#{@count += 1}.pdf"
       acc.print_pdf( file, true )

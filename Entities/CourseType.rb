@@ -33,39 +33,39 @@ class CourseTypes < Entities
   def self.files
     begin
       ddir = Courses.dir_diplomas
-      ( Dir.glob( ddir + "/*odt" ) +
-          Dir.glob( ddir + "/*odg" ) ).
+      ( Dir.glob( ddir + '/*odt') +
+          Dir.glob( ddir + '/*odg') ).
         collect{|f| f.sub( /^.*\//, '' ) }
     end
   end
 
   def set_entry( id, field, value )
     case field.to_s
-    when "name"
+    when 'name'
       value.gsub!(/[^a-zA-Z0-9_-]/, '_' )
     end
     super( id, field, value )
   end
   
   def listp_profeda_code
-    self.search_by_profeda_code( "^.+$" ).collect{|ct|
+    self.search_by_profeda_code('^.+$').collect{|ct|
       [ ct.coursetype_id, ct.profeda_code ]
     }
   end
   
   def listp_name
-    self.search_by_profeda_code( "^$" ).collect{|ct|
+    self.search_by_profeda_code('^$').collect{|ct|
       [ ct.coursetype_id, ct.name ]
     }.sort{|a,b| a[1].downcase <=> b[1].downcase }
   end
   
   def migration_1(ct)
     ct.tests = 1
-    ct.output = ["certificate"]
+    ct.output = ['certificate']
   end
 
   def migration_2(ct)
-    ct.diploma_type = ["simple"]
+    ct.diploma_type = ['simple']
   end
   
   def migration_3(ct)

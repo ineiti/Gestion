@@ -144,17 +144,17 @@ class Courses < Entities
 
     # Prepare correct name
     name = if needs_center
-             if creator.permissions.index "center"
+             if creator.permissions.index 'center'
                creator.login_name
              else
                Persons.find_by_permissions(:center).login_name
-             end + "_"
+             end + '_'
            else
-             ""
+             ''
            end + "#{ctype.name}_#{date}"
 
     # Check for double names
-    suffix = ""
+    suffix = ''
     counter = 1
     while Courses.match_by_name(name + suffix)
       counter += 1
