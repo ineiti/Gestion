@@ -20,7 +20,6 @@ class ReportComptaFlat < View
         show_button :close
       end
     end
-    
   end
   
   def rpc_button_report_movements( session, data )
