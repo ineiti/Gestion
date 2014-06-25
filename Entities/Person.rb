@@ -597,7 +597,7 @@ class Person < Entity
 
   def update_local_passwd(pass)
     if permissions.index 'email'
-      ddputs(2) { "Updating password #{pass} for #{login_name}" }
+      dputs(2) { "Updating password #{pass} for #{login_name}" }
       %x[ echo -e "#{pass}\n#{pass}" | passwd #{login_name} ]
     end
   end
@@ -790,7 +790,7 @@ class Person < Entity
     fname = "#{person_id.to_s.rjust(6, '0')}-#{full_name.gsub(/ /, '_')}"
     courses = ["", ""]
     Courses.list_courses_for_person(self).each { |c|
-      ddputs(3) { "Course #{c.inspect}" }
+      dputs(3) { "Course #{c.inspect}" }
       courses.unshift(Courses.match_by_course_id(c.first).description)
     }
     replace = [[/--NAME1--/, first_name],

@@ -99,7 +99,7 @@ class CashboxCourse < View
         ( dst = data._move_students ) &&
         src != dst &&
         data._courses
-      ddputs(3){"Moving student #{src.inspect}, #{dst.inspect}"}
+      dputs(3){"Moving student #{src.inspect}, #{dst.inspect}"}
       data._courses.move_payment( src.login_name, dst.login_name )
     end
     reply( :window_hide ) +
