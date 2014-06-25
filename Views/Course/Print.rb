@@ -60,6 +60,7 @@ class CoursePrint < View
     ret = rpc_print(session, exa, data)
     dp lp_cmd = cmd_printer(session, exa)
     course = Courses.match_by_course_id(data._courses[0])
+    ddputs(3){"lp_cmd is #{lp_cmd}"}
     if data._courses && data._courses.length > 0
       case rep = course.print_exa(lp_cmd, number)
         when true

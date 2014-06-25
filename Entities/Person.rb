@@ -586,12 +586,8 @@ class Person < Entity
         Persons.responsibles_del(self)
       end
     end
-    if has_role(:email)
-      if login_name == 'admin' && !permissions.index('email')
-        log_msg :Persons, "Won't add e-mail to admin without explicit email-flag"
-      else
-        add_local_email
-      end
+    if permissions.index 'email'
+      add_local_email
     end
     if (old_permissions | self._permissions).index('email')
       Persons.update_fetchmailrc
@@ -600,13 +596,9 @@ class Person < Entity
   end
 
   def update_local_passwd(pass)
-    if Permission.has_role permissions, :email
-      if login_name == 'admin' && !permissions.index('email')
-        log_msg :Persons, "Won't add e-mail to admin without explicit email-flag"
-      else
-        ddputs(2) { "Updating password #{pass} for #{login_name}" }
-        %x[ echo -e "#{pass}\n#{pass}" | passwd #{login_name} ]
-      end
+    if permissions.index 'email'
+      ddputs(2) { "Updating password #{pass} for #{login_name}" }
+      %x[ echo -e "#{pass}\n#{pass}" | passwd #{login_name} ]
     end
   end
 
