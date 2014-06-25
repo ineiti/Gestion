@@ -480,6 +480,53 @@ class TC_Course < Test::Unit::TestCase
     assert File.exists? foo_maint.dir_exas
   end
 
+  # Syncs, aborts and sends again, checking if only new files are transmitted
+  def test_resync_files
+    @port = 3302
+    main = Thread.new {
+      QooxView::startWeb(@port)
+    }
+    dputs(1) { "Starting at port #{@port}" }
+    sleep 1
+    cname = "#{@center.login_name}_"
+
+    @maint_t.data_set_hash({:output => ['label'],
+                            :central_host => "http://localhost:#{@port}/label", :filename => ["label.odg"],
+                            :name => 'it-101',
+                            :diploma_type => ['accredited']})
+
+    students = %w( secretaire admin surf )
+    @maint_2.students.concat students
+    @grade0 = Grades.create({:student => @secretaire,
+                             :course => @maint_2, :mean => 11, :means => [11]})
+
+    @maint_2.exas_prepare_files
+    @maint_2.exas_fetch_files
+    students[0..1].each { |s|
+      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      FileUtils.touch("#{student_dir}/exa.doc")
+    }
+
+    assert_equal [], Persons.search_by_login_name("^#{cname}")
+    assert_equal nil, Courses.find_by_name("^#{cname}")
+
+    @maint_2.sync_do(false)
+
+    main.kill
+
+    foo_maint = Courses.find_by_name("^#{cname}")
+    names = Persons.search_by_login_name("^#{cname}").collect { |p|
+      p.login_name
+    }
+    assert_equal %w(foo_secretaire foo_admin foo_surf), names
+    assert_equal 'foo_maint_1210', foo_maint.name
+    assert_equal 'foo', foo_maint._center.login_name
+
+    dputs(1) { "Diploma-dir is #{foo_maint.dir_exas}" }
+
+    assert File.exists? foo_maint.dir_exas
+  end
+
   def test_random_id
     @port = 3303
     main = Thread.new {
@@ -489,10 +536,10 @@ class TC_Course < Test::Unit::TestCase
     sleep 1
     cname = "#{@center.login_name}_"
 
-    @maint_t.data_set_hash({:output => ["label"],
+    @maint_t.data_set_hash({:output => ['label'],
                             :central_host => "http://localhost:#{@port}/label", :filename => ["label.odg"],
-                            :name => "it-101",
-                            :diploma_type => ["accredited"]})
+                            :name => 'it-101',
+                            :diploma_type => ['accredited']})
 
     students = %w( secretaire admin surf )
     @maint_2.students.concat students
@@ -516,13 +563,13 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.sync_do
 
     foo_maint = Courses.find_by_name("^#{cname}")
-    foo_grade = Grades.match_by_course_person(foo_maint, "foo_secretaire")
+    foo_grade = Grades.match_by_course_person(foo_maint, 'foo_secretaire')
     names = Persons.search_by_login_name("^#{cname}").collect { |p|
       p.login_name
     }
-    assert_equal ["foo_secretaire", "foo_admin", "foo_surf"], names
-    assert_equal "foo_maint_1210", foo_maint.name
-    assert_equal "foo", foo_maint._center.login_name
+    assert_equal %w(foo_secretaire foo_admin foo_surf), names
+    assert_equal 'foo_maint_1210', foo_maint.name
+    assert_equal 'foo', foo_maint._center.login_name
     Grades.search_all.each { |g|
       dputs(1) { "Grade #{g.grade_id}: #{g.course.name}-#{g.student.login_name}-#{g.random}" }
     }
@@ -543,12 +590,12 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.sync_do
     assert_equal random, @grade0.random
 
-    @grade0.remark = "foo"
+    @grade0.remark = 'foo'
     assert_equal random, @grade0.random
     ConfigBase.add_function :course_client
-    @grade0.remark = "foo"
+    @grade0.remark = 'foo'
     assert_equal random, @grade0.random
-    @grade0.remark = "foo bar"
+    @grade0.remark = 'foo bar'
     assert_equal nil, @grade0.random
 
     ConfigBase.add_function :course_server

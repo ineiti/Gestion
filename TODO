@@ -1,18 +1,16 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - Change course-type and name
+        - client/server
+          - check for already transmitted documents and transmit one user at
+            a time
 
 BUGS:
-        - Fetchmail
-            - When no email at all, fetchmailrc is not rewritten
-            - fetchmail should fetch things in small portions
-            - add "limit" to fetchmail
-        - client/server:
-          - B 131113: server: when getting new course, ignore "room", check 
-            for center-id
-          - B 140605: CourseGrade::sync - catch timeouts on requests and ECONNRESET
-          - B 140605: A nil-user is transferred for site_2_1402
+        - CSV-handling:
+            - Add flag to CSV-storage so that a new element doesn't involve writing
+             down of all elements
+            - When saving CSV, save in "*.sav", then sync, then rename and sync again
+             mostly with regard to SD-cards that have troubles when writing the CSVs
         - Make LibNet working at least on ArchLinux
           - Network/Connections doesn't show variables
           - think about connections / Provider / Hardware / Others
@@ -45,7 +43,6 @@ UI:
          tabs can be added
 
 FEATURES:
-        - Change course-type and name
         - LibNet:
           - Feature: rewrite in Ruby
         - Show what student payed all in CourseDiploma
@@ -81,7 +78,6 @@ FEATURES:
           - only add center-ids when a course is "certified"
 
         - Progression-meter for Report::Executive
-        - SelfChat: if on multilogin, propose a "name"-field
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
         - AC: correctly show differing accounts in "check"
@@ -95,7 +91,6 @@ FEATURES:
           - download/upload backup: same as synchronize and fetch
           - import courses from server
 
-        - use multilogin as flag for users
         - configure better print, libnet, uploadwidget, so that it get's correctly
           addressed with a configuration
         - when a student logins remotely to a course_sever, don't allow to change
@@ -104,9 +99,6 @@ FEATURES:
           - add m/f recognition to change wording
           - Implement better handling of course-days
         - label. : show a form if no student found
-        - receive SMS through LibNet and do actions
-          - make connection
-          - return stats
         - progression-bar in Administration::Backup::restore
 	-3 check diploma-templates
 
@@ -119,8 +111,6 @@ Programming:
           ( flock -e 200; locked commands ) 200>/tmp/blah.lockfile
         - why is Entity::get_value always called three times?
         - replace all 'undefined' variables with class-variables
-        - Add flag to CSV-storage so that a new element doesn't involve writing
-          down of all elements
         - Change ConfigBase functions_base: all functions are evaluated with
           base_dependencies, like network, network_share and network_internet,
           so that network_internet and network_share depend on network
@@ -255,9 +245,20 @@ To check:
 
 
 ** FIXED **:
+        - Fetchmail
+            - B 140624: When no email at all, fetchmailrc is not rewritten
+            - F 140624: fetchmail should fetch things in small portions
+            - F 140624: add "limit" and friends to fetchmail
+        - F 140620: Change course-type and name
+        - B 140620: Views/Course/Print - still problem with pdf/printer/pdf/printer/...
         - F 140620: Inject sms into SMScontrol
         - F 140620: Add SMS-control panel
         - F 140611: SMScontrol gets going
+        - client/server:
+          - B 131113: server: when getting new course, ignore "room", check
+            for center-id
+          - B 140605: CourseGrade::sync - catch timeouts on requests and ECONNRESET
+          - B 140605: A nil-user is transferred for site_2_1402
         - F 140604: Move money from one student to another
         - B 140604: Course::Modifiy::Print_student doesn't fill in course-desc and has
          multiple lines

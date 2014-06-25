@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.5\n"
 "POT-Creation-Date: 2014-06-24 04:54+0100\n"
-"PO-Revision-Date: 2014-06-24 04:58+0100\n"
+"PO-Revision-Date: 2014-06-24 17:00+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: French <fr@profeda.org>\n"
 "Language: \n"
@@ -2004,17 +2004,17 @@ msgstr "Impression"
 #. Comes from file Views/Course/Print.rb and line is         show_print :print_exa_1
 #: ../Views/Course/Print.rb:14
 msgid "print_exa_1"
-msgstr "Imprimer exa 1"
+msgstr "Imprimer exa it-101"
 
 #. Comes from file Views/Course/Print.rb and line is         show_print :print_exa_2
 #: ../Views/Course/Print.rb:15
 msgid "print_exa_2"
-msgstr "Imprimer exa 2"
+msgstr "Imprimer exa it-102"
 
 #. Comes from file Views/Course/Print.rb and line is         show_print :print_exa_3
 #: ../Views/Course/Print.rb:16
 msgid "print_exa_3"
-msgstr "Imprimer exa 3"
+msgstr "Imprimer exa it-103"
 
 #. Comes from file Views/Course/Responsible.rb and line is class CourseResponsible < View
 #: ../Views/Course/Responsible.rb:1

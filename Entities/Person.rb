@@ -444,6 +444,7 @@ class Persons < Entities
                 user '#{p.email}' there with password '#{p.acc_pass}'
                     is #{p.login_name} here
                 mimedecode #{p.acc_supp.join}
+                option limit 1000000 batchlimit 10 fetchlimit 10 fetchsizelimit 20
 
               person
             end
@@ -575,6 +576,7 @@ class Person < Entity
   def permissions=(p)
     has_teacher = self._permissions and self._permissions.concat(p).index("teacher")
     dputs(3) { "#{self.login_name}: has_teacher is #{has_teacher} - permissions are #{p}" }
+    old_permissions = self._permissions
     self._permissions = p.uniq
     if has_teacher
       if Permission.can_view(p.reject { |perm|
@@ -590,6 +592,9 @@ class Person < Entity
       else
         add_local_email
       end
+    end
+    if (old_permissions | self._permissions).index('email')
+      Persons.update_fetchmailrc
     end
     update_accounts
   end
@@ -622,7 +627,6 @@ class Person < Entity
       }
       FileUtils.chown 'http', 'http', squirrel_pref
     end
-    Persons.update_fetchmailrc
     update_local_passwd(password)
   end
 

@@ -37,7 +37,7 @@ QooxView.init( '../Entities', '../Views' )
 
 tests = %w( login view tasks internet info course person )
 #tests = %w( sms )
-tests = %w( person )
+tests = %w( course )
 #tests = %w( configbase )
 tests.each{|t|
   require "ge_#{t}"

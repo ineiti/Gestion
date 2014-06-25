@@ -515,7 +515,7 @@ base_gestion
            @proxy.print_exa_long[number - 1]
          end
 
-    lp_cmd and pp.lp_cmd = lp_cmd
+    pp.lp_cmd = lp_cmd
     pp.print(studs.flatten(1) + [
         [/Teacher/, teacher.full_name],
         [/Course_name/, name],
@@ -898,17 +898,20 @@ base_gestion
         dputs(2) { 'Timeout occured' }
         err = 'Error Timeout occured'
       rescue ECONNRESET
-        dputs(2){ 'Connection reset' }
+        dputs(2) { 'Connection reset' }
         err = 'Error - connection reset'
       end
     }
     return err
   end
 
-  def sync_transfer(field, transfer, slow = false)
+  def sync_transfer(field, transfer = '', slow = false, existing = nil)
     ss = @sync_state
     block_size = 4096
     transfer_md5 = Digest::MD5.hexdigest(transfer)
+    if transfer_md5 == existing
+      return 'No change'
+    end
     t_array = []
     while t_array.length * block_size < transfer.length
       start = (block_size * t_array.length)
@@ -933,7 +936,7 @@ base_gestion
       }
       return ret
     else
-      dputs(2) { "Nothing to transfer" }
+      dputs(2) { 'Nothing to transfer' }
       return nil
     end
   end
@@ -943,8 +946,18 @@ base_gestion
     dputs(3) { @sync_state }
     slow and sleep 3
 
-    dputs(4) { "Responsibles" }
-    @sync_state = sync_s += "<li>Transferring responsibles: "
+    dputs(4) { 'Fetching remote state' }
+    @sync_state = sync_s += '<li>Demander ce qui existe déjà: '
+    ret = sync_transfer(:exists)
+    if ret =~ /^Error:/
+      @sync_state += 'Error</li>'
+      return false
+    end
+    remote_state = JSON.parse(ret.sub(/^OK: /, ''))
+    @sync_state = sync_s += 'OK</li>'
+
+    dputs(4) { 'Responsibles' }
+    @sync_state = sync_s += '<li>Transferring responsibles: '
     users = [teacher.login_name, responsible.login_name, center.login_name]
     assistant and users.push assistant.login_name
     ret = sync_transfer(:users, users.collect { |s|
@@ -954,12 +967,12 @@ base_gestion
     if ret =~ /^Error:/
       return false
     end
-    @sync_state = sync_s += "OK</li>"
+    @sync_state = sync_s += 'OK</li>'
 
-    dputs(4) { "Students" }
+    dputs(4) { 'Students' }
     if students.length > 0
-      dputs(4) { "Students - go" }
-      @sync_state = sync_s += "<li>Transferring users: "
+      dputs(4) { 'Students - go' }
+      @sync_state = sync_s += '<li>Transferring users: '
       users = students + [teacher.login_name, responsible.login_name]
       ret = sync_transfer(:users, users.collect { |s|
         Persons.match_by_login_name(s)
@@ -968,11 +981,11 @@ base_gestion
       if ret =~ /^Error:/
         return false
       end
-      @sync_state = sync_s += "OK</li>"
+      @sync_state = sync_s += 'OK</li>'
     end
 
-    dputs(4) { "Courses" }
-    @sync_state = sync_s += "<li>Transferring course: "
+    dputs(4) { 'Courses' }
+    @sync_state = sync_s += '<li>Transferring course: '
     myself = self.to_hash(true)
     myself._students = students
     ret = sync_transfer(:course, myself.to_json, slow)
@@ -980,12 +993,12 @@ base_gestion
     if ret =~ /^Error:/
       return false
     end
-    @sync_state = sync_s += "OK</li>"
+    @sync_state = sync_s += 'OK</li>'
 
-    dputs(4) { "Grades" }
+    dputs(4) { 'Grades' }
     if (grades = Grades.matches_by_course(self.course_id)).length > 0
-      dputs(4) { "Grades - go" }
-      @sync_state = sync_s += "<li>Transferring grades: "
+      dputs(4) { 'Grades - go' }
+      @sync_state = sync_s += '<li>Transferring grades: '
       ret = sync_transfer(:grades, grades.select { |g|
         g.course and g.student
       }.collect { |g|
@@ -993,7 +1006,6 @@ base_gestion
         g.to_hash(true).merge(:course => g.course.name,
                               :person => g.student.login_name)
       }.to_json, slow)
-      @sync_state += ret
       if ret =~ /^Error:/
         return false
       end
@@ -1009,13 +1021,13 @@ base_gestion
           dputs(0) { "Error: Can't find grade for #{course}-#{student}!" }
         end
       }
-      @sync_state = sync_s += "OK</li>"
+      @sync_state = sync_s += 'OK</li>'
     end
 
-    dputs(4) { "Exams" }
+    dputs(4) { 'Exams' }
     if file = zip_create(true)
-      dputs(4) { "Exams - go" }
-      @sync_state = sync_s += "<li>Transferring exams: "
+      dputs(4) { 'Exams - go' }
+      @sync_state = sync_s += '<li>Transferring exams: '
       file = "/tmp/#{file}"
       dputs(3) { "Exa-file is #{file}" }
       ret = sync_transfer(:exams, File.open(file) { |f| f.read }, slow)
@@ -1023,10 +1035,10 @@ base_gestion
       if ret =~ /^Error:/
         return false
       end
-      @sync_state = sync_s += "OK</li>"
+      @sync_state = sync_s += 'OK</li>'
     end
 
-    @sync_state = sync_s += "It is finished!"
+    @sync_state = sync_s += 'It is finished!'
     dputs(3) { @sync_state }
     return true
   end
@@ -1248,7 +1260,7 @@ base_gestion
     p_dst = Persons.match_by_login_name(dst)
     p_src = Persons.match_by_login_name(src)
     src_dst = "#{p_src.login_name}-#{p_src.full_name} to " +
-    "#{p_dst.login_name}-#{p_dst.full_name}"
+        "#{p_dst.login_name}-#{p_dst.full_name}"
     movs.select { |m|
       m.desc =~ / #{src}:/
     }.each { |m|
