@@ -60,6 +60,9 @@ module SMScontrol
         when /^sms/
           number, text = attr.split(";", 2)
           @modem.sms_send(number, text)
+        when /^email/
+          send_email
+          return false
       end
     }
     ret.length == 0 ? nil : ret
@@ -114,11 +117,19 @@ module SMScontrol
     end
   end
 
+  def send_email
+    File.open('/tmp/status.html', 'w') { |f|
+      f.write(ERB.new(File.open('Files/smsinfo.erb') { |f| f.read }).result(binding))
+    }
+    system('echo ".-=-." | mail -a /tmp/status.html -s "$( hostname ): Connected" ineiti@profeda.org')
+  end
+
   def check_sms
     return unless @modem
     if @send_status
       @modem.sms_send(@phone_main, interpret_commands('cmd:status').join('::'))
       @send_status = false
+      send_email
     end
     sms = @modem.sms_list.concat(@sms_injected)
     @sms_injected = []
@@ -127,7 +138,7 @@ module SMScontrol
       SMSs.create(sms)
       log_msg :SMS, "Working on SMS #{sms.inspect}"
       if sms._Content =~ /^cmd:/i
-        if ret = interpret_commands(sms._Content)
+        if (ret = interpret_commands(sms._Content))
           log_msg :SMS, "Sending to #{sms._Phone} - #{ret.inspect}"
           @modem.sms_send(sms._Phone, ret.join('::'))
         end
@@ -143,13 +154,16 @@ module SMScontrol
             end
           when :Tigo
             case sms._Content
-              when /160.*cfa/i
+              when /200.*cfa/i
+                @state_goal = MODEM_DISCONNECTED
                 log_msg :SMS, 'Getting internet-credit'
                 @modem.sms_send(100, 'internet')
-              when /310.*cfa/i
+              when /350.*cfa/i
+                @state_goal = MODEM_DISCONNECTED
                 log_msg :SMS, 'Getting internet-credit'
                 @modem.sms_send(200, 'internet')
-              when /810.*cfa/i
+              when /850.*cfa/i
+                @state_goal = MODEM_DISCONNECTED
                 log_msg :SMS, 'Getting internet-credit'
                 @modem.sms_send(1111, 'internet')
               when /souscription reussie/i
@@ -166,7 +180,7 @@ module SMScontrol
                   @max_traffic *= 2
                 end
                 make_connection
-                log_msg :SMS, "Making connection"
+                log_msg :SMS, 'Making connection'
                 @send_status = true
             end
         end

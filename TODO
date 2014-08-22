@@ -6,11 +6,13 @@ WORKING:
             a time
 
 BUGS:
+        - Synching to server drops files!
         - CSV-handling:
             - Add flag to CSV-storage so that a new element doesn't involve writing
              down of all elements
             - When saving CSV, save in "*.sav", then sync, then rename and sync again
              mostly with regard to SD-cards that have troubles when writing the CSVs
+             -> this is WAY TO SLOW to do things!!
         - Make LibNet working at least on ArchLinux
           - Network/Connections doesn't show variables
           - think about connections / Provider / Hardware / Others

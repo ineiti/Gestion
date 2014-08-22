@@ -9,6 +9,7 @@ class Label < RPCQooxdooPath
     if req.request_method == "POST"
       path, query, addr = req.path, req.query.to_sym, RPCQooxdooHandler.get_ip(req)
       dputs(4) { "Got query: #{path} - #{query.inspect} - #{addr}" }
+      log_msg :label, "Got query: #{path} - #{addr}"
 
       if query._field == "start"
         d = JSON.parse(query._data).to_sym
@@ -66,12 +67,14 @@ class Label < RPCQooxdooPath
                else
                  ""
                end
+      log_msg :grading, "Student #{grade.student.full_name} from #{center} in course #{grade.course.name}"
       if grade.mean >= 10
         ERB.new(File.open("Files/label.erb") { |f| f.read }).result(binding)
       else
         ERB.new(File.open("Files/label_notpassed.erb") { |f| f.read }).result(binding)
       end
     else
+      log_msg :grading, "Unknown grade-id #{grade_id}"
       ERB.new(File.open("Files/label_notfound.erb") { |f| f.read }).result(binding)
     end
   end

@@ -16,7 +16,7 @@ class AdminInternet < View
       gui_vbox :nogroup do
         show_int_ro :credit_left
         show_int_ro :promotion_left
-        show_list_drop :auto_disconnect, "[:No,:Yes]", :callback => :auto_disconnect
+        show_list_drop :auto_disconnect, '[:No,:Yes]', :callback => :auto_disconnect
         show_button :connect, :disconnect, :delete_emails
       end
       gui_vbox :nogroup do
@@ -25,12 +25,12 @@ class AdminInternet < View
       end
     end
 
-    @file_ad = "/var/run/poff_after_email"
+    @file_ad = '/var/run/poff_after_email'
   end
 
   def auto_disconnect_get
     dputs( 3 ){ "Auto disconenct with #{@file_ad} and #{File.exists? @file_ad}" }
-    File.exists?( @file_ad ) ? "Yes" : "No"
+    File.exists?( @file_ad ) ? 'Yes' : 'No'
   end
 
   def update( session )
@@ -45,7 +45,7 @@ class AdminInternet < View
   def rpc_update( session )
     buttons = reply( :unhide, :connect ) +
       reply( :hide, :disconnect )
-    if $lib_net.call( :isp_connected ) == "yes"
+    if $lib_net.call( :isp_connected ) == 'yes'
       buttons = reply( :hide, :connect ) +
         reply( :unhide, :disconnect )
     end
@@ -78,10 +78,10 @@ class AdminInternet < View
     if args[0]['auto_disconnect']
       value = args[0]['auto_disconnect'][0]
       dputs( 3 ){ "Going to set #{value}" }
-      if value and value == "Yes"
-        File.new( @file_ad, "w" ).close
+      if value and value == 'Yes'
+        File.new( @file_ad, 'w').close
       else
-        if auto_disconnect_get == "Yes"
+        if auto_disconnect_get == 'Yes'
           File.unlink( @file_ad )
         end
       end

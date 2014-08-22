@@ -9,7 +9,7 @@ class SelfChat < View
       @@disc.data_str = Array.new(@@box_length, "")
     @order = 100
     @update = true
-    @auto_update = 10
+    @auto_update_async = 10
     @auto_update_send_values = false
 
     gui_vboxg do
