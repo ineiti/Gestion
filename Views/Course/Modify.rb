@@ -381,7 +381,6 @@ class CourseModify < View
   end
 
   def rpc_update(session)
-    dp session.owner.has_role( :director )
     reply(:empty, :students) +
         super(session) +
         reply_print(session) +

@@ -58,7 +58,7 @@ class CoursePrint < View
     dputs(3) { "printing with #{data._courses.inspect}" }
     exa = "print_exa_#{number}".to_sym
     ret = rpc_print(session, exa, data)
-    dp lp_cmd = cmd_printer(session, exa)
+    lp_cmd = cmd_printer(session, exa)
     course = Courses.match_by_course_id(data._courses[0])
     dputs(3){"lp_cmd is #{lp_cmd}"}
     if data._courses && data._courses.length > 0
