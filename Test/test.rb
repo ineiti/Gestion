@@ -1,8 +1,10 @@
+#!/usr/bin/env ruby
 #!/usr/local/bin/ruby -I.
 #!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I. -wKU
 %w( QooxView AfriCompta LibNet Network/lib Hilink/lib HelperClasses/lib Gestion ).each{|l|
   $LOAD_PATH.push "../../#{l}"
 }
+$LOAD_PATH.push "."
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"
@@ -37,7 +39,7 @@ QooxView.init( '../Entities', '../Views' )
 
 tests = %w( login view tasks internet info course person )
 #tests = %w( sms )
-tests = %w( course )
+#tests = %w( course )
 #tests = %w( configbase )
 tests.each{|t|
   require "ge_#{t}"

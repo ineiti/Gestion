@@ -3,7 +3,7 @@ class SelfEmail < View
     set_data_class :Persons
     @update = true
     @order = 100
-    @functions_need = [:network]
+    @functions_need = [:network, :email]
     @elements = %w( email acc_remote acc_pass acc_proto acc_port acc_supp )
 
     gui_vbox do

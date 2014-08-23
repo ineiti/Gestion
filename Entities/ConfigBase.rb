@@ -8,8 +8,8 @@ class ConfigBases < Entities
     courses course_server course_client internet_simple
     internet_libnet sms_control
     inventory accounting quiz accounting_courses accounting_old
-    cashbox ).sort.to_sym
-    @@functions_base = { :network => [ :internet, :share, :internet_only ],
+    cashbox email ).sort.to_sym
+    @@functions_base = { :network => [ :internet, :share, :internet_only, :email ],
       :internet => [ :internet_simple, :internet_libnet ],
       :courses => [ :course_server, :course_client, :accounting_courses ],
       :accounting => [ :accounting_courses ],
