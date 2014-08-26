@@ -596,7 +596,7 @@ class Person < Entity
   end
 
   def update_local_passwd(pass)
-    if permissions.index 'email'
+    if permissions and permissions.index 'email'
       dputs(2) { "Updating password #{pass} for #{login_name}" }
       %x[ echo -e "#{pass}\n#{pass}" | passwd #{login_name} ]
     end

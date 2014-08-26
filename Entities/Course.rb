@@ -780,7 +780,7 @@ base_gestion
   # files over.
   # The name of the zip-file is different from the directory-name, so that the
   # upload is less error-prone.
-  def zip_create(for_server = false, include_files = true)
+  def zip_create(for_server = false, include_files = true, exclude_exams = [])
     pre = for_server ? center.login_name + '_' : ''
     dir = "exa-#{pre}#{name}"
     file = "#{pre}#{name}.zip"
@@ -791,16 +791,20 @@ base_gestion
       Zip::File.open(tmp_file, Zip::File::CREATE) { |z|
         z.mkdir dir
         students.each { |s|
-          p = "#{dir}/#{pre}#{s}"
-          z.mkdir(p)
-          if include_files
-            dputs(3) { "Searching in #{dir_exas}/#{s}" }
-            Dir.glob("#{dir_exas}/#{s}/*").each { |exa_f|
-              dputs(3) { "Adding file #{exa_f}" }
-              z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
-                f.write File.open(exa_f) { |ef| ef.read }
+          if exclude_exams.index(s)
+            ddputs(3) { "Student #{s} is to be excluded: #{exclude_exams.inspect}" }
+          else
+            p = "#{dir}/#{pre}#{s}"
+            z.mkdir(p)
+            if include_files
+              dputs(3) { "Searching in #{dir_exas}/#{s}" }
+              Dir.glob("#{dir_exas}/#{s}/*").each { |exa_f|
+                dputs(3) { "Adding file #{exa_f}" }
+                z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
+                  f.write File.open(exa_f) { |ef| ef.read }
+                }
               }
-            }
+            end
           end
         }
       }
@@ -936,7 +940,7 @@ base_gestion
       }
       return ret
     else
-      dputs(2) { 'Nothing to transfer' }
+      ddputs(2) { 'Nothing to transfer' }
       return nil
     end
   end
@@ -945,16 +949,6 @@ base_gestion
     @sync_state = sync_s = ""
     dputs(3) { @sync_state }
     slow and sleep 3
-
-    dputs(4) { 'Fetching remote state' }
-    @sync_state = sync_s += '<li>Demander ce qui existe déjà: '
-    ret = sync_transfer(:exists)
-    if ret =~ /^Error:/
-      @sync_state += 'Error</li>'
-      return false
-    end
-    remote_state = JSON.parse(ret.sub(/^OK: /, ''))
-    @sync_state = sync_s += 'OK</li>'
 
     dputs(4) { 'Responsibles' }
     @sync_state = sync_s += '<li>Transferring responsibles: '
@@ -1025,7 +1019,20 @@ base_gestion
     end
 
     dputs(4) { 'Exams' }
-    if file = zip_create(true)
+    remote_exams = {}
+    if true
+      dputs(4) { 'Fetching remote exams' }
+      @sync_state = sync_s += '<li>Demander ce qui existe déjà: '
+      ret = sync_transfer(:exams_here, self.name)
+      if ret =~ /^Error:/
+        @sync_state += 'Error</li>'
+        return false
+      end
+      remote_exams = JSON.parse(ret.sub(/^OK: /, ''))
+      @sync_state = sync_s += 'OK</li>'
+    end
+
+    if file = zip_create(true, true, [])
       dputs(4) { 'Exams - go' }
       @sync_state = sync_s += '<li>Transferring exams: '
       file = "/tmp/#{file}"

@@ -100,12 +100,10 @@ class TC_Course < Test::Unit::TestCase
     assert_equal 3, courses_surf.length
   end
 
-  COURSE_STR = "base_gestion\nAdmin The\nLe Secretaire\n72\nCours de base\nWord\nExcel\nLinux\n\n"+
-      "1er f√©vrier 03\n4 mai 03\n4 juin 03\n" +
-      "P Admin The\n\nNP Internet Surfer\nhttp://ndjair.net\n"
+  COURSE_STR = "base_gestion\nAdmin The\n    Le Secretaire\n    72\n    Cours de base\n    Word\nExcel\nLinux\n\n    1er février 03\n    4 mai 03\n    4 juin 03\nP Admin The\n\nNP Internet Surfer\nhttp://ndjair.net\n"
 
   # Check different assertions of missing stuff and students
-  def tes_diploma_export
+  def test_diploma_export
     assert_equal %w( start end sign duration teacher responsible description contents ),
                  @net.export_check
 
@@ -120,8 +118,7 @@ class TC_Course < Test::Unit::TestCase
 
     assert_nil @net.export_check
 
-    assert_equal "base_gestion\nAdmin The\nLe Secretaire\n72\nCours de base\nWord\nExcel\nLinux\n\n"+
-                     "1er f√©vrier 03\n4 mai 03\n4 juin 03\n",
+    assert_equal "base_gestion\nAdmin The\n    Le Secretaire\n    72\n    Cours de base\n    Word\nExcel\nLinux\n\n    1er février 03\n    4 mai 03\n    4 juin 03\n",
                  @net.export_diploma
 
     @net.students = %w( admin surf )
@@ -289,7 +286,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal "base_arabe_1201", @c1.name
   end
 
-  def tes_duration_adds
+  def test_duration_adds
     dputs(1) { "@maint is #{@maint.inspect}" }
     @maint.dow = ["lu-me-ve"]
     @maint.end = "30.01.2012"
@@ -405,7 +402,7 @@ class TC_Course < Test::Unit::TestCase
     end
   end
 
-  def tes_files_move
+  def test_files_move
     @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
                             :central_host => "label.profeda.org", :filename => ["label.odg"],
                             :diploma_type => ["simple"]})
@@ -465,7 +462,7 @@ class TC_Course < Test::Unit::TestCase
 
     @maint_2.sync_do(false)
 
-    main.kill
+    main.kill.join
 
     foo_maint = Courses.find_by_name("^#{cname}")
     names = Persons.search_by_login_name("^#{cname}").collect { |p|
@@ -512,7 +509,7 @@ class TC_Course < Test::Unit::TestCase
 
     @maint_2.sync_do(false)
 
-    main.kill
+    main.kill.join
 
     foo_maint = Courses.find_by_name("^#{cname}")
     names = Persons.search_by_login_name("^#{cname}").collect { |p|
@@ -528,7 +525,7 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_random_id
-    @port = 3303
+    @port = 3302
     main = Thread.new {
       QooxView::startWeb(@port)
     }
@@ -607,7 +604,7 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_wrong_password
-    @port = 3304
+    @port = 3302
     main = Thread.new {
       QooxView::startWeb(@port)
     }
@@ -641,7 +638,7 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_update_grade
-    @port = 3305
+    @port = 3302
     main = Thread.new {
       QooxView::startWeb(@port)
     }
@@ -670,10 +667,10 @@ class TC_Course < Test::Unit::TestCase
     main.kill
   end
 
-  def tes_bulk
+  def test_bulk
     ConfigBase.set_functions([])
     names = ["Dmin A", "Zero", "One Two", "Ten Eleven Twelve", "A B C D",
-             "H√©l√®ne M√©y√®re", "√Ñeri Soustroup"]
+             "Hélène Méyère", "Ñeri Soustroup"]
     reply = ""
     while names.length > 0
       dputs(4) { "Doing #{names.inspect}" }
@@ -683,11 +680,11 @@ class TC_Course < Test::Unit::TestCase
       names.shift
     end
     bulk = [["zero", "Zero", ""], %w( tone One Two ), ["eten", "Ten", "Eleven Twelve"],
-            ["ca", "A B", "C D"], %w( mhelene H√©l√®ne M√©y√®re )]
+            ["ca", "A B", "C D"], %w( mhelene Hélène Méyère )]
     bulk.each { |b|
       login, first, family = b
       dputs(1) { "Doing #{b.inspect}" }
-      p = Entities.Persons.match_by_login_name(login)
+      p = Persons.match_by_login_name(login)
       dputs(5) { "p is #{p.inspect} - login is #{login.inspect}" }
       assert_not_nil p, login.inspect
       assert_equal login, p.login_name
@@ -696,20 +693,20 @@ class TC_Course < Test::Unit::TestCase
       assert_equal %w( student ), p.permissions
     }
 
-    students = Entities.Courses.match_by_name('net_1001').students
+    students = Courses.match_by_name('net_1001').students
     assert_equal %w( ca eten mhelene s_eri tone zero ), students.sort
   end
 
-  def tes_add_double
+  def test_add_double
     RPCQooxdooHandler.request(1, "View.CourseModify", "button", [["default", "create_new",
                                                                   {"name" => "net_1001", "double_name" => "Dmin A"}]])
     RPCQooxdooHandler.request(1, "View.CourseModify", "button", [["default", "accept",
                                                                   {"name" => "net_1001", "double_proposition" => [@admin.person_id]}]])
 
-    assert_equal %w( admin admin2 ), @net.students.sort
+    assert_equal %w( admin admin3 ), @net.students.sort
   end
 
-  def tes_grade
+  def test_grade
     @grade0 = Grades.save_data({:student => @secretaire,
                                 :course => @net, :means => [11]})
     assert_equal 11, @grade0[:mean]

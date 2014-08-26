@@ -85,7 +85,7 @@ class Label < RPCQooxdooPath
     end
     dputs(3) { "Course-name is #{course_name} and field is #{tr._field}" }
     case tr._field
-      when /users/
+      when "users"
         users = JSON.parse(tr._data)
         dputs(3) { "users are #{users.inspect}" }
         users.each { |s|
@@ -110,7 +110,7 @@ class Label < RPCQooxdooPath
           end
         }
         "OK: Got users #{users.collect { |u| u._login_name }.join(':')}"
-      when /course/
+      when "course"
         course = JSON.parse(tr._data).to_sym
         dputs(3) { "Course is #{course.inspect}" }
         course.delete :course_id
@@ -135,7 +135,7 @@ class Label < RPCQooxdooPath
           Courses.create(course)
         end
         "OK: Updated course #{course._name}"
-      when /grades/
+      when "grades"
         'OK: ' + JSON.parse(tr._data).collect { |grade|
           grade.to_sym!
           ret = [grade._course, grade._student]
@@ -158,8 +158,8 @@ class Label < RPCQooxdooPath
                                                    grade._student).inspect }
           ret.push g.random
         }.to_json
-      when /exams/
-        tr.gsub!( /[^a-zA-Z0-9_-]/, '' )
+      when "exams"
+        tr._tid.gsub!( /[^a-zA-Z0-9_-]/, '' )
         file = "/tmp/#{tr._tid}.zip"
         File.open(file, "w") { |f| f.write tr._data }
         if course = Courses.match_by_name(course_name)
@@ -167,6 +167,8 @@ class Label < RPCQooxdooPath
           course.zip_read(file)
         end
         "OK: Read file #{file}"
+      when "exams_here"
+        {}.to_json
     end
   end
 end
