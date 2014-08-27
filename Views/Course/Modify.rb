@@ -283,7 +283,7 @@ class CourseModify < View
         end
       end
       #person.email = "#{person.login_name}@ndjair.net"
-      person and course.students.push(person.login_name)
+      person and course.students_add person
     end
     if users.length > 0
       reply("update", {:names => users.join("\n")}) +
@@ -328,8 +328,7 @@ class CourseModify < View
     dputs(5) { "Data is #{data.inspect} - #{course.students.inspect} " +
         "- #{student.inspect}" }
     if not course.students.index(student.login_name)
-      course.students.push(
-          student.login_name)
+      course.students_add student
     end
     present_doubles(session, course)
   end
@@ -339,10 +338,9 @@ class CourseModify < View
     prefix = ConfigBase.has_function?(:course_server) ?
         "#{session.owner.login_name}_" : ""
     name = data['double_name']
-    course.students.push Persons.create({:first_name => name,
-                                         :login_name_prefix => prefix,
-                                         :permissions => %w( student ), :town => @town, :country => @country}).
-                             login_name
+    course.students_add Persons.create({:first_name => name,
+                                        :login_name_prefix => prefix,
+                                        :permissions => %w( student ), :town => @town, :country => @country})
     present_doubles(session, course)
   end
 
@@ -385,7 +383,7 @@ class CourseModify < View
         super(session) +
         reply_print(session) +
         hide_if_center(session) +
-        reply_visible( session.owner.has_role( "director" ), :edit_name )
+        reply_visible(session.owner.has_role("director"), :edit_name)
   end
 
   def update_layout(session)
@@ -438,7 +436,7 @@ class CourseModify < View
       data._wen_name = "#{base}-#{nbr}"
     end
     data._wen_name.sub!(/#{course.ctype.name}_/, "#{data._wen_ctype.name}_")
-    dputs(2){"data._wen_name is now #{data._wen_name}"}
+    dputs(2) { "data._wen_name is now #{data._wen_name}" }
     course.ctype = data._wen_ctype
     course.name = data._wen_name
     if course.entries

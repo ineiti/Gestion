@@ -9,6 +9,7 @@ WORKING:
             a time
 
 BUGS:
+        - Entity.method_missing is not really adding methods!
         - Sometimes data is not saved!
             - we need absolutely to revamp the data-handling, either update the
             CSV-code or move to ActiveRecord

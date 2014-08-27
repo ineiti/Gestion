@@ -25,6 +25,10 @@ class TC_Course < Test::Unit::TestCase
                                     :permissions => ["default"], :first_name => "Internet", :family_name => "Surfer")
     @surf2 = Entities.Persons.create(:login_name => "surf2", :password => "super",
                                      :permissions => ["default"], :first_name => "Internet", :family_name => "Surfer")
+    @stud1 = Entities.Persons.create(:login_name => "stud1", :password => "super",
+                                     :permissions => ["default"], :first_name => "Internet", :family_name => "Student")
+    @stud2 = Entities.Persons.create(:login_name => "stud2", :password => "super",
+                                     :permissions => ["default"], :first_name => "Internet", :family_name => "Student")
     @maint_t = Entities.CourseTypes.create(:name => "maint", :duration => 72,
                                            :desciption => "maintenance", :contents => "lots of work",
                                            :filename => ['base_gestion.odt'], :output => "certificate",
@@ -78,6 +82,27 @@ class TC_Course < Test::Unit::TestCase
     #SQLite.dbs_open_load_migrate
     #Entities.Persons.save
     #Entities.LogActions.save
+  end
+
+  def test_add_student
+    assert_equal %w( secretaire surf ), @it_101.students.sort
+    assert_equal %w( admin surf ), @maint.students.sort
+    assert_equal %w( admin2 surf ), @base.students.sort
+
+    @maint.students_add @surf2
+    assert_equal %w( admin surf surf2 ), @maint.students.sort
+
+    @maint.students_add @stud1.login_name
+    assert_equal %w( admin stud1 surf surf2 ), @maint.students.sort
+
+    @base.students_add [ @stud1, @stud2 ]
+    assert_equal %w( admin2 stud1 stud2 surf ), @base.students.sort
+
+    @base.students_del [ @stud1, @stud2 ]
+    assert_equal %w( admin2 surf ), @base.students.sort
+
+    @base.students_add [ @stud1.login_name, @stud2 ]
+    assert_equal %w( admin2 stud1 stud2 surf ), @base.students.sort
   end
 
   def test_print
@@ -202,7 +227,7 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.thread.join
     assert_equal 0, Dir.glob("#{@maint_2.dir_diplomas}/*").count
 
-    @maint_2.students.push 'secretaire'
+    @maint_2.students_add 'secretaire'
     @maint_2.prepare_diplomas(false)
     @maint_2.thread.join
     assert_equal 0, Dir.glob("#{@maint_2.dir_diplomas}/*").count
@@ -226,7 +251,7 @@ class TC_Course < Test::Unit::TestCase
   def test_print_diplomas
     ConfigBase.add_function :course_server
 
-    @maint_2.students.push 'secretaire'
+    @maint_2.students_add 'secretaire'
     Grades.search_all.each { |g|
       dputs(1) { g.inspect }
     }
@@ -349,7 +374,7 @@ class TC_Course < Test::Unit::TestCase
 
     @it_101_t.diploma_type = %w( accredited )
     dputs(1) { "it_101 is #{@it_101.class}" }
-    @it_101.students.push 'secretaire'
+    @it_101.students_add 'secretaire'
     @grade0 = Grades.save_data({:student => @secretaire,
                                 :course => @it_101, :mean => 11, :means => [11]})
     @it_101.prepare_diplomas(false)
@@ -390,7 +415,7 @@ class TC_Course < Test::Unit::TestCase
     @maint_t.data_set_hash({:output => ["label"], :central_name => "foo",
                             :central_host => "label.profeda.org", :filename => ["label.odg"],
                             :diploma_type => ["simple"]})
-    @maint_2.students.push 'secretaire'
+    @maint_2.students_add 'secretaire'
     Grades.search_all.each { |g|
       dputs(1) { "Grade #{g.grade_id}: #{g.course.name} - #{g.student.login_name}" }
     }

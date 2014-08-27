@@ -413,7 +413,7 @@ class Persons < Entities
       end
     end
     #person.email = "#{person.login_name}@ndjair.net"
-    person and course.students.push(person.login_name)
+    person and course.students_add person
     person
   end
 

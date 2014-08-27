@@ -59,7 +59,7 @@ class PersonCourse < View
   def rpc_button_add_course( session, args )
     if ca = args['courses_available'] and ca.length > 0
       c = Entities.Courses.match_by_id( ca[0] )
-      c.students.push args['persons'].flatten[0]
+      c.students_add args['persons'].flatten[0]
     end
     reply( :window_hide ) +
       rpc_list_choice( session, 'persons', args )

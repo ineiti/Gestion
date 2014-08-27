@@ -225,7 +225,7 @@ class Courses < Entities
         while lines.size > 0
           grade, name = lines.shift.split(' ', 2)
           student = Entities.Persons.find_name_or_create(name)
-          course.students.push(student.login_name)
+          course.students_add student
           g = Grades.match_by_course_person(course, student)
           if g then
             g.mean, g.remark = Grades.grade_to_mean(grade), lines.shift
@@ -309,7 +309,7 @@ class Course < Entity
 
   def check_students_dir
     check_dir
-    students.each { |s|
+    students and students.each { |s|
       [dir_exas, dir_exas_share].each { |d|
         (!File.exists? "#{d}/#{s}") and FileUtils.mkdir("#{d}/#{s}")
       }
@@ -790,21 +790,19 @@ base_gestion
       File.exists?(tmp_file) and FileUtils.rm(tmp_file)
       Zip::File.open(tmp_file, Zip::File::CREATE) { |z|
         z.mkdir dir
+        dputs(3){"Students is #{students.inspect}"}
         students.each { |s|
           p = "#{dir}/#{pre}#{s}"
+          dputs(3){"Creating #{p}"}
           z.mkdir(p)
           if include_files
             dputs(3) { "Searching in #{dir_exas}/#{s}" }
             Dir.glob("#{dir_exas}/#{s}/*").each { |exa_f|
-              filename = exa_f.sub( /^#{dir_exas}\//, '')
-              if exclude_exams.index(s)
-                ddputs(3) { "File #{exa_f} already here" }
-              else
-                dputs(3) { "Adding file #{exa_f}" }
-                z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
-                  f.write File.open(exa_f) { |ef| ef.read }
-                }
-              end
+              #filename = exa_f.sub(/^#{dir_exas}\//, '')
+              dputs(3) { "Adding file #{exa_f}" }
+              z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
+                f.write File.open(exa_f) { |ef| ef.read }
+              }
             }
           end
         }
@@ -941,7 +939,7 @@ base_gestion
       }
       return ret
     else
-      ddputs(2) { 'Nothing to transfer' }
+      dputs(2) { 'Nothing to transfer' }
       return nil
     end
   end
@@ -1021,7 +1019,7 @@ base_gestion
 
     dputs(4) { 'Exams' }
     remote_exams = {}
-    if true
+    if false
       dputs(4) { 'Fetching remote exams' }
       @sync_state = sync_s += '<li>Demander ce qui existe déjà: '
       ret = sync_transfer(:exams_here, self.name)
@@ -1033,7 +1031,7 @@ base_gestion
       @sync_state = sync_s += 'OK</li>'
     end
 
-    if file = zip_create(true, true, [])
+    if file = zip_create(true, true, remote_exams)
       dputs(4) { 'Exams - go' }
       @sync_state = sync_s += '<li>Transferring exams: '
       file = "/tmp/#{file}"
@@ -1108,8 +1106,24 @@ base_gestion
   end
 
   def students=(s)
-    super(s)
+    self._students = s
     @pre_init or log_msg :course, "Students for #{name} are: #{students.inspect}"
+  end
+
+  def students_add(studs)
+    [studs].flatten.each { |s|
+      s.class == Person and s = s.login_name
+      log_msg :course, "Adding student #{s} to course #{name}"
+      self.students = (students || []) + [s]
+    }
+  end
+
+  def students_del(studs)
+    [studs].flatten.each { |s|
+      s.class == Person and s = s.login_name
+      log_msg :course, "Deleting student #{s} to course #{name}"
+      self.students = (students || []) - [s]
+    }
   end
 
   def report_pdf
@@ -1236,7 +1250,7 @@ base_gestion
 
     log_msg "course", "Transferring #{student} from #{name} to #{new_course.name}"
     self.students = students - [student]
-    new_course.students = new_course.students + [student]
+    new_course.students_add student
 
     entries.movements.select { |m|
       m.desc =~ / #{student}:/
