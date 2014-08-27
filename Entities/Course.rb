@@ -780,7 +780,7 @@ base_gestion
   # files over.
   # The name of the zip-file is different from the directory-name, so that the
   # upload is less error-prone.
-  def zip_create(for_server = false, include_files = true, exclude_exams = [])
+  def zip_create(for_server = false, include_files = true, md5sums = {})
     pre = for_server ? center.login_name + '_' : ''
     dir = "exa-#{pre}#{name}"
     file = "#{pre}#{name}.zip"
@@ -791,20 +791,21 @@ base_gestion
       Zip::File.open(tmp_file, Zip::File::CREATE) { |z|
         z.mkdir dir
         students.each { |s|
-          if exclude_exams.index(s)
-            ddputs(3) { "Student #{s} is to be excluded: #{exclude_exams.inspect}" }
-          else
-            p = "#{dir}/#{pre}#{s}"
-            z.mkdir(p)
-            if include_files
-              dputs(3) { "Searching in #{dir_exas}/#{s}" }
-              Dir.glob("#{dir_exas}/#{s}/*").each { |exa_f|
+          p = "#{dir}/#{pre}#{s}"
+          z.mkdir(p)
+          if include_files
+            dputs(3) { "Searching in #{dir_exas}/#{s}" }
+            Dir.glob("#{dir_exas}/#{s}/*").each { |exa_f|
+              filename = exa_f.sub( /^#{dir_exas}\//, '')
+              if exclude_exams.index(s)
+                ddputs(3) { "File #{exa_f} already here" }
+              else
                 dputs(3) { "Adding file #{exa_f}" }
                 z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
                   f.write File.open(exa_f) { |ef| ef.read }
                 }
-              }
-            end
+              end
+            }
           end
         }
       }

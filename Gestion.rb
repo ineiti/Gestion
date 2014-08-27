@@ -166,9 +166,19 @@ else
     dputs(1) { 'Starting autosave' }
     $autosave = Thread.new {
       loop {
-        Entities.save_all
-        Internet::check_services
+        begin
+          dputs(2) { 'Starting to save' }
+          Entities.save_all
+          dputs(2) { 'Everything is saved' }
+        rescue Exception => e
+          dputs(0) { "Error: couldn't save all" }
+          dputs(0) { "#{e.inspect}" }
+          dputs(0) { "#{e.to_s}" }
+          puts e.backtrace
+        end
+        dputs(2){ 'Going to sleep' }
         sleep get_config(2 * 60, :autosave, :timer)
+        dputs(2){ 'Finished sleeping' }
       }
     }
   end
@@ -183,6 +193,7 @@ else
             Internet::fetch_cash
           end
           Internet::take_money
+          Internet::check_services
         rescue Exception => e
           dputs(0) { "Error: couldn't take internet-money" }
           dputs(0) { "#{e.inspect}" }

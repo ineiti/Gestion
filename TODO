@@ -1,11 +1,17 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
+        - Checking why sometimes data is not saved
+            - probably the thread in Gestion.rb dies for some reason - gave it
+            an error-handler and some too many debugging outputs
         - client/server
           - check for already transmitted documents and transmit one user at
             a time
 
 BUGS:
+        - Sometimes data is not saved!
+            - we need absolutely to revamp the data-handling, either update the
+            CSV-code or move to ActiveRecord
         - Synching to server drops files!
         - CSV-handling:
             - Add flag to CSV-storage so that a new element doesn't involve writing
@@ -13,6 +19,10 @@ BUGS:
             - When saving CSV, save in "*.sav", then sync, then rename and sync again
              mostly with regard to SD-cards that have troubles when writing the CSVs
              -> this is WAY TO SLOW to do things!!
+            - Add a number of 'backup'-files with ending .0, .1, ..., then saving
+             one after the other. Add a timestamp at the beginning of the file,
+             then start with the youngest.
+                - If the loading fails, try the older file
         - Make LibNet working at least on ArchLinux
           - Network/Connections doesn't show variables
           - think about connections / Provider / Hardware / Others

@@ -168,6 +168,11 @@ class Label < RPCQooxdooPath
         end
         "OK: Read file #{file}"
       when "exams_here"
+
+        if course = Courses.match_by_name(course_name)
+          dputs(3) { "Updating exams" }
+          course.zip_read(file)
+        end
         {}.to_json
     end
   end
