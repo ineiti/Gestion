@@ -28,6 +28,10 @@ po/*mo
 po/*pot
 tmp/
 po/*/*
+Binaries/onetimers/data
+Binaries/onetimers/Diplomas
+Binaries/onetimers/Exas
+Binaries/onetimers/config.yaml
 
 Test/share_test
 Doc/.backup
