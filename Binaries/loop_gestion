@@ -56,7 +56,7 @@ while [ ! -f $STOP ]; do
   quit=$( date +%s )
   if [ $(( quit - now )) -lt 60 ]; then
     log This seems to be quite bad... not restarting >> $LOG
-    #tail -n 30 $LOG | mail -s "Gestion crashed on short notice" ineiti@profeda.org
+    #tail -n 30 $LOG | mail -s "Gestion crashed on short notice" root@localhost
     exit
   fi
 done

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-COMPTA_DB=/Users/ineiti/.camping.db
+COMPTA_DB=/Users/foo/.camping.db
 
 sqlite3 sql.db 'DROP TABLE "stsql_accounts";'
 sqlite3 $COMPTA_DB ".dump compta_accounts" | sed -e 's/"compta_accounts"/"stsql_accounts"/' | 

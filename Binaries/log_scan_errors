@@ -3,6 +3,6 @@
 LOG=/var/log/gestion/gestion.log.1
 
 if grep -q "^:0:" $LOG; then
-  grep "^:0:" -A 20 -B 20 $LOG | mail -s "$( hostname ): Error-logs for $( date )" ineiti@profeda.org
+  grep "^:0:" -A 20 -B 20 $LOG | mail -s "$( hostname ): Error-logs for $( date )" root@localhost
 fi
 
