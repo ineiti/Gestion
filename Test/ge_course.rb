@@ -95,13 +95,13 @@ class TC_Course < Test::Unit::TestCase
     @maint.students_add @stud1.login_name
     assert_equal %w( admin stud1 surf surf2 ), @maint.students.sort
 
-    @base.students_add [ @stud1, @stud2 ]
+    @base.students_add [@stud1, @stud2]
     assert_equal %w( admin2 stud1 stud2 surf ), @base.students.sort
 
-    @base.students_del [ @stud1, @stud2 ]
+    @base.students_del [@stud1, @stud2]
     assert_equal %w( admin2 surf ), @base.students.sort
 
-    @base.students_add [ @stud1.login_name, @stud2 ]
+    @base.students_add [@stud1.login_name, @stud2]
     assert_equal %w( admin2 stud1 stud2 surf ), @base.students.sort
   end
 
@@ -465,10 +465,10 @@ class TC_Course < Test::Unit::TestCase
     sleep 1
     cname = "#{@center.login_name}_"
 
-    @maint_t.data_set_hash({:output => ["label"],
-                            :central_host => "http://localhost:#{@port}/label", :filename => ["label.odg"],
-                            :name => "it-101",
-                            :diploma_type => ["accredited"]})
+    @maint_t.data_set_hash({:output => ['label'],
+                            :central_host => "http://localhost:#{@port}/label", :filename => ['label.odg'],
+                            :name => 'it-101',
+                            :diploma_type => ['accredited']})
 
     students = %w( secretaire admin surf )
     @maint_2.students.concat students
@@ -504,49 +504,27 @@ class TC_Course < Test::Unit::TestCase
 
   # Syncs, aborts and sends again, checking if only new files are transmitted
   def test_resync_files
-    @port = 3302
-    main = Thread.new {
-      QooxView::startWeb(@port)
-    }
-    dputs(1) { "Starting at port #{@port}" }
-    sleep 1
-    cname = "#{@center.login_name}_"
+    students = %w( abc_secretaire abc_admin abc_surf )
+    @maint_2.students = students
 
-    @maint_t.data_set_hash({:output => ['label'],
-                            :central_host => "http://localhost:#{@port}/label", :filename => ["label.odg"],
-                            :name => 'it-101',
-                            :diploma_type => ['accredited']})
-
-    students = %w( secretaire admin surf )
-    @maint_2.students.concat students
-    @grade0 = Grades.create({:student => @secretaire,
-                             :course => @maint_2, :mean => 11, :means => [11]})
-
-    @maint_2.exas_prepare_files
-    @maint_2.exas_fetch_files
+    @maint_2.name = "abc_#{@maint_2.name}"
+    @maint_2.check_students_dir
     students[0..1].each { |s|
       student_dir = "#{@maint_2.dir_exas}/#{s}"
+      dputs(2) { "Adding a simple doc to #{student_dir}" }
       FileUtils.touch("#{student_dir}/exa.doc")
     }
 
-    assert_equal [], Persons.search_by_login_name("^#{cname}")
-    assert_equal nil, Courses.find_by_name("^#{cname}")
+    assert_equal({'secretaire' => [%w(exa.doc d41d8cd98f00b204e9800998ecf8427e)],
+                  'admin' => [%w(exa.doc d41d8cd98f00b204e9800998ecf8427e)],
+                  'surf' => []},
+                 JSON.parse(Label.field_save({course: @maint_2.name, user: 'abc',
+                                              field: 'exams_here'})))
 
-    @maint_2.sync_do(false)
-
-    main.kill.join
-
-    foo_maint = Courses.find_by_name("^#{cname}")
-    names = Persons.search_by_login_name("^#{cname}").collect { |p|
-      p.login_name
+    zip = @maint_2.zip_create
+    Zip::File.open( zip ){|f|
+      assert_equal nil, f.read('maint_1210')
     }
-    assert_equal %w(foo_secretaire foo_admin foo_surf), names
-    assert_equal 'foo_maint_1210', foo_maint.name
-    assert_equal 'foo', foo_maint._center.login_name
-
-    dputs(1) { "Diploma-dir is #{foo_maint.dir_exas}" }
-
-    assert File.exists? foo_maint.dir_exas
   end
 
   def test_random_id
@@ -881,7 +859,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal 10, @course_acc.student_paid('surf').first.value
     assert_equal 0, @course_acc.student_paid('surf2').length
 
-    @course_acc.move_payment( 'surf', 'surf2' )
+    @course_acc.move_payment('surf', 'surf2')
 
     assert_equal 10, @secretaire.account_due.total
     assert_equal 10, @course_acc.entries.total
@@ -895,20 +873,20 @@ class TC_Course < Test::Unit::TestCase
     assert_equal 10, @course_acc.student_paid('surf2').first.value
     assert_equal 0, @course_acc.student_paid('surf').length
 
-    @course_acc.move_payment( 'surf2', 'surf' )
+    @course_acc.move_payment('surf2', 'surf')
 
     assert_equal 10, @course_acc.entries.total
     assert_equal 1, @course_acc.student_paid('surf').length
     assert_equal 10, @course_acc.student_paid('surf').first.value
     assert_equal 0, @course_acc.student_paid('surf2').length
 
-    Accounts.archive( 1, 2014 )
+    Accounts.archive(1, 2014)
 
     assert_equal 10, @course_acc.entries.total
     assert_equal 10, @course_acc.student_paid('surf').first.value
     assert_equal 0, @course_acc.student_paid('surf2').length
 
-    @course_acc.move_payment( 'surf', 'surf2' )
+    @course_acc.move_payment('surf', 'surf2')
 
     assert_equal 10, @course_acc.entries.total
     assert_equal 10, @course_acc.student_paid('surf2').first.value

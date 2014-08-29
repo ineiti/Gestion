@@ -1,20 +1,15 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - Checking why sometimes data is not saved
-            - probably the thread in Gestion.rb dies for some reason - gave it
-            an error-handler and some too many debugging outputs
         - client/server
-          - check for already transmitted documents and transmit one user at
-            a time
+          - first get a hash of everything stored on the server with its md5-sum,
+            then compare what needs to be copied over
 
 BUGS:
-        - Entity.method_missing is not really adding methods!
-        - Sometimes data is not saved!
-            - we need absolutely to revamp the data-handling, either update the
-            CSV-code or move to ActiveRecord
         - Synching to server drops files!
         - CSV-handling:
+            - we need absolutely to revamp the data-handling, either update the
+            CSV-code or move to ActiveRecord
             - Add flag to CSV-storage so that a new element doesn't involve writing
              down of all elements
             - When saving CSV, save in "*.sav", then sync, then rename and sync again
@@ -258,6 +253,11 @@ To check:
 
 
 ** FIXED **:
+        - B 140828: Entity.method_missing is not really adding methods!
+        - B 140828: Sometimes data is not saved!
+        - B 140828: Checking why sometimes data is not saved
+            - a problem is in "QooxView:Storages:CSV" save and create methods,
+            which can step on each others toes
         - Fetchmail
             - B 140624: When no email at all, fetchmailrc is not rewritten
             - F 140624: fetchmail should fetch things in small portions

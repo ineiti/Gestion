@@ -83,9 +83,9 @@ class Label < RPCQooxdooPath
     if not (course_name = tr._course) =~ /^#{tr._user}_/
       course_name = "#{tr._user}_#{tr._course}"
     end
-    dputs(3) { "Course-name is #{course_name} and field is #{tr._field}" }
+    ddputs(3) { "Course-name is #{course_name} and field is #{tr._field}" }
     case tr._field
-      when "users"
+      when 'users'
         users = JSON.parse(tr._data)
         dputs(3) { "users are #{users.inspect}" }
         users.each { |s|
@@ -110,7 +110,7 @@ class Label < RPCQooxdooPath
           end
         }
         "OK: Got users #{users.collect { |u| u._login_name }.join(':')}"
-      when "course"
+      when 'course'
         course = JSON.parse(tr._data).to_sym
         dputs(3) { "Course is #{course.inspect}" }
         course.delete :course_id
@@ -123,7 +123,7 @@ class Label < RPCQooxdooPath
             "#{tr._user}_#{course._assistant}")
         course._students = course._students.collect { |s| "#{tr._user}_#{s}" }
         course._ctype = CourseTypes.match_by_name(course._ctype)
-        return "Error: could't make course of type #{course.ctype}" unless course._ctype
+        return "Error: couldn't make course of type #{course.ctype}" unless course._ctype
         course._center = Persons.match_by_login_name(tr._user)
         course._room = Rooms.find_by_name("")
         dputs(3) { "Course is now #{course.inspect}" }
@@ -135,7 +135,7 @@ class Label < RPCQooxdooPath
           Courses.create(course)
         end
         "OK: Updated course #{course._name}"
-      when "grades"
+      when 'grades'
         'OK: ' + JSON.parse(tr._data).collect { |grade|
           grade.to_sym!
           ret = [grade._course, grade._student]
@@ -158,22 +158,33 @@ class Label < RPCQooxdooPath
                                                    grade._student).inspect }
           ret.push g.random
         }.to_json
-      when "exams"
-        tr._tid.gsub!( /[^a-zA-Z0-9_-]/, '' )
+      when 'exams'
+        tr._tid.gsub!(/[^a-zA-Z0-9_-]/, '')
         file = "/tmp/#{tr._tid}.zip"
-        File.open(file, "w") { |f| f.write tr._data }
+        File.open(file, 'w') { |f| f.write tr._data }
         if course = Courses.match_by_name(course_name)
-          dputs(3) { "Updating exams" }
+          dputs(3) { 'Updating exams' }
           course.zip_read(file)
         end
         "OK: Read file #{file}"
-      when "exams_here"
-
+      when 'exams_here'
+        exa_files = {}
+        ddputs(3){"Searching for course #{course_name}"}
         if course = Courses.match_by_name(course_name)
-          dputs(3) { "Updating exams" }
-          course.zip_read(file)
+          ddputs(3) { 'Fetching existing files' }
+          course.students.each { |s|
+            s_no_center = s.gsub( /^#{tr._user}_/, '' )
+            exa_files[s_no_center] = []
+            Dir.glob("#{course.dir_exas}/#{s}/*").each { |exa_f|
+              md5 = Digest::MD5.file(exa_f).hexdigest
+              exa_rel = exa_f.sub( /^.*\//, '' )
+              ddputs(3) { "Adding file #{exa_rel} with md5 #{md5}" }
+              exa_files[s_no_center].push [exa_rel, md5]
+            }
+          }
         end
-        {}.to_json
+        ddputs(3){"Exams found #{exa_files.inspect}"}
+        exa_files.to_json
     end
   end
 end

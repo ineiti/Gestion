@@ -8,7 +8,7 @@ $LOAD_PATH.push "."
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"
-DEBUG_LVL=0
+DEBUG_LVL=2
 
 require 'QooxView'
 require 'ACQooxView'
@@ -39,7 +39,7 @@ QooxView.init( '../Entities', '../Views' )
 
 tests = %w( login view tasks internet info course person )
 #tests = %w( sms )
-#tests = %w( course )
+tests = %w( course )
 #tests = %w( configbase )
 tests.each{|t|
   require "ge_#{t}"
