@@ -169,10 +169,10 @@ class Label < RPCQooxdooPath
         "OK: Read file #{file}"
       when 'exams_here'
         'OK: ' + if course = Courses.match_by_name(course_name)
-                   ddputs(3) { "Sending md5 of #{course_name}" }
+                   dputs(3) { "Sending md5 of #{course_name}" }
                    course.md5_exams
                  else
-                   ddputs(3) { "Didn't find #{course_name}" }
+                   dputs(3) { "Didn't find #{course_name}" }
                    {}
                  end.to_json
     end

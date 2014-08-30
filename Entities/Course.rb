@@ -785,7 +785,7 @@ base_gestion
     dir = "exa-#{pre}#{name}"
     file = "#{pre}#{name}.zip"
     tmp_file = "/tmp/#{file}"
-    ddputs(4) { "for_server:#{for_server} - include_files:#{include_files} " +
+    dputs(4) { "for_server:#{for_server} - include_files:#{include_files} " +
         "md5sums:#{md5sums.inspect}" }
 
     if students and students.size > 0
@@ -806,14 +806,14 @@ base_gestion
               if md5sums.has_key?(s)
                 md5sums[s].each { |f, md5|
                   if (f == filename) && (md5 == Digest::MD5.file(exa_f).hexdigest)
-                    ddputs(3) { "Found file #{filename} to be excluded" }
+                    dputs(3) { "Found file #{filename} to be excluded" }
                     file_add = false
                     files_excluded.push exa_f.sub(/^#{dir_exas}\//, '')
                   end
                 }
               end
               if file_add
-                ddputs(3) { "Adding file #{exa_f}" }
+                dputs(3) { "Adding file #{exa_f}" }
                 z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
                   f.write File.open(exa_f) { |ef| ef.read }
                 }
@@ -860,7 +860,7 @@ base_gestion
             FileUtils.mkdir(dir_exas_student)
             if (files_student = z.dir.entries(dir_zip_student)).size > 0
               files_student.each { |fs|
-                ddputs(3) { "Extracting #{dir_exas_student}/#{fs}" }
+                dputs(3) { "Extracting #{dir_exas_student}/#{fs}" }
                 z.extract("#{dir_zip_student}/#{fs}", "#{dir_exas_student}/#{fs}")
               }
             end
@@ -870,7 +870,7 @@ base_gestion
         }
         begin
           JSON.parse(z.read("#{dir_zip}/files_excluded")).each { |f|
-            ddputs(3) { "Transferring file #{f} from old to new directory" }
+            dputs(3) { "Transferring file #{f} from old to new directory" }
             FileUtils.cp "#{dir_exas_tmp}/#{center_pre + f}",
                          "#{dir_exas}/#{center_pre + f}"
           }
@@ -1343,7 +1343,7 @@ base_gestion
 
   def md5_exams
     center_pre = center ? "#{center.login_name}_" : ''
-    ddputs(3) { "Fetching existing files with center -#{center_pre}-" }
+    dputs(3) { "Fetching existing files with center -#{center_pre}-" }
     Hash[students.map { |s|
       [s.sub(/^#{center_pre}/, ''),
        Dir.glob("#{dir_exas}/#{s}/*").map { |exa_f|
