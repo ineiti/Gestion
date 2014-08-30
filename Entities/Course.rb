@@ -1340,7 +1340,7 @@ base_gestion
   end
 
   def md5_exams
-    center_pre = center ? "#{center.name}_" : ''
+    center_pre = center ? "#{center.login_name}_" : ''
     ddputs(3) { "Fetching existing files with center -#{center_pre}-" }
     Hash[students.map { |s|
       [s.sub(/^#{center_pre}/, ''),
