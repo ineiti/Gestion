@@ -1340,7 +1340,7 @@ base_gestion
   end
 
   def md5_exams
-    dputs(3) { 'Fetching existing files' }
+    ddputs(3) { 'Fetching existing files' }
     Hash[students.map { |s|
       [s,
        Dir.glob("#{dir_exas}/#{s}/*").map { |exa_f|
