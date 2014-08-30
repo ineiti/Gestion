@@ -1340,8 +1340,8 @@ base_gestion
   end
 
   def md5_exams
-    ddputs(3) { 'Fetching existing files' }
     center_pre = center ? "#{center.name}_" : ''
+    ddputs(3) { "Fetching existing files with center -#{center_pre}-" }
     Hash[students.map { |s|
       [s.sub(/^#{center_pre}/, ''),
        Dir.glob("#{dir_exas}/#{s}/*").map { |exa_f|
