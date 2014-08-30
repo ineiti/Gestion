@@ -836,6 +836,7 @@ base_gestion
     dir_zip = "exa-#{name.sub(/^#{center}_/, '')}"
     dir_exas = @proxy.dir_exas + "/#{name}"
     dir_exas_tmp = "/tmp/#{name}"
+    center_pre = center ? "#{center.login_name}_" : ''
     file = f || "/tmp/#{dir_zip}.zip"
     dputs(3) { "dir_zip: #{dir_zip}, dir_exas: #{dir_exas}, dir_exas_tmp: #{dir_exas_tmp}, " +
         "file: #{file}" }
@@ -870,7 +871,8 @@ base_gestion
         begin
           JSON.parse(z.read("#{dir_zip}/files_excluded")).each { |f|
             ddputs(3) { "Transferring file #{f} from old to new directory" }
-            FileUtils.cp "#{dir_exas_tmp}/#{f}", "#{dir_exas}/#{f}"
+            FileUtils.cp "#{dir_exas_tmp}/#{center_pre + f}",
+                         "#{dir_exas}/#{center_pre + f}"
           }
         rescue Errno::ENOENT => e
           dputs(3) { 'No files_excluded here' }
