@@ -4,6 +4,7 @@ WORKING:
         - client/server
           - first get a hash of everything stored on the server with its md5-sum,
             then compare what needs to be copied over
+        - If center-person adds course, it is not visible
 
 BUGS:
         - Synching to server drops files!

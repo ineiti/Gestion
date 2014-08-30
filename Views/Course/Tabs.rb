@@ -65,11 +65,9 @@ class CourseTabs < View
     if hide.size < 8
       ( reply( :window_show, :not_all_elements ) +
           hide.collect{|h| reply( :hide, h ) } ).flatten
-      #      reply( :window_show, :not_all_elements ) +
-      #        reply( :hide, hide )
     else
       rep = reply( :empty, [ :courses ] ) +
-        reply( :update, :courses => Entities.Courses.list_courses(session))
+        reply( :update, :courses => Courses.list_courses(session))
       if not session.can_view( 'FlagAdminCourse' )
         rep += reply( :hide, :delete ) + reply( :hide, :add )
       end
@@ -146,7 +144,7 @@ class CourseTabs < View
     log_msg :coursetabs, "Adding new course #{course.inspect}"
 
     reply( :window_hide ) +
-      View.CourseTabs.rpc_update( session ) +
+      rpc_update( session ) +
       reply( :update, :courses => [ course.course_id ] )
   end
     

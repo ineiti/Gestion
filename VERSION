@@ -1,5 +1,9 @@
 Important notices for versions:
 
+- 140830: 1.5.3
+  - reworked synchronisation of exams when only some changed
+  - BIG BAD SAVE BUG!
+
 - 140428: 1.4.3
   - Important update due to bad reworking of reply( :update, ... )
 

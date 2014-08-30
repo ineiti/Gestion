@@ -101,13 +101,13 @@ class Courses < Entities
     ret = search_all_
     if session != nil
       user = session.owner
-      if not session.can_view("FlagCourseGradeAll")
+      if not session.can_view('FlagCourseGradeAll')
         ret = ret.select { |d|
           dputs(4) { "teacher is #{d.teacher.inspect}, user is #{user.inspect}" }
           (d.teacher and d.teacher.login_name == user.login_name) or
               (d.responsible and d.responsible.login_name == user.login_name) or
               ((d.name =~ /^#{session.owner.login_name}_/) and
-                  session.owner.permissions.index("center"))
+                  session.owner.permissions.index('center'))
         }
       end
     end
@@ -806,14 +806,14 @@ base_gestion
               if md5sums.has_key?(s)
                 md5sums[s].each { |f, md5|
                   if (f == filename) && (md5 == Digest::MD5.file(exa_f).hexdigest)
-                    dputs(3) { "Found file #{filename} to be excluded" }
+                    ddputs(3) { "Found file #{filename} to be excluded" }
                     file_add = false
                     files_excluded.push exa_f.sub(/^#{dir_exas}\//, '')
                   end
                 }
               end
               if file_add
-                dputs(3) { "Adding file #{exa_f}" }
+                ddputs(3) { "Adding file #{exa_f}" }
                 z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
                   f.write File.open(exa_f) { |ef| ef.read }
                 }
@@ -859,7 +859,7 @@ base_gestion
             FileUtils.mkdir(dir_exas_student)
             if (files_student = z.dir.entries(dir_zip_student)).size > 0
               files_student.each { |fs|
-                dputs(3) { "Extracting #{dir_exas_student}/#{fs}" }
+                ddputs(3) { "Extracting #{dir_exas_student}/#{fs}" }
                 z.extract("#{dir_zip_student}/#{fs}", "#{dir_exas_student}/#{fs}")
               }
             end
@@ -869,7 +869,7 @@ base_gestion
         }
         begin
           JSON.parse(z.read("#{dir_zip}/files_excluded")).each { |f|
-            dputs(3) { "Transferring file #{f}" }
+            ddputs(3) { "Transferring file #{f} from old to new directory" }
             FileUtils.cp "#{dir_exas_tmp}/#{f}", "#{dir_exas}/#{f}"
           }
         rescue Errno::ENOENT => e
