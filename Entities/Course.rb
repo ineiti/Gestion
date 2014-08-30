@@ -785,7 +785,7 @@ base_gestion
     dir = "exa-#{pre}#{name}"
     file = "#{pre}#{name}.zip"
     tmp_file = "/tmp/#{file}"
-    dputs(4) { "for_server:#{for_server} - include_files:#{include_files} " +
+    ddputs(4) { "for_server:#{for_server} - include_files:#{include_files} " +
         "md5sums:#{md5sums.inspect}" }
 
     if students and students.size > 0
@@ -1341,8 +1341,9 @@ base_gestion
 
   def md5_exams
     ddputs(3) { 'Fetching existing files' }
+    center_pre = center ? "#{center.name}_" : ''
     Hash[students.map { |s|
-      [s,
+      [s.sub(/^#{center_pre}/, ''),
        Dir.glob("#{dir_exas}/#{s}/*").map { |exa_f|
          md5 = Digest::MD5.file(exa_f).hexdigest
          exa_rel = exa_f.sub(/^.*\//, '')
