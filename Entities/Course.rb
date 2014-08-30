@@ -785,24 +785,42 @@ base_gestion
     dir = "exa-#{pre}#{name}"
     file = "#{pre}#{name}.zip"
     tmp_file = "/tmp/#{file}"
+    dputs(4) { "for_server:#{for_server} - include_files:#{include_files} " +
+        "md5sums:#{md5sums.inspect}" }
 
     if students and students.size > 0
       File.exists?(tmp_file) and FileUtils.rm(tmp_file)
       Zip::File.open(tmp_file, Zip::File::CREATE) { |z|
         z.mkdir dir
-        dputs(3){"Students is #{students.inspect}"}
+        dputs(3) { "Students is #{students.inspect}" }
+        files_excluded = []
         students.each { |s|
           p = "#{dir}/#{pre}#{s}"
-          dputs(3){"Creating #{p}"}
+          dputs(3) { "Creating #{p}" }
           z.mkdir(p)
           if include_files
             dputs(3) { "Searching in #{dir_exas}/#{s}" }
             Dir.glob("#{dir_exas}/#{s}/*").each { |exa_f|
-              #filename = exa_f.sub(/^#{dir_exas}\//, '')
-              dputs(3) { "Adding file #{exa_f}" }
-              z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
-                f.write File.open(exa_f) { |ef| ef.read }
-              }
+              file_add = true
+              filename = exa_f.sub(/.*\//, '')
+              if md5sums.has_key?(s)
+                md5sums[s].each { |f, md5|
+                  if (f == filename) && (md5 == Digest::MD5.file(exa_f).hexdigest)
+                    dputs(3) { "Found file #{filename} to be excluded" }
+                    file_add = false
+                    files_excluded.push exa_f.sub(/^#{dir_exas}\//, '')
+                  end
+                }
+              end
+              if file_add
+                dputs(3) { "Adding file #{exa_f}" }
+                z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
+                  f.write File.open(exa_f) { |ef| ef.read }
+                }
+              end
+            }
+            z.file.open("#{dir}/files_excluded", 'w') { |f|
+              f.write files_excluded.to_json
             }
           end
         }
@@ -817,11 +835,18 @@ base_gestion
 
     dir_zip = "exa-#{name.sub(/^#{center}_/, '')}"
     dir_exas = @proxy.dir_exas + "/#{name}"
+    dir_exas_tmp = "/tmp/#{name}"
     file = f || "/tmp/#{dir_zip}.zip"
+    dputs(3) { "dir_zip: #{dir_zip}, dir_exas: #{dir_exas}, dir_exas_tmp: #{dir_exas_tmp}, " +
+        "file: #{file}" }
 
-    if File.exists?(file) and students
-      %x[ rm -rf /tmp/#{name} ]
-      %x[ test -d #{dir_exas} && mv #{dir_exas} /tmp ]
+    if File.exists?(file) && students
+      # Save existing exams in /tmp
+      FileUtils.rm_rf dir_exas_tmp
+      if File.exists? dir_exas
+        dputs(3) { "Moving #{dir_exas} to /tmp" }
+        FileUtils.mv dir_exas, dir_exas_tmp
+      end
       FileUtils.mkdir dir_exas
 
       dputs(3) { "Opening zip-file #{file}" }
@@ -830,13 +855,26 @@ base_gestion
           dir_zip_student = "#{dir_zip}/#{s}"
           dir_exas_student = "#{dir_exas}/#{s}"
 
-          if (files_student = z.dir.entries(dir_zip_student)).size > 0
+          begin
             FileUtils.mkdir(dir_exas_student)
-            files_student.each { |fs|
-              z.extract("#{dir_zip_student}/#{fs}", "#{dir_exas_student}/#{fs}")
-            }
+            if (files_student = z.dir.entries(dir_zip_student)).size > 0
+              files_student.each { |fs|
+                dputs(3) { "Extracting #{dir_exas_student}/#{fs}" }
+                z.extract("#{dir_zip_student}/#{fs}", "#{dir_exas_student}/#{fs}")
+              }
+            end
+          rescue Errno::ENOENT => e
+            dputs(3) { "Directory for student #{s} doesn't exist" }
           end
         }
+        begin
+          JSON.parse(z.read("#{dir_zip}/files_excluded")).each { |f|
+            dputs(3) { "Transferring file #{f}" }
+            FileUtils.cp "#{dir_exas_tmp}/#{f}", "#{dir_exas}/#{f}"
+          }
+        rescue Errno::ENOENT => e
+          dputs(3) { 'No files_excluded here' }
+        end
       }
       FileUtils.rm file
     end
@@ -1019,7 +1057,7 @@ base_gestion
 
     dputs(4) { 'Exams' }
     remote_exams = {}
-    if false
+    if true
       dputs(4) { 'Fetching remote exams' }
       @sync_state = sync_s += '<li>Demander ce qui existe déjà: '
       ret = sync_transfer(:exams_here, self.name)
@@ -1300,4 +1338,18 @@ base_gestion
       end
     }
   end
+
+  def md5_exams
+    dputs(3) { 'Fetching existing files' }
+    Hash[students.map { |s|
+      [s,
+       Dir.glob("#{dir_exas}/#{s}/*").map { |exa_f|
+         md5 = Digest::MD5.file(exa_f).hexdigest
+         exa_rel = exa_f.sub(/^.*\//, '')
+         dputs(3) { "Adding file #{exa_rel} with md5 #{md5}" }
+         [exa_rel, md5]
+       }]
+    }]
+  end
+
 end

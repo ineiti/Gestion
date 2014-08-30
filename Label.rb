@@ -83,7 +83,7 @@ class Label < RPCQooxdooPath
     if not (course_name = tr._course) =~ /^#{tr._user}_/
       course_name = "#{tr._user}_#{tr._course}"
     end
-    ddputs(3) { "Course-name is #{course_name} and field is #{tr._field}" }
+    dputs(3) { "Course-name is #{course_name} and field is #{tr._field}" }
     case tr._field
       when 'users'
         users = JSON.parse(tr._data)
@@ -168,23 +168,11 @@ class Label < RPCQooxdooPath
         end
         "OK: Read file #{file}"
       when 'exams_here'
-        exa_files = {}
-        ddputs(3){"Searching for course #{course_name}"}
-        if course = Courses.match_by_name(course_name)
-          ddputs(3) { 'Fetching existing files' }
-          course.students.each { |s|
-            s_no_center = s.gsub( /^#{tr._user}_/, '' )
-            exa_files[s_no_center] = []
-            Dir.glob("#{course.dir_exas}/#{s}/*").each { |exa_f|
-              md5 = Digest::MD5.file(exa_f).hexdigest
-              exa_rel = exa_f.sub( /^.*\//, '' )
-              ddputs(3) { "Adding file #{exa_rel} with md5 #{md5}" }
-              exa_files[s_no_center].push [exa_rel, md5]
-            }
-          }
-        end
-        ddputs(3){"Exams found #{exa_files.inspect}"}
-        exa_files.to_json
+        'OK: ' + if course = Courses.match_by_name(course_name)
+          course.md5_exams
+        else
+          {}
+        end.to_json
     end
   end
 end

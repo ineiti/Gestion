@@ -504,10 +504,12 @@ class TC_Course < Test::Unit::TestCase
 
   # Syncs, aborts and sends again, checking if only new files are transmitted
   def test_resync_files
-    students = %w( abc_secretaire abc_admin abc_surf )
+    students = %w( secretaire admin surf )
     @maint_2.students = students
 
-    @maint_2.name = "abc_#{@maint_2.name}"
+    @maint_2.name = "foo_#{@maint_2.name}"
+    dputs(3){"Clearing directory #{@maint_2.dir_exas}"}
+    FileUtils.rm_rf @maint_2.dir_exas
     @maint_2.check_students_dir
     students[0..1].each { |s|
       student_dir = "#{@maint_2.dir_exas}/#{s}"
@@ -515,16 +517,80 @@ class TC_Course < Test::Unit::TestCase
       FileUtils.touch("#{student_dir}/exa.doc")
     }
 
+    # Test md5-sums
+    files_hash = @maint_2.md5_exams
+    assert_equal files_hash, JSON.parse(Label.field_save({course: @maint_2.name, user: 'foo',
+                                                          field: 'exams_here'}).
+                                            sub(/^OK: /, ''))
     assert_equal({'secretaire' => [%w(exa.doc d41d8cd98f00b204e9800998ecf8427e)],
                   'admin' => [%w(exa.doc d41d8cd98f00b204e9800998ecf8427e)],
-                  'surf' => []},
-                 JSON.parse(Label.field_save({course: @maint_2.name, user: 'abc',
-                                              field: 'exams_here'})))
+                  'surf' => []}, files_hash)
 
-    zip = @maint_2.zip_create
-    Zip::File.open( zip ){|f|
-      assert_equal nil, f.read('maint_1210')
+    # Test normal creation of zip-file
+    @maint_2.name = @maint_2.name.sub(/^foo_/, '')
+    dputs(3){"Clearing directory #{@maint_2.dir_exas}"}
+    FileUtils.rm_rf @maint_2.dir_exas
+    @maint_2.check_students_dir
+    students[0..1].each { |s|
+      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      dputs(2) { "Adding a simple doc to #{student_dir}" }
+      FileUtils.touch("#{student_dir}/exa.doc")
     }
+    zip = @maint_2.zip_create(true)
+    Zip::File.open("/tmp/#{zip}") { |f|
+      assert_nothing_raised {
+        f.read('exa-foo_maint_1210/foo_secretaire/exa.doc')
+        f.read('exa-foo_maint_1210/foo_admin/exa.doc')
+      }
+      assert_equal [], JSON.parse( f.read('exa-foo_maint_1210/files_excluded') )
+    }
+
+    # Test ignoring files already there
+    FileUtils.touch("#{@maint_2.dir_exas}/surf/exa.doc")
+    FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa2.doc")
+    zip = @maint_2.zip_create(true, true, files_hash)
+    exams = []
+    Zip::File.open("/tmp/#{zip}") { |zf|
+      zf.each { |f|
+        f.name =~ /\.doc$/ and exams.push f.name
+      }
+      assert_equal %w(secretaire/exa.doc admin/exa.doc),
+                   JSON.parse( zf.read('exa-foo_maint_1210/files_excluded') )
+    }
+    assert_equal %w(exa-foo_maint_1210/foo_secretaire/exa2.doc exa-foo_maint_1210/foo_surf/exa.doc),
+                 exams
+
+    # Test adding files already there but with other md5sum
+    files_hash = @maint_2.md5_exams
+    File.open("#{@maint_2.dir_exas}/surf/exa.doc", 'w') { |f| f.write('hello') }
+    zip = @maint_2.zip_create(true, true, files_hash)
+    exams = []
+    Zip::File.open("/tmp/#{zip}") { |zf|
+      zf.each { |f|
+        f.name =~ /\.doc$/ and exams.push f.name
+      }
+      assert_equal %w(secretaire/exa.doc secretaire/exa2.doc admin/exa.doc),
+                   JSON.parse( zf.read('exa-foo_maint_1210/files_excluded') )
+    }
+    assert_equal %w(exa-foo_maint_1210/foo_surf/exa.doc), exams
+
+    # Test merging of directory with additional (to-be-deleted) files and
+    # copying of files not transferred but locally available
+    files_hash = @maint_2.md5_exams
+    FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa3.doc")
+    FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa5.doc")
+    zip = @maint_2.zip_create(false, true, files_hash)
+    FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa4.doc")
+    FileUtils.rm("#{@maint_2.dir_exas}/secretaire/exa5.doc")
+    @maint_2.zip_read( "/tmp/#{zip}" )
+    assert File.exists?("#{@maint_2.dir_exas}/surf/exa.doc"),
+                        "Didn't restore non-transferred file"
+    assert File.exists?("#{@maint_2.dir_exas}/secretaire/exa3.doc"),
+           "Didn't add transferred file"
+    assert File.exists?("#{@maint_2.dir_exas}/secretaire/exa5.doc"),
+           "Didn't add transferred but deleted file"
+    assert ! File.exists?("#{@maint_2.dir_exas}/secretaire/exa4.doc"),
+           "Didn't delete additional file"
   end
 
   def test_random_id

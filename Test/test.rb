@@ -8,7 +8,7 @@ $LOAD_PATH.push "."
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"
-DEBUG_LVL=2
+DEBUG_LVL=0
 
 require 'QooxView'
 require 'ACQooxView'
