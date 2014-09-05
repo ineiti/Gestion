@@ -1,25 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - client/server
-          - first get a hash of everything stored on the server with its md5-sum,
-            then compare what needs to be copied over
-        - If center-person adds course, it is not visible
 
 BUGS:
         - Synching to server drops files!
-        - CSV-handling:
-            - we need absolutely to revamp the data-handling, either update the
-            CSV-code or move to ActiveRecord
-            - Add flag to CSV-storage so that a new element doesn't involve writing
-             down of all elements
-            - When saving CSV, save in "*.sav", then sync, then rename and sync again
-             mostly with regard to SD-cards that have troubles when writing the CSVs
-             -> this is WAY TO SLOW to do things!!
-            - Add a number of 'backup'-files with ending .0, .1, ..., then saving
-             one after the other. Add a timestamp at the beginning of the file,
-             then start with the youngest.
-                - If the loading fails, try the older file
         - Make LibNet working at least on ArchLinux
           - Network/Connections doesn't show variables
           - think about connections / Provider / Hardware / Others
@@ -52,6 +36,33 @@ UI:
          tabs can be added
 
 FEATURES:
+        - Reporting on file downloads
+        - "Files/"
+            - easy editing
+            - updating in both ways
+        - Add date to Session, so old sessions can be deleted
+        - Rethink CourseTypes:
+          - versioning of coursetypes
+          - CourseServer: changing of label/attestation by course_directors
+          - CourseGrade - add comment to file-uploads, so people know what to
+            upload
+          - adding files to be print by teachers, like exams and others?
+    	- Courses::Days - add other days to the list
+        - client/server:
+          - get course-types from server
+            - fetch course-description from server
+            - Course::Grade - Syncing with server when course-type doesn't exist must
+              return error -> only sync with CourseTypes fetched from server
+          - check for already transmitted documents and transmit one user at
+            the time
+          - CourseDiplomas: display random-id if available
+          - only add center-ids when a course is "certified"
+            - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
+              - send-server: same as synchronize
+              - fetch: to do, adding to courseTabs
+              - download/upload backup: same as synchronize and fetch
+              - import courses from server
+
         - LibNet:
           - Feature: rewrite in Ruby
         - Show what student payed all in CourseDiploma
@@ -67,38 +78,15 @@ FEATURES:
           people are online, else every hour
         - Entities::Person.account_service should be replaced by
           ConfigBase.account_service
-        - Rethink CourseTypes:
-          - versioning of coursetypes
-          - CourseServer: changing of label/attestation by course_directors
-          - CourseGrade - add comment to file-uploads, so people know what to
-            upload
-          - adding files to be print by teachers, like exams and others?
 
         - Put adding of students and printing as background-tasks
-
-        - client/server:
-          - get course-types from server
-            - fetch course-description from server
-            - Course::Grade - Syncing with server when course-type doesn't exist must
-              return error -> only sync with CourseTypes fetched from server
-          - check for already transmitted documents and transmit one user at
-            the time
-          - CourseDiplomas: display random-id if available
-          - only add center-ids when a course is "certified"
 
         - Progression-meter for Report::Executive
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
         - AC: correctly show differing accounts in "check"
-        - CourseType: Add versions
-	-4 Courses::Days - add other days to the list
 
         - add init-script for Gestion to "service gestion restart"
-        - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
-          - send-server: same as synchronize
-          - fetch: to do, adding to courseTabs
-          - download/upload backup: same as synchronize and fetch
-          - import courses from server
 
         - configure better print, libnet, uploadwidget, so that it get's correctly
           addressed with a configuration
@@ -113,7 +101,7 @@ FEATURES:
 
 Programming:
         - Move Gestion::Reports to AfriCompta
-        - CourseStats: whenn adding a course, account_entries is not updated
+        - CourseStats: when adding a course, account_entries is not updated
           -> should probably do a "watch account-changes and update if changed"
             thingie
         - LibNet has concurrency-troubles - use "flock" to mend it:
@@ -254,6 +242,22 @@ To check:
 
 
 ** FIXED **:
+        - P 140904: Storage/CSV
+            - adding flag "changed" to entries and class
+                - test "add_only" - should be OK (tm)
+            - Add flag to CSV-storage so that a new element doesn't involve writing
+             down of all elements -> only with "add_only"-flag
+            - Add a number of 'backup'-files with ending .0, .1, ..., then saving
+             one after the other. Add a timestamp at the beginning of the file,
+             then start with the youngest.
+                - If the loading fails, try the older file
+                - add a YYYYmmddHHMMSS-tag and delete those older than n minutes
+            - When saving CSV, save in "*.sav", then sync, then rename and sync again
+             mostly with regard to SD-cards that have troubles when writing the CSVs
+             -> this is WAY TO SLOW to do things!!
+        - F 140830: client/server
+          - first get a hash of everything stored on the server with its md5-sum,
+            then compare what needs to be copied over
         - B 140828: Entity.method_missing is not really adding methods!
         - B 140828: Sometimes data is not saved!
         - B 140828: Checking why sometimes data is not saved
