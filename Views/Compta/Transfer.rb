@@ -49,11 +49,16 @@ class ComptaTransfer < View
 
   def rpc_list_choice_persons(session, data)
     reply(:empty, :report) +
-        reply(:update, :report => data._persons.report_list(:all))
+        reply(:update, :upto => data._upto ) +
+        reply(:update, :report => data._persons.report_list(:all, data._upto.from_web))
+  end
+
+  def rpc_button_update( session, data )
+    rpc_list_choice_persons( session, data )
   end
 
   def rpc_button_print(session, data)
     send_printer_reply(session, :print, data,
-                       data._persons.report_pdf(:all))
+                       data._persons.report_pdf(:all, data._upto.from_web))
   end
 end
