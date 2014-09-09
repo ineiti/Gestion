@@ -34,7 +34,8 @@ class ComptaTransfer < View
       amount = (other.account_due.total.to_f * 1000).to_i
       log_msg :comptatransfer, "#{session.owner.login_name} gets #{amount} from " +
           "#{other.login_name}"
-      session.owner.get_all_due(other, data._upto.from_web)
+      session.owner.get_all_due(other,
+                                data._upto.date_from_web)
     end
     rpc_update(session)
   end
@@ -49,16 +50,18 @@ class ComptaTransfer < View
 
   def rpc_list_choice_persons(session, data)
     reply(:empty, :report) +
-        reply(:update, :upto => data._upto ) +
-        reply(:update, :report => data._persons.report_list(:all, data._upto.from_web))
+        reply(:update, :upto => data._upto) +
+        reply(:update, :report => data._persons.report_list(:all,
+                                                            data._upto.date_from_web))
   end
 
-  def rpc_button_update( session, data )
-    rpc_list_choice_persons( session, data )
+  def rpc_button_update(session, data)
+    rpc_list_choice_persons(session, data)
   end
 
   def rpc_button_print(session, data)
     send_printer_reply(session, :print, data,
-                       data._persons.report_pdf(:all, data._upto.from_web))
+                       data._persons.report_pdf(:all,
+                                                data._upto.date_from_web))
   end
 end
