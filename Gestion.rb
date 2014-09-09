@@ -167,18 +167,14 @@ else
     $autosave = Thread.new {
       loop {
         begin
-          dputs(2) { 'Starting to save' }
           Entities.save_all
-          dputs(2) { 'Everything is saved' }
         rescue Exception => e
           dputs(0) { "Error: couldn't save all" }
           dputs(0) { "#{e.inspect}" }
           dputs(0) { "#{e.to_s}" }
           puts e.backtrace
         end
-        dputs(2){ 'Going to sleep' }
         sleep get_config(2 * 60, :autosave, :timer)
-        dputs(2){ 'Finished sleeping' }
       }
     }
   end

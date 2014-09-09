@@ -50,19 +50,19 @@ class Usage < Entity
           end
           dputs(4) { "l is now #{l}" }
         }
-        (dp fields).size > 0 ? fields : nil
+        (fields).size > 0 ? fields : nil
       }
     }.compact
   end
 
-  def collect_data( from = Date.today - 7, to = Date.today )
+  def collect_data(from = Date.today - 7, to = Date.today)
     count = Hash.new(0)
-    filter_files.select{|f|
+    filter_files.select { |f|
       f._date and f._date >= from and f._date <= to
-    }.each{|f|
+    }.each { |f|
       count[f._element] += 1
     }
-    count.to_a.sort{|a,b| b[1] <=> a[1] }
+    count.to_a.sort { |a, b| b[1] <=> a[1] }
   end
 
   def self.filter_line(line, filter)
@@ -70,18 +70,18 @@ class Usage < Entity
       when /^s/
         reg, rep = filter.split('/')[1, 2]
         dputs(4) { "Replacing #{reg.inspect} with #{rep.inspect}" }
-        line.sub!(/#{reg}/, rep.to_s)
+        return line.sub(/#{reg}/, rep.to_s)
       when /^g/
-        dputs(4) { "grepping #{filter}" }
+        dputs(4) { "grepping #{filter} on #{line}" }
         if !(line =~ /#{filter[1..-1]}/)
           dputs(4) { "Didn't find - bail out" }
-          line = nil
+          return nil
         end
       when /^v/
         dputs(4) { "grepping -v #{filter}" }
         if line =~ /#{filter[1..-1]}/
           dputs(4) { 'Found it - bail out' }
-          line = nil
+          return nil
         end
     end
     line
@@ -95,7 +95,11 @@ class Usage < Entity
       value = match.shift
       case f
         when /date/
-          {date: Time.strptime(value, arg)}
+          begin
+            {date: Time.strptime(value, arg)}
+          rescue ArgumentError => e
+            {date: Time.now}
+          end
         when /name/
           {name: value}
         when /element/

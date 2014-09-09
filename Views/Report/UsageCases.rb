@@ -27,7 +27,7 @@ class ReportUsageCases < View
       gui_vboxg :nogroup do
         show_list_drop :file_data, '%w(none)', :callback => :file_chosen
         show_text :file_source, :flexwidth => 10, :flexheight => 1
-        show_text :file_filtered, :flexwidth => 10, :flexheight => 10
+        show_text :file_filtered, :flexwidth => 10, :flexheight => 1
       end
     end
   end
@@ -49,6 +49,7 @@ class ReportUsageCases < View
   end
 
   def rpc_update(session)
+    dp 'Updating file_data'
     reply(:empty_only, :file_data) +
         if ul = Usages.match_by_id(session.s_data._usage_list)
           reply(:update, :file_data => ul.fetch_files)

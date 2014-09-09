@@ -54,6 +54,9 @@ class TC_Usage < Test::Unit::TestCase
 
     assert_nil Usage.filter_line(logline, 'vwiki')
     assert_not_nil Usage.filter_line(logline, 'vhtml')
+
+    assert_nil Usage.filter_line(logline, 'gis The')
+    assert_not_nil Usage.filter_line(logline, 'gis the')
   end
 
   def test_filter_field
