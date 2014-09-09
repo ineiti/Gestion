@@ -869,7 +869,7 @@ class Person < Entity
         end
       }
       dputs(3) { "Value is #{value}" }
-      Movements.create("Transfert au comptable", Date.today,
+      Movements.create("Transfert au comptable", date,
                        value, @account_cash, person.account_due_paid)
     end
   end
