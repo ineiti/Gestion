@@ -45,7 +45,7 @@ class Usage < Entity
             end
             ddputs(4) { "l is now #{l}" }
           }
-          ( dp fields ).size > 0 ? fields : nil
+          (dp fields).size > 0 ? fields : nil
         }
       }
     }.flatten.compact
@@ -73,17 +73,20 @@ class Usage < Entity
     line
   end
 
-  def self.filter_field(line, field, regex, arg)
-    ( match = line.match(/#{regex}/) and match.size > 1 ) or return {}
-    ddputs(3){"Found a match: #{match.size} - #{match.inspect}"}
-    value = match[1]
-    case field
-      when /date/
-        {date: Time.strptime(value, arg)}
-      when /name/
-        {name: value}
-      when /element/
-        {element: value}
-    end
+  def self.filter_field(line, field, regex, arg = nil)
+    (match = line.match(/#{regex}/) and match.size > 1) or return {}
+    ddputs(3) { "Found a match: #{match.size} - #{match.inspect}" }
+    match = match[1..-1]
+    field.split(',').map { |f|
+      value = match.shift
+      case f
+        when /date/
+          {date: Time.strptime(value, arg)}
+        when /name/
+          {name: value}
+        when /element/
+          {element: value}
+      end
+    }.inject(:update)
   end
 end
