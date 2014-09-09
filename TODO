@@ -242,6 +242,7 @@ To check:
 
 
 ** FIXED **:
+        - F 140909: Add "upto"-field for transfer
         - P 140904: Storage/CSV
             - adding flag "changed" to entries and class
                 - test "add_only" - should be OK (tm)
