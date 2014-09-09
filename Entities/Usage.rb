@@ -55,6 +55,16 @@ class Usage < Entity
     }
   end
 
+  def collect_data( from = Date.today - 7, to = Date.today )
+    count = Hash.new(0)
+    filter_files.select{|f|
+      f._date and f._date >= from and f._date <= to
+    }.each{|f|
+      count[f._element] += 1
+    }
+    count.to_a.sort{|a,b| b[1] <=> a[1] }
+  end
+
   def self.filter_line(line, filter)
     case filter
       when /^s/

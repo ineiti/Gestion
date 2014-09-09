@@ -1,9 +1,10 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
+        - Synching to server drops files! - some packets are missing?
+            - show transferred/total on server-end
 
 BUGS:
-        - Synching to server drops files!
         - Make LibNet working at least on ArchLinux
           - Network/Connections doesn't show variables
           - think about connections / Provider / Hardware / Others
@@ -36,7 +37,6 @@ UI:
          tabs can be added
 
 FEATURES:
-        - Reporting on file downloads
         - "Files/"
             - easy editing
             - updating in both ways
@@ -242,6 +242,7 @@ To check:
 
 
 ** FIXED **:
+        - F 140909: Reporting on file downloads
         - F 140909: Add "upto"-field for transfer
         - P 140904: Storage/CSV
             - adding flag "changed" to entries and class

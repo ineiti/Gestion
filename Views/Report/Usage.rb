@@ -11,7 +11,8 @@ class ReportUsage < View
         show_button :print
       end
       gui_vbox :nogroup do
-        show_table :usage_report, :headings => [ :Date, :Element, :Count ]
+        show_table :usage_report, :headings => [ :Element, :Count ],
+                   :widths => [300, 70], :height => 300
         show_date :from
         show_date :to
         show_button :update
@@ -20,7 +21,7 @@ class ReportUsage < View
   end
 
   def rpc_update( session )
-    reply( :update, {from: Date.today.to_web, to: Date.today.to_web})
+    reply( :update, {from: (Date.today - 7).to_web, to: Date.today.to_web})
   end
 
   def rpc_print(session, name, data)
@@ -28,6 +29,10 @@ class ReportUsage < View
   end
 
   def rpc_list_choice_usage(session, data)
-
+    return [] unless data._usage
+    table = data._usage.collect_data( data._from.date_from_web,
+                                      data._to.date_from_web )
+    reply( :empty_only, :usage_report ) +
+        reply( :update, :usage_report => table )
   end
 end
