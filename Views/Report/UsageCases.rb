@@ -8,15 +8,15 @@ class ReportUsageCases < View
 
     set_data_class :Usages
 
-    gui_vboxg do
-      gui_hboxg :nogroup do
+    gui_vbox do
+      gui_hbox :nogroup do
         gui_vbox :nogroup do
           vtlp_list :usage_list, 'name'
           #show_entity_usage :usage, :single, :name, :callback => true,
           #                  :flexheight => 1
           show_button :delete, :new
         end
-        gui_vboxg :nogroup do
+        gui_vbox :nogroup do
           show_str :name
           show_str :file_dir
           show_str :file_glob
@@ -27,14 +27,13 @@ class ReportUsageCases < View
       gui_vboxg :nogroup do
         show_list_drop :file_data, '%w(none)', :callback => :file_chosen
         show_text :file_source, :flexwidth => 10, :flexheight => 1
-        show_text :file_filtered, :flexheight => 1
+        show_text :file_filtered, :flexwidth => 10, :flexheight => 10
       end
     end
   end
   
   def rpc_list_choice_file_data( session, data )
-    dp data
-    dp file_data = data._file_data.first
+    file_data = data._file_data.first
     return if file_data == 'none'
     usage_list = Usages.match_by_id( data._usage_list.first ) or return
     file_f = [{}]
@@ -52,7 +51,6 @@ class ReportUsageCases < View
   def rpc_update(session)
     reply(:empty_only, :file_data) +
         if ul = Usages.match_by_id(session.s_data._usage_list)
-          dp ul.name
           reply(:update, :file_data => ul.fetch_files)
         else
           []

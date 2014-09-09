@@ -977,7 +977,7 @@ class Person < Entity
         (from..to).include? m.date
       }
     elsif to
-      ddputs(3){"Fetching only dates upto #{to}"}
+      dputs(3){"Fetching only dates upto #{to}"}
       account.movements.select { |m|
         dputs(3) { "Date is #{m.date.inspect}" }
         m.date <= to

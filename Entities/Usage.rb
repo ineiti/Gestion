@@ -29,18 +29,18 @@ class Usage < Entity
   def filter_files
     fetch_files.sort.reverse.map { |logfile|
       filter_file(logfile)
-    }.flatten.compact
+    }.flatten
   end
 
   def filter_file(logfile)
-    ddputs(3) { "Filtering file #{logfile}" }
+    dputs(3) { "Filtering file #{logfile}" }
     File.open(logfile, 'r') { |f|
       f.readlines.map { |l|
         l.chomp!
         fields = {}
-        ddputs(4) { "Filtering line #{l}" }
+        dputs(4) { "Filtering line #{l}" }
         file_filter.to_s.split(/\n/).each { |filter|
-          ddputs(4) { "Applying filter #{filter.inspect} to #{l.inspect}" }
+          dputs(4) { "Applying filter #{filter.inspect} to #{l.inspect}" }
           case filter
             when /^[sgv]/
               l = Usage.filter_line(l, filter) or break
@@ -48,11 +48,11 @@ class Usage < Entity
               field, regex, arg = filter.split('::')
               fields.merge! Usage.filter_field(l, field[1..-1], regex, arg)
           end
-          ddputs(4) { "l is now #{l}" }
+          dputs(4) { "l is now #{l}" }
         }
         (dp fields).size > 0 ? fields : nil
       }
-    }
+    }.compact
   end
 
   def collect_data( from = Date.today - 7, to = Date.today )
@@ -69,18 +69,18 @@ class Usage < Entity
     case filter
       when /^s/
         reg, rep = filter.split('/')[1, 2]
-        ddputs(4) { "Replacing #{reg.inspect} with #{rep.inspect}" }
+        dputs(4) { "Replacing #{reg.inspect} with #{rep.inspect}" }
         line.sub!(/#{reg}/, rep.to_s)
       when /^g/
-        ddputs(4) { "grepping #{filter}" }
+        dputs(4) { "grepping #{filter}" }
         if !(line =~ /#{filter[1..-1]}/)
-          ddputs(4) { "Didn't find - bail out" }
+          dputs(4) { "Didn't find - bail out" }
           line = nil
         end
       when /^v/
-        ddputs(4) { "grepping -v #{filter}" }
+        dputs(4) { "grepping -v #{filter}" }
         if line =~ /#{filter[1..-1]}/
-          ddputs(4) { 'Found it - bail out' }
+          dputs(4) { 'Found it - bail out' }
           line = nil
         end
     end
@@ -89,7 +89,7 @@ class Usage < Entity
 
   def self.filter_field(line, field, regex, arg = nil)
     (match = line.match(/#{regex}/) and match.size > 1) or return {}
-    ddputs(3) { "Found a match: #{match.size} - #{match.inspect}" }
+    dputs(3) { "Found a match: #{match.size} - #{match.inspect}" }
     match = match[1..-1]
     field.split(',').map { |f|
       value = match.shift
