@@ -28,27 +28,31 @@ class Usage < Entity
 
   def filter_files
     fetch_files.sort.reverse.map { |logfile|
-      ddputs(3) { "Filtering file #{logfile}" }
-      File.open(logfile, 'r') { |f|
-        f.readlines.map { |l|
-          l.chomp!
-          fields = {}
-          ddputs(4) { "Filtering line #{l}" }
-          file_filter.split(/\n/).each { |filter|
-            ddputs(4) { "Applying filter #{filter.inspect} to #{l.inspect}" }
-            case filter
-              when /^[sgv]/
-                l = Usage.filter_line(l, filter) or break
-              when /^f/
-                field, regex, arg = filter.split('::')
-                fields.merge! Usage.filter_field(l, field[1..-1], regex, arg)
-            end
-            ddputs(4) { "l is now #{l}" }
-          }
-          (dp fields).size > 0 ? fields : nil
-        }
-      }
+      filter_file(logfile)
     }.flatten.compact
+  end
+
+  def filter_file(logfile)
+    ddputs(3) { "Filtering file #{logfile}" }
+    File.open(logfile, 'r') { |f|
+      f.readlines.map { |l|
+        l.chomp!
+        fields = {}
+        ddputs(4) { "Filtering line #{l}" }
+        file_filter.to_s.split(/\n/).each { |filter|
+          ddputs(4) { "Applying filter #{filter.inspect} to #{l.inspect}" }
+          case filter
+            when /^[sgv]/
+              l = Usage.filter_line(l, filter) or break
+            when /^f/
+              field, regex, arg = filter.split('::')
+              fields.merge! Usage.filter_field(l, field[1..-1], regex, arg)
+          end
+          ddputs(4) { "l is now #{l}" }
+        }
+        (dp fields).size > 0 ? fields : nil
+      }
+    }
   end
 
   def self.filter_line(line, filter)

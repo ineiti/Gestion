@@ -858,13 +858,15 @@ class Person < Entity
     return true
   end
 
-  def get_all_due(person)
+  def get_all_due(person, date = Date.today)
     if person.account_due && @account_cash
       value = 0
       person.account_due.movements.each { |m|
-        dputs(3) { "Moving #{m.inspect}" }
-        value += m.get_value(person.account_due)
-        m.move_from_to(person.account_due, person.account_due_paid)
+        if m.date <= date
+          dputs(3) { "Moving #{m.inspect}" }
+          value += m.get_value(person.account_due)
+          m.move_from_to(person.account_due, person.account_due_paid)
+        end
       }
       dputs(3) { "Value is #{value}" }
       Movements.create("Transfert au comptable", Date.today,
@@ -974,6 +976,11 @@ class Person < Entity
         dputs(3) { "Date is #{m.date.inspect}" }
         (from..to).include? m.date
       }
+    elsif to
+      account.movements.select { |m|
+        dputs(3) { "Date is #{m.date.inspect}" }
+        m.date <= to
+      }
     else
       account.movements
     end.reverse.collect { |m|
@@ -1000,7 +1007,7 @@ class Person < Entity
             Date.new(date.year, date.month, 1),
             Date.new(date.year, date.month, -1))
       when :all, 4
-        report_list_movements
+        report_list_movements(nil, date)
       when :all_paid, 5
         report_list_movements(nil, nil, account_due_paid)
     end

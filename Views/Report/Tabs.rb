@@ -4,6 +4,5 @@
 class ReportTabs < View
   def layout
     @order = 100
-    @functions_need = [:accounting]
   end
 end

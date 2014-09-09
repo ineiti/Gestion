@@ -355,20 +355,20 @@ class CourseModify < View
   def rpc_list_choice(session, name, args)
     #Calling rpc_list_choice with [["courses", {"courses"=>["base_25"], "name_base"=>["base"]}]]
     dputs(3) { "rpc_list_choice with #{name} - #{args.inspect}" }
-    if name == "courses" and args['courses'].length > 0
+    if name == 'courses' and args['courses'].length > 0
       course_id = args['courses'][0]
       dputs(3) { "replying for course_id #{course_id}" }
       course = Courses.match_by_course_id(course_id)
-      reply("empty", [:students]) +
+      reply('empty', [:students]) +
           update_form_data(course) +
-          reply("update", {:courses => [course_id]})
+          reply('update', {:courses => [course_id]})
       #else
       #  reply("empty", [:students])
     end
   end
 
   def hide_if_center(session)
-    if session.owner.permissions.index("center")
+    if session.owner.permissions.index('center')
       %w( print_student duration dow hours
       classroom ).collect { |e|
         reply(:hide, e)
@@ -383,7 +383,7 @@ class CourseModify < View
         super(session) +
         reply_print(session) +
         hide_if_center(session) +
-        reply_visible(session.owner.has_role("director"), :edit_name)
+        reply_visible(session.owner.has_role('director'), :edit_name)
   end
 
   def update_layout(session)

@@ -54,7 +54,7 @@ class CourseTabs < View
     end
     if ( teachers = Persons.list_teachers ).size > 0
       session.owner.permissions
-      if ( ! session.owner.permissions.index( "center" ) ) ||
+      if ( ! session.owner.permissions.index('center') ) ||
           teachers.select{|t| t =~ /^#{session.owner.login_name}_/}.length > 0
         hide.push :new_teacher
       end
@@ -79,28 +79,28 @@ class CourseTabs < View
     args.to_sym!
     dputs(5){args.inspect}
     if args._ct_name and args._ct_name.size > 0
-      dputs(3){"Creating CourseType"}
+      dputs(3){ 'Creating CourseType' }
       ct = CourseTypes.create( :name => args._ct_name, :duration => args._ct_duration,
         :tests => 1, :description => args._ct_desc, :contents => args._ct_contents,
-        :diploma_type => ["simple"], :output => ["certificate"],
+        :diploma_type => ['simple'], :output => ['certificate'],
         :page_format => [1], :filename => args._ct_filename )
       dputs(1){"New CourseType is #{ct.inspect}"}
     end
     if args._new_room and args._new_room.size > 0
-      dputs(3){"Creating Room"}
+      dputs(3){ 'Creating Room' }
       room = Rooms.create( :name => args._new_room )
       dputs(1){"New room is #{room.inspect}"}
     end
     if args._new_teacher and args._new_teacher.size > 0
-      dputs(3){"Creating Teacher"}
+      dputs(3){ 'Creating Teacher' }
       teacher = Persons.create_person( args._new_teacher, session.owner )
-      teacher.permissions = ["teacher"]
+      teacher.permissions = ['teacher']
       dputs(1){"New teacher #{teacher.inspect}"}
     end
     if args._new_center and args._new_center.size > 0
-      dputs(3){"Creating Center"}
+      dputs(3){ 'Creating Center' }
       center = Persons.create( :complete_name => args._new_center )
-      center.permissions = ["center"]
+      center.permissions = ['center']
       dputs(1){"New center #{center.inspect}"}
     end
     reply( :window_hide ) +
@@ -121,8 +121,8 @@ class CourseTabs < View
       course.delete
     end
 
-    reply( "empty", [:courses] ) +
-      reply( "update", { :courses => Courses.list_courses(session) } ) +
+    reply( :empty, [:courses] ) +
+      reply( :update, { :courses => Courses.list_courses(session) } ) +
       reply( :child, reply(:empty, [:students]) )
   end
 
@@ -132,12 +132,12 @@ class CourseTabs < View
     course = Courses.create_ctype( data['new_ctype'], data['name_date'], 
       session.owner )
     
-    if session.owner.permissions.index( "center" )
+    if session.owner.permissions.index('center')
       course.teacher = course.responsible = Persons.responsibles_raw.select{|p|
         p.login_name =~ /^#{session.owner.login_name}_/ }.first
     else
-      course.teacher = Persons.find_by_permissions( "teacher" )
-      course.responsible = Persons.find_by_permissions( "director" ) || 
+      course.teacher = Persons.find_by_permissions('teacher')
+      course.responsible = Persons.find_by_permissions('director') ||
         course.teacher
     end
 
@@ -160,7 +160,7 @@ class CourseTabs < View
   def rpc_list_choice( session, name, args )
     dputs( 3 ){ "New choice #{name} - #{args.inspect}" }
 
-    reply( :pass_tabs, [ "list_choice", name, args ] ) +
+    reply( :pass_tabs, [ 'list_choice', name, args ] ) +
       reply( :fade_in, :parent_child )
   end
 
@@ -170,6 +170,6 @@ class CourseTabs < View
 
   def rpc_update_view( session, args = nil )
     super( session, args ) +
-      reply( :fade_in, "parent,windows" )
+      reply( :fade_in, 'parent,windows')
   end
 end

@@ -3,7 +3,8 @@ class ReportComptaFlat < View
     @count = 1
     @rpc_update = true
     @order = 30
-    
+    @functions_need = [:accounting]
+
     gui_hboxg do
       gui_vboxg :nogroup do
         show_entity_account_lazy :account_archive, :drop, :callback => true

@@ -4,6 +4,7 @@ class ReportUsageCases < View
   def layout
     @order = 50
     @update = true
+    @functions_needed = [ :usage_report ]
 
     set_data_class :Usages
 
@@ -24,18 +25,35 @@ class ReportUsageCases < View
         end
       end
       gui_vboxg :nogroup do
-        show_list_drop :file_choice, '%w(none)', :callback => :file_chosen
+        show_list_drop :file_data, '%w(none)', :callback => :file_chosen
         show_text :file_source, :flexwidth => 10, :flexheight => 1
         show_text :file_filtered, :flexheight => 1
       end
     end
   end
+  
+  def rpc_list_choice_file_data( session, data )
+    dp data
+    dp file_data = data._file_data.first
+    return if file_data == 'none'
+    usage_list = Usages.match_by_id( data._usage_list.first ) or return
+    file_f = [{}]
+    file_s = if File.exists? file_data
+               file_f = usage_list.filter_file( file_data )
+               File.open( file_data, 'r').readlines[0..100]
+             else
+               ''
+             end
+    reply( :empty_only, %w( file_source file_filtered ) ) +
+        reply( :update, :file_source => file_s ) +
+        reply( :update, :file_filtered => file_f[0..100].join("\n"))
+  end
 
   def rpc_update(session)
-    reply(:empty, :file_choice) +
+    reply(:empty_only, :file_data) +
         if ul = Usages.match_by_id(session.s_data._usage_list)
           dp ul.name
-          reply(:update, :file_choice => ul.fetch_files)
+          reply(:update, :file_data => ul.fetch_files)
         else
           []
         end

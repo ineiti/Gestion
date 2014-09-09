@@ -15,7 +15,7 @@
   rotate 30
   mail root@localhost
   prerotate
-    mail -s "Events from $( hostname )" -a /var/log/gestion/events.log root@localhost
+    echo "Events from logrotate" | mail -s "Events from $( hostname )" -a /var/log/gestion/events.log root@localhost
   endscript
   nocompress
 }

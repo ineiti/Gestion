@@ -6,8 +6,8 @@ class ReportCourse < View
   def layout
     @order = 10
     @update = true
-    @functions_need = [:cashbox]
-    
+    @functions_need = [:cashbox, :accounting]
+
     gui_hboxg do
       gui_vboxg :nogroup do
         show_entity_course_lazy :course, :single, :name, 

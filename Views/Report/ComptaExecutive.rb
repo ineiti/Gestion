@@ -4,7 +4,8 @@ class ReportComptaExecutive < View
   def layout
     @order = 20
     @update = true
-    
+    @functions_need = [:accounting]
+
     gui_hboxg do
       gui_vbox :nogroup do
         gui_vboxg :nogroup do
