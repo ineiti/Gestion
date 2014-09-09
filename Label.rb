@@ -11,7 +11,7 @@ class Label < RPCQooxdooPath
       dputs(4) { "Got query: #{path} - #{query.inspect} - #{addr}" }
 
       if query._field == 'start'
-        log_msg :label, "Got start-query: #{path} - #{addr}"
+        log_msg :label, "Got start-query: #{path} - #{query.inspect} - #{addr}"
         d = JSON.parse(query._data).to_sym
         dputs(3) { "d is #{d.inspect}" }
         if (user = Persons.match_by_login_name(d._user)) and
