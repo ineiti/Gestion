@@ -838,19 +838,19 @@ base_gestion
     dir_exas_tmp = "/tmp/#{name}"
     center_pre = center ? "#{center.login_name}_" : ''
     file = f || "/tmp/#{dir_zip}.zip"
-    dputs(3) { "dir_zip: #{dir_zip}, dir_exas: #{dir_exas}, dir_exas_tmp: #{dir_exas_tmp}, " +
+    ddputs(3) { "dir_zip: #{dir_zip}, dir_exas: #{dir_exas}, dir_exas_tmp: #{dir_exas_tmp}, " +
         "file: #{file}" }
 
     if File.exists?(file) && students
       # Save existing exams in /tmp
       FileUtils.rm_rf dir_exas_tmp
       if File.exists? dir_exas
-        dputs(3) { "Moving #{dir_exas} to /tmp" }
+        ddputs(3) { "Moving #{dir_exas} to /tmp" }
         FileUtils.mv dir_exas, dir_exas_tmp
       end
       FileUtils.mkdir dir_exas
 
-      dputs(3) { "Opening zip-file #{file}" }
+      ddputs(3) { "Opening zip-file #{file}" }
       Zip::File.open(file) { |z|
         students.each { |s|
           dir_zip_student = "#{dir_zip}/#{s}"
@@ -860,22 +860,22 @@ base_gestion
             FileUtils.mkdir(dir_exas_student)
             if (files_student = z.dir.entries(dir_zip_student)).size > 0
               files_student.each { |fs|
-                dputs(3) { "Extracting #{dir_exas_student}/#{fs}" }
+                ddputs(3) { "Extracting #{dir_exas_student}/#{fs}" }
                 z.extract("#{dir_zip_student}/#{fs}", "#{dir_exas_student}/#{fs}")
               }
             end
           rescue Errno::ENOENT => e
-            dputs(3) { "Directory for student #{s} doesn't exist" }
+            ddputs(3) { "Directory for student #{s} doesn't exist" }
           end
         }
         begin
           JSON.parse(z.read("#{dir_zip}/files_excluded")).each { |f|
-            dputs(3) { "Transferring file #{f} from old to new directory" }
+            ddputs(3) { "Transferring file #{f} from old to new directory" }
             FileUtils.cp "#{dir_exas_tmp}/#{center_pre + f}",
                          "#{dir_exas}/#{center_pre + f}"
           }
         rescue Errno::ENOENT => e
-          dputs(3) { 'No files_excluded here' }
+          ddputs(3) { 'No files_excluded here' }
         end
       }
       FileUtils.rm file

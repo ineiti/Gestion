@@ -6,21 +6,21 @@ class Label < RPCQooxdooPath
 
   def self.parse_req(req)
     dputs(4) { "Label: #{req.inspect}" }
-    if req.request_method == "POST"
+    if req.request_method == 'POST'
       path, query, addr = req.path, req.query.to_sym, RPCQooxdooHandler.get_ip(req)
       dputs(4) { "Got query: #{path} - #{query.inspect} - #{addr}" }
-      log_msg :label, "Got query: #{path} - #{addr}"
 
-      if query._field == "start"
+      if query._field == 'start'
+        log_msg :label, "Got start-query: #{path} - #{addr}"
         d = JSON.parse(query._data).to_sym
         dputs(3) { "d is #{d.inspect}" }
         if (user = Persons.match_by_login_name(d._user)) and
             (user.check_pass(d._pass))
-          @@transfers[d._tid] = d.merge(:data => "")
-          return "OK: send field"
+          @@transfers[d._tid] = d.merge(:data => '')
+          return 'OK: send field'
         else
           dputs(3) { "User #{d._user.inspect} with pass #{d._pass.inspect} unknown" }
-          return "Error: authentification"
+          return 'Error: authentification'
         end
       elsif @@transfers.has_key? query._field
         tr = @@transfers[query._field]
@@ -32,7 +32,7 @@ class Label < RPCQooxdooPath
             ret = self.field_save(tr)
           else
             dputs(2) { "Field #{tr._field} transmitted with errors" }
-            ret = "Error: wrong MD5"
+            ret = 'Error: wrong MD5'
           end
           @@transfers.delete query._field
           return ret
@@ -40,10 +40,11 @@ class Label < RPCQooxdooPath
           return "OK: send #{tr._chunks} more chunks"
         end
       end
-      return "Error: must start or use existing field"
+      return 'Error: must start or use existing field'
     else
       path = /.*\/([^\/]*)\/([^\/]*)$/.match(req.path)
       dputs(3) { "Path is #{path.inspect}" }
+      log_msg :label, "Got label-query: #{path.inspect}"
       self.get_student(path[1], path[2])
     end
   end
@@ -69,13 +70,13 @@ class Label < RPCQooxdooPath
                end
       log_msg :grading, "Student #{grade.student.full_name} from #{center} in course #{grade.course.name}"
       if grade.mean >= 10
-        ERB.new(File.open("Files/label.erb") { |f| f.read }).result(binding)
+        ERB.new(File.open('Files/label.erb') { |f| f.read }).result(binding)
       else
-        ERB.new(File.open("Files/label_notpassed.erb") { |f| f.read }).result(binding)
+        ERB.new(File.open('Files/label_notpassed.erb') { |f| f.read }).result(binding)
       end
     else
       log_msg :grading, "Unknown grade-id #{grade_id}"
-      ERB.new(File.open("Files/label_notfound.erb") { |f| f.read }).result(binding)
+      ERB.new(File.open('Files/label_notfound.erb') { |f| f.read }).result(binding)
     end
   end
 
