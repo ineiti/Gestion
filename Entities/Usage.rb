@@ -22,7 +22,7 @@ end
 
 class Usage < Entity
   def fetch_files
-    return [] unless File.exists? file_dir
+    return [] unless File.exists? file_dir.to_s
     Dir.glob("#{file_dir}/#{file_glob}")
   end
 
