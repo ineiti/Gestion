@@ -20,14 +20,14 @@ class ReportUsageCases < View
           show_str :name
           show_str :file_dir
           show_str :file_glob
-          show_text :file_filter, :flexwidth => 10, :flexheight => 1
+          show_text :file_filter, :flexwidth => 1, :flexheight => 1
           show_button :save
         end
       end
       gui_vboxg :nogroup do
         show_list_drop :file_data, '%w(none)', :callback => :file_chosen
-        show_text :file_source, :flexwidth => 10, :flexheight => 1
-        show_text :file_filtered, :flexwidth => 10, :flexheight => 1
+        show_text :file_source, :flexwidth => 1, :flexheight => 1
+        show_text :file_filtered, :flexwidth => 1, :flexheight => 1
       end
     end
   end
