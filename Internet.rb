@@ -89,7 +89,7 @@ module Internet
         end
       }
     else
-      dputs(2) { "Not updating Internet::check_services" }
+      dputs(3) { 'Not updating Internet::check_services' }
     end
   end
 

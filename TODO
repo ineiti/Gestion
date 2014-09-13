@@ -3,6 +3,9 @@
 WORKING:
         - Synching to server drops files! - some packets are missing?
             - show transferred/total on server-end
+        - UsageStat
+            - add handling of .gz-files
+            - doesn't work with Files
 
 BUGS:
         - Make LibNet working at least on ArchLinux
