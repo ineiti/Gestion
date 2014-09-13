@@ -313,14 +313,14 @@ class TC_Course < Test::Unit::TestCase
 
   def test_duration_adds
     dputs(1) { "@maint is #{@maint.inspect}" }
-    @maint.dow = ["lu-me-ve"]
-    @maint.end = "30.01.2012"
+    @maint.dow = ['lu-me-ve']
+    @maint.end = '30.01.2012'
     assert_equal [6, [[/1001/, 0], [/1002/, 2], [/1003/, 4], [/1004/, 7],
                       [/1005/, 9], [/1006/, 11]]],
                  @maint.get_duration_adds
 
-    @maint.dow = ["lu-ve"]
-    @maint.end = "30.01.2012"
+    @maint.dow = ['lu-ve']
+    @maint.end = '30.01.2012'
     assert_equal [10,
                   [[/1001/, 0], [/1002/, 1], [/1003/, 2], [/1004/, 3], [/1005/, 4],
                    [/1006/, 7], [/1007/, 8], [/1008/, 9], [/1009/, 10], [/1010/, 11]]],
@@ -334,9 +334,9 @@ class TC_Course < Test::Unit::TestCase
     @maint_t.diploma_type = [:files]
 
     %x[ rm -rf Exas ]
-    FileUtils.mkdir "Exas"
+    FileUtils.mkdir 'Exas'
 
-    file = @maint_2.zip_create
+    file = @maint_2.zip_create( for_server: false )
     file_tmp = "/tmp/#{file}"
     file_exa_tmp = "/tmp/exa-#{file}"
     assert_not_nil file
@@ -351,7 +351,7 @@ class TC_Course < Test::Unit::TestCase
     Zip::File.open(file_exa_tmp) { |z|
       %w( admin surf ).each { |s|
         p = "exa-#{@maint_2.name}/#{s}"
-        z.file.open("#{p}/first.doc", "w") { |f| f.puts "Hello world" }
+        z.file.open("#{p}/first.doc", "w") { |f| f.puts 'Hello world' }
       }
     }
 
@@ -362,11 +362,11 @@ class TC_Course < Test::Unit::TestCase
       assert File.exists? "#{dir}/first.doc"
     }
     dir = "Exas/#{@maint_2.name}/secretaire"
-    assert !File.exists?(dir)
+    assert File.exists?(dir)
     assert !File.exists?("#{dir}/first.doc")
 
-    assert ["first.doc"], @maint_2.exam_files("admin").join(":")
-    assert [], @maint_2.exam_files("secretaire").join(":")
+    assert ['first.doc'], @maint_2.exam_files('admin').join(':')
+    assert [], @maint_2.exam_files('secretaire').join(':')
   end
 
   def test_label
@@ -536,7 +536,7 @@ class TC_Course < Test::Unit::TestCase
       dputs(2) { "Adding a simple doc to #{student_dir}" }
       FileUtils.touch("#{student_dir}/exa.doc")
     }
-    zip = @maint_2.zip_create(true)
+    zip = @maint_2.zip_create
     Zip::File.open("/tmp/#{zip}") { |f|
       assert_nothing_raised {
         f.read('exa-foo_maint_1210/foo_secretaire/exa.doc')
@@ -548,7 +548,7 @@ class TC_Course < Test::Unit::TestCase
     # Test ignoring files already there
     FileUtils.touch("#{@maint_2.dir_exas}/surf/exa.doc")
     FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa2.doc")
-    zip = @maint_2.zip_create(true, true, files_hash)
+    zip = @maint_2.zip_create(md5sums: files_hash)
     exams = []
     Zip::File.open("/tmp/#{zip}") { |zf|
       zf.each { |f|
@@ -563,7 +563,7 @@ class TC_Course < Test::Unit::TestCase
     # Test adding files already there but with other md5sum
     files_hash = @maint_2.md5_exams
     File.open("#{@maint_2.dir_exas}/surf/exa.doc", 'w') { |f| f.write('hello') }
-    zip = @maint_2.zip_create(true, true, files_hash)
+    zip = @maint_2.zip_create(md5sums: files_hash)
     exams = []
     Zip::File.open("/tmp/#{zip}") { |zf|
       zf.each { |f|
@@ -579,7 +579,7 @@ class TC_Course < Test::Unit::TestCase
     files_hash = @maint_2.md5_exams
     FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa3.doc")
     FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa5.doc")
-    zip = @maint_2.zip_create(false, true, files_hash)
+    zip = @maint_2.zip_create(for_server: false, md5sums: files_hash)
     FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa4.doc")
     FileUtils.rm("#{@maint_2.dir_exas}/secretaire/exa5.doc")
     @maint_2.zip_read( "/tmp/#{zip}" )
@@ -593,6 +593,35 @@ class TC_Course < Test::Unit::TestCase
            "Didn't delete additional file"
   end
 
+  def test_sync_exams
+    students = %w( secretaire admin surf )
+    @maint_2.students = students
+    @port = 3302
+    @maint_t.data_set_hash({:output => ['label'],
+                            :central_host => "http://localhost:#{@port}/label", :filename => ['label.odg'],
+                            :name => 'it-101',
+                            :diploma_type => ['accredited']})
+
+    @maint_2.name = @maint_2.name.sub(/^foo_/, '')
+    dputs(3){"Clearing directory #{@maint_2.dir_exas}"}
+    FileUtils.rm_rf @maint_2.dir_exas
+    @maint_2.check_students_dir
+    students[0..1].each { |s|
+      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      dputs(2) { "Adding a simple doc to #{student_dir}" }
+      FileUtils.touch("#{student_dir}/exa.doc")
+    }
+
+    main = Thread.new {
+      QooxView::startWeb(@port)
+    }
+
+    ConfigBase.add_function :course_server
+    @maint_2.sync_do
+
+    main.kill
+  end
+
   def test_random_id
     @port = 3302
     main = Thread.new {
@@ -603,7 +632,7 @@ class TC_Course < Test::Unit::TestCase
     cname = "#{@center.login_name}_"
 
     @maint_t.data_set_hash({:output => ['label'],
-                            :central_host => "http://localhost:#{@port}/label", :filename => ["label.odg"],
+                            :central_host => "http://localhost:#{@port}/label", :filename => ['label.odg'],
                             :name => 'it-101',
                             :diploma_type => ['accredited']})
 
@@ -684,23 +713,23 @@ class TC_Course < Test::Unit::TestCase
     dputs(1) { @center.inspect }
     dputs(1) { Persons.find_by_permissions(:center).inspect }
     assert @it_101.sync_do
-    assert_equal(
-        "<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>" +
-            "<li>Transferring course: OK</li><li>Transferring exams: OK</li>It is finished!",
+    assert_equal( '<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>' +
+                      '<li>Transferring course: OK</li><li>Demander ce qui existe déjà: OK</li>' +
+                      '<li>Transferring exams: OK</li>It is finished!',
         @it_101.sync_state)
 
     @center.password_plain = ""
 
     assert !@it_101.sync_do
     assert_equal(
-        "<li>Transferring responsibles: Error: authentification",
+        '<li>Transferring responsibles: Error: authentification',
         @it_101.sync_state)
 
     @center.password = ""
     assert @it_101.sync_do
-    assert_equal(
-        "<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>" +
-            "<li>Transferring course: OK</li><li>Transferring exams: OK</li>It is finished!",
+    assert_equal( '<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>' +
+                      '<li>Transferring course: OK</li><li>Demander ce qui existe déjà: OK</li>' +
+                      '<li>Transferring exams: OK</li>It is finished!',
         @it_101.sync_state)
 
     main.kill

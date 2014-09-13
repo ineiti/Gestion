@@ -3,7 +3,7 @@ class ReportUsage < View
   def layout
     @order = 60
     @update = true
-    @functions_needed = [:usage_report]
+    @functions_need = [:usage_report]
 
     gui_hbox do
       gui_vbox :nogroup do

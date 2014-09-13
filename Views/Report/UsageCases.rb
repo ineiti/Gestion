@@ -4,7 +4,7 @@ class ReportUsageCases < View
   def layout
     @order = 50
     @update = true
-    @functions_needed = [ :usage_report ]
+    @functions_need = [ :usage_report ]
 
     set_data_class :Usages
 

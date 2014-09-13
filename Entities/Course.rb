@@ -780,13 +780,18 @@ base_gestion
   # files over.
   # The name of the zip-file is different from the directory-name, so that the
   # upload is less error-prone.
-  def zip_create(for_server = false, include_files = true, md5sums = {})
+  # @param [Object] for_server
+  # @param [Object] include_files
+  # @param [Object] md5sums
+  # @param [Object] users
+  def zip_create(for_server: true, include_files: true, md5sums: {},
+                 choice: '.*')
     pre = for_server ? center.login_name + '_' : ''
     dir = "exa-#{pre}#{name}"
     file = "#{pre}#{name}.zip"
     tmp_file = "/tmp/#{file}"
     dputs(4) { "for_server:#{for_server} - include_files:#{include_files} " +
-        "md5sums:#{md5sums.inspect}" }
+        "md5sums:#{md5sums.inspect} - choice:#{choice.inspect}" }
 
     if students and students.size > 0
       File.exists?(tmp_file) and FileUtils.rm(tmp_file)
@@ -794,7 +799,7 @@ base_gestion
         z.mkdir dir
         dputs(3) { "Students is #{students.inspect}" }
         files_excluded = []
-        students.each { |s|
+        students.select { |s| s =~ /#{choice}/ }.each { |s|
           p = "#{dir}/#{pre}#{s}"
           dputs(3) { "Creating #{p}" }
           z.mkdir(p)
@@ -836,7 +841,6 @@ base_gestion
     dir_zip = "exa-#{name.sub(/^#{center}_/, '')}"
     dir_exas = @proxy.dir_exas + "/#{name}"
     dir_exas_tmp = "/tmp/#{name}"
-    center_pre = center ? "#{center.login_name}_" : ''
     file = f || "/tmp/#{dir_zip}.zip"
     dputs(3) { "dir_zip: #{dir_zip}, dir_exas: #{dir_exas}, dir_exas_tmp: #{dir_exas_tmp}, " +
         "file: #{file}" }
@@ -846,6 +850,7 @@ base_gestion
       FileUtils.rm_rf dir_exas_tmp
       if File.exists? dir_exas
         dputs(3) { "Moving #{dir_exas} to /tmp" }
+        dputs(3) { "#{dir_exas} is " + Dir.glob("#{dir_exas}/**/*").join(' ') }
         FileUtils.mv dir_exas, dir_exas_tmp
       end
       FileUtils.mkdir dir_exas
@@ -869,6 +874,8 @@ base_gestion
           end
         }
         begin
+          center_pre = ConfigBase.has_function?(:course_server) ?
+              "#{center.login_name}_" : ''
           JSON.parse(z.read("#{dir_zip}/files_excluded")).each { |f|
             dputs(3) { "Transferring file #{f} from old to new directory" }
             FileUtils.cp "#{dir_exas_tmp}/#{center_pre + f}",
@@ -940,7 +947,7 @@ base_gestion
       rescue Timeout::Error
         dputs(2) { 'Timeout occured' }
         err = 'Error Timeout occured'
-      rescue ECONNRESET
+      rescue Errno::ECONNRESET
         dputs(2) { 'Connection reset' }
         err = 'Error - connection reset'
       end
@@ -985,7 +992,7 @@ base_gestion
   end
 
   def sync_do(slow = false)
-    @sync_state = sync_s = ""
+    @sync_state = sync_s = ''
     dputs(3) { @sync_state }
     slow and sleep 3
 
@@ -998,6 +1005,7 @@ base_gestion
     }.compact.to_json, slow)
     @sync_state += ret
     if ret =~ /^Error:/
+      dputs(2){"Error is #{ret}"}
       return false
     end
     @sync_state = sync_s += 'OK</li>'
@@ -1071,7 +1079,10 @@ base_gestion
       @sync_state = sync_s += 'OK</li>'
     end
 
-    if file = zip_create(true, true, remote_exams)
+    local_exams = md5_exams
+    ddputs(3){"Remote: #{remote_exams.inspect}"}
+    ddputs(3){"Local: #{local_exams.inspect}"}
+    if file = zip_create(md5sums: remote_exams)
       dputs(4) { 'Exams - go' }
       @sync_state = sync_s += '<li>Transferring exams: '
       file = "/tmp/#{file}"
@@ -1342,7 +1353,8 @@ base_gestion
   end
 
   def md5_exams
-    center_pre = center ? "#{center.login_name}_" : ''
+    center_pre = ConfigBase.has_function?(:course_server) ?
+        "#{center.login_name}_" : ''
     dputs(3) { "Fetching existing files with center -#{center_pre}-" }
     Hash[students.map { |s|
       [s.sub(/^#{center_pre}/, ''),

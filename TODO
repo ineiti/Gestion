@@ -2,10 +2,11 @@
 
 WORKING:
         - Synching to server drops files! - some packets are missing?
+            - transfer one user at the time
             - show transferred/total on server-end
         - UsageStat
             - add handling of .gz-files
-            - doesn't work with Files
+            - doesn't work with Files from buzz
 
 BUGS:
         - Make LibNet working at least on ArchLinux
@@ -245,6 +246,8 @@ To check:
 
 
 ** FIXED **:
+        - B 140913: usagestats are always shown - wrong header
+        - B 140913: error in test using zip_read - wrong adding of course-directory
         - F 140909: Reporting on file downloads
         - F 140909: Add "upto"-field for transfer
         - P 140904: Storage/CSV
