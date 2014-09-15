@@ -49,7 +49,6 @@ class ReportUsageCases < View
   end
 
   def rpc_update(session)
-    dp 'Updating file_data'
     reply(:empty_only, :file_data) +
         if ul = Usages.match_by_id(session.s_data._usage_list)
           reply(:update, :file_data => ul.fetch_files)

@@ -2,6 +2,8 @@
 # This class only holds the configuration necessary to fetch
 # all data from the files
 
+require 'zlib'
+
 class Usages < Entities
   def setup_data
     value_str :name
@@ -32,26 +34,50 @@ class Usage < Entity
     }.flatten
   end
 
+  def readlines(file)
+    File.open(file, 'r') { |f|
+      if file =~ /gz$/
+        gz = Zlib::GzipReader.new(f)
+        result = gz.readlines
+      else
+        f.readlines
+      end
+    }
+  end
+
   def filter_file(logfile)
-    dputs(3) { "Filtering file #{logfile}" }
-    File.open(logfile, 'r') { |f|
-      f.readlines.map { |l|
-        l.chomp!
-        fields = {}
-        dputs(4) { "Filtering line #{l}" }
-        file_filter.to_s.split(/\n/).each { |filter|
-          dputs(4) { "Applying filter #{filter.inspect} to #{l.inspect}" }
-          case filter
-            when /^[sgv]/
-              l = Usage.filter_line(l, filter) or break
-            when /^f/
-              field, regex, arg = filter.split('::')
-              fields.merge! Usage.filter_field(l, field[1..-1], regex, arg)
-          end
-          dputs(4) { "l is now #{l}" }
+    ddputs(3) { "Filtering file #{logfile}" }
+    filters = file_filter.to_s.split(/\n/)
+    case filters.first
+      when /^g/
+        reg = /#{filters.shift[1..-1]}/
+        readlines(logfile).select { |l|
+          l =~ reg
         }
-        (fields).size > 0 ? fields : nil
+      when /^v/
+        reg = /#{filters.shift[1..-1]}/
+        f.readlines(logfile).select { |l|
+          !l =~ reg
+        }
+      else
+        log_msg :Usage, "Attention: #{filters.join(':')} doesn't start with grep!"
+        readlines(logfile)
+    end.map { |l|
+      l.chomp!
+      fields = {}
+      dputs(4) { "Filtering line #{l}" }
+      file_filter.to_s.split(/\n/).each { |filter|
+        dputs(4) { "Applying filter #{filter.inspect} to #{l.inspect}" }
+        case filter
+          when /^[sgv]/
+            l = Usage.filter_line(l, filter) or break
+          when /^f/
+            field, regex, arg = filter.split('::')
+            fields.merge! Usage.filter_field(l, field[1..-1], regex, arg)
+        end
+        dputs(4) { "l is now #{l}" }
       }
+      (fields).size > 0 ? fields : nil
     }.compact
   end
 

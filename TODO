@@ -1,12 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - Synching to server drops files! - some packets are missing?
-            - transfer one user at the time
-            - show transferred/total on server-end
-        - UsageStat
-            - add handling of .gz-files
-            - doesn't work with Files from buzz
+        - make Views::Reports::Usage faster by not re-calculating everything when
+            changing dates and duration
 
 BUGS:
         - Make LibNet working at least on ArchLinux
@@ -28,19 +24,12 @@ BUGS:
 Security:
 
 UI:
-        - Internet: bizarre "kicked ... because of inactivity"
-        - Slowness in UI
-          - 140509: misuse of search_all is logged now
-          - 140509: most very slow occurrences (Persons.search_all) are removed
-          - check Log.search_all occurrences
-          - CourseTabs still very slow for startup
-          - Slowness in CourseGrade when saving students
-            - don't "update" uidnumber, sn and givenname if not needed
-
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
 
 FEATURES:
+        - LibNet:
+          - Feature: rewrite in Ruby
         - "Files/"
             - easy editing
             - updating in both ways
@@ -67,8 +56,6 @@ FEATURES:
               - download/upload backup: same as synchronize and fetch
               - import courses from server
 
-        - LibNet:
-          - Feature: rewrite in Ruby
         - Show what student payed all in CourseDiploma
         - /etc/gestion.conf - bash file for very basic configuration
           - BASE=/opt/profeda
@@ -246,6 +233,20 @@ To check:
 
 
 ** FIXED **:
+        - UI140915: Slowness in UI
+          - 140509: misuse of search_all is logged now
+          - 140509: most very slow occurrences (Persons.search_all) are removed
+          - check Log.search_all occurrences
+          - CourseTabs still very slow for startup
+          - Slowness in CourseGrade when saving students
+            - don't "update" uidnumber, sn and givenname if not needed
+        - B 140915: Internet: bizarre "kicked ... because of inactivity"
+        - B 140915: UsageStat
+            - add handling of .gz-files
+            - doesn't work with Files from buzz
+        - B 140915: Synching to server drops files! - some packets are missing?
+            - transfer one user at the time
+            - show transferred/total on server-end
         - B 140913: usagestats are always shown - wrong header
         - B 140913: error in test using zip_read - wrong adding of course-directory
         - F 140909: Reporting on file downloads

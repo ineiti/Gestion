@@ -1,4 +1,5 @@
 require 'test/unit'
+require 'benchmark'
 
 class TC_Usage < Test::Unit::TestCase
 
@@ -83,5 +84,81 @@ class TC_Usage < Test::Unit::TestCase
                  Usage.filter_field("#{name}:#{element}",
                                     'name,element', '(.*):(.*)'))
 
+  end
+
+  def test_speed
+    dputs_func
+
+    results = ''
+    dputs(1) { 'Benchmarking different search strategies' }
+    dputs(1) { '   total   description' }
+    dputs(1) { Benchmark.measure('finding with grep') {
+      results = %x[ grep "GET /Files" reports/report_long ]
+    }.format('%t  %n') }
+    assert_equal 31, results.split("\n").count
+
+    dputs(1) { Benchmark.measure('finding with grep') {
+      results = %x[ grep "GET /Files" reports/report_long ]
+    }.format('%t  %n') }
+    assert_equal 31, results.split("\n").count
+
+    results = []
+    dputs(1) { Benchmark.measure('Searching with =~') {
+      File.open('reports/report_long', 'r') { |f|
+        f.readlines.each { |l|
+          results.push l if l =~ /GET \/Files/
+        }
+      }
+    }.format('%t  %n') }
+    assert_equal 31, results.length
+
+    results = []
+    dputs(1) { Benchmark.measure('Searching with =~ and variable') {
+      File.open('reports/report_long', 'r') { |f|
+        term = /GET \/Files/
+        f.readlines.each { |l|
+          results.push l if l =~ term
+        }
+      }
+    }.format('%t  %n') }
+    assert_equal 31, results.length
+
+    results = []
+    grep = 'gGET /Files'
+    dputs(1) { Benchmark.measure('Searching with =~ in case') {
+      File.open('reports/report_long', 'r') { |f|
+        f.readlines.each { |l|
+          case grep
+            when /^g/
+              results.push l if l =~ /GET \/Files/
+          end
+        }
+      }
+    }.format('%t  %n') }
+    assert_equal 31, results.length
+
+    results = []
+    dputs(1) { Benchmark.measure('Searching with index') {
+      File.open('reports/report_long', 'r') { |f|
+        f.readlines.each { |l|
+          results.push l if l.index('GET /Files')
+        }
+      }
+    }.format('%t  %n') }
+    assert_equal 31, results.length
+
+    results = []
+    u = Usages.create( name: 'test', file_dir: 'reports', file_glob: 'report_long',
+                       file_filter: "gGET /Files\nfname::(.*)")
+    dputs(1) { Benchmark.measure('Searching with Usages') {
+      results = u.filter_file( 'reports/report_long')
+    }.format('%t  %n') }
+    assert_equal 31, results.length
+
+    results = []
+    dputs(1) { Benchmark.measure('Searching with Usages a gzip-file') {
+      results = u.filter_file( 'reports/report_long.gz')
+    }.format('%t  %n') }
+    assert_equal 31, results.length
   end
 end

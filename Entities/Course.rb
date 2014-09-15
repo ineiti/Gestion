@@ -785,13 +785,14 @@ base_gestion
   # @param [Object] md5sums
   # @param [Object] users
   def zip_create(for_server: true, include_files: true, md5sums: {},
-                 choice: '.*')
+                 size_exams: -1, files_added: nil)
+    dputs_func
     pre = for_server ? center.login_name + '_' : ''
     dir = "exa-#{pre}#{name}"
     file = "#{pre}#{name}.zip"
     tmp_file = "/tmp/#{file}"
-    dputs(4) { "for_server:#{for_server} - include_files:#{include_files} " +
-        "md5sums:#{md5sums.inspect} - choice:#{choice.inspect}" }
+    dputs(2) { "for_server:#{for_server} - include_files:#{include_files} " +
+        "md5sums:#{md5sums.inspect} - size_exams:#{size_exams.inspect}" }
 
     if students and students.size > 0
       File.exists?(tmp_file) and FileUtils.rm(tmp_file)
@@ -799,35 +800,43 @@ base_gestion
         z.mkdir dir
         dputs(3) { "Students is #{students.inspect}" }
         files_excluded = []
-        students.select { |s| s =~ /#{choice}/ }.each { |s|
+        students.sort.each { |s|
           p = "#{dir}/#{pre}#{s}"
           dputs(3) { "Creating #{p}" }
           z.mkdir(p)
           if include_files
             dputs(3) { "Searching in #{dir_exas}/#{s}" }
-            Dir.glob("#{dir_exas}/#{s}/*").each { |exa_f|
+            Dir.glob("#{dir_exas}/#{s}/*").sort.each { |exa_f|
+              exa_md5 = Digest::MD5.file(exa_f).hexdigest
               file_add = true
               filename = exa_f.sub(/.*\//, '')
               if md5sums.has_key?(s)
                 md5sums[s].each { |f, md5|
-                  if (f == filename) && (md5 == Digest::MD5.file(exa_f).hexdigest)
+                  if (f == filename) && (md5 == exa_md5)
                     dputs(3) { "Found file #{filename} to be excluded" }
                     file_add = false
                     files_excluded.push exa_f.sub(/^#{dir_exas}\//, '')
                   end
                 }
               end
-              if file_add
-                dputs(3) { "Adding file #{exa_f}" }
+              if file_add and size_exams != 0
+                dputs(2) { "Adding file #{exa_f} with size #{size_exams}" }
+                files_added and files_added.push [s, File.basename(exa_f), exa_md5]
                 z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
-                  f.write File.open(exa_f) { |ef| ef.read }
+                  f.write File.open(exa_f) { |ef|
+                    content = ef.read
+                    dputs(3) { "Size of file is #{content.size}" }
+                    size_exams -= [content.size, size_exams.abs].min
+                    content
+                  }
                 }
               end
             }
-            z.file.open("#{dir}/files_excluded", 'w') { |f|
-              f.write files_excluded.to_json
-            }
           end
+        }
+        dputs(2) { "Files_excluded are #{files_excluded.inspect}" }
+        z.file.open("#{dir}/files_excluded", 'w') { |f|
+          f.write files_excluded.to_json
         }
       }
       return file
@@ -956,7 +965,6 @@ base_gestion
   end
 
   def sync_transfer(field, transfer = '', slow = false, existing = nil)
-    ss = @sync_state
     block_size = 4096
     transfer_md5 = Digest::MD5.hexdigest(transfer)
     if transfer_md5 == existing
@@ -976,6 +984,7 @@ base_gestion
                                     :user => center.login_name, :pass => center.password_plain,
                                     :course => name}.to_json)
       return ret if ret =~ /^Error:/
+      ss = @sync_state
       t_array.each { |t|
         @sync_state = "#{ss} #{((pos+1) * 100 / t_array.length).floor}%"
         dputs(3) { @sync_state }
@@ -1005,7 +1014,7 @@ base_gestion
     }.compact.to_json, slow)
     @sync_state += ret
     if ret =~ /^Error:/
-      dputs(2){"Error is #{ret}"}
+      dputs(2) { "Error is #{ret}" }
       return false
     end
     @sync_state = sync_s += 'OK</li>'
@@ -1080,11 +1089,11 @@ base_gestion
     end
 
     local_exams = md5_exams
-    ddputs(3){"Remote: #{remote_exams.inspect}"}
-    ddputs(3){"Local: #{local_exams.inspect}"}
-    if file = zip_create(md5sums: remote_exams)
+    files = zip_create_chunks(local_exams, remote_exams)
+    files.each { |file|
       dputs(4) { 'Exams - go' }
-      @sync_state = sync_s += '<li>Transferring exams: '
+      @sync_state = sync_s + "<li>Transferring exams " +
+          "#{files.index(file) + 1}/#{files.count}: "
       file = "/tmp/#{file}"
       dputs(3) { "Exa-file is #{file}" }
       ret = sync_transfer(:exams, File.open(file) { |f| f.read }, slow)
@@ -1092,12 +1101,38 @@ base_gestion
       if ret =~ /^Error:/
         return false
       end
-      @sync_state = sync_s += 'OK</li>'
-    end
+    }
+    @sync_state = sync_s += '<li>Transferring exams: OK</li>'
 
     @sync_state = sync_s += 'It is finished!'
     dputs(3) { @sync_state }
     return true
+  end
+
+  def sort_md5s(m)
+    m.map { |k, v| {k => v.sort { |a, b| a[0] <=> b[0] }} }
+  end
+
+  def zip_create_chunks(local, remote)
+    dputs_func
+    files = []
+    while (sort_md5s(local) != sort_md5s(remote))
+      fa = []
+      dputs(3) { "Remote: #{remote.inspect}" }
+      dputs(3) { "Local: #{local.inspect}" }
+      zipfile = zip_create(md5sums: remote, size_exams: ConfigBase.max_upload_size.to_i,
+                           files_added: fa)
+      zipfile_cnt = "#{zipfile.chomp('.zip')}-#{files.size}.zip"
+      FileUtils.mv "/tmp/#{zipfile}", "/tmp/#{zipfile_cnt}"
+      files.push zipfile_cnt
+      dputs(3) { "Zip-file #{files.last} has files added #{fa.inspect}" }
+      fa.each { |s, f, md5|
+        dputs(3) { "Found student #{s} with file #{f} and md5 #{md5} in zip" }
+        remote[s] ||= []
+        remote[s].push [f, md5]
+      }
+    end
+    files
   end
 
   def sync_start

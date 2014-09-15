@@ -254,7 +254,7 @@ class CourseGrade < View
       course.sync_start
 
       reply( :window_show, :sync ) +
-        reply( :auto_update, -5 ) +
+        reply( :auto_update, -1 ) +
         rpc_update_with_values( session, data )
     else
       reply( :window_show, :sync ) +
