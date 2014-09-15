@@ -81,9 +81,13 @@ class Usage < Entity
     }.compact
   end
 
+  def filter_files_cache
+    @filter_data ||= filter_files
+  end
+
   def collect_data(from = Date.today - 7, to = Date.today)
     count = Hash.new(0)
-    filter_files.select { |f|
+    filter_files_cache.select { |f|
       f._date and f._date >= from and f._date <= to
     }.each { |f|
       count[f._element] += 1
