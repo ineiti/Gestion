@@ -37,7 +37,8 @@ $lib_net = LibNet.new( true )
 
 QooxView.init( '../Entities', '../Views' )
 
-tests = %w( login view tasks internet info course person )
+tests = %w( compta configbase course info internet login person qvinfo
+            report share sms tasks usage view )
 #tests = %w( sms )
 #tests = %w( person )
 #tests = %w( configbase )

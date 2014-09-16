@@ -5,15 +5,13 @@ $LOAD_PATH.push('../QooxView', '.', '../AfriCompta', '../LibNet',
 Encoding.default_external = Encoding::UTF_8
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
-# N'Djaména, Tchad. The following modules shall be covered:
-# - Login: - for payable laptop web-access
-#          - for students
+# N'Djaména, Tchad.
 
 VERSION_GESTION='1.6.0'
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
-CONFIG_FILE="config.yaml"
+CONFIG_FILE='config.yaml'
 if not FileTest.exists? CONFIG_FILE
   puts "Config-file doesn't exist"
   puts 'Do you want me to copy a standard one? [Y/n] '
@@ -46,7 +44,7 @@ begin
   require 'Info'
   require 'Label'
   require 'GetDiplomas'
-  require 'SMScontrol'
+  require 'SMSinfo'
   require 'ACQooxView'
   ACQooxView.load_entities
 rescue StorageLoadError
@@ -205,12 +203,12 @@ else
     $sms_control = Thread.new {
       loop {
         begin
-          SMScontrol.check_connection
-          SMScontrol.check_sms
-          dputs(2) { SMScontrol.state_to_s }
+          Network::SMScontrol.check_connection
+          Network::SMScontrol.check_sms
+          dputs(2) { Network::SMScontrol.state_to_s }
           sleep 10
         rescue Exception => e
-          dputs(0) { 'Error in SMS.rb' }
+          dputs(0) { 'Error with SMScontrol' }
           dputs(0) { "#{e.inspect}" }
           dputs(0) { "#{e.to_s}" }
           puts e.backtrace

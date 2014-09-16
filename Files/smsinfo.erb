@@ -1,4 +1,4 @@
-<DOCTYPE html  "-//W3C//DTD  1.0 //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<DOCTYPE html "-//W3C//DTD  1.0 //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -63,11 +63,11 @@
 
   <ul>
     <li>Modem is 
-      <%= SMScontrol.modem ? "present" : "MISSING" %></li>
+      <%= Network::SMScontrol.modem ? "present" : "MISSING" %></li>
     <li>Internet is
-      <%= SMScontrol.is_connected ? 'CONNECTED' : 'disconnected' %></li>
-    <li>Promotion used: <%= SMScontrol.state_traffic / 1000 %>k /
-      <%= SMScontrol.max_traffic / 1000 %>k
+      <%= Network::SMScontrol.is_connected ? 'CONNECTED' : 'disconnected' %></li>
+    <li>Promotion used: <%= Network::SMScontrol.state_traffic / 1000 %>k /
+      <%= Network::SMScontrol.max_traffic / 1000 %>k
     </li>
     <li>Last SMS received:
       <ul>

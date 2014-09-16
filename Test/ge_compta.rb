@@ -1,5 +1,5 @@
 require 'test/unit'
-require 'ftools'
+#require 'FileUtils'
 
 
 class TC_Compta < Test::Unit::TestCase
