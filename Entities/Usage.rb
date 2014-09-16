@@ -46,7 +46,7 @@ class Usage < Entity
   end
 
   def filter_file(logfile)
-    ddputs(3) { "Filtering file #{logfile}" }
+    dputs(3) { "Filtering file #{logfile}" }
     filters = file_filter.to_s.split(/\n/)
     case filters.first
       when /^g/

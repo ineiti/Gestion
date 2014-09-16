@@ -19,6 +19,9 @@ class ConfigBases < Entities
     @@functions_conflict = [ [:course_server, :course_client] ]
   end
 
+  def migration_3(c)
+    c._max_upload_size = 1_000_000
+  end
   
   def migration_2( c )
     dputs(3){"Migrating in: #{c.inspect} - #{get_config(true, :LibNet, :simulation ).inspect}"}

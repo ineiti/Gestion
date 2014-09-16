@@ -554,7 +554,7 @@ class TC_Course < Test::Unit::TestCase
       zf.each { |f|
         f.name =~ /\.doc$/ and exams.push f.name
       }
-      assert_equal %w(secretaire/exa.doc admin/exa.doc),
+      assert_equal %w(admin/exa.doc secretaire/exa.doc),
                    JSON.parse(zf.read('exa-foo_maint_1210/files_excluded'))
     }
     assert_equal %w(exa-foo_maint_1210/foo_secretaire/exa2.doc exa-foo_maint_1210/foo_surf/exa.doc),
@@ -569,7 +569,7 @@ class TC_Course < Test::Unit::TestCase
       zf.each { |f|
         f.name =~ /\.doc$/ and exams.push f.name
       }
-      assert_equal %w(secretaire/exa.doc secretaire/exa2.doc admin/exa.doc),
+      assert_equal %w( admin/exa.doc secretaire/exa.doc secretaire/exa2.doc),
                    JSON.parse(zf.read('exa-foo_maint_1210/files_excluded'))
     }
     assert_equal %w(exa-foo_maint_1210/foo_surf/exa.doc), exams
@@ -600,7 +600,6 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_sync_exams
-    dputs_func
     students = %w( admin secretaire surf )
     @maint_2.students = students
 

@@ -786,7 +786,6 @@ base_gestion
   # @param [Object] users
   def zip_create(for_server: true, include_files: true, md5sums: {},
                  size_exams: -1, files_added: nil)
-    dputs_func
     pre = for_server ? center.login_name + '_' : ''
     dir = "exa-#{pre}#{name}"
     file = "#{pre}#{name}.zip"
@@ -1114,14 +1113,15 @@ base_gestion
   end
 
   def zip_create_chunks(local, remote)
-    dputs_func
     files = []
-    while (sort_md5s(local) != sort_md5s(remote))
+    loop {
       fa = []
       dputs(3) { "Remote: #{remote.inspect}" }
       dputs(3) { "Local: #{local.inspect}" }
       zipfile = zip_create(md5sums: remote, size_exams: ConfigBase.max_upload_size.to_i,
                            files_added: fa)
+      fa.length == 0 and return files
+
       zipfile_cnt = "#{zipfile.chomp('.zip')}-#{files.size}.zip"
       FileUtils.mv "/tmp/#{zipfile}", "/tmp/#{zipfile_cnt}"
       files.push zipfile_cnt
@@ -1131,8 +1131,8 @@ base_gestion
         remote[s] ||= []
         remote[s].push [f, md5]
       }
-    end
-    files
+    }
+    []
   end
 
   def sync_start

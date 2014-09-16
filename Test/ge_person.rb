@@ -105,6 +105,8 @@ class TC_Person < Test::Unit::TestCase
     assert_equal 500, @josue.account_total_due.to_i - josue_due, "account_total_due"
     dputs( 1 ){ "surf.log_list is #{@surf.log_list.inspect}" }
     dputs( 1 ){ "josue.log_list #{@josue.log_list.inspect}" }
+
+    return unless LogActions.logging
     log_list = [ @surf.log_list.last, @josue.log_list.last]
     dputs( 1 ){ "log_list #{log_list.inspect}" }
     log_list.undate
@@ -155,6 +157,7 @@ class TC_Person < Test::Unit::TestCase
   end
   
   def test_log_password
+    return unless LogActions.logging
     @admin.password = "admin"
     assert_equal( {:data_class_id=>1,
         :data_field=>:password,
@@ -167,6 +170,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_log_change
+    return unless LogActions.logging
     @admin.first_name = "super"
     assert_equal( {:data_class_id=>1,
         :data_field=>:first_name,

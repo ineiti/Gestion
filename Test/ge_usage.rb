@@ -87,20 +87,20 @@ class TC_Usage < Test::Unit::TestCase
   end
 
   def test_speed
-    dputs_func
+    #dputs_func
 
     results = ''
     dputs(1) { 'Benchmarking different search strategies' }
     dputs(1) { '   total   description' }
     dputs(1) { Benchmark.measure('finding with grep') {
       results = %x[ grep "GET /Files" reports/report_long ]
+      assert_equal 31, results.split("\n").count
     }.format('%t  %n') }
-    assert_equal 31, results.split("\n").count
 
     dputs(1) { Benchmark.measure('finding with grep') {
       results = %x[ grep "GET /Files" reports/report_long ]
+      assert_equal 31, results.split("\n").count
     }.format('%t  %n') }
-    assert_equal 31, results.split("\n").count
 
     results = []
     dputs(1) { Benchmark.measure('Searching with =~') {
@@ -109,8 +109,8 @@ class TC_Usage < Test::Unit::TestCase
           results.push l if l =~ /GET \/Files/
         }
       }
+      assert_equal 31, results.length
     }.format('%t  %n') }
-    assert_equal 31, results.length
 
     results = []
     dputs(1) { Benchmark.measure('Searching with =~ and variable') {
@@ -120,8 +120,8 @@ class TC_Usage < Test::Unit::TestCase
           results.push l if l =~ term
         }
       }
+      assert_equal 31, results.length
     }.format('%t  %n') }
-    assert_equal 31, results.length
 
     results = []
     grep = 'gGET /Files'
@@ -134,8 +134,8 @@ class TC_Usage < Test::Unit::TestCase
           end
         }
       }
+      assert_equal 31, results.length
     }.format('%t  %n') }
-    assert_equal 31, results.length
 
     results = []
     dputs(1) { Benchmark.measure('Searching with index') {
@@ -144,21 +144,21 @@ class TC_Usage < Test::Unit::TestCase
           results.push l if l.index('GET /Files')
         }
       }
+      assert_equal 31, results.length
     }.format('%t  %n') }
-    assert_equal 31, results.length
 
     results = []
     u = Usages.create( name: 'test', file_dir: 'reports', file_glob: 'report_long',
                        file_filter: "gGET /Files\nfname::(.*)")
     dputs(1) { Benchmark.measure('Searching with Usages') {
       results = u.filter_file( 'reports/report_long')
+      assert_equal 31, results.length
     }.format('%t  %n') }
-    assert_equal 31, results.length
 
     results = []
     dputs(1) { Benchmark.measure('Searching with Usages a gzip-file') {
       results = u.filter_file( 'reports/report_long.gz')
+      assert_equal 31, results.length
     }.format('%t  %n') }
-    assert_equal 31, results.length
   end
 end

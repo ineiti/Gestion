@@ -6,7 +6,7 @@ class NetworkTigo < View
     @order = 20
     @tigo_number = Entities.Statics.get( :AdminTigo )
     @functions_need = [:internet]
-    @values_need = { :isp => [:tigo] }
+    @values_need = { :isp => :tigo }
 
     gui_vbox do
       gui_hbox :nogroup do

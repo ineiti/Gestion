@@ -1,8 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - make Views::Reports::Usage faster by not re-calculating everything when
-            changing dates and duration
 
 BUGS:
         - Make LibNet working at least on ArchLinux
@@ -233,6 +231,9 @@ To check:
 
 
 ** FIXED **:
+        - B 140915: AfriCompta doesn't pass most tests!
+        - UI140915: make Views::Reports::Usage faster by not re-calculating everything when
+            changing dates and duration
         - UI140915: Slowness in UI
           - 140509: misuse of search_all is logged now
           - 140509: most very slow occurrences (Persons.search_all) are removed
