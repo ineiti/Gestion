@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
-$LOAD_PATH.push('../QooxView', '.', '../AfriCompta', '../LibNet',
-                '../Network/lib', '../Hilink/lib', '../HelperClasses/lib')
+$LOAD_PATH.push('../QooxView', '.', '../AfriCompta', '../LibNet')
+$LOAD_PATH.concat %w( Network HilinkModem SerialModem HelperClasses ).map{|p|
+                  "../#{p}/lib"
+                }
 Encoding.default_external = Encoding::UTF_8
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
