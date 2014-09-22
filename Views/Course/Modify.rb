@@ -388,7 +388,7 @@ class CourseModify < View
 
   def update_layout(session)
     resps = Persons.responsibles
-    if session.owner.permissions.index("center")
+    if session.owner.permissions.index('center')
       resps = Persons.responsibles_sort(
           Persons.responsibles_raw.select { |p|
             p.login_name =~ /^#{session.owner.login_name}_/

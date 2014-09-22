@@ -954,21 +954,18 @@ base_gestion
         return ret.body
       rescue Timeout::Error
         dputs(2) { 'Timeout occured' }
-        err = 'Error Timeout occured'
+        err = 'Error: Timeout occured'
       rescue Errno::ECONNRESET
         dputs(2) { 'Connection reset' }
-        err = 'Error - connection reset'
+        err = 'Error: Connection reset'
       end
     }
     return err
   end
 
-  def sync_transfer(field, transfer = '', slow = false, existing = nil)
+  def sync_transfer(field, transfer = '', slow = false)
     block_size = 4096
     transfer_md5 = Digest::MD5.hexdigest(transfer)
-    if transfer_md5 == existing
-      return 'No change'
-    end
     t_array = []
     while t_array.length * block_size < transfer.length
       start = (block_size * t_array.length)

@@ -4,7 +4,7 @@
 # - secure connection
 # Implemented:
 # - fetch CourseType-definitions
-require 'erb'
+require 'cgi'
 
 class ICC < RPCQooxdooPath
   @@transfers = {}
@@ -50,30 +50,30 @@ class ICC < RPCQooxdooPath
       path = /.*\/([^\/]*)\/([^\/]*)$/.match(req.path)
       ddputs(3) { "Path #{req.path} is #{path.inspect}" }
       log_msg :ICC, "Got query: #{path.inspect}"
-      self.request(path[1], path[2])
+      self.request(path[1], path[2], CGI.parse(req.query_string))
     end
   end
 
-  def self.request( entity_name, m )
+  def self.request(entity_name, m, query)
     m =~ /^icc_/ and log_msg :ICC, "Method #{m} includes 'icc_' - probably not what you want"
     method = "icc_#{m}"
-    if en = Object.const_get(entity_name) and en.respond_to? method
-      ddputs(3){"Sending #{method} to #{entity_name}"}
-      en.send(method)
+    if en = Object.const_get(entity_name)
+      ddputs(3) { "Sending #{method} to #{entity_name}" }
+      en.send(method, query).to_json
     else
-      dputs(0){"Error: Object #{entity_name} has no method #{method}"}
+      dputs(0) { "Error: Object #{entity_name} doesn't exist" }
     end
   end
 
   def self.data_received(tr)
     entity_name, m = tr._method.split('.')
     method = "icc#{m}"
-    Object.const_get( entity_name )
-    if en = Object.const_get(entity_name) and en.respond_to? method
-      ddputs(3){"Sending #{method} to #{entity_name}"}
+    Object.const_get(entity_name)
+    if en = Object.const_get(entity_name) # and en.respond_to? method
+      ddputs(3) { "Sending #{method} to #{entity_name}" }
       en.send(method, tr)
     else
-      dputs(0){"Error: Object #{entity_name} has no method #{method}"}
+      dputs(0) { "Error: Object #{entity_name} has no method #{method}" }
     end
   end
 
@@ -111,10 +111,10 @@ class ICC < RPCQooxdooPath
       dputs(3) { "Going to transfer: #{t_array.inspect}" }
       tid = Digest::MD5.hexdigest(rand.to_s)
       ret = ICC.send_post(url, :start,
-                             {:method => method, :chunks => t_array.length,
-                              :md5 => transfer_md5, :tid => tid,
-                              :user => center.login_name, :pass => center.password_plain,
-                              :course => name}.to_json)
+                          {:method => method, :chunks => t_array.length,
+                           :md5 => transfer_md5, :tid => tid,
+                           :user => center.login_name, :pass => center.password_plain,
+                           :course => name}.to_json)
       return ret if ret =~ /^Error:/
       ss = @sync_state
       t_array.each { |t|

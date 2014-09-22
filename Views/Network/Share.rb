@@ -1,5 +1,3 @@
-require 'Helpers.rb'
-
 class NetworkShare < View
   include VTListPane
   

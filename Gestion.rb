@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
 $LOAD_PATH.push('../QooxView', '.', '../AfriCompta', '../LibNet')
-$LOAD_PATH.concat %w( Network HilinkModem SerialModem HelperClasses ).map{|p|
-                  "../#{p}/lib"
-                }
+$LOAD_PATH.concat %w( Network HilinkModem SerialModem HelperClasses ).map { |p|
+  "../#{p}/lib"
+}
 Encoding.default_external = Encoding::UTF_8
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
@@ -42,13 +42,11 @@ end
 begin
   HAS_CONFIGBASE=true
   require 'QooxView'
-  require 'Internet'
-  require 'Info'
-  require 'Label'
-  require 'GetDiplomas'
-  require 'SMSinfo'
   require 'ACQooxView'
   ACQooxView.load_entities
+  %w( Modules Paths ).each { |dir|
+    Dir.glob("#{dir}/*").each { |d| require d }
+  }
 rescue StorageLoadError
   cleanup_data
 rescue Exception => e
@@ -77,7 +75,7 @@ begin
   Permission.add('center_director', '', 'center')
   Permission.add('secretary', 'CourseModify,FlagPersonAdd,FlagPersonDelete,' +
       'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
-      'FlagAddInternet,CourseStats', 'assistant')
+      'FlagAddInternet,CourseStats,CoursePrint', 'assistant')
   Permission.add('accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
       'ComptaReport,ComptaShow,Cashbox.*,Report.*', 'internet')
   Permission.add('maintenance', 'Inventory.*', 'default')

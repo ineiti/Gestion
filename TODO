@@ -1,6 +1,18 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
+        - client/server:
+          - get course-types from server
+            - fetch course-description from server
+            - Course::Grade - Syncing with server when course-type doesn't exist must
+              return error -> only sync with CourseTypes fetched from server
+          - CourseDiplomas: display random-id if available
+          - only add center-ids when a course is "certified"
+            - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
+              - send-server: same as synchronize
+              - fetch: to do, adding to courseTabs
+              - download/upload backup: same as synchronize and fetch
+              - import courses from server
 
 BUGS:
         - Make LibNet working at least on ArchLinux
@@ -39,20 +51,6 @@ FEATURES:
             upload
           - adding files to be print by teachers, like exams and others?
     	- Courses::Days - add other days to the list
-        - client/server:
-          - get course-types from server
-            - fetch course-description from server
-            - Course::Grade - Syncing with server when course-type doesn't exist must
-              return error -> only sync with CourseTypes fetched from server
-          - check for already transmitted documents and transmit one user at
-            the time
-          - CourseDiplomas: display random-id if available
-          - only add center-ids when a course is "certified"
-            - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
-              - send-server: same as synchronize
-              - fetch: to do, adding to courseTabs
-              - download/upload backup: same as synchronize and fetch
-              - import courses from server
 
         - Show what student payed all in CourseDiploma
         - /etc/gestion.conf - bash file for very basic configuration
@@ -231,6 +229,8 @@ To check:
 
 
 ** FIXED **:
+        - B 140918: Assistants don't show up in course::modify::assistant
+        - B 140918: secretary can't print exam-files
         - B 140915: AfriCompta doesn't pass most tests!
         - UI140915: make Views::Reports::Usage faster by not re-calculating everything when
             changing dates and duration

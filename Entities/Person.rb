@@ -355,9 +355,10 @@ class Persons < Entities
   end
 
   def self.responsibles_raw
-    return Persons.search_by_permissions("director") +
-        Persons.search_by_permissions("teacher") +
-        Persons.search_by_permissions("center_director")
+    return Persons.search_by_permissions('director') +
+        Persons.search_by_permissions('teacher') +
+        Persons.search_by_permissions('assistant') +
+        Persons.search_by_permissions('center_director')
 =begin
     Persons.search_all.select{|p| 
       dputs(4){"Person #{p.login_name} has #{p.permissions.inspect}"}
@@ -379,7 +380,7 @@ class Persons < Entities
       @resps = Persons.responsibles_raw
       @resps = Persons.responsibles_sort(@resps)
     else
-      dputs(3) { "Lazily using responsible-cache" }
+      dputs(3) { 'Lazily using responsible-cache' }
     end
     @resps
   end
@@ -457,6 +458,10 @@ class Persons < Entities
     rescue Errno::EACCES => e
       dputs(0) { "Can't write fetchmailrc here..." }
     end
+  end
+
+  def Persons.center
+    Persons.find_by_permissions(:center)
   end
 end
 
@@ -580,7 +585,7 @@ class Person < Entity
     self._permissions = p.uniq
     if has_teacher
       if Permission.can_view(p.reject { |perm|
-        perm.to_s == "admin" }, "FlagResponsible")
+        perm.to_s == 'admin' }, 'FlagResponsible')
         Persons.responsibles_add(self)
       else
         Persons.responsibles_del(self)
@@ -746,14 +751,14 @@ class Person < Entity
       log_msg :person, "Setting password (#{pass}) for #{self.login_name} to #{p}"
       self._password = p
     end
-    if (permissions and permissions.index("center")) or
-        (groups and groups.index("share")) or
+    if (permissions and permissions.index('center')) or
+        (groups and groups.index('share')) or
         (not self.password_plain or self.password_plain == "" or
             self.password_plain == pass)
       self.password_plain = pass
     else
       dputs(2) { self.password_plain.inspect }
-      self.password_plain = "****"
+      self.password_plain = '****'
     end
   end
 
@@ -805,7 +810,7 @@ class Person < Entity
                [/--COURSE1--/, courses[0]],
                [/--COURSE2--/, courses[1]],
                [/--PASS--/, password_plain]]
-    if center = Persons.find_by_permissions(:center)
+    if center = Persons.center
       url, email = center.email.to_s.split("::")
       replace.concat([[/--CENTER_NAME--/, center.full_name],
                       [/--CENTER_ADDRESS--/, center.address],
@@ -906,7 +911,7 @@ class Person < Entity
         begin
           r = course.data_get("_#{role}")
         rescue Exception => e
-          if e.message == "WrongIndex"
+          if e.message == 'WrongIndex'
             dputs(0) { "Error: Role :#{role} is not well defined - resetting to nil" }
             course.data_set("_#{role}", nil)
           end

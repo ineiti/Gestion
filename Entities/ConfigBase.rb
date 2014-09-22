@@ -4,6 +4,7 @@ class ConfigBases < Entities
     value_str :libnet_uri
     value_str :internet_cash
     value_int :max_upload_size
+    value_str :server_url
     
     @@functions = %w( network internet share 
     courses course_server course_client internet_simple

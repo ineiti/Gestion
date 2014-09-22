@@ -1,6 +1,9 @@
-require 'network/modem.rb'
+require 'network/modem'
+require 'network/smscontrol'
 
 class NetworkSMS < View
+  include Network
+
   def layout
     @functions_need = [:sms_control]
     @order = 100
@@ -8,8 +11,8 @@ class NetworkSMS < View
     @auto_update_async = 10
     @auto_update_send_values = false
 
-    gui_hbox do
-      gui_vbox do
+    gui_hboxg do
+      gui_vbox :nogroup do
         gui_vbox :nogroup do
           show_str_ro :state_now
           show_str_ro :state_goal
@@ -26,8 +29,8 @@ class NetworkSMS < View
           show_button :connect, :disconnect
         end
       end
-      gui_vbox do
-        show_text :sms_received
+      gui_vboxg :nogroup do
+        show_text :sms_received, :flexheight => 1
       end
     end
   end
