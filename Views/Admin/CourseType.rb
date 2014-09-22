@@ -53,12 +53,12 @@ class AdminCourseType < View
                       :account_base)
   end
 
-  def rpc_updates(session)
+  def rpc_update(session)
     reply(:update, :account_base => [0])
   end
 
   def rpc_button_from_server(session, data)
-    auto_update = 0
+    downloading = false
     reply(:window_show, :win_from_server) +
         reply_show_hide(:status, :ctypes_server) +
         reply_show_hide(:close, :download) +
@@ -67,13 +67,24 @@ class AdminCourseType < View
               'No server defined, aborting'
             else
               if Persons.center
-                auto_update = 3
-                CourseTypes.fetch_server
+                downloading = true
                 'Fetching CourseTypes from server'
               else
                 'There is no center defined, aborting'
               end
-            end ) +
-        reply( :auto_update, auto_update)
+            end) +
+        (downloading ? reply(:callback_button, :download_list) : reply)
+  end
+
+  def rpc_button_download_list(session, data)
+    #dp (res = ICC.transfer('CourseTypes.list')).inspect
+    dp ( res = ICC.get( :CourseTypes, :list ) ).inspect
+    if res !=~/^Error: /
+      dp ct_list = JSON.parse(res)
+      reply_show_hide(:ctypes_server, :status) +
+          reply(:update, :ctypes_server => ct_list) +
+          reply(:unhide, :download)
+    else
     end
   end
+end

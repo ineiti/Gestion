@@ -76,20 +76,13 @@ class CourseTypes < Entities
     ct.page_format[0] += 1
   end
 
-  def fetch_server
-
-  end
-
   def icc_list(arg)
     list_name
   end
 
   def icc_fetch(arg)
-    dp arg
     return 'Error: no course_type_name given' unless ctn = arg._course_type_name.first
-    dp ctn
-    ct = find_by_name(ctn)
-    return "Error: CourseType #{ctn} doesn't exist" unless ct
+    return "Error: CourseType #{ctn} doesn't exist" unless ct = find_by_name(ctn)
     return ct
   end
 end

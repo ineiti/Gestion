@@ -98,7 +98,7 @@ class CourseModify < View
 
   def rpc_button_bulk_add(session, data)
     if data['name']
-      reply("window_show", "students_bulk")
+      reply(:window_show, 'students_bulk')
     end
   end
 
@@ -120,8 +120,8 @@ class CourseModify < View
 
   def rpc_button_edit_student(session, data)
     dputs(3) { "data is: #{data.inspect}" }
-    login = data["students"][0]
-    reply("parent",
+    login = data['students'][0]
+    reply('parent',
           reply(:init_values, [:PersonTabs, {:search => login, :persons => []}]) +
               reply(:switch_tab, :PersonTabs)) +
         reply(:switch_tab, :PersonModify)
@@ -155,28 +155,28 @@ class CourseModify < View
     dputs(3) { "Doing with data #{var.inspect} step is #{var._step.inspect}" }
     case var._step
       when 1
-        dputs(3) { "Showing prepare-window" }
+        dputs(3) { 'Showing prepare-window' }
         ret += reply(:window_show, :printing) +
-            reply(:update, :msg_print => "Preparing students: <br><br>" +
-                var._students.each_slice(5).collect { |s| s.join(", ") }.join(",<br>")) +
+            reply(:update, :msg_print => 'Preparing students: <br><br>' +
+                var._students.each_slice(5).collect { |s| s.join(', ') }.join(',<br>')) +
             reply(:hide, :print_next)
       when 2
-        dputs(3) { "Printing pdfs" }
+        dputs(3) { 'Printing pdfs' }
         files = var._students.collect { |s|
           Persons.match_by_login_name(s).print(var._students.length)
         }
-        var._pages = OpenPrint.print_nup_duplex(files, "student_cards")
+        var._pages = OpenPrint.print_nup_duplex(files, 'student_cards')
         cmd = cmd_printer(session, :print_student)
         dputs(3) { "Command is #{cmd} with pages #{var._pages.inspect}" }
         if not cmd
           ret = reply(:window_show, :printing) +
-              reply(:update, :msg_print => "Click on one of the links:<ul>" +
+              reply(:update, :msg_print => 'Click on one of the links:<ul>' +
                   var._pages.collect { |r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
-                  "</ul>")
+                  '</ul>')
           var._step = 9
         elsif var._pages.length > 0
           ret = reply(:window_show, :printing) +
-              reply(:update, :msg_print => "Impression de la page face en cours pour<ul>" +
+              reply(:update, :msg_print => 'Impression de la page face en cours pour<ul>' +
                   "<li>#{var._students.join('</li><li>')}</li></ul>" +
                   "<br>Cliquez sur 'suivant' pour imprimer les pages arrières") +
               reply(:unhide, :print_next)
@@ -190,7 +190,7 @@ class CourseModify < View
         cmd = cmd_printer(session, :print_student)
         dputs(3) { "Command is #{cmd} with pages #{var._pages.inspect}" }
         ret = reply(:window_show, :printing) +
-            reply(:update, :msg_print => "Impression de la page face arrière en cours<ul>" +
+            reply(:update, :msg_print => 'Impression de la page face arrière en cours<ul>' +
                 "<li>#{var._students.join('</li><li>')}</li></ul>") +
             reply(:hide, :print_next)
         cmd += " -o outputorder=reverse #{var._pages[1]}"
@@ -243,17 +243,17 @@ class CourseModify < View
               reply(:update, :msg_print => "Impression de la fiche de présence pour<br>#{data['name']} en cours") +
               reply(:hide, :print_next)
         when false
-          str = [[course.start, "start-date"],
-                 [course.end, "end-date"],
-                 [course.students.count > 0, "students"]].select { |t, s| !t }.
-              collect { |t, s| "<li>#{s}</li>" }.join("")
+          str = [[course.start, 'start-date'],
+                 [course.end, 'end-date'],
+                 [course.students.count > 0, 'students']].select { |t, s| !t }.
+              collect { |t, s| "<li>#{s}</li>" }.join('')
 
           ret + reply(:window_show, :missing_data) +
-              reply("update", :missing => "One of the following is missing:<ul>" +
+              reply('update', :missing => 'One of the following is missing:<ul>' +
                   "#{str}</ul>")
         else
           ret + reply(:window_show, :missing_data) +
-              reply("update", :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>")
+              reply('update', :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>")
       end
     end
   end
@@ -286,7 +286,7 @@ class CourseModify < View
       person and course.students_add person
     end
     if users.length > 0
-      reply("update", {:names => users.join("\n")}) +
+      reply(:update, {:names => users.join("\n")}) +
           update_students(course) +
           reply(:callback_button, :bulk_students)
     else
