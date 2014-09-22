@@ -66,16 +66,17 @@ class Label < RPCQooxdooPath
                    "Remarques: #{grade.remark}"
                  end
                else
-                 ""
+                 ''
                end
-      log_msg :grading, "Student #{grade.student.full_name} from #{center} in course #{grade.course.name}"
+      log_msg :show_grade, "Student #{grade.student.full_name} from #{center} in course #{grade.course.name} " +
+          "has grade #{grade.mean}"
       if grade.mean >= 10
         ERB.new(File.open('Files/label.erb') { |f| f.read }).result(binding)
       else
         ERB.new(File.open('Files/label_notpassed.erb') { |f| f.read }).result(binding)
       end
     else
-      log_msg :grading, "Unknown grade-id #{grade_id}"
+      log_msg :show_grade, "Unknown grade-id #{grade_id}"
       ERB.new(File.open('Files/label_notfound.erb') { |f| f.read }).result(binding)
     end
   end
