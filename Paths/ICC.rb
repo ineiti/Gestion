@@ -11,7 +11,7 @@ class ICC < RPCQooxdooPath
 
   def self.parse_req(req)
     dputs_func
-    dputs(4) { "Request: #{req.inspect}" }
+    #dputs(4) { "Request: #{req.inspect}" }
     if req.request_method == 'POST'
       path, query, addr = req.path, req.query.to_sym, RPCQooxdooHandler.get_ip(req)
       dputs(4) { "Got query: #{path} - #{query.inspect} - #{addr}" }
@@ -53,8 +53,9 @@ class ICC < RPCQooxdooPath
     else # GET-request
       path = /.*\/([^\/]*)\/([^\/]*)$/.match(req.path)
       ddputs(3) { "Path #{req.path} is #{path.inspect}" }
-      log_msg :ICC, "Got query: #{path.inspect}"
-      self.request(path[1], path[2], CGI.parse(req.query_string))
+      query = CGI.parse( req.query_string )
+      log_msg :ICC, "Got query: #{path.inspect} - #{query}"
+      self.request(path[1], path[2], query)
     end
   end
 
@@ -63,10 +64,10 @@ class ICC < RPCQooxdooPath
     method = "icc_#{m}"
     if en = Object.const_get(entity_name)
       ddputs(3) { "Sending #{method} to #{entity_name}" }
-      en.send(method, query).to_json
+      en.send(method, query)
     else
-      dputs(0) { "Error: Object #{entity_name} doesn't exist" }
-    end
+      log_msg :ICC, "Error: Object #{entity_name} doesn't exist"
+    end.to_json
   end
 
   def self.data_received(tr)
@@ -75,10 +76,10 @@ class ICC < RPCQooxdooPath
     Object.const_get(entity_name)
     if en = Object.const_get(entity_name) # and en.respond_to? method
       ddputs(3) { "Sending #{method} to #{entity_name}" }
-      en.send(method, tr).to_json
+      en.send(method, tr)
     else
-      dputs(0) { "Error: Object #{entity_name} has no method #{method}" }
-    end
+      log_msg :ICC, "Error: Object #{entity_name} has no method #{method}"
+    end.to_json
   end
 
   def self.send_post(url, cmdkey, data, retries: 4)
@@ -135,6 +136,6 @@ class ICC < RPCQooxdooPath
 
   def self.get(entity_name, method, args: {}, url: ConfigBase.server_url)
     dp path = URI.parse("#{url}/#{entity_name}/#{method}?#{URI.encode_www_form(args)}")
-    ret = Net::HTTP.get(path)
+    ret = JSON::parse(Net::HTTP.get(path))
   end
 end

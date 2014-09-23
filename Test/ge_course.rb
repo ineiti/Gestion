@@ -1008,4 +1008,18 @@ class TC_Course < Test::Unit::TestCase
 
     #puts AccountRoot.archive.dump_rec( true ).join("\n")
   end
+
+  def test_ct_fetch
+    assert_equal 'Error: no course_type_name given', CourseTypes.icc_fetch({})
+    assert_equal "Error: CourseType 123 doesn't exist",
+                 CourseTypes.icc_fetch({course_type_names: [%w( 123 ).to_json]})
+
+    assert_equal 'it-101',
+                 CourseTypes.icc_fetch({course_type_names: [%w( it-101 ).to_json]}).
+                     first._name
+
+    assert_equal 'it-101:it-301',
+                 CourseTypes.icc_fetch({course_type_names: [%w( it-101 it-301).to_json]}).
+                     map{|ct| ct._name}.join(':')
+  end
 end

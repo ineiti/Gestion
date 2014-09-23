@@ -81,9 +81,15 @@ class CourseTypes < Entities
   end
 
   def icc_fetch(arg)
-    return 'Error: no course_type_name given' unless ctn = arg._course_type_name.first
-    return "Error: CourseType #{ctn} doesn't exist" unless ct = find_by_name(ctn)
-    return ct
+    if ct_names = arg._course_type_names
+      dp ct_names
+      cts = JSON.parse(ct_names.first)
+      cts.collect { |ct|
+        self.find_by_name(ct) or return "Error: CourseType #{ct} doesn't exist"
+      }
+    else
+      return 'Error: no course_type_name given'
+    end
   end
 end
 

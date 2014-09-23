@@ -1,10 +1,6 @@
 #!/usr/bin/env ruby
-#!/usr/local/bin/ruby -I.
-#!/usr/bin/ruby -I.. -I../../QooxView -I../../AfriCompta -I../../LibNet -I. -wKU
-%w( QooxView AfriCompta LibNet Network/lib Hilink/lib HelperClasses/lib Gestion ).each{|l|
-  $LOAD_PATH.push "../../#{l}"
-}
-$LOAD_PATH.push "."
+require '../Dependencies'
+Dependencies.load_path( here: '..')
 require 'test/unit'
 
 CONFIG_FILE="config_test.yaml"
@@ -13,7 +9,8 @@ DEBUG_LVL=0
 require 'QooxView'
 require 'ACQooxView'
 require 'LibNet'
-require 'Label'
+require '../Paths/Label'
+require '../Paths/ICC'
 ACQooxView.load_entities
 
 def permissions_init
@@ -40,7 +37,7 @@ QooxView.init( '../Entities', '../Views' )
 tests = %w( compta configbase course info internet login person qvinfo
             report share sms tasks usage view )
 #tests = %w( sms )
-#tests = %w( person )
+tests = %w( course )
 #tests = %w( configbase )
 tests.each{|t|
   require "ge_#{t}"
