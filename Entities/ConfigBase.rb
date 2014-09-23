@@ -67,5 +67,11 @@ class ConfigBases < Entities
   end
 end
 
+class ConfigBase < Entity
+  def server_uri
+    server_url =~ /^http/ ? server_url : "http://#{server_url}"
+  end
+end
+
 require 'Helpers/ConfigBase'
 

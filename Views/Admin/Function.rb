@@ -9,11 +9,12 @@ class AdminFunction < View
         gui_vboxg :nogroup do
           show_block :wide
           show_arg :functions, :flexheight => 1
+          show_arg :welcome_text, :width => 400, :flexheight => 1
         end
         gui_vbox :nogroup do
           show_block :narrow
           show_block :vars
-          show_arg :welcome_text, :width => 400, :flexheight => 1
+          show_arg :server_url, :width => 200
         end
       end
       show_button :save

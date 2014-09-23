@@ -106,7 +106,7 @@ class ICC < RPCQooxdooPath
     return err
   end
 
-  def self.transfer(method, transfer = '', url: ConfigBase.server_url, slow: false)
+  def self.transfer(method, transfer = '', url: ConfigBase.server_uri, slow: false)
     block_size = 4096
     transfer_md5 = Digest::MD5.hexdigest(transfer)
     t_array = []
@@ -137,7 +137,7 @@ class ICC < RPCQooxdooPath
     return ret
   end
 
-  def self.get(entity_name, method, args: {}, url: ConfigBase.server_url)
+  def self.get(entity_name, method, args: {}, url: ConfigBase.server_uri)
     args_json = {}
     args.each_pair{|k,v| args_json[k] = v.to_json}
     dp path = URI.parse("#{url}/#{entity_name}/#{method}?#{URI.encode_www_form(args_json)}")
