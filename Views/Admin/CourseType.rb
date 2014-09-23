@@ -57,12 +57,19 @@ class AdminCourseType < View
     reply(:update, :account_base => [0])
   end
 
+  def status_list(show_status, status: '', list: [])
+    reply_one_two(show_status, :close, :download) +
+        reply_one_two(show_status, :status, :ctypes_server).concat(
+            show_status ? reply(:update, status: status) :
+                reply(:empty_only, :ctypes_server) +
+                    reply(:update, ctypes_server: list)
+        ).flatten
+  end
+
   def rpc_button_from_server(session, data)
     downloading = false
-    reply(:window_show, :win_from_server) +
-        reply_show_hide(:status, :ctypes_server) +
-        reply_show_hide(:close, :download) +
-        reply(:update, :status =>
+    reply(:window_show, :win_from_server).concat(
+        [status_list(true, status:
             if ConfigBase.server_url.to_s.length == 0
               'No server defined, aborting'
             else
@@ -72,41 +79,40 @@ class AdminCourseType < View
               else
                 'There is no center defined, aborting'
               end
-            end) +
-        (downloading ? reply(:callback_button, :download_list) : reply)
+            end),
+         (downloading ? reply(:callback_button, :download_list) : reply)]).flatten
   end
 
   def rpc_button_download_list(session, data)
     #dp (res = ICC.transfer('CourseTypes.list')).inspect
     dp (res = ICC.get(:CourseTypes, :list)).inspect
     if res !=~/^Error: /
-      reply_show_hide(:ctypes_server, :status) +
-          reply(:empty_only, :ctypes_server) +
-          reply(:update, :ctypes_server => res) +
-          reply(:unhide, :download)
+      status_list(false, list: res)
     else
-      reply_show_hide(:status, :ctypes_server) +
-          reply_show_hide(:close, :download) +
-          reply(:update, :status => 'Error while getting list')
+      status_list(true, status: 'Error while getting list')
     end
   end
 
   def rpc_button_download(session, data)
     if (cts_names = data._ctypes_server).length > 0
-      log_msg :CourseType, "Downloading #{data._ctypes_server}"
-      dp (cts = ICC.get(:CourseTypes, :fetch,
-                        args: {course_type_names: cts_names.to_json})).inspect
-      cts.each { |ct|
-        log_msg :CourseType, "Creating CourseType #{ct._name}"
-        CourseTypes.create(ct)
-      }
-      reply_show_hide(:status, :ctypes_server) +
-          reply_show_hide(:close, :download) +
-          vtlp_update_list(session) +
-          reply(:update, :status => "Downloaded #{cts_names.length} CourseTypes")
+      status_list(true, status: "Downloading #{cts_names.length} CourseTypes").concat(
+          reply(:callback_button, :fetch_list))
     else
       log_msg :CourseType, 'Nothing to download'
       reply(:window_hide)
     end
+  end
+
+  def rpc_button_fetch_list( session, data )
+    cts_names = data._ctypes_server
+    dp (cts = ICC.get(:CourseTypes, :fetch,
+                      args: {course_type_names: cts_names})).inspect
+    log_msg :CourseType, "Downloaded #{cts_names}"
+    cts.each { |ct|
+      log_msg :CourseType, "Creating CourseType #{ct._name}"
+      CourseTypes.create(ct)
+    }
+    vtlp_update_list(session).concat(
+        status_list(true, status: "Downloaded #{cts_names.length} CourseTypes"))
   end
 end

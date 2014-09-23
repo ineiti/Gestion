@@ -81,10 +81,8 @@ class CourseTypes < Entities
   end
 
   def icc_fetch(arg)
-    if ct_names = arg._course_type_names
-      dp ct_names
-      cts = JSON.parse(ct_names.first)
-      cts.collect { |ct|
+    if dp ct_names = arg._course_type_names
+      ct_names.collect { |ct|
         self.find_by_name(ct) or return "Error: CourseType #{ct} doesn't exist"
       }
     else

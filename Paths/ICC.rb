@@ -59,11 +59,14 @@ class ICC < RPCQooxdooPath
     end
   end
 
-  def self.request(entity_name, m, query)
+  def self.request(entity_name, m, query_json)
     m =~ /^icc_/ and log_msg :ICC, "Method #{m} includes 'icc_' - probably not what you want"
     method = "icc_#{m}"
     if en = Object.const_get(entity_name)
       ddputs(3) { "Sending #{method} to #{entity_name}" }
+      query={}
+      query_json.each_pair{|k,v| query[k] = JSON.parse( v.first )}
+      ddputs(3){"Found query #{query.inspect}"}
       en.send(method, query)
     else
       log_msg :ICC, "Error: Object #{entity_name} doesn't exist"
@@ -135,7 +138,9 @@ class ICC < RPCQooxdooPath
   end
 
   def self.get(entity_name, method, args: {}, url: ConfigBase.server_url)
-    dp path = URI.parse("#{url}/#{entity_name}/#{method}?#{URI.encode_www_form(args)}")
+    args_json = {}
+    args.each_pair{|k,v| args_json[k] = v.to_json}
+    dp path = URI.parse("#{url}/#{entity_name}/#{method}?#{URI.encode_www_form(args_json)}")
     ret = JSON::parse(Net::HTTP.get(path))
   end
 end
