@@ -7,6 +7,8 @@ class Label < RPCQooxdooPath
   def self.parse_req(req)
     dputs(4) { "Label: #{req.inspect}" }
     if req.request_method == 'POST'
+      dputs(0){ 'Deprecated' }
+      exit
       path, query, addr = req.path, req.query.to_sym, RPCQooxdooHandler.get_ip(req)
       dputs(4) { "Got query: #{path} - #{query.inspect} - #{addr}" }
 
@@ -82,6 +84,9 @@ class Label < RPCQooxdooPath
   end
 
   def self.field_save(tr)
+    dp :Deprecated
+    exit
+
     if not (course_name = tr._course) =~ /^#{tr._user}_/
       course_name = "#{tr._user}_#{tr._course}"
     end

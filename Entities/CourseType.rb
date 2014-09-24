@@ -81,7 +81,7 @@ class CourseTypes < Entities
   end
 
   def icc_fetch(arg)
-    if dp ct_names = arg._course_type_names
+    if ct_names = arg._course_type_names
       ct_names.collect { |ct|
         self.find_by_name(ct) or return "Error: CourseType #{ct} doesn't exist"
       }
@@ -100,7 +100,7 @@ class CourseType < Entity
     if central_host.to_s.length > 0
       ret = "#{central_host}"
     else
-      ret = "#{get_config(%x[ hostname -f ].chomp + ":3302", :Courses, :hostname)}"
+      ret = "#{get_config(%x[ hostname -f ].chomp + ':3302', :Courses, :hostname)}"
     end
     if !(ret =~ /^https{0,1}:\/\//)
       ret = "http://#{ret}"

@@ -4,6 +4,8 @@ WORKING:
         - client/server:
           - get course-types from server
             - fetch course-description from server
+
+            - Move Course::sync to ICC
             - Course::Grade - Syncing with server when course-type doesn't exist must
               return error -> only sync with CourseTypes fetched from server
           - CourseDiplomas: display random-id if available

@@ -272,6 +272,112 @@ class Courses < Entities
       c[p.to_sym] = person
     }
   end
+
+  def icc_users(tr)
+    users = tr._data
+    dputs(3) { "users are #{users.inspect}" }
+    users.each { |s|
+      s.to_sym!
+      if s._login_name != tr._user
+        s._login_name = "#{tr._user}_#{s._login_name}"
+      else
+        s.delete :password
+      end
+      %w( person_id groups ).each { |f|
+        s.delete f.to_sym
+      }
+      s._permissions = s._permissions & %w( teacher center )
+      dputs(3) { "Person is #{s.inspect}" }
+      dputs(4) { "Looking for #{s._login_name}" }
+      if stud = Persons.match_by_login_name(s._login_name)
+        dputs(3) { "Updating person #{stud.login_name} with #{s._login_name}" }
+        stud.data_set_hash(s)
+      else
+        dputs(3) { "Creating person #{s.inspect}" }
+        Persons.create(s)
+      end
+    }
+    "Got users #{users.collect { |u| u._login_name }.join(':')}"
+  end
+
+  def center_course_name(course, user)
+    course =~ /^#{user}_/ ? course : "#{user}_#{course}"
+  end
+
+  def icc_course(tr)
+    course = tr._data.to_sym
+    dputs(3) { "Course is #{course.inspect}" }
+    course.delete :course_id
+    course._name = center_course_name(course._name, tr._user)
+    course._responsible = Persons.match_by_login_name(
+        "#{tr._user}_#{course._responsible}")
+    course._teacher = Persons.match_by_login_name(
+        "#{tr._user}_#{course._teacher}")
+    course._assistant = Persons.match_by_login_name(
+        "#{tr._user}_#{course._assistant}")
+    course._students = course._students.collect { |s| "#{tr._user}_#{s}" }
+    course._ctype = CourseTypes.match_by_name(course._ctype)
+    return "Error: couldn't make course of type #{course.ctype}" unless course._ctype
+    course._center = Persons.match_by_login_name(tr._user)
+    course._room = Rooms.find_by_name("")
+    dputs(3) { "Course is now #{course.inspect}" }
+    if c = Courses.match_by_name(course._name)
+      dputs(3) { "Updating course #{course._name}" }
+      c.data_set_hash(course)
+    else
+      dputs(3) { "Creating course #{course._name}" }
+      Courses.create(course)
+    end
+    "Updated course #{course._name}"
+  end
+
+  def icc_grades(tr)
+    tr._data.collect { |grade|
+      grade.to_sym!
+      ret = [grade._course, grade._student]
+      dputs(3) { "Grades is #{grade.inspect}" }
+      grade._course =
+          Courses.match_by_name("#{tr._user}_#{grade._course}")
+      grade._student =
+          Persons.match_by_login_name("#{tr._user}_#{grade._student}")
+      grade.delete :grade_id
+      grade.delete :random
+      if g = Grades.match_by_course_person(grade._course,
+                                           grade._student)
+        dputs(3) { "Updating grade #{g.inspect} with #{grade.inspect}" }
+        g.data_set_hash(grade)
+      else
+        g = Grades.create(grade)
+        dputs(3) { "Creating grade #{g.inspect} with #{grade.inspect}" }
+      end
+      dputs(3) { Grades.match_by_course_person(grade._course,
+                                               grade._student).inspect }
+      ret.push g.random
+    }
+  end
+
+  def icc_exams(tr)
+    tr._tid.gsub!(/[^a-zA-Z0-9_-]/, '')
+    file = "/tmp/#{tr._tid}.zip"
+    File.open(file, 'w') { |f| f.write tr._data._zip }
+    if course = Courses.match_by_name(center_course_name(tr._data._course, tr._user))
+      dputs(3) { 'Updating exams' }
+      course.zip_read(file)
+    end
+    "Read file #{file}"
+  end
+
+  def icc_exams_here(tr)
+    course_name = center_course_name(tr._data, tr._user)
+    if course = Courses.match_by_name(course_name)
+      dputs(3) { "Sending md5 of #{course_name}" }
+      course.md5_exams
+    else
+      dputs(3) { "Didn't find #{course_name}" }
+      {}
+    end
+  end
+
 end
 
 
@@ -942,7 +1048,7 @@ base_gestion
     %x[ rm -rf #{dir_exas_share} ]
   end
 
-  def sync_send_post(field, data)
+  def sync_send_post_old(field, data)
     path = URI.parse("#{ctype.get_url}/")
     post = {:field => field, :data => data}
     dputs(3) { "Sending to #{path.inspect}: #{data.inspect}" }
@@ -963,43 +1069,13 @@ base_gestion
     return err
   end
 
-  def sync_transfer(field, transfer = '', slow = false)
-    block_size = 4096
-    transfer_md5 = Digest::MD5.hexdigest(transfer)
-    t_array = []
-    while t_array.length * block_size < transfer.length
-      start = (block_size * t_array.length)
-      t_array.push transfer[start..(start+block_size -1)]
-    end
-    if t_array.length > 0
-      pos = 0
-      dputs(3) { "Going to transfer: #{t_array.inspect}" }
-      tid = Digest::MD5.hexdigest(rand.to_s)
-      ret = sync_send_post(:start, {:field => field, :chunks => t_array.length,
-                                    :md5 => transfer_md5, :tid => tid,
-                                    :user => center.login_name, :pass => center.password_plain,
-                                    :course => name}.to_json)
-      return ret if ret =~ /^Error:/
-      ss = @sync_state
-      t_array.each { |t|
-        @sync_state = "#{ss} #{((pos+1) * 100 / t_array.length).floor}%"
-        dputs(3) { @sync_state }
-        ret = sync_send_post(tid, t)
-        return ret if ret =~ /^Error:/
-        slow and sleep 3
-        pos += 1
-      }
-      return ret
-    else
-      dputs(2) { 'Nothing to transfer' }
-      return nil
-    end
+  def sync_transfer(field, transfer = '', json = true)
+    return ICC.transfer("Courses.#{field}", transfer, url: ctype.get_url, json: json)
   end
 
-  def sync_do(slow = false)
+  def sync_do
     @sync_state = sync_s = ''
     dputs(3) { @sync_state }
-    slow and sleep 3
 
     dputs(4) { 'Responsibles' }
     @sync_state = sync_s += '<li>Transferring responsibles: '
@@ -1007,10 +1083,10 @@ base_gestion
     assistant and users.push assistant.login_name
     ret = sync_transfer(:users, users.collect { |s|
       Persons.match_by_login_name(s)
-    }.compact.to_json, slow)
-    @sync_state += ret
-    if ret =~ /^Error:/
-      dputs(2) { "Error is #{ret}" }
+    }.compact)
+    if ret._code == 'Error'
+      @sync_state += "Error: #{ret._msg}"
+      dputs(2) { "Error is #{ret._msg}" }
       return false
     end
     @sync_state = sync_s += 'OK</li>'
@@ -1022,9 +1098,9 @@ base_gestion
       users = students + [teacher.login_name, responsible.login_name]
       ret = sync_transfer(:users, users.collect { |s|
         Persons.match_by_login_name(s)
-      }.to_json, slow)
-      @sync_state += ret
-      if ret =~ /^Error:/
+      })
+      if ret._code == 'Error'
+        @sync_state += "Error: #{ret._msg}"
         return false
       end
       @sync_state = sync_s += 'OK</li>'
@@ -1034,9 +1110,9 @@ base_gestion
     @sync_state = sync_s += '<li>Transferring course: '
     myself = self.to_hash(true)
     myself._students = students
-    ret = sync_transfer(:course, myself.to_json, slow)
-    @sync_state += ret
-    if ret =~ /^Error:/
+    ret = sync_transfer(:course, myself)
+    if ret._code == 'Error'
+      @sync_state += "Error: #{ret._msg}"
       return false
     end
     @sync_state = sync_s += 'OK</li>'
@@ -1051,11 +1127,13 @@ base_gestion
         dputs(4) { "Found grade with #{g.course.inspect} and #{g.student.inspect}" }
         g.to_hash(true).merge(:course => g.course.name,
                               :person => g.student.login_name)
-      }.to_json, slow)
-      if ret =~ /^Error:/
+      })
+      if ret._code == 'Error'
+        @sync_state += "Error: #{ret._msg}"
         return false
       end
-      grades = JSON.parse(ret.sub(/^OK: /, ''))
+      grades = ret._msg
+      #grades = JSON.parse(ret.sub(/^OK: /, ''))
       dputs(3) { "Return is #{grades.inspect}" }
       grades.each { |g|
         course_name, student, random = g
@@ -1076,11 +1154,11 @@ base_gestion
       dputs(4) { 'Fetching remote exams' }
       @sync_state = sync_s += '<li>Demander ce qui existe déjà: '
       ret = sync_transfer(:exams_here, self.name)
-      if ret =~ /^Error:/
-        @sync_state += 'Error</li>'
+      if ret._code == 'Error'
+        @sync_state += "Error: #{ret._msg}"
         return false
       end
-      remote_exams = JSON.parse(ret.sub(/^OK: /, ''))
+      remote_exams = ret._msg
       @sync_state = sync_s += 'OK</li>'
     end
 
@@ -1092,9 +1170,10 @@ base_gestion
           "#{files.index(file) + 1}/#{files.count}: "
       file = "/tmp/#{file}"
       dputs(3) { "Exa-file is #{file}" }
-      ret = sync_transfer(:exams, File.open(file) { |f| f.read }, slow)
-      @sync_state += ret
-      if ret =~ /^Error:/
+      ret = sync_transfer(:exams,
+                          {zip: File.open(file) { |f| f.read }, course: name})
+      if ret._code == 'Error'
+        @sync_state += "Error: #{ret._msg}"
         return false
       end
     }

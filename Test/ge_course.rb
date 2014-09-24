@@ -43,7 +43,7 @@ class TC_Course < Test::Unit::TestCase
     @it_101_t = CourseTypes.create(:name => "it-101", :diploma_type => ["accredited"],
                                    :output => %w( label ), :filename => %w( label.odg ),
                                    :contents => "it-101", :description => "windows, word, excel",
-                                   :central_host => "http://localhost:3302/label")
+                                   :central_host => "http://localhost:3302/icc")
     @it_101 = Courses.create_ctype(@it_101_t, "1203")
     @it_101.data_set_hash(:responsible => @secretaire, :teacher => @surf,
                           :start => "1.11.2012", :end => "1.2.2013", :sign => "10.2.2013",
@@ -466,7 +466,7 @@ class TC_Course < Test::Unit::TestCase
     cname = "#{@center.login_name}_"
 
     @maint_t.data_set_hash({:output => ['label'],
-                            :central_host => "http://localhost:#{@port}/label", :filename => ['label.odg'],
+                            :central_host => "http://localhost:#{@port}/icc", :filename => ['label.odg'],
                             :name => 'it-101',
                             :diploma_type => ['accredited']})
 
@@ -485,7 +485,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal [], Persons.search_by_login_name("^#{cname}")
     assert_equal nil, Courses.find_by_name("^#{cname}")
 
-    @maint_2.sync_do(false)
+    @maint_2.sync_do
 
     main.kill.join
 
@@ -493,9 +493,9 @@ class TC_Course < Test::Unit::TestCase
     names = Persons.search_by_login_name("^#{cname}").collect { |p|
       p.login_name
     }
-    assert_equal ["foo_secretaire", "foo_admin", "foo_surf"], names
-    assert_equal "foo_maint_1210", foo_maint.name
-    assert_equal "foo", foo_maint._center.login_name
+    assert_equal %w(foo_secretaire foo_admin foo_surf), names
+    assert_equal 'foo_maint_1210', foo_maint.name
+    assert_equal 'foo', foo_maint._center.login_name
 
     dputs(1) { "Diploma-dir is #{foo_maint.dir_exas}" }
 
@@ -519,9 +519,8 @@ class TC_Course < Test::Unit::TestCase
 
     # Test md5-sums
     files_hash = @maint_2.md5_exams
-    assert_equal files_hash, JSON.parse(Label.field_save({course: @maint_2.name, user: 'foo',
-                                                          field: 'exams_here'}).
-                                            sub(/^OK: /, ''))
+    assert_equal files_hash,
+                 Courses.icc_exams_here( {user: 'foo', data: @maint_2.name})
     assert_equal({'secretaire' => [%w(exa.doc d41d8cd98f00b204e9800998ecf8427e)],
                   'admin' => [%w(exa.doc d41d8cd98f00b204e9800998ecf8427e)],
                   'surf' => []}, files_hash)
@@ -651,7 +650,7 @@ class TC_Course < Test::Unit::TestCase
     cname = "#{@center.login_name}_"
 
     @maint_t.data_set_hash({:output => ['label'],
-                            :central_host => "http://localhost:#{@port}/label", :filename => ['label.odg'],
+                            :central_host => "http://localhost:#{@port}/icc", :filename => ['label.odg'],
                             :name => 'it-101',
                             :diploma_type => ['accredited']})
 
@@ -728,7 +727,7 @@ class TC_Course < Test::Unit::TestCase
     dputs(1) { "Starting at port #{@port}" }
     sleep 1
 
-    @it_101.ctype.central_host = "http://localhost:#{@port}/label"
+    @it_101.ctype.central_host = "http://localhost:#{@port}/icc"
     dputs(1) { @center.inspect }
     dputs(1) { Persons.find_by_permissions(:center).inspect }
     assert @it_101.sync_do
@@ -737,14 +736,14 @@ class TC_Course < Test::Unit::TestCase
                      '<li>Transferring exams: OK</li>It is finished!',
                  @it_101.sync_state)
 
-    @center.password_plain = ""
+    @center.password_plain = ''
 
     assert !@it_101.sync_do
     assert_equal(
-        '<li>Transferring responsibles: Error: authentification',
+        '<li>Transferring responsibles: Error: authentication',
         @it_101.sync_state)
 
-    @center.password = ""
+    @center.password = ''
     assert @it_101.sync_do
     assert_equal('<li>Transferring responsibles: OK</li><li>Transferring users: OK</li>' +
                      '<li>Transferring course: OK</li><li>Demander ce qui existe déjà: OK</li>' +
@@ -762,7 +761,7 @@ class TC_Course < Test::Unit::TestCase
     dputs(1) { "Starting at port #{@port}" }
     sleep 1
 
-    @it_101.ctype.central_host = "http://localhost:#{@port}/label"
+    @it_101.ctype.central_host = "http://localhost:#{@port}/icc"
 
     grade = Grades.create({:student => @surf,
                            :course => @it_101, :means => [11]})
@@ -1012,14 +1011,14 @@ class TC_Course < Test::Unit::TestCase
   def test_ct_fetch
     assert_equal 'Error: no course_type_name given', CourseTypes.icc_fetch({})
     assert_equal "Error: CourseType 123 doesn't exist",
-                 CourseTypes.icc_fetch({course_type_names: [%w( 123 ).to_json]})
+                 CourseTypes.icc_fetch({course_type_names: %w( 123 )})
 
     assert_equal 'it-101',
-                 CourseTypes.icc_fetch({course_type_names: [%w( it-101 ).to_json]}).
+                 CourseTypes.icc_fetch({course_type_names: %w( it-101 )}).
                      first._name
 
     assert_equal 'it-101:it-301',
-                 CourseTypes.icc_fetch({course_type_names: [%w( it-101 it-301).to_json]}).
+                 CourseTypes.icc_fetch({course_type_names: %w( it-101 it-301)}).
                      map{|ct| ct._name}.join(':')
   end
 end
