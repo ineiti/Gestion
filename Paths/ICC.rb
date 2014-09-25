@@ -1,15 +1,16 @@
 # This will be the only InterCenterCommunication-point to "Gestion"
 # TODO
-# - include Label
 # - secure connection
 # Implemented:
-# - fetch CourseType-definitions
+# - simple get-function
+# - longer post-function
+# - put json around everything
 require 'cgi'
 
 class ICC < RPCQooxdooPath
   @@transfers = {}
 
-  def self.response( code, msg )
+  def self.response(code, msg)
     {code: code, msg: msg}.to_json
   end
 
@@ -27,12 +28,12 @@ class ICC < RPCQooxdooPath
         if (user = Persons.match_by_login_name(d._user)) and
             (user.check_pass(d._pass))
           @@transfers[d._tid] = d.merge(:data => '')
-          d._chunks > 0 and return self.response( 'OK', 'send data' )
+          d._chunks > 0 and return self.response('OK', 'send data')
           query._cmdkey = d._tid
           query._data = ''
         else
           dputs(3) { "User #{d._user.inspect} with pass #{d._pass.inspect} unknown" }
-          return self.response( 'Error', 'authentication')
+          return self.response('Error', 'authentication')
         end
       end
       if tr = @@transfers[query._cmdkey]
@@ -41,23 +42,23 @@ class ICC < RPCQooxdooPath
         if (tr._chunks -= 1) <= 0
           if Digest::MD5.hexdigest(tr._data) == tr._md5
             dputs(2) { "Successfully received cmdkey #{tr._cmdkey}" }
-            ret = self.response( 'OK', self.data_received(tr) )
+            ret = self.response('OK', self.data_received(tr))
           else
             dputs(2) { "cmdkey #{tr._cmdkey} transmitted with errors, " +
                 "#{Digest::MD5.hexdigest(tr._data)} instead of #{tr._md5}" }
-            ret = self.response( 'Error', 'wrong MD5' )
+            ret = self.response('Error', 'wrong MD5')
           end
           @@transfers.delete query._cmdkey
           return ret
         else
-          return self.response( 'OK', "send #{tr._chunks} more chunks" )
+          return self.response('OK', "send #{tr._chunks} more chunks")
         end
       end
-      return self.response( 'Error', 'must start or use existing cmdkey' )
+      return self.response('Error', 'must start or use existing cmdkey')
     else # GET-request
       path = /.*\/([^\/]*)\/([^\/]*)$/.match(req.path)
       dputs(3) { "Path #{req.path} is #{path.inspect}" }
-      query = CGI.parse( req.query_string )
+      query = CGI.parse(req.query_string)
       log_msg :ICC, "Got query: #{path.inspect} - #{query}"
       self.request(path[1], path[2], query)
     end
@@ -69,17 +70,17 @@ class ICC < RPCQooxdooPath
     if en = Object.const_get(entity_name)
       dputs(3) { "Sending #{method} to #{entity_name}" }
       query={}
-      query_json.each_pair{|k,v| query[k] = JSON.parse( v.first )}
-      dputs(3){"Found query #{query.inspect}"}
-      en.send(method, query)
+      query_json.each_pair { |k, v| query[k] = JSON.parse(v.first) }
+      dputs(3) { "Found query #{query.inspect}" }
+      self.response('OK', en.send(method, query))
     else
-      log_msg :ICC, "Error: Object #{entity_name} doesn't exist"
+      self.response('Error', log_msg(:ICC, "Object #{entity_name} doesn't exist"))
     end
   end
 
   def self.data_received(tr)
-    if tr._method.sub!( /^json@/, '')
-      tr._data = JSON.parse( tr._data ).first
+    if tr._method.sub!(/^json@/, '')
+      tr._data = JSON.parse(tr._data).first
     end
     entity_name, m = tr._method.split('.')
     method = "icc_#{m}"
@@ -101,7 +102,7 @@ class ICC < RPCQooxdooPath
       begin
         ret = Net::HTTP.post_form(path, post)
         dputs(4) { "Return-value is #{ret.inspect}, body is #{ret.body}" }
-        return JSON.parse( ret.body )
+        return JSON.parse(ret.body)
       rescue Timeout::Error
         dputs(2) { 'Timeout occured' }
         err = 'Error: Timeout occured'
@@ -149,8 +150,8 @@ class ICC < RPCQooxdooPath
 
   def self.get(entity_name, method, args: {}, url: ConfigBase.server_uri)
     args_json = {}
-    args.each_pair{|k,v| args_json[k] = v.to_json}
+    args.each_pair { |k, v| args_json[k] = v.to_json }
     path = URI.parse("#{url}/#{entity_name}/#{method}?#{URI.encode_www_form(args_json)}")
-    ret = JSON::parse(Net::HTTP.get(path))
+    JSON::parse(Net::HTTP.get(path))
   end
 end
