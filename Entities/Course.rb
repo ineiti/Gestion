@@ -10,6 +10,7 @@ require 'docsplit'
 require 'rqrcode'
 require 'rqrcode/export/png'
 require 'net/http'
+require 'base64'
 
 
 class Courses < Entities
