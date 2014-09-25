@@ -87,9 +87,9 @@ class AdminCourseType < View
     #dp (res = ICC.transfer('CourseTypes.list')).inspect
     dp (res = ICC.get(:CourseTypes, :list)).inspect
     if res._code == 'Error'
-      status_list(false, list: res._msg)
+      status_list(true, status: "Error: #{res._msg}")
     else
-      status_list(true, status: 'Error while getting list')
+      status_list(false, list: res._msg)
     end
   end
 

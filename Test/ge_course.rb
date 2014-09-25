@@ -10,66 +10,66 @@ class TC_Course < Test::Unit::TestCase
     Permission.add('teacher', '.*')
     Entities.delete_all_data()
 
-    dputs(3) { "Resetting SQLite" }
+    dputs(3) { 'Resetting SQLite' }
     SQLite.dbs_close_all
-    FileUtils.cp("db.testGestion", "data/compta.db")
+    FileUtils.cp('db.testGestion', 'data/compta.db')
     SQLite.dbs_open_load_migrate
+    ConfigBase.server_url = 'http://localhost:3302/icc'
 
-    @admin = Entities.Persons.create(:login_name => "admin", :password => "super123",
-                                     :permissions => ["default", "teacher"], :first_name => "Admin", :family_name => "The")
-    @admin2 = Entities.Persons.create(:login_name => "admin2", :password => "super123",
-                                      :permissions => ["default", "teacher"], :first_name => "Admin", :family_name => "The")
-    @secretaire = Entities.Persons.create(:login_name => "secretaire", :password => "super",
-                                          :permissions => ["default", "teacher"], :first_name => "Le", :family_name => "Secretaire")
-    @surf = Entities.Persons.create(:login_name => "surf", :password => "super",
-                                    :permissions => ["default"], :first_name => "Internet", :family_name => "Surfer")
-    @surf2 = Entities.Persons.create(:login_name => "surf2", :password => "super",
-                                     :permissions => ["default"], :first_name => "Internet", :family_name => "Surfer")
-    @stud1 = Entities.Persons.create(:login_name => "stud1", :password => "super",
-                                     :permissions => ["default"], :first_name => "Internet", :family_name => "Student")
-    @stud2 = Entities.Persons.create(:login_name => "stud2", :password => "super",
-                                     :permissions => ["default"], :first_name => "Internet", :family_name => "Student")
-    @maint_t = Entities.CourseTypes.create(:name => "maint", :duration => 72,
-                                           :desciption => "maintenance", :contents => "lots of work",
-                                           :filename => ['base_gestion.odt'], :output => "certificate",
-                                           :diploma_type => ["simple"],
-                                           :account_base => Accounts.create_path("Root::Income::Courses"))
-    @maint_2 = Courses.create(:name => "maint_1210", :start => "1.10.2012",
-                              :end => "1.1.2013", :sign => "2.1.2012", :teacher => @secretaire,
-                              :contents => "lots of work", :description => "maintenance",
+    @admin = Entities.Persons.create(:login_name => 'admin', :password => 'super123',
+                                     :permissions => %w(default teacher), :first_name => 'Admin', :family_name => 'The')
+    @admin2 = Entities.Persons.create(:login_name => 'admin2', :password => 'super123',
+                                      :permissions => %w(default teacher), :first_name => 'Admin', :family_name => 'The')
+    @secretaire = Entities.Persons.create(:login_name => 'secretaire', :password => 'super',
+                                          :permissions => %w(default teacher), :first_name => 'Le', :family_name => 'Secretaire')
+    @surf = Entities.Persons.create(:login_name => 'surf', :password => 'super',
+                                    :permissions => ['default'], :first_name => 'Internet', :family_name => 'Surfer')
+    @surf2 = Entities.Persons.create(:login_name => 'surf2', :password => 'super',
+                                     :permissions => ['default'], :first_name => 'Internet', :family_name => 'Surfer')
+    @stud1 = Entities.Persons.create(:login_name => 'stud1', :password => 'super',
+                                     :permissions => ['default'], :first_name => 'Internet', :family_name => 'Student')
+    @stud2 = Entities.Persons.create(:login_name => 'stud2', :password => 'super',
+                                     :permissions => ['default'], :first_name => 'Internet', :family_name => 'Student')
+    @maint_t = Entities.CourseTypes.create(:name => 'maint', :duration => 72,
+                                           :desciption => 'maintenance', :contents => 'lots of work',
+                                           :filename => ['base_gestion.odt'], :output => 'certificate',
+                                           :diploma_type => ['simple'],
+                                           :account_base => Accounts.create_path('Root::Income::Courses'))
+    @maint_2 = Courses.create(:name => 'maint_1210', :start => '1.10.2012',
+                              :end => '1.1.2013', :sign => '2.1.2012', :teacher => @secretaire,
+                              :contents => 'lots of work', :description => 'maintenance',
                               :duration => 72, :responsible => @secretaire,
                               :ctype => @maint_t)
 
-    @it_101_t = CourseTypes.create(:name => "it-101", :diploma_type => ["accredited"],
+    @it_101_t = CourseTypes.create(:name => 'it-101', :diploma_type => ['accredited'],
                                    :output => %w( label ), :filename => %w( label.odg ),
-                                   :contents => "it-101", :description => "windows, word, excel",
-                                   :central_host => "http://localhost:3302/icc")
-    @it_101 = Courses.create_ctype(@it_101_t, "1203")
+                                   :contents => 'it-101', :description => 'windows, word, excel')
+    @it_101 = Courses.create_ctype(@it_101_t, '1203')
     @it_101.data_set_hash(:responsible => @secretaire, :teacher => @surf,
-                          :start => "1.11.2012", :end => "1.2.2013", :sign => "10.2.2013",
+                          :start => '1.11.2012', :end => '1.2.2013', :sign => '10.2.2013',
                           :students => %w( secretaire surf ))
 
-    @net_t = CourseTypes.create(:name => "it-301", :description => "Networking")
-    @net = Entities.Courses.create(:name => "net_1001",
+    @net_t = CourseTypes.create(:name => 'it-301', :description => 'Networking')
+    @net = Entities.Courses.create(:name => 'net_1001',
                                    :ctype => @net_t)
 
-    @base = Entities.Courses.create(:name => "base_1004", :ctype => @it_101_t)
+    @base = Entities.Courses.create(:name => 'base_1004', :ctype => @it_101_t)
 
-    @maint = Entities.Courses.create(:name => "maint_1204", :start => "19.01.2012", :end => "18.02.2012",
-                                     :dow => "lu-ve", :teacher => @secretaire, :ctype => @maint_t)
+    @maint = Entities.Courses.create(:name => 'maint_1204', :start => '19.01.2012', :end => '18.02.2012',
+                                     :dow => 'lu-ve', :teacher => @secretaire, :ctype => @maint_t)
     @maint.students = %w( admin surf )
     @base.students = %w( admin2 surf )
 
 
-    @center = Persons.create(:login_name => "foo", :permissions => ["center"],
-                             :address => "B.P. 1234", :town => "Sansibar",
-                             :phone => "+23599999999", :email => "profeda@gmail.com")
-    @center.password = @center.password_plain = "1234"
+    @center = Persons.create(:login_name => 'foo', :permissions => ['center'],
+                             :address => 'B.P. 1234', :town => 'Sansibar',
+                             :phone => '+23599999999', :email => 'profeda@gmail.com')
+    @center.password = @center.password_plain = '1234'
 
-    @admin_session = Sessions.create(@admin, "default")
+    @admin_session = Sessions.create(@admin, 'default')
 
-    @accountant = Persons.create(:login_name => "accountant",
-                                 :permissions => ["accountant"])
+    @accountant = Persons.create(:login_name => 'accountant',
+                                 :permissions => ['accountant'])
   end
 
   def teardown
@@ -413,7 +413,7 @@ class TC_Course < Test::Unit::TestCase
     @grade0 = Grades.create({:student => @secretaire,
                              :course => @maint_2, :mean => 11, :means => [11]})
     @maint_t.data_set_hash({:output => ['label'], :central_name => 'foo',
-                            :central_host => 'label.profeda.org', :filename => ['label.odg'],
+                            :filename => ['label.odg'],
                             :diploma_type => ['simple']})
     @maint_2.students_add 'secretaire'
     Grades.search_all.each { |g|
@@ -429,7 +429,7 @@ class TC_Course < Test::Unit::TestCase
 
   def test_files_move
     @maint_t.data_set_hash({:output => ['label'], :central_name => 'foo',
-                            :central_host => 'label.profeda.org', :filename => ['label.odg'],
+                            :filename => ['label.odg'],
                             :diploma_type => ['simple']})
     students = %w( secretaire admin surf )
     @maint_2.students.concat students
@@ -466,7 +466,7 @@ class TC_Course < Test::Unit::TestCase
     cname = "#{@center.login_name}_"
 
     @maint_t.data_set_hash({:output => ['label'],
-                            :central_host => "http://localhost:#{@port}/icc", :filename => ['label.odg'],
+                            :filename => ['label.odg'],
                             :name => 'it-101',
                             :diploma_type => ['accredited']})
 
@@ -520,7 +520,7 @@ class TC_Course < Test::Unit::TestCase
     # Test md5-sums
     files_hash = @maint_2.md5_exams
     assert_equal files_hash,
-                 Courses.icc_exams_here( {user: 'foo', data: @maint_2.name})
+                 Courses.icc_exams_here({user: 'foo', data: @maint_2.name})
     assert_equal({'secretaire' => [%w(exa.doc d41d8cd98f00b204e9800998ecf8427e)],
                   'admin' => [%w(exa.doc d41d8cd98f00b204e9800998ecf8427e)],
                   'surf' => []}, files_hash)
@@ -650,7 +650,7 @@ class TC_Course < Test::Unit::TestCase
     cname = "#{@center.login_name}_"
 
     @maint_t.data_set_hash({:output => ['label'],
-                            :central_host => "http://localhost:#{@port}/icc", :filename => ['label.odg'],
+                            :filename => ['label.odg'],
                             :name => 'it-101',
                             :diploma_type => ['accredited']})
 
@@ -726,8 +726,8 @@ class TC_Course < Test::Unit::TestCase
     }
     dputs(1) { "Starting at port #{@port}" }
     sleep 1
+    ConfigBase.server_url = "http://localhost:#{@port}/icc"
 
-    @it_101.ctype.central_host = "http://localhost:#{@port}/icc"
     dputs(1) { @center.inspect }
     dputs(1) { Persons.find_by_permissions(:center).inspect }
     assert @it_101.sync_do
@@ -760,18 +760,17 @@ class TC_Course < Test::Unit::TestCase
     }
     dputs(1) { "Starting at port #{@port}" }
     sleep 1
-
-    @it_101.ctype.central_host = "http://localhost:#{@port}/icc"
+    ConfigBase.server_url = "http://localhost:#{@port}/icc"
 
     grade = Grades.create({:student => @surf,
                            :course => @it_101, :means => [11]})
-    assert !Courses.find_by_name("foo_")
-    assert !Persons.match_by_login_name("foo_secretaire")
+    assert !Courses.find_by_name('foo_')
+    assert !Persons.match_by_login_name('foo_secretaire')
 
     @it_101.sync_do
 
-    foo = Courses.find_by_name("foo_")
-    foo_surf = Persons.match_by_login_name("foo_surf")
+    foo = Courses.find_by_name('foo_')
+    foo_surf = Persons.match_by_login_name('foo_surf')
     foo_grade = Grades.match_by_course_person(foo, foo_surf)
 
     assert_equal [11], foo_grade.means
@@ -785,18 +784,18 @@ class TC_Course < Test::Unit::TestCase
 
   def test_bulk
     ConfigBase.set_functions([])
-    names = ["Dmin A", "Zero", "One Two", "Ten Eleven Twelve", "A B C D",
-             "Hélène Méyère", "Ñeri Soustroup"]
-    reply = ""
+    names = ['Dmin A', 'Zero', 'One Two', 'Ten Eleven Twelve', 'A B C D',
+             'Hélène Méyère', 'Ñeri Soustroup']
+    reply = ''
     while names.length > 0
       dputs(4) { "Doing #{names.inspect}" }
-      reply = RPCQooxdooHandler.request(1, "View.CourseModify", "button", [["default", "bulk_students",
-                                                                            {"name" => "net_1001", "names" => names.join("\n")}]])
+      reply = RPCQooxdooHandler.request(1, 'View.CourseModify', 'button', [['default', 'bulk_students',
+                                                                            {'name' => 'net_1001', 'names' => names.join("\n")}]])
       assert_not_nil reply
       names.shift
     end
-    bulk = [["zero", "Zero", ""], %w( tone One Two ), ["eten", "Ten", "Eleven Twelve"],
-            ["ca", "A B", "C D"], %w( mhelene Hélène Méyère )]
+    bulk = [['zero', 'Zero', ''], %w( tone One Two ), ['eten', 'Ten', 'Eleven Twelve'],
+            ['ca', 'A B', 'C D'], %w( mhelene Hélène Méyère )]
     bulk.each { |b|
       login, first, family = b
       dputs(1) { "Doing #{b.inspect}" }
@@ -814,10 +813,10 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_add_double
-    RPCQooxdooHandler.request(1, "View.CourseModify", "button", [["default", "create_new",
-                                                                  {"name" => "net_1001", "double_name" => "Dmin A"}]])
-    RPCQooxdooHandler.request(1, "View.CourseModify", "button", [["default", "accept",
-                                                                  {"name" => "net_1001", "double_proposition" => [@admin.person_id]}]])
+    RPCQooxdooHandler.request(1, 'View.CourseModify', 'button', [['default', 'create_new',
+                                                                  {'name' => 'net_1001', 'double_name' => 'Dmin A'}]])
+    RPCQooxdooHandler.request(1, 'View.CourseModify', 'button', [['default', 'accept',
+                                                                  {'name' => 'net_1001', 'double_proposition' => [@admin.person_id]}]])
 
     assert_equal %w( admin admin3 ), @net.students.sort
   end
@@ -1019,6 +1018,11 @@ class TC_Course < Test::Unit::TestCase
 
     assert_equal 'it-101:it-301',
                  CourseTypes.icc_fetch({course_type_names: %w( it-101 it-301)}).
-                     map{|ct| ct._name}.join(':')
+                     map { |ct| ct._name }.join(':')
+  end
+
+  def test_json_byte
+    a = {cmd: 'hi', data: File.open('test_bytes.png') { |f| f.read }}
+    assert_equal a, JSON.parse(a.to_json).to_sym
   end
 end

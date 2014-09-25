@@ -1171,7 +1171,8 @@ base_gestion
       file = "/tmp/#{file}"
       dputs(3) { "Exa-file is #{file}" }
       ret = sync_transfer(:exams,
-                          {zip: File.open(file) { |f| f.read }, course: name})
+                          {zip: File.open(file) { |f| f.read }.force_encoding(Encoding::ASCII_8BIT),
+                           course: name})
       if ret._code == 'Error'
         @sync_state += "Error: #{ret._msg}"
         return false

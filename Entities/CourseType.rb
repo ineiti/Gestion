@@ -18,7 +18,6 @@ class CourseTypes < Entities
 
     value_block :central
     value_list_drop :diploma_type, "%w( simple files accredited )"
-    value_str :central_host
     value_int :files_needed
     value_list_drop :output, "%w( certificate label )"
 
@@ -97,8 +96,8 @@ class CourseType < Entity
   end
 
   def get_url
-    if central_host.to_s.length > 0
-      ret = "#{central_host}"
+    if ConfigBase.server_uri.to_s.length > 0
+      ret = "#{ConfigBase.server_uri}"
     else
       ret = "#{get_config(%x[ hostname -f ].chomp + ':3302', :Courses, :hostname)}"
     end

@@ -129,7 +129,7 @@ class CourseTabs < View
   def rpc_button_new_course( session, data )
     dputs( 3 ){ "session: #{session} - data: #{data.inspect}" }
     
-    course = Courses.create_ctype( data['new_ctype'], data['name_date'], 
+    course = Courses.create_ctype( data._new_ctype, data._name_date,
       session.owner )
     
     if session.owner.permissions.index('center')

@@ -3,7 +3,7 @@ require '../Dependencies'
 Dependencies.load_path( here: '..')
 require 'test/unit'
 
-CONFIG_FILE="config_test.yaml"
+CONFIG_FILE='config_test.yaml'
 DEBUG_LVL=0
 
 require 'QooxView'
