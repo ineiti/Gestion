@@ -360,7 +360,7 @@ class Courses < Entities
   def icc_exams(tr)
     tr._tid.gsub!(/[^a-zA-Z0-9_-]/, '')
     file = "/tmp/#{tr._tid}.zip"
-    File.open(file, 'w') { |f| f.write Base::decode64(tr._data)._zip }
+    File.open(file, 'w') { |f| f.write Base64::decode64(tr._data)._zip }
     if course = Courses.match_by_name(center_course_name(tr._data._course, tr._user))
       dputs(3) { 'Updating exams' }
       course.zip_read(file)
@@ -1171,7 +1171,7 @@ base_gestion
           "#{files.index(file) + 1}/#{files.count}: "
       file = "/tmp/#{file}"
       dputs(3) { "Exa-file is #{file}" }
-      file_64 = Base::encode64(File.open(file) { |f| f.read }.
+      file_64 = Base64::encode64(File.open(file) { |f| f.read }.
                                    force_encoding(Encoding::ASCII_8BIT))
       ret = sync_transfer(:exams, {zip: file_64, course: name})
       if ret._code == 'Error'
