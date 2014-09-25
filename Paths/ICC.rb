@@ -7,6 +7,7 @@
 # - put json around everything
 require 'cgi'
 
+=begin
 # Ouch - old version of ActiveSupport, needs this patch
 module ActiveSupport::JSON::Encoding
   def self.escape(string)
@@ -19,6 +20,7 @@ module ActiveSupport::JSON::Encoding
     json
   end
 end
+=end
 
 class ICC < RPCQooxdooPath
   @@transfers = {}

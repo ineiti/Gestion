@@ -1,4 +1,6 @@
 require 'test/unit'
+require 'iconv'
+require 'base64'
 #require 'ftools'
 
 
@@ -1022,7 +1024,20 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_json_byte
-    a = {cmd: 'hi', data: File.open('test_bytes.png') { |f| f.read }}
-    assert_equal a, JSON.parse(a.to_json).to_sym
+    a = {cmd: 'hi', data: "bad\x92 value" }
+    b = JSON.parse({cmd: a._cmd, data: Base64.encode64( a._data )}.to_json).to_sym
+    b._data = Base64.decode64( b._data )
+    assert_equal a.to_s, b.to_s
+
+    f = File.open('test_bytes.png') { |f| f.read }.force_encoding( Encoding::ASCII_8BIT)
+    assert_equal f, f
+    assert_equal f, Base64.decode64( Base64.encode64( f ) )
+
+    a = {cmd: 'hi', data: File.open('test_bytes.png') { |f| f.read }.
+        force_encoding( Encoding::ASCII_8BIT) }
+    b = JSON.parse({cmd: a._cmd, data: Base64.encode64( a._data )}.to_json).to_sym
+    b._data = Base64.decode64( b._data )
+    assert_equal a._data, b._data, 'Not the same with Base64'
+
   end
 end
