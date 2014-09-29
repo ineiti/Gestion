@@ -9,7 +9,6 @@ require 'zip/filesystem'
 require 'docsplit'
 require 'rqrcode'
 require 'rqrcode/export/png'
-require 'net/http'
 require 'base64'
 
 
@@ -1071,8 +1070,10 @@ base_gestion
   end
 
   def sync_transfer(field, transfer = '', json = true)
-    return ICC.transfer("Courses.#{field}", transfer, url: ctype.get_url, json: json,
-    percent_str: @sync_state )
+    ss = @sync_state
+    return ICC.transfer(Persons.center, "Courses.#{field}", transfer,
+                        url: ctype.get_url, json: json,
+                        percent_str: @sync_state){|s| @sync_state = "#{ss} #{s}"}
   end
 
   def sync_do
@@ -1173,7 +1174,7 @@ base_gestion
       file = "/tmp/#{file}"
       dputs(3) { "Exa-file is #{file}" }
       file_64 = Base64::encode64(File.open(file) { |f| f.read }.
-                                   force_encoding(Encoding::ASCII_8BIT))
+                                     force_encoding(Encoding::ASCII_8BIT))
       ret = sync_transfer(:exams, {zip: file_64, course: name})
       if ret._code == 'Error'
         @sync_state += "Error: #{ret._msg}"
