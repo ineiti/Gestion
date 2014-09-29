@@ -129,7 +129,8 @@ class ICC < RPCQooxdooPath
     return err
   end
 
-  def self.transfer(method, transfer = '', url: ConfigBase.server_uri, json: true)
+  def self.transfer(method, transfer = '', url: ConfigBase.server_uri, json: true,
+      percent_str: nil)
     block_size = 4096
     if json
       method.prepend 'json@'
@@ -152,10 +153,12 @@ class ICC < RPCQooxdooPath
                          :md5 => transfer_md5, :tid => tid,
                          :user => center.login_name, :pass => center.password_plain}.to_json)
     return ret if ret._code == 'Error'
-    ss = @sync_state
+    percent_str and ps = percent_str
     t_array.each { |t|
-      @sync_state = "#{ss} #{((pos+1) * 100 / t_array.length).floor}%"
-      dputs(3) { @sync_state }
+      if percent_str
+        percent_str and percent_str = "#{ps} #{((pos+1) * 100 / t_array.length).floor}%"
+        dputs(3) { percent_str }
+      end
       ret = ICC.send_post(url, tid, t)
       return ret if ret =~ /^Error:/
       pos += 1

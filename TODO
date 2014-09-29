@@ -5,7 +5,10 @@ WORKING:
           - get course-types from server
             - fetch course-description from server
             - Move Course::sync to ICC
+                - "Transferring exam" doesn't show "%" anymore
 
+                - move ICC to QooxView
+                - add "json" and "base64"-flag
             - Course::Grade - Syncing with server when course-type doesn't exist must
               return error -> only sync with CourseTypes fetched from server
           - CourseDiplomas: display random-id if available
@@ -231,6 +234,13 @@ To check:
 
 
 ** FIXED **:
+        - B 140929: Data corruption when turning off while saving
+            - don't load 0-byte files
+            - how to save:
+                - rename all .tmp-files to normal files
+                - write .tmp-files
+                -> this would let a margin of 1 minute to get everything out on
+                  the disks
         - B 140918: Assistants don't show up in course::modify::assistant
         - B 140918: secretary can't print exam-files
         - B 140915: AfriCompta doesn't pass most tests!

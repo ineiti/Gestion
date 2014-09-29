@@ -1071,7 +1071,8 @@ base_gestion
   end
 
   def sync_transfer(field, transfer = '', json = true)
-    return ICC.transfer("Courses.#{field}", transfer, url: ctype.get_url, json: json)
+    return ICC.transfer("Courses.#{field}", transfer, url: ctype.get_url, json: json,
+    percent_str: @sync_state )
   end
 
   def sync_do

@@ -20,31 +20,12 @@ if not FileTest.exists? CONFIG_FILE
   end
 end
 
-def cleanup_data
-  puts 'Oups - looking what to do'
-  youngest = nil
-  if File.exists? 'Backups'
-    youngest = %x[ ls Backups | sort | tail -n 1 ]
-    puts "Backups are here - trying youngest: #{ youngest }"
-  end
-  puts 'Making new backup and deleting everything in data/*'
-  %x[ Binaries/backup 1rescue_ ]
-  exec "nohup Binaries/swipe_gestion -f #{youngest}"
-  #FileUtils.rm_rf( "data" )
-  #youngest and exec "nohup Binaries/restore #{ youngest } &"
-  #%x[ echo Binaries/start_gestion | at now+1min ]
-  #%x[ pkill -9 -f tee.*gestion ]
-  #exit
-end
-
 begin
   HAS_CONFIGBASE=true
   require 'QooxView'
   require 'ACQooxView'
   ACQooxView.load_entities
   Dependencies.load_dirs
-rescue StorageLoadError
-  cleanup_data
 rescue Exception => e
   puts "#{e.inspect}"
   puts "#{e.to_s}"
@@ -114,12 +95,6 @@ begin
                              :price => 25000, :duration => 30)
   end
 
-rescue StorageLoadError
-  cleanup_data
-    #rescue DRb::DRbConnError
-    #  dputs(0){ "Error: Connection to LibNet has been refused!" }
-    #  dputs(0){ "Error: Either start lib_net on #{uri} or remove LibNet-entry in config.yaml"}
-    #  exit
 rescue Exception => e
   case e.to_s
     when /UpdatePot|MakeMo|PrintHelp|value_entity_uncomplete/
