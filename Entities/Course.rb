@@ -1072,8 +1072,8 @@ base_gestion
   def sync_transfer(field, transfer = '', json = true)
     ss = @sync_state
     return ICC.transfer(Persons.center, "Courses.#{field}", transfer,
-                        url: ctype.get_url, json: json,
-                        percent_str: @sync_state){|s| @sync_state = "#{ss} #{s}"}
+                        url: ctype.get_url, json: json) { |s|
+      @sync_state = "#{ss} #{s}" }
   end
 
   def sync_do
@@ -1217,7 +1217,7 @@ base_gestion
 
   def sync_start
     if @thread
-      dputs(2) { "Thread is here, killing" }
+      dputs(2) { 'Thread is here, killing' }
       begin
         abort_pdfs
       rescue Exception => e
@@ -1227,8 +1227,8 @@ base_gestion
         puts e.backtrace
       end
     end
-    dputs(2) { "Starting new thread" }
-    @sync_state = "Starting"
+    dputs(2) { 'Starting new thread' }
+    @sync_state = 'Starting'
     @thread = Thread.new {
       begin
         sync_do
@@ -1237,6 +1237,7 @@ base_gestion
         dputs(0) { "#{e.inspect}" }
         dputs(0) { "#{e.to_s}" }
         puts e.backtrace
+        @sync_state += "Error: thread reported #{e.to_s}"
       end
     }
   end

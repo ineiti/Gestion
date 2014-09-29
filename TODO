@@ -1,23 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - client/server:
-          - get course-types from server
-            - fetch course-description from server
-            - Move Course::sync to ICC
-                - "Transferring exam" doesn't show "%" anymore
-                - move ICC to QooxView
-
-            - when error in thread, UI should be informed
-            - Course::Grade - Syncing with server when course-type doesn't exist must
-              return error -> only sync with CourseTypes fetched from server
-          - CourseDiplomas: display random-id if available
-          - only add center-ids when a course is "certified"
-            - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
-              - send-server: same as synchronize
-              - fetch: to do, adding to courseTabs
-              - download/upload backup: same as synchronize and fetch
-              - import courses from server
 
 BUGS:
         - Make LibNet working at least on ArchLinux
@@ -56,6 +39,15 @@ FEATURES:
             upload
           - adding files to be print by teachers, like exams and others?
     	- Courses::Days - add other days to the list
+          - CourseDiplomas: display random-id if available
+          - only add center-ids when a course is "certified"
+            - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
+              - send-server: same as synchronize
+              - fetch: to do, adding to courseTabs
+              - download/upload backup: same as synchronize and fetch
+              - import courses from server
+          - Course::Grade - Syncing with server when course-type doesn't exist must
+              return error -> only sync with CourseTypes fetched from server
 
         - Show what student payed all in CourseDiploma
         - /etc/gestion.conf - bash file for very basic configuration
@@ -234,6 +226,13 @@ To check:
 
 
 ** FIXED **:
+        - F 140929: client/server:
+          - get course-types from server
+            - fetch course-description from server
+            - Move Course::sync to ICC
+                - "Transferring exam" doesn't show "%" anymore
+                - move ICC to QooxView
+            - when error in thread, UI should be informed
         - B 140929: Data corruption when turning off while saving
             - don't load 0-byte files
             - how to save:
