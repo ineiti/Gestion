@@ -7,7 +7,8 @@ WORKING:
             - Move Course::sync to ICC
                 - "Transferring exam" doesn't show "%" anymore
                 - move ICC to QooxView
-                
+
+            - when error in thread, UI should be informed
             - Course::Grade - Syncing with server when course-type doesn't exist must
               return error -> only sync with CourseTypes fetched from server
           - CourseDiplomas: display random-id if available
