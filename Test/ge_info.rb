@@ -1,6 +1,4 @@
 require 'test/unit'
-require '../Info.rb'
-require '../Internet.rb'
 
 class TC_info < Test::Unit::TestCase
   def setup

@@ -359,7 +359,7 @@ class Courses < Entities
   def icc_exams(tr)
     tr._tid.gsub!(/[^a-zA-Z0-9_-]/, '')
     file = "/tmp/#{tr._tid}.zip"
-    File.open(file, 'w') { |f| f.write Base64::decode64(tr._data)._zip }
+    File.open(file, 'w') { |f| f.write Base64::decode64(tr._data._zip ) }
     if course = Courses.match_by_name(center_course_name(tr._data._course, tr._user))
       dputs(3) { 'Updating exams' }
       course.zip_read(file)
@@ -1071,9 +1071,11 @@ base_gestion
 
   def sync_transfer(field, transfer = '', json = true)
     ss = @sync_state
-    return ICC.transfer(Persons.center, "Courses.#{field}", transfer,
+    ret = ICC.transfer(Persons.center, "Courses.#{field}", transfer,
                         url: ctype.get_url, json: json) { |s|
       @sync_state = "#{ss} #{s}" }
+    @sync_state = ss
+    ret
   end
 
   def sync_do

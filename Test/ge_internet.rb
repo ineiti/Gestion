@@ -1,5 +1,4 @@
 require 'test/unit'
-require '../Internet'
 
 class LibNet
   def initialize

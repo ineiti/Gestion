@@ -3,7 +3,9 @@ Internet - an interface for the internet-part of Markas-al-Nour.
 =end
 
 module Internet
-  def self.fetch_users
+  extend self
+
+  def fetch_users
     if (server = ConfigBase.internet_cash)
       begin
         ret = Net::HTTP.get(server, '/internetCash/fetch_users')
@@ -33,7 +35,7 @@ module Internet
     end
   end
 
-  def self.take_money
+  def take_money
     if users_connected = $lib_net.call(:users_connected)
       users_connected.split.each { |u|
         dputs(3) { "User is #{u}" }
@@ -74,7 +76,7 @@ module Internet
     end
   end
 
-  def self.check_services
+  def check_services
     if false
       groups_all = Services.search_all.collect { |s| s[:group] }
       Persons.search_all.each { |p|
@@ -93,7 +95,7 @@ module Internet
     end
   end
 
-  def self.active_course_for(user)
+  def active_course_for(user)
     # We want an exact match, so we put the name between ^ and $
     courses = Entities.Courses.search_by_students("^#{user.login_name}$")
     if courses
@@ -118,7 +120,7 @@ module Internet
     return false
   end
 
-  def self.free(user)
+  def free(user)
     isp = $lib_net.isp_params.to_sym
     dputs(3) { "isp is #{isp.inspect}" }
     case isp._allow_free
@@ -150,12 +152,12 @@ module Internet
     return false
   end
 
-  def self.connect_user(ip, name)
+  def connect_user(ip, name)
     $lib_net.call(:user_connect, "#{ip} #{name} " +
         "#{self.free(name) ? 'yes' : 'no'}")
   end
 
-  def self.update_connection( ip, name )
+  def update_connection( ip, name )
     return "From #{ip} user #{name}"
   end
 end

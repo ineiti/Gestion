@@ -12,9 +12,9 @@ module Dependencies
     }
   end
 
-  def load_dirs
+  def load_dirs( here: '.' )
     %w( Modules Paths ).each { |dir|
-      Dir.glob("#{dir}/*").each { |d| require d }
+      Dir.glob("#{here}/#{dir}/*").each { |d| require d }
     }
   end
 end

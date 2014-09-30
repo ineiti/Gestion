@@ -9,8 +9,9 @@ DEBUG_LVL=0
 require 'QooxView'
 require 'ACQooxView'
 require 'LibNet'
-require '../Paths/Label'
-require '../Paths/ICC'
+require '../Dependencies'
+Dependencies.load_path( here: '..' )
+Dependencies.load_dirs( here: '..' )
 ACQooxView.load_entities
 
 def permissions_init
@@ -34,11 +35,14 @@ $lib_net = LibNet.new( true )
 
 QooxView.init( '../Entities', '../Views' )
 
-tests = %w( compta configbase course info internet login person qvinfo
-            report share sms tasks usage view )
+tests = Dir.glob( 'ge_*.rb' )
 #tests = %w( sms )
-tests = %w( course )
+#tests = %w( internet )
 #tests = %w( configbase )
 tests.each{|t|
-  require "ge_#{t}"
+  begin
+    require "ge_#{t}"
+  rescue LoadError => e
+    require t
+  end
 }
