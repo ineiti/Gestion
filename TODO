@@ -3,7 +3,6 @@
 WORKING:
 
 BUGS:
-        - chat-lines disappear in markas
         - Make LibNet working at least on ArchLinux
           - Network/Connections doesn't show variables
           - think about connections / Provider / Hardware / Others

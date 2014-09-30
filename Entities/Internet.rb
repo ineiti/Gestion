@@ -47,7 +47,7 @@ module Internet
         if user
           dputs(3) { "Found user #{u}: #{user.full_name}" }
           if not (ag = AccessGroups.allow_user_now(u))[0]
-            log_msg "take_money", "Kicking user #{u} because of accessgroups: #{ag[1]}"
+            log_msg 'take_money', "Kicking user #{u} because of accessgroups: #{ag[1]}"
             $lib_net.call(:user_disconnect_name,
               "#{user.login_name}")
           elsif self.free(user)
@@ -58,7 +58,7 @@ module Internet
               dputs(3) { "Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}" }
               user.internet_credit = user.internet_credit.to_i - cost
             else
-              log_msg "take_money", "User #{u} has not enough money left - kicking"
+              log_msg 'take_money', "User #{u} has not enough money left - kicking"
               $lib_net.call(:user_disconnect_name,
                 "#{user.login_name}")
             end
@@ -71,7 +71,7 @@ module Internet
     end
     if users_disconnected = $lib_net.call(:users_disconnected)
       users_disconnected.split.each{|u|
-        log_msg "take_money", "Kicked user #{u} because of inactivity"
+        log_msg 'take_money', "Kicked user #{u} because of inactivity"
       }
     end
   end
@@ -106,8 +106,8 @@ module Internet
           dputs(3) { "Searching course for #{user.full_name}" }
           dputs(3) { [c.name, c.start, c.end].inspect }
           begin
-            c_start = Date.strptime(c.start, "%d.%m.%Y")
-            c_end = Date.strptime(c.end, "%d.%m.%Y")
+            c_start = Date.strptime(c.start, '%d.%m.%Y')
+            c_end = Date.strptime(c.end, '%d.%m.%Y')
           rescue
             c_start = c_end = Date.new
           end
@@ -139,7 +139,7 @@ module Internet
         dputs(3) { "User #{user.login_name} is on freesurf" }
         return true
       end
-      if Permission.can_view(user.permissions, "FlagInternetFree")
+      if Permission.can_view(user.permissions, 'FlagInternetFree')
         dputs(3) { "User #{user.login_name} has FlagInternetFree" }
         return true
       end
@@ -148,7 +148,7 @@ module Internet
         return true
       end
     end
-    dputs(3) { "Found nothing" }
+    dputs(3) { 'Found nothing' }
     return false
   end
 

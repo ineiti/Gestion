@@ -27,10 +27,10 @@ class ConfigBases < Entities
   def migration_2( c )
     dputs(3){"Migrating in: #{c.inspect} - #{get_config(true, :LibNet, :simulation ).inspect}"}
     if get_config( true, :LibNet, :simulation ) == false
-      dputs(3){"Adding LibNet"}
+      dputs(3){ 'Adding LibNet' }
       c._functions += [:internet_libnet]
     end
-    c._libnet_uri = get_config( "", :LibNet, :URI )
+    c._libnet_uri = get_config( '', :LibNet, :URI )
     c._internet_cash = get_config( nil, :LibNet, :internetCash )
     dputs(3){"Migrating out: #{c.inspect}"}
   end
@@ -49,19 +49,19 @@ class ConfigBases < Entities
           $lib_net = DRbObject.new nil, uri
           dputs(1){ "Connection is #{$lib_net.status}" }
         else
-          require "LibNet.rb"
+          require 'LibNet.rb'
           if get_config( false, :LibNet, :simulation )
-            dputs(2){ "Loading simulated LibNet" }
+            dputs(2){ 'Loading simulated LibNet' }
             $lib_net = LibNet.new( true )
           else
-            dputs(2){ "Loading LibNet in live-mode" }
+            dputs(2){ 'Loading LibNet in live-mode' }
             $lib_net = LibNet.new( false )
           end
         end
       else
-        require "LibNet.rb"
+        require 'LibNet.rb'
         $lib_net = LibNet.new( true )
-        dputs(2){ "Loading LibNet in simulation-mode" }
+        dputs(2){ 'Loading LibNet in simulation-mode' }
       end
     end
   end
@@ -72,6 +72,3 @@ class ConfigBase < Entity
     server_url =~ /^http/ ? server_url : "http://#{server_url}"
   end
 end
-
-require 'Helpers/ConfigBase'
-

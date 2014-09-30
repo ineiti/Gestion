@@ -7,7 +7,7 @@ Encoding.default_external = Encoding::UTF_8
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad.
 
-VERSION_GESTION='1.6.0'
+VERSION_GESTION='1.6.1'
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -21,7 +21,6 @@ if not FileTest.exists? CONFIG_FILE
 end
 
 begin
-  HAS_CONFIGBASE=true
   require 'QooxView'
   require 'ACQooxView'
   ACQooxView.load_entities

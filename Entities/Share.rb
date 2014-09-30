@@ -9,18 +9,18 @@ class Shares < Entities
     value_str :force_user
     value_str :force_group
     #value_text :args
-    value_list_drop :public, "%w( No Read ReadWrite )"
+    value_list_drop :public, '%w( No Read ReadWrite )'
     
     value_block :acl
     value_str :acl
   end
   
   def migration_1( s )
-    s.public = [ s.public.first == "Yes" ? "ReadWrite" : "No" ]
+    s.public = [ s.public.first == 'Yes' ? 'ReadWrite' : 'No']
   end
 
   def save_config( domain )
-    a = Command::run( "cat Files/smb.conf" )
+    a = System.run_str('cat Files/smb.conf')
     a.gsub!( /WORKGROUP/, domain )
     a.gsub!( /SERVER/, "Profeda-server on #{domain}" )
     a += "\n"
@@ -36,9 +36,9 @@ class Shares < Entities
         valid_users.push sh.force_group
       end
       case sh.public.first
-      when "Read"
+      when 'Read'
         a += "  guest ok = yes\n  writeable = no\n"
-      when "ReadWrite"
+      when 'ReadWrite'
         a += "  guest ok = yes\n  writeable = yes\n"
       else
         read = []
@@ -66,13 +66,13 @@ class Shares < Entities
         f.write( a )
       }
 
-      if File.exists? "/etc/init.d/samba"
-        Command::run( "/etc/init.d/samba restart")
-      elsif File.exists? "/etc/init.d/smb"
-        Command::run( "/etc/init.d/smb restart")
-        Command::run( "/etc/init.d/nmb restart")
-      elsif File.exists? "/etc/systemd"
-        Command::run( "systemctl restart smbd nmbd" )
+      if File.exists? '/etc/init.d/samba'
+        System.run_str('/etc/init.d/samba restart')
+      elsif File.exists? '/etc/init.d/smb'
+        System.run_str('/etc/init.d/smb restart')
+        System.run_str('/etc/init.d/nmb restart')
+      elsif File.exists? '/etc/systemd'
+        System.run_str('systemctl restart smbd nmbd')
       else
         dputs(0){"Error: Couldn't restart samba as there was no init.d-file"}
       end
