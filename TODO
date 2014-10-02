@@ -3,7 +3,6 @@
 WORKING:
 
 BUGS:
-
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
