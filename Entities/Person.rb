@@ -579,8 +579,8 @@ class Person < Entity
   end
 
   def permissions=(p)
-    has_teacher = self._permissions and self._permissions.concat(p).index("teacher")
-    dputs(3) { "#{self.login_name}: has_teacher is #{has_teacher} - permissions are #{p}" }
+    has_teacher = self._permissions and self._permissions.concat(p).index('teacher')
+    dputs(3) { "#{self.login_name}: has_teacher is #{has_teacher} - permissions are #{p.inspect}" }
     old_permissions = self._permissions
     self._permissions = p.uniq
     if has_teacher
@@ -594,7 +594,7 @@ class Person < Entity
     if permissions.index 'email'
       add_local_email
     end
-    if (old_permissions | self._permissions).index('email')
+    if (old_permissions || self._permissions).index('email')
       Persons.update_fetchmailrc
     end
     update_accounts
