@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
+        - Adding ScheduleType to schools
 
 BUGS:
         - Get QooxView/Test/qv_gettext to run

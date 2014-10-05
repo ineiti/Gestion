@@ -28,7 +28,7 @@ class Info < RPCQooxdooPath
   # Check on room (info1, info2, others), course and time
   def self.allowed_login(args)
     username = args[:user]
-    return "yes"
+    return 'yes'
   end
   
   # Who is allowed to use internet for free?
@@ -37,7 +37,7 @@ class Info < RPCQooxdooPath
     dputs( 3 ){ "Can #{args} do it?" }
     username = args[:user]
     user = Entities.Persons.match_by_login_name( username )
-    Internet.free( user ) ? "yes" : "no"
+    Internet.free( user ) ? 'yes' : 'no'
   end
   
   def self.isAllowed( args, ip )
@@ -48,12 +48,12 @@ class Info < RPCQooxdooPath
   def self.login( args, ip )
     dputs(3){"Logging in with #{args.inspect}"}
     user = Persons.match_by_login_name( args[:user] )
-    if self.autoConnect( args ) == "yes"
+    if self.autoConnect( args, ip ) == 'yes'
       dputs(2){"Auto-connecting user #{user.login_name} with ip #{ip}"}
       Internet.connect_user( ip, user.login_name )
-      return "connected"
+      return 'connected'
     end
-    return "nothing"
+    return 'nothing'
   end
 
   def self.clientUse( args, ip )
@@ -63,11 +63,11 @@ class Info < RPCQooxdooPath
     if user
       dputs(3){"Found user with groups #{user.groups.inspect} and internet_credit #{user.internet_credit.inspect}"}
       if Internet.free( user )
-        dputs(3){"Found free"}
-        return "nopay"
+        dputs(3){ 'Found free' }
+        return 'nopay'
       elsif user.groups and user.groups.index('localonly')
-        dputs(3){"Found localonly"}
-        return "local"
+        dputs(3){ 'Found localonly' }
+        return 'local'
       elsif user.internet_credit
         dputs(3){"Credit is #{user.internet_credit.inspect}"}
         return user.internet_credit
@@ -86,16 +86,16 @@ class Info < RPCQooxdooPath
       dputs(4){ "clientUse is #{cu.inspect} - cost_max is #{cost_max.inspect}" }
       case cu
       when /nopay/
-        return "yes"
+        return 'yes'
       when /local/
-        return "no"
+        return 'no'
       when -100...cost_max
-        return "no"
+        return 'no'
       else
-        return "yes"
+        return 'yes'
       end
     end    
-    return "no"
+    return 'no'
   end
     
   def self.query( args, ip )
