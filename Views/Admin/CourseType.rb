@@ -68,9 +68,7 @@ class AdminCourseType < View
 
   def rpc_button_from_server(session, data)
     downloading = false
-    reply(:window_show, :win_from_server).concat(
-        [status_list(true, status:
-            if ConfigBase.server_url.to_s.length == 0
+    status = if ConfigBase.server_url.to_s.length == 0
               'No server defined, aborting'
             else
               if Persons.center
@@ -79,7 +77,9 @@ class AdminCourseType < View
               else
                 'There is no center defined, aborting'
               end
-            end),
+            end    
+    reply(:window_show, :win_from_server).concat(
+        [status_list(true, status: status ),
          (downloading ? reply(:callback_button, :download_list) : reply)]).flatten
   end
 
