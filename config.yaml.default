@@ -33,7 +33,7 @@ Accounting:
 #  course: Root::Income::IT-Courses
 
 Samba:
-  simulation: true
+  simulation: false
   config_dir: /etc/samba
 
 AfriCompta:
