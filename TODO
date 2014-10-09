@@ -22,6 +22,10 @@ UI:
 FEATURES:
         - Adjust MaN-cards
         - Add Language-evaluations for MaN
+        - Add value_bool to list
+        - CSV-save
+            - use directory for old files
+            - link to newest file
         - LibNet:
           - Feature: rewrite in Ruby
           - Make LibNet working at least on ArchLinux
