@@ -54,18 +54,18 @@ class TC_Report < Test::Unit::TestCase
   end
 
   def test_report_list
-    assert_equal [[["Root::Income::Courses::maint_1404",
+    assert_equal [[['Root::Income::Courses::maint_1404',
                     [20.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]]],
                  @report_simple.print_list_monthly
-    assert_equal [[["Root::Income::Courses", [20.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]],
-                  [["Root::Lending", [20.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]],
-                  [["Total", [40.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]]],
+    assert_equal [[['Root::Income::Courses', [20.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]],
+                  [['Root::Lending', [20.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]],
+                  [['Total', [40.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]]],
                  @report_double.print_list_monthly
   end
 
   def test_heading
     assert_equal %w(Period 2014/09 2014/10 2014/11 2014/12 2015/01 2015/02 2015/03 2015/04 2015/05 2015/06 2015/07 2015/08),
-                 @report_simple.print_heading_monthly.flatten
+                 @report_simple.print_heading_monthly(Date.new(2014,9)).flatten
   end
 
   def test_report_pdf

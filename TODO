@@ -20,6 +20,8 @@ UI:
          tabs can be added
 
 FEATURES:
+        - Adjust MaN-cards
+        - Add Language-evaluations for MaN
         - LibNet:
           - Feature: rewrite in Ruby
           - Make LibNet working at least on ArchLinux

@@ -68,18 +68,19 @@ class AdminCourseType < View
 
   def rpc_button_from_server(session, data)
     downloading = false
-    status = if ConfigBase.server_url.to_s.length == 0
-              'No server defined, aborting'
-            else
-              if Persons.center
-                downloading = true
-                'Fetching CourseTypes from server'
-              else
-                'There is no center defined, aborting'
-              end
-            end    
+    status =
+        if ConfigBase.server_url.to_s.length == 0
+          'No server defined, aborting'
+        else
+          if Persons.center
+            downloading = true
+            'Fetching CourseTypes from server'
+          else
+            'There is no center defined, aborting'
+          end
+        end
     reply(:window_show, :win_from_server).concat(
-        [status_list(true, status: status ),
+        [status_list(true, status: status),
          (downloading ? reply(:callback_button, :download_list) : reply)]).flatten
   end
 
@@ -103,12 +104,12 @@ class AdminCourseType < View
     end
   end
 
-  def rpc_button_fetch_list( session, data )
+  def rpc_button_fetch_list(session, data)
     cts_names = data._ctypes_server
     dp (cts = ICC.get(:CourseTypes, :fetch,
                       args: {course_type_names: cts_names})).inspect
     if cts._code == 'Error'
-      return status_list( true, status: "Error: #{cts._msg}" )
+      return status_list(true, status: "Error: #{cts._msg}")
     end
 
     log_msg :CourseType, "Downloaded #{cts_names}"
