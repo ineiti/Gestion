@@ -142,7 +142,7 @@ class Grade < Entity
     dputs(4) { "Course is #{course.inspect}" }
     center_id = course.center ? course.center.login_name : 'pit'
     dputs(4) { "Course is #{course.inspect}" }
-    "#{course.ctype.get_url}/#{center_id}/#{random}"
+    "#{ConfigBase.get_url(:label_url)}/#{center_id}/#{random}"
   end
 
   def person

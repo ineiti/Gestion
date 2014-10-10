@@ -94,16 +94,4 @@ class CourseType < Entity
   def get_unique
     name
   end
-
-  def get_url
-    if ConfigBase.server_uri.to_s.length > 0
-      ret = "#{ConfigBase.server_uri}"
-    else
-      ret = "#{get_config(%x[ hostname -f ].chomp + ':3302', :Courses, :hostname)}"
-    end
-    if !(ret =~ /^https{0,1}:\/\//)
-      ret = "http://#{ret}"
-    end
-    ret
-  end
 end

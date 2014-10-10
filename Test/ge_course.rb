@@ -17,6 +17,8 @@ class TC_Course < Test::Unit::TestCase
     FileUtils.cp('db.testGestion', 'data/compta.db')
     SQLite.dbs_open_load_migrate
     ConfigBase.server_url = 'http://localhost:3302/icc'
+    ConfigBase.block_size = 8192
+    ConfigBase.label_url = 'http://localhost:3302/label'
 
     @admin = Entities.Persons.create(:login_name => 'admin', :password => 'super123',
                                      :permissions => %w(default teacher), :first_name => 'Admin', :family_name => 'The')
@@ -398,6 +400,11 @@ class TC_Course < Test::Unit::TestCase
     assert @grade0.get_url_label =~ /^http:\/\//
     dputs(1) { "URL-label is #{@grade0.get_url_label}" }
     assert @grade0.random
+
+    ConfigBase.label_url = 'profeda.org'
+    assert @grade0.get_url_label =~ /^http:\/\/profeda.org/
+    ConfigBase.label_url = 'http://profeda.org'
+    assert @grade0.get_url_label =~ /^http:\/\/profeda.org/
   end
 
   def test_random_match

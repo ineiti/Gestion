@@ -1044,31 +1044,10 @@ base_gestion
     %x[ rm -rf #{dir_exas_share} ]
   end
 
-  def sync_send_post_old(field, data)
-    path = URI.parse("#{ctype.get_url}/")
-    post = {:field => field, :data => data}
-    dputs(3) { "Sending to #{path.inspect}: #{data.inspect}" }
-    err = ''
-    (1..4).each { |i|
-      begin
-        ret = Net::HTTP.post_form(path, post)
-        dputs(4) { "Return-value is #{ret.inspect}, body is #{ret.body}" }
-        return ret.body
-      rescue Timeout::Error
-        dputs(2) { 'Timeout occured' }
-        err = 'Error: Timeout occured'
-      rescue Errno::ECONNRESET
-        dputs(2) { 'Connection reset' }
-        err = 'Error: Connection reset'
-      end
-    }
-    return err
-  end
-
   def sync_transfer(field, transfer = '', json = true)
     ss = @sync_state
     ret = ICC.transfer(Persons.center, "Courses.#{field}", transfer,
-                        url: ctype.get_url, json: json) { |s|
+                        url: ConfigBase.get_url(:server_url), json: json) { |s|
       @sync_state = "#{ss} #{s}" }
     @sync_state = ss
     ret
