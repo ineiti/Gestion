@@ -921,7 +921,7 @@ base_gestion
                 }
               end
               if file_add and size_exams != 0
-                dputs(2) { "Adding file #{exa_f} with size #{size_exams}" }
+                dputs(3) { "Adding file #{exa_f} with size #{size_exams}" }
                 files_added and files_added.push [s, File.basename(exa_f), exa_md5]
                 z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
                   f.write File.open(exa_f) { |ef|
@@ -935,7 +935,7 @@ base_gestion
             }
           end
         }
-        dputs(2) { "Files_excluded are #{files_excluded.inspect}" }
+        dputs(3) { "Files_excluded are #{files_excluded.inspect}" }
         z.file.open("#{dir}/files_excluded", 'w') { |f|
           f.write files_excluded.to_json
         }
@@ -1081,7 +1081,6 @@ base_gestion
     dputs(4) { 'Responsibles' }
     @sync_state = sync_s += '<li>Transferring responsibles: '
     users = [teacher.login_name, responsible.login_name, center.login_name]
-    dp "Getting assistant #{assistant.inspect}"
     assistant and users.push assistant.login_name
     ret = sync_transfer(:users, users.collect { |s|
       Persons.match_by_login_name(s)

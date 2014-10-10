@@ -232,6 +232,8 @@ To check:
 
 
 ** FIXED **:
+        - B 141010: transfer-errors are not caught correctly
+        - B 141010: Entities with id=0 should not exist and return nil
         - F 140929: client/server:
           - get course-types from server
             - fetch course-description from server
