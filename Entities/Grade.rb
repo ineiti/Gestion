@@ -99,40 +99,40 @@ class Grade < Entity
     value = (data_get(:mean).to_f * 2).round / 2
     case value
       when 10..11.5 then
-        "P"
+        'P'
       when 12..14 then
-        "AB"
+        'AB'
       when 14.5..16.5 then
-        "B"
+        'B'
       when 17..18.5 then
-        "TB"
+        'TB'
       when 19..20 then
-        "E"
+        'E'
       else
-        "NP"
+        'NP'
     end
   end
 
   def mention
     case to_s
-      when "P" then
-        "Passable"
-      when "AB" then
-        "Assez bien"
-      when "B" then
-        "Bien"
-      when "TB" then
-        "Très bien"
-      when "E" then
-        "Excellent"
+      when 'P' then
+        'Passable'
+      when 'AB' then
+        'Assez bien'
+      when 'B' then
+        'Bien'
+      when 'TB' then
+        'Très bien'
+      when 'E' then
+        'Excellent'
       else
-        "PAS PASSÉ"
+        'PAS PASSÉ'
     end
   end
 
   def init_random
     while not self.random
-      r = rand(1_000_000_000).to_s.rjust(9, "0")
+      r = rand(1_000_000_000).to_s.rjust(9, '0')
       Grades.match_by_random(r) or self.random = r
     end
   end
@@ -140,7 +140,7 @@ class Grade < Entity
   def get_url_label
     init_random
     dputs(4) { "Course is #{course.inspect}" }
-    center_id = course.center ? course.center.login_name : "pit"
+    center_id = course.center ? course.center.login_name : 'pit'
     dputs(4) { "Course is #{course.inspect}" }
     "#{course.ctype.get_url}/#{center_id}/#{random}"
   end

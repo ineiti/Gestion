@@ -30,22 +30,18 @@ class Courses < Entities
     value_list_drop :dow, "%w( lu-me-ve ma-je-sa lu-ve ma-sa )"
     value_list_drop :hours, "%w( 9-12 16-18 9-11 )"
     value_entity_room :classroom, :drop, :name
-    # value_entity :classroom, :Rooms, :drop, :name
 
     value_block :students
     value_list :students
 
     value_block :teacher
     value_entity_person_lazy :teacher, :drop, :full_name
-    #lambda{|p| p.permissions.index("teacher")}
     value_entity_person_empty_lazy :assistant, :drop, :full_name
-    #lambda{|p| p.permissions.index("teacher")}
     value_entity_person_lazy :responsible, :drop, :full_name
-    #lambda{|p| p.permissions.index("teacher")}
 
     value_block :center
     value_entity_person_empty :center, :drop, :full_name,
-                              lambda { |p| p.permissions.index("center") }
+                              lambda { |p| p.permissions.index('center') }
 
     value_block :content
     value_str :description
@@ -62,17 +58,17 @@ class Courses < Entities
     value_block :account
     value_entity_account_empty_lazy :entries, :drop, :path
 
-    @dir_diplomas ||= "Diplomas"
-    @dir_exas ||= "Exas"
-    @dir_exas_share ||= "Exas/Share"
+    @dir_diplomas ||= 'Diplomas'
+    @dir_exas ||= 'Exas'
+    @dir_exas_share ||= 'Exas/Share'
 
     [@dir_exas, @dir_exas_share].each { |d|
       File.exists? d or FileUtils.mkdir d
     }
 
     @thread = nil
-    @presence_sheet ||= "presence_sheet.ods"
-    @presence_sheet_small ||= "presence_sheet_small.ods"
+    @presence_sheet ||= 'presence_sheet.ods'
+    @presence_sheet_small ||= 'presence_sheet_small.ods'
     @print_presence = OpenPrint.new("#{@dir_diplomas}/#{@presence_sheet}")
     @print_presence_small = OpenPrint.new("#{@dir_diplomas}/#{@presence_sheet_small}")
     @print_exa = (1..3).collect { |i|
@@ -85,7 +81,7 @@ class Courses < Entities
 
   def set_entry(id, field, value)
     case field.to_s
-      when "name"
+      when 'name'
         value.gsub!(/[^a-zA-Z0-9_-]/, '_')
     end
     super(id, field, value)
@@ -184,8 +180,8 @@ class Courses < Entities
   def self.from_date_fr(str)
     day, month, year = str.split(' ')
     day = day.gsub(/^0/, '')
-    if day == "1er"
-      day = "1"
+    if day == '1er'
+      day = '1'
     end
     month = %w( janvier février mars avril mai juin juillet août
     septembre octobre novembre décembre ).index(month) + 1
@@ -211,7 +207,7 @@ class Courses < Entities
         end
         course.teacher, course.responsible = course.teacher.login_name, course.responsible.login_name
         course.duration, course.description = lines.shift(2)
-        course.contents = ""
+        course.contents = ''
         while lines[0].size > 0
           course.contents += lines.shift
         end
@@ -248,7 +244,7 @@ class Courses < Entities
     end
     dputs(4) { "Converting for name #{name} with #{Rooms.data.inspect}" }
     r = Rooms.match_by_name(name)
-    if (not r) and (not r = Rooms.match_by_name(""))
+    if (not r) and (not (r = Rooms.match_by_name("")))
       r = nil
     end
     c.classroom = r
@@ -259,13 +255,13 @@ class Courses < Entities
     %w( teacher assistant responsible ).each { |p|
       person = c[p.to_sym]
       dputs(4) { "#{p} is before #{person.inspect}" }
-      if p == "assistant" and person == ["none"]
+      if p == 'assistant' and person == ['none']
         person = nil
       else
         begin
           person = Persons.match_by_login_name(person.join).person_id
         rescue NoMethodError
-          person = Persons.match_by_login_name("admin").person_id
+          person = Persons.match_by_login_name('admin').person_id
         end
       end
       dputs(4) { "#{p} is after #{person.inspect}" }
@@ -1085,6 +1081,7 @@ base_gestion
     dputs(4) { 'Responsibles' }
     @sync_state = sync_s += '<li>Transferring responsibles: '
     users = [teacher.login_name, responsible.login_name, center.login_name]
+    dp "Getting assistant #{assistant.inspect}"
     assistant and users.push assistant.login_name
     ret = sync_transfer(:users, users.collect { |s|
       Persons.match_by_login_name(s)
