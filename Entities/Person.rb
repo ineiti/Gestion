@@ -314,11 +314,11 @@ class Persons < Entities
 
   def login_to_full(login)
     p = match_by_login_name(login)
-    p ? p.full_name : ""
+    p ? p.full_name : ''
   end
 
   def listp_responsible(session = nil)
-    list = search_by_permissions("teacher")
+    list = search_by_permissions('teacher')
     if session
       list = list.select { |p|
         p.login_name =~ /^#{session.owner.login_name}_/
