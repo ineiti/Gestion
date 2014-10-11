@@ -58,17 +58,6 @@ class TC_Person < Test::Unit::TestCase
     @accountant = Persons.create( :login_name => "accountant",
       :permissions => ["accountant"])
 
-    Entities.Services.create( :name => "surf", :price => 1000, :duration => 20 )
-    Entities.Services.create( :name => "solar", :price => 1000, :duration => 20 )
-    Entities.Services.create( :name => "club", :price => 1000, :duration => 0 )
-    Entities.Payments.create( :desc => "Service:surf", :date => ( Time.now - 60 * 60 * 24 * 21 ).to_i,
-      :client => @surf.id )
-    Entities.Payments.create( :desc => "Service:solar", :date => ( Time.now - 60 * 60 * 24 * 19 ).to_i,
-      :client => @surf.id )
-    Entities.Payments.create( :desc => "Service:club", :date => ( Time.now - 60 * 60 * 24 * 19 ).to_i,
-      :client => @josue.id )
-    Entities.Payments.create( :desc => "Service:surf", :date => ( Time.now - 60 * 60 * 24 * 19 ).to_i,
-      :client => @josue.id )
   end
 
   def teardown
@@ -119,14 +108,6 @@ class TC_Person < Test::Unit::TestCase
         :data_old=>josue_due, :data_class_id=>2,
         :data_class=>"Person", :msg=>"internet_credit pour -surf:500-", :data_field=>:account_total_due},
       log_list[1].unlogid )
-  end
-
-  def test_services
-    # TODO:
-    # re-add services
-    return
-    assert_equal ["club","surf"], @josue.services_active
-    assert_equal ["solar"], @surf.services_active
   end
 
   def test_accents

@@ -16,7 +16,7 @@ class PersonCredit < View
   end
 	
   def rpc_button_add_credit( session, data )
-    dputs(3){"Adding credit"}
+    dputs(3){ 'Adding credit' }
     rep = []
     if person = Persons.add_internet_credit( session, data )
       rep = reply( :update, :credit_add => "" ) +
@@ -37,7 +37,7 @@ class PersonCredit < View
   end
 
   def rpc_list_choice( session, name, data )
-    if name == "persons"
+    if name == 'persons'
       dputs( 2 ){ "Got data: #{data.inspect}" }
       if data['persons'][0] and p = Persons.match_by_login_name( data['persons'].flatten[0])
         reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) ) +

@@ -17,9 +17,9 @@ class CourseTypes < Entities
     value_text :contents
 
     value_block :central
-    value_list_drop :diploma_type, "%w( simple files accredited )"
+    value_list_drop :diploma_type, '%w( simple files accredited )'
     value_int :files_needed
-    value_list_drop :output, "%w( certificate label )"
+    value_list_drop :output, '%w( certificate label )'
 
     value_block :accounting
     value_int :salary_teacher

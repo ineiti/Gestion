@@ -6,12 +6,13 @@ class ConfigBases < Entities
     value_int :max_upload_size
     value_str :server_url
     value_str :label_url
+    value_entity_account :account_activities, :drop, :path
 
     @@functions = %w( network internet share 
     courses course_server course_client internet_simple
     internet_libnet sms_control
     inventory accounting quiz accounting_courses accounting_old
-    cashbox email usage_report ).sort.to_sym
+    cashbox email usage_report activities ).sort.to_sym
     @@functions_base = {:network => [:internet, :share, :internet_only, :email],
                         :internet => [:internet_simple, :internet_libnet],
                         :courses => [:course_server, :course_client, :accounting_courses],

@@ -82,18 +82,6 @@ begin
   dputs(1) { 'Loading database' }
   ACQooxView::check_db
 
-  if not Entities.Services.match_by_name('Free solar')
-    dputs(1) { 'Creating services' }
-    Entities.Services.create(:name => 'CCC', :group => 'ccc',
-                             :price => 1000, :duration => 0)
-    Entities.Services.create(:name => 'CCC active', :group => 'ccc_active',
-                             :price => 5000, :duration => 30)
-    Entities.Services.create(:name => 'Free solar', :group => 'free_solar',
-                             :price => 10000, :duration => 30)
-    Entities.Services.create(:name => 'Free internet', :group => 'free_internet',
-                             :price => 25000, :duration => 30)
-  end
-
 rescue Exception => e
   case e.to_s
     when /UpdatePot|MakeMo|PrintHelp|value_entity_uncomplete/
@@ -157,7 +145,6 @@ else
             Internet::fetch_cash
           end
           Internet::take_money
-          Internet::check_services
         rescue Exception => e
           dputs(0) { "Error: couldn't take internet-money" }
           dputs(0) { "#{e.inspect}" }

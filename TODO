@@ -1,6 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
+        - Adjust MaN-cards for library
+            - Added activities to hold for library, internet and other stuff
+        - Add Language-evaluations for MaN
         - Adding ScheduleType to schools
 
 BUGS:
@@ -20,9 +23,8 @@ UI:
          tabs can be added
 
 FEATURES:
-        - Adjust MaN-cards
-        - Add Language-evaluations for MaN
         - Add value_bool to list
+            - use for "lsusb" and "lpstat"
         - CSV-save
             - use directory for old files
             - link to newest file

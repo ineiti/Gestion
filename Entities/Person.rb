@@ -6,7 +6,7 @@
 
 class String
   def capitalize_all
-    self.split(" ").collect { |s| s.capitalize }.join(" ")
+    self.split(' ').collect { |s| s.capitalize }.join(' ')
   end
 
   def capitalize_all!
@@ -491,7 +491,7 @@ class Person < Entity
   end
 
   def update_account_due
-    if can_view :FlagAddInternet and login_name != "admin"
+    if can_view :FlagAddInternet and login_name != 'admin'
       dputs(3) { "Adding account_due to -#{login_name.inspect}-" }
       #acc = data_get( :account_name_due )
       acc = account_name_due
@@ -504,7 +504,7 @@ class Person < Entity
         self.account_name_due = acc
       end
       lending = "#{get_config('Root::Lending', :Accounting, :lending)}::#{acc}"
-      service = get_config("Root::Income::Services", :Accounting, :service)
+      service = get_config('Root::Income::Services', :Accounting, :service)
       dputs(2) { "Searching accounts for #{full_name} with "+
           "lending: #{lending} - service: #{service}" }
       @account_due = Accounts.get_by_path_or_create(lending,
@@ -712,27 +712,6 @@ class Person < Entity
       dputs(2) { "is #{pass} equal to #{password}" }
       #return pass == data_get( :password )
       return pass == password
-    end
-  end
-
-  def services_active
-    dputs(4) { "Entering" }
-    payments = Entities.Payments.search_by_client(self.id)
-    if payments
-      payments.select { |p|
-        dputs(3) { "Found payment for #{self.full_name}: #{p.inspect}" }
-        if p.desc =~ /^Service:/
-          service = Entities.Services.match_by_name(p.desc.gsub(/^Service:/, ''))
-          dputs(3) { "Found service #{service}" }
-          service.duration == 0 or p.date + service.duration * 60 * 60 * 24 >= Time.now.to_i
-        else
-          false
-        end
-      }.collect { |p|
-        p.desc.gsub(/^Service:/, '')
-      }
-    else
-      []
     end
   end
 

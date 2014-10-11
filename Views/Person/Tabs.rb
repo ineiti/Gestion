@@ -5,12 +5,9 @@ class PersonTabs < View
     @persons_total = Persons.data.count
 
     gui_vbox :nogroup do
-      #gui_fields do
       show_str :search
-      show_list_single :persons, "[]", :callback => true
-      show_arg :persons, :flexheight => 1
+      show_list_single :persons, '[]', :flexheight => 1, :callback => true
       show_button :start_search, :delete, :add
-      #end
 
       gui_window :add_person do
         show_str :complete_name, :width => 150
