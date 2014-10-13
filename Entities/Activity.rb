@@ -46,7 +46,7 @@ class Activity < Entity
     "#{get_config('.', :Entities, :Courses, :dir_diplomas)}/#{self._card_filename.first}"
   end
 
-  def cost
+  def cost_mov
     self._cost.to_i / 1000.0
   end
 end
@@ -99,7 +99,7 @@ class ActivityPayments < Entities
 
   def pay(act, p_paid, p_cashed, d_today = Date.today)
     mov = Movements.create("#{p_paid.login_name} paid #{p_cashed.login_name} #{act.cost} "+
-                               "for #{act.name}", Date.today, act.cost,
+                               "for #{act.name}", Date.today, act.cost_mov,
                            p_cashed.account_due, ConfigBase.account_activities)
     date_start, date_end =
         case act.start_type.to_s

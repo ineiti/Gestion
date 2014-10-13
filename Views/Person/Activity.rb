@@ -3,7 +3,7 @@ class PersonActivity < View
 
   def layout
     @update = true
-    @order = 40
+    @order = 140
 
     @functions_need = [:cashbox]
 
@@ -61,10 +61,10 @@ class PersonActivity < View
     if act.movement.account_src == act.person_cashed.account_due
       act.movement.delete
       act.delete
-      rpc_list_choice_persons(session, data )
+      rpc_list_choice_persons(session, data)
     else
-      reply( :window_show, :printing )+
-          reply( :update, :msg_print => 'Ce mouvement est déjà comptabilisé')
+      reply(:window_show, :printing)+
+          reply(:update, :msg_print => 'Ce mouvement est déjà comptabilisé')
     end
   end
 
@@ -95,12 +95,18 @@ class PersonActivity < View
         end
 
     rep = rpc_print(session, :print_activity, data)
-    #lp_cmd = cmd_printer(session, :print_activity)
-    file = act.print
-    if file.class == String
+    lp_cmd = cmd_printer(session, :print_activity)
+    files = OpenPrint.print_nup_duplex([act.print])
+    if lp_cmd
+      %x[ #{lp_cmd} #{files.pop} ]
+      %x[ #{lp_cmd} #{files.pop} ]
       rep += reply(:window_show, :printing) +
-          reply(:update, :msg_print => 'Click to download:<ul>' +
-              "<li><a target='other' href=\"#{file}\">#{file}</a></li></ul>")
+          reply(:update, :msg_print => "Printing is finished on #{lp_cmd.sub(/.* /,'')}")
+    else
+      rep += reply(:window_show, :printing) +
+          reply(:update, :msg_print => 'Click on one of the links:<ul>' +
+              files.collect { |r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
+              '</ul>')
     end
 
     return rep
