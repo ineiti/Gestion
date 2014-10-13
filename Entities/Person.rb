@@ -34,13 +34,15 @@ class Persons < Entities
     value_block :address
     value_str_LDAP :first_name, :ldap_name => 'sn'
     value_str_LDAP :family_name, :ldap_name => 'givenname'
+    value_list_drop :gender, '%w( male female n/a )'
     value_date :birthday
     value_str :address
     value_str_LDAP :phone, :ldap_name => 'mobile'
     value_str_LDAP :email, :ldap_name => 'mail'
     value_str_LDAP :town, :ldap_name => 'l'
     value_str_LDAP :country, :ldap_name => 'st'
-    value_list_drop :gender, '%w( male female n/a )'
+    value_str :profession
+    value_str :school_grade
 
     value_block :admin
     value_str :account_name_due
@@ -765,14 +767,14 @@ class Person < Entity
   end
 
   def print(counter = nil)
-    ctype = "Visiteur"
+    ctype = 'Visiteur'
     courses = Courses.list_courses_for_person(self)
     if courses and courses.length > 0
       dputs(3) { "Courses is #{courses.inspect}" }
       ctype = Courses.match_by_course_id(courses[0][0]).description
     end
     fname = "#{person_id.to_s.rjust(6, '0')}-#{full_name.gsub(/ /, '_')}"
-    courses = ["", ""]
+    courses = ['', '']
     Courses.list_courses_for_person(self).each { |c|
       dputs(3) { "Course #{c.inspect}" }
       courses.unshift(Courses.match_by_course_id(c.first).description)
@@ -790,7 +792,7 @@ class Person < Entity
                [/--COURSE2--/, courses[1]],
                [/--PASS--/, password_plain]]
     if center = Persons.center
-      url, email = center.email.to_s.split("::")
+      url, email = center.email.to_s.split('::')
       replace.concat([[/--CENTER_NAME--/, center.full_name],
                       [/--CENTER_ADDRESS--/, center.address],
                       [/--CENTER_TOWN--/, center.town],

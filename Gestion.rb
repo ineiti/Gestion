@@ -51,9 +51,9 @@ begin
   Permission.add('center_director', '', 'center')
   Permission.add('secretary', 'CourseModify,FlagPersonAdd,FlagPersonDelete,' +
       'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
-      'FlagAddInternet,CourseStats,CoursePrint', 'assistant')
+      'FlagAddInternet,CourseStats,CoursePrint,PersonActivity', 'assistant')
   Permission.add('accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
-      'ComptaReport,ComptaShow,Cashbox.*,Report.*', 'internet')
+      'ComptaReport,ComptaShow,Cashbox.*,Report.*', 'secretary')
   Permission.add('maintenance', 'Inventory.*', 'default')
   Permission.add('cybermanager', 'PersonCredit,NetworkTigo,FlagAddInternet,' +
       'FlagPersonAdd,CashboxService,NetworkSMS', '')

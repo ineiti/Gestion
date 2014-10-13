@@ -746,7 +746,7 @@ base_gestion
 
   def make_pdfs(convert)
     if @thread
-      dputs(2) { "Thread is here, killing" }
+      dputs(2) { 'Thread is here, killing' }
       begin
         abort_pdfs
       rescue Exception => e
@@ -757,7 +757,7 @@ base_gestion
       end
     end
 
-    dputs(2) { "Starting new thread" }
+    dputs(2) { 'Starting new thread' }
     @thread = Thread.new {
       begin
         counter = 1
@@ -779,9 +779,9 @@ base_gestion
 
         dputs(3) { "Convert is #{convert.inspect}" }
         if convert
-          @make_pdfs_state["0"] = "converting"
-          old = Dir.glob(dir_diplomas + "/content.xml*")
-          list = Dir.glob(dir_diplomas + "/*odt")
+          @make_pdfs_state["0"] = 'converting'
+          old = Dir.glob(dir_diplomas + '/content.xml*')
+          list = Dir.glob(dir_diplomas + '/*odt')
           format = ctype.output[0].to_sym
 
           dputs(4) { "old is #{old.inspect}" }
@@ -789,8 +789,8 @@ base_gestion
 
           FileUtils.rm(old)
           if list.size == 0
-            dputs(2) { "No files here, quitting" }
-            @make_pdfs_state["0"] = "done"
+            dputs(2) { 'No files here, quitting' }
+            @make_pdfs_state['0'] = 'done'
             @thread.kill
           end
           dputs(2) { "Creating -#{format.inspect}-#{list.inspect}-" }
@@ -803,7 +803,7 @@ base_gestion
             dputs(3) { "Started thread for file #{p} in directory #{dir}" }
             student_name = p.sub(/.*[0-9]+-/, '').sub(/\.odt/, '')
             dputs(3) { "Student name is #{student_name}" }
-            @make_pdfs_state[student_name][1] = "working"
+            @make_pdfs_state[student_name][1] = 'working'
 
             if format == :certificate
               Docsplit.extract_pdf p, :output => dir
@@ -812,15 +812,15 @@ base_gestion
                                       :density => 300, :format => :png
               FileUtils.mv(p.sub(/.odt$/, '_1.png'), p.sub(/.odt$/, '.png'))
             end
-            dputs(5) { "Finished docsplit" }
+            dputs(5) { 'Finished docsplit' }
             FileUtils.rm(p)
-            dputs(5) { "Finished rm" }
+            dputs(5) { 'Finished rm' }
             outfile = p.sub(/\.[^\.]*$/, format == :certificate ? '.pdf' : '.png')
             outfiles.push outfile
-            @make_pdfs_state[student_name][1] = "done"
+            @make_pdfs_state[student_name][1] = 'done'
             @make_pdfs_state[student_name][2] = outfile.sub(/^#{@proxy.dir_diplomas}./, '')
           }
-          @make_pdfs_state["0"] = "collecting"
+          @make_pdfs_state['0'] = 'collecting'
           if format == :certificate
             dputs(3) { "Getting #{outfiles.inspect} out of #{dir}" }
             all = "#{dir}/000-all.pdf"
@@ -840,9 +840,9 @@ base_gestion
             dputs(3) { "Page-format is #{pf.inspect}: #{format}" }
             `pdftops #{all} - | psnup -4 #{format} | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
             FileUtils.mv("#{psn}.tmp", psn)
-            dputs(2) { "Finished" }
+            dputs(2) { 'Finished' }
           else
-            dputs(3) { "Making a zip-file" }
+            dputs(3) { 'Making a zip-file' }
             Zip::File.open("#{dir}/all.zip", Zip::File::CREATE) { |z|
               Dir.glob("#{dir}/*").each { |image|
                 z.get_output_stream(image.sub(".*/", "")) { |f|
@@ -860,7 +860,7 @@ base_gestion
         dputs(0) { "#{e.to_s}" }
         puts e.backtrace
       end
-      @make_pdfs_state["0"] = "done"
+      @make_pdfs_state['0'] = 'done'
     }
   end
 

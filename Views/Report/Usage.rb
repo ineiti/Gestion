@@ -42,7 +42,6 @@ class ReportUsage < View
 
   def rpc_list_choice_duration(session, data)
     return [] if !data._to or !data._duration.first or !data._usage
-    dp data._duration
     data._from = (data._to.date_from_web - data._duration.first.to_i).to_web
     rpc_list_choice_usage(session, data)
   end

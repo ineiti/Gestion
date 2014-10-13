@@ -21,20 +21,33 @@ class Activities < Entities
     Dir.glob(get_config('.', :Entities, :Courses, :dir_diplomas) + '/*.{ods,odg}').
         collect { |f| f.cut(/^.*\//) }
   end
-
-  def active_for(s, d = Date.today)
-    ActivityPayments.search_by_person_paid(s).select { |ap|
-      ap.date_start <= d and d <= ap.date_end
-    }.collect{|ap| ap.activity}
-  end
-
 end
 
+
 class Activity < Entity
-  def start_end( s, d = Date.today )
+  attr_accessor :print_card
+
+  def setup_instance
+    ddir = Courses.dir_diplomas
+    adir = "#{ddir}/Activities"
+    if !File.exist? adir
+      FileUtils::mkdir(adir)
+    end
+    @print_card = OpenPrint.new(card_filename, adir)
+  end
+
+  def start_end(s, d = Date.today)
     ActivityPayments.search_by_person_paid(s).select { |ap|
       ap.date_start <= d and d <= ap.date_end and ap.activity == self
-    }.collect{|ap| [ap.date_start, ap.date_end]}.pop || [nil, nil]
+    }.collect { |ap| [ap.date_start, ap.date_end] }.pop || [nil, nil]
+  end
+
+  def card_filename
+    "#{get_config('.', :Entities, :Courses, :dir_diplomas)}/#{self._card_filename.first}"
+  end
+
+  def cost
+    self._cost.to_i / 1000.0
   end
 end
 
@@ -97,5 +110,41 @@ class ActivityPayments < Entities
         end
     ActivityPayments.create(activity: act, person_paid: p_paid, person_cashed: p_cashed,
                             movement: mov, date_start: date_start, date_end: date_end)
+  end
+
+  def active_for(s, d = Date.today)
+    for_user(s).select { |ap|
+      ap.date_start <= d and d <= ap.date_end
+    }
+  end
+
+  def for_user(s)
+    ActivityPayments.matches_by_person_paid(s)
+  end
+end
+
+class ActivityPayment < Entity
+  def date_start
+    Date.from_db(self._date_start)
+  end
+
+  def date_end
+    Date.from_db(self._date_end)
+  end
+
+  def print
+    st = person_paid
+    date = `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"`
+    replace = {NAME1: st.first_name, NAME2: st.family_name,
+    BDAY: st.birthday, ADDRESS: st.address, TOWN: st.town,
+    TEL: st.phone, UNAME: st.login_name, PASS: st.password_plain,
+    EMAIL: st.email, PROFESSION: st.profession, STUDY_LEVEL: st.school_grade,
+    DATE: date, PRICE: activity.cost,
+    DATE_START: date_start, DATE_END: date_end}
+
+    fname = "#{st.person_id.to_s.rjust(6, '0')}-#{st.full_name.gsub(/ /, '_')}"
+    dputs(3) { "Replace is #{replace.inspect} - fname is #{fname}" }
+
+    activity.print_card.print_hash(replace, nil, fname)
   end
 end

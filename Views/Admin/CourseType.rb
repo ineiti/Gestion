@@ -85,8 +85,7 @@ class AdminCourseType < View
   end
 
   def rpc_button_download_list(session, data)
-    #dp (res = ICC.transfer('CourseTypes.list')).inspect
-    dp (res = ICC.get(:CourseTypes, :list)).inspect
+    (res = ICC.get(:CourseTypes, :list)).inspect
     if res._code == 'Error'
       status_list(true, status: "Error: #{res._msg}")
     else
@@ -106,7 +105,7 @@ class AdminCourseType < View
 
   def rpc_button_fetch_list(session, data)
     cts_names = data._ctypes_server
-    dp (cts = ICC.get(:CourseTypes, :fetch,
+    (cts = ICC.get(:CourseTypes, :fetch,
                       args: {course_type_names: cts_names})).inspect
     if cts._code == 'Error'
       return status_list(true, status: "Error: #{cts._msg}")

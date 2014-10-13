@@ -1,9 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - Adjust MaN-cards for library
-            - Added activities to hold for library, internet and other stuff
-        - Add Language-evaluations for MaN
+        - Activities
+            - Library: Adjust for MaN-cards
+        - PersonTab::add - should offer more direct input fields
         - Adding ScheduleType to schools
 
 BUGS:
@@ -23,6 +23,10 @@ UI:
          tabs can be added
 
 FEATURES:
+        - allow for window-definitions outside of main gui_*
+        - change View::CourseTab::persons for entity
+            - change all other non-entity fields, too
+        - Add Language-evaluations for MaN
         - Add value_bool to list
             - use for "lsusb" and "lpstat"
         - CSV-save
