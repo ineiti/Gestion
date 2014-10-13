@@ -97,7 +97,7 @@ class PersonTabs < View
     # Check if we have an exact match on the login_name
     dputs(3) { "Searching for exact match #{s}" }
     if exact = Persons.match_by_login_name(s)
-      dputs(3) { "Found exact match" }
+      dputs(3) { 'Found exact match' }
       if pos = result.index(exact)
         dputs(3) { "Found exact match at position #{pos}" }
         result.delete_at(pos)

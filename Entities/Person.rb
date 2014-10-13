@@ -465,6 +465,49 @@ class Persons < Entities
   def Persons.center
     Persons.find_by_permissions(:center)
   end
+
+  def Persons.search_in(str, field = nil, center: nil)
+    # Don't search if there are few caracters and lots of Persons
+    if (not str or str.length < 3) and (Entities.Persons.new_id.values[0] > 100)
+      field ? View.reply( :empty_only, field ) : []
+    end
+
+    # Search all these fields and merge the results
+    result = %w( login_name family_name first_name 
+        permissions person_id email phone groups ).collect { |f|
+      ret = Persons.search_by(f, str)
+      if center
+        ret = ret.select { |p| p.login_name =~ /^#{center}(_|$)/ }
+      end
+      dputs(3) { "Result for #{f} is: #{ret.collect { |r| r.login_name }}" }
+      ret
+    }.flatten.uniq.sort { |a, b|
+      a.login_name.to_s <=> b.login_name.to_s
+    }
+    dputs(3) { "Result is: #{result.collect { |r| r.login_name }}" }
+    not result and result = []
+
+    # Check if we have an exact match on the login_name
+    dputs(3) { "Searching for exact match #{str}" }
+    if exact = Persons.match_by_login_name(str)
+      dputs(3) { 'Found exact match' }
+      if pos = result.index(exact)
+        dputs(3) { "Found exact match at position #{pos}" }
+        result.delete_at(pos)
+        result.unshift(exact)
+        dputs(3) { "result is now #{result.inspect}" }
+      end
+    end
+
+    if result.length > 20
+      result = result[0..19]
+    end
+
+    if field
+      return View.reply(:empty_only, field) +
+          View.reply(:update, {field => result.collect { |p| p.to_list }})
+    end
+  end
 end
 
 #
@@ -963,7 +1006,7 @@ class Person < Entity
         (from..to).include? m.date
       }
     elsif to
-      dputs(3){"Fetching only dates upto #{to}"}
+      dputs(3) { "Fetching only dates upto #{to}" }
       account.movements.select { |m|
         dputs(3) { "Date is #{m.date.inspect}" }
         m.date <= to

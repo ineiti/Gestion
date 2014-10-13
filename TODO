@@ -3,6 +3,9 @@
 WORKING:
         - Activities
             - Library: Adjust for MaN-cards
+            - move Activities to "Entrées"
+            - add librarian with rights to add address for library-users
+            - allow multiple-print in "Entrées::Activities"
         - PersonTab::add - should offer more direct input fields
         - Adding ScheduleType to schools
 
@@ -23,6 +26,8 @@ UI:
          tabs can be added
 
 FEATURES:
+        - reverse show_entity_lazy;show_entity to show_entity;show_entity_all
+        - reverse update( :empty, :empty_only ) to update( :empty_all, :empty )
         - allow for window-definitions outside of main gui_*
         - change View::CourseTab::persons for entity
             - change all other non-entity fields, too
