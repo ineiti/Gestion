@@ -7,6 +7,8 @@ BUGS:
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
+            - there would have to be a storage of the old names, like the first line
+             of the CVS or the data given by the sql-database
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
         - When CourseAdd is first tab and course is added, LTab.js:174 can't
           find getActiveForm, as it is not drawn yet...
