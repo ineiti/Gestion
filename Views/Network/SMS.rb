@@ -36,10 +36,12 @@ class NetworkSMS < View
   end
 
   def rpc_update(session)
-    emails = system('which postqueue > /dev/null') ? %x[ postqueue -p | tail -n 1 ] : 'n/a'
-    vpns = system( 'which systemctl > /dev/null') ?
-        %x[ systemctl list-units --no-legend openvpn@* | sed -e "s/OpenVPN.*//" ] :
-        %x[ pgrep openvpn ]
+    emails = System.exists?('postqueue') ?
+        System.run_str('postqueue -p | tail -n 1') : 'n/a'
+    vpns = System.exists?('systemctl') ?
+        System.run_str('systemctl list-units --no-legend openvpn@* | '+
+                           'sed -e "s/OpenVPN.*//"') :
+        System.run_str('pgrep openvpn')
     reply(:update,
           :state_now => SMScontrol.state_now, :state_goal => SMScontrol.state_goal,
           :transfer => SMScontrol.state_traffic, :promotion => SMScontrol.max_traffic,
