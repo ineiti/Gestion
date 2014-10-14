@@ -1,5 +1,10 @@
 Important notices for versions:
 
+- 141014: 1.7.0
+  - added librarian
+  - added activities
+  - synchronisation of exams
+
 - 140830: 1.5.3
   - reworked synchronisation of exams when only some changed
   - BIG BAD SAVE BUG!

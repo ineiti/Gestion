@@ -7,7 +7,7 @@ Encoding.default_external = Encoding::UTF_8
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad.
 
-VERSION_GESTION='1.6.1'
+VERSION_GESTION='1.7.0'
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -45,7 +45,7 @@ begin
   Permission.add('quiz', 'SelfChat,SelfConcours,SelfResults', '')
   Permission.add('internet', 'SelfInternet,SelfChat', 'default')
   Permission.add('student', '', 'internet')
-  Permission.add('librarian', 'LibraryUsers,FlagInternetFree', 'student')
+  Permission.add('librarian', 'LibraryPerson,FlagInternetFree', 'student')
   Permission.add('assistant', 'TaskEdit,FlagInternetFree', 'student')
   Permission.add('teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
       'FlagResponsible', 'assistant')

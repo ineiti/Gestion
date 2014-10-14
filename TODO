@@ -1,13 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - reverse update( :empty, :empty_only ) to update( :empty_all, :empty )
-        - Activities
-            - Library: Adjust for MaN-cards
-            - move Activities to "Entrées"
-            - add librarian with rights to add address for library-users
-            - allow multiple-print in "Entrées::Activities"
-        - PersonTab::add - should offer more direct input fields
         - Adding ScheduleType to schools
 
 BUGS:
@@ -244,6 +237,13 @@ To check:
 
 
 ** FIXED **:
+        - P 141014: reverse update( :empty, :empty_only ) to update( :empty_all, :empty )
+        - F 141014: Activities
+            - Library: Adjust for MaN-cards
+            - move Activities to "Entrées"
+            - add librarian with rights to add address for library-users
+            - allow multiple-print in "Entrées::Activities"
+        - F 141013: PersonTab::add - should offer more direct input fields
         - B 141010: transfer-errors are not caught correctly
         - B 141010: Entities with id=0 should not exist and return nil
         - F 140929: client/server:
