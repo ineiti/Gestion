@@ -20,17 +20,7 @@ UI:
          tabs can be added
 
 FEATURES:
-        - reverse show_entity_lazy;show_entity to show_entity;show_entity_all
-        - use list with entities also in reply( :update, :students => student )
-        - allow for window-definitions outside of main gui_*
-        - change View::CourseTab::persons for entity
-            - change all other non-entity fields, too
         - Add Language-evaluations for MaN
-        - Add value_bool to list
-            - use for "lsusb" and "lpstat"
-        - CSV-save
-            - use directory for old files
-            - link to newest file
         - LibNet:
           - Feature: rewrite in Ruby
           - Make LibNet working at least on ArchLinux
@@ -95,12 +85,22 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - use list with entities also in reply( :update, :students => student )
+            - for the moment add .to_frontend:
+                reply( :update, :students => student.to_frontend )
+              this works for entities and arrays of entities. Shoule be generalized
+        - allow for window-definitions outside of main gui_*
+        - change View::CourseTab::persons for entity
+            - change all other non-entity fields, too
+        - Add value_bool to list
+            - use for "lsusb" and "lpstat"
+        - CSV-save
+            - use directory for old files
+            - link to newest file
         - Move Gestion::Reports to AfriCompta
         - CourseStats: when adding a course, account_entries is not updated
           -> should probably do a "watch account-changes and update if changed"
             thingie
-        - LibNet has concurrency-troubles - use "flock" to mend it:
-          ( flock -e 200; locked commands ) 200>/tmp/blah.lockfile
         - why is Entity::get_value always called three times?
         - replace all 'undefined' variables with class-variables
         - Change ConfigBase functions_base: all functions are evaluated with
@@ -112,10 +112,6 @@ Programming:
         - merge two ways of free surfing: group::freesurf and
           permissions::FreeInternet
         - Lots of stuff in View/* should go into Entities/*
-        - configure also LibNet through Gestion
-          - 130400 can set cost_* now
-          - 130400 also change permanent or 
-        - replace gsm-ussd with something Debian
         -2 verify if Person::data_set and Person::data_set_log are really
           necessary
         -3 change Course::make_pdfs to OpenPrint
@@ -125,7 +121,6 @@ Documentation:
 > 2.0
 Features:
         - Add a cookie to log in automatically
-        -2 Rename course
         -3 Add a status-bar on bottom for progresses and information like:
            printing, progress, messages, connect/disconnect, ...
 	-3 Admin::Restore - show progress
@@ -144,17 +139,13 @@ Features:
 	- CourseHistory - what should go in there?
 
 Programming:
-        - Calling rpc_calls
-          - Convert all "args" to_sym!
-          - take out last [0]-arrays needed in args
 	-2 Allow subdirectories in Entities-directory
-	-3 add a print-dialog with window and buttons
 	-3 Change Frontend::Views::LTab::dispatch to handle one request at a
 	  time and to allow new requests to be inserted before handling other
 	  requests -> doing a reply( parent->switch_tab ) + reply( switch_tab )
 	  should switch the tab in the NEW parent-tab!
 	-3 kill Layout.js::dispatch::init_values, as it is not needed anymore with
-	  the RPC-queue enabled (even though I'm nut sure the latter really works...)
+	  the RPC-queue enabled (even though I'm not sure the latter really works...)
 	-3 when empty configuration and LDAP is not here, fall back to CSV
 	-3 Add real type-checking between value_* and Storages
 	-4 rpc_parse_reply
@@ -237,7 +228,9 @@ To check:
 
 
 ** FIXED **:
-        - P 141014: reverse update( :empty, :empty_only ) to update( :empty_all, :empty )
+        - B 141014: Report::ComptaExecutive doesn't work when no archives found
+        - Pr141014: reverse show_entity_lazy;show_entity to show_entity;show_entity_all
+        - Pr141014: reverse update( :empty, :empty_only ) to update( :empty_all, :empty )
         - F 141014: Activities
             - Library: Adjust for MaN-cards
             - move Activities to "Entrées"
