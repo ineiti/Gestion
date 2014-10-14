@@ -7,7 +7,7 @@ class ReportUsage < View
 
     gui_hbox do
       gui_vbox :nogroup do
-        show_entity_usage :usage, :single, :name, :callback => true
+        show_entity_usage_all :usage, :single, :name, :callback => true
         show_button :print
       end
       gui_vbox :nogroup do

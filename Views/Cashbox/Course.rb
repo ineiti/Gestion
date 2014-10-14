@@ -8,11 +8,11 @@ class CashboxCourse < View
     
     gui_hboxg do
       gui_vbox :nogroup do
-        show_entity_course_lazy :courses, :single, :name,
+        show_entity_course :courses, :single, :name,
           :flexheight => 1, :callback => true, :width => 100
       end
       gui_vbox :nogroup do
-        show_entity_person_lazy :students, :single, :full_name,
+        show_entity_person :students, :single, :full_name,
           :flexheight => 1, :callback => true, :width => 300
           show_str :full_name
           show_button :add_student
@@ -35,7 +35,7 @@ class CashboxCourse < View
       end
 
       gui_window :win_move do
-        show_entity_person_lazy :move_students, :drop, :full_name, :width => 300
+        show_entity_person :move_students, :drop, :full_name, :width => 300
         show_button :close, :do_move
       end
     end

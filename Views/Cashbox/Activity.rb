@@ -9,13 +9,13 @@ class CashboxActivity < View
 
     gui_hboxg do
       gui_vboxg :nogroup do
-        show_entity_activity :activities, :single, :name, :flexheight => 1, :width => 200,
+        show_entity_activity_all :activities, :single, :name, :flexheight => 1, :width => 200,
                              :callback => true
         show_block_ro :show
       end
       gui_vboxg :nogroup do
         gui_vboxg :nogroup do
-          show_entity_person_lazy :students, :multi, :full_name,
+          show_entity_person :students, :multi, :full_name,
                                   :flexheight => 1, :callback => true, :width => 300
           show_str :full_name
           show_button :new_student, :search_student, :signed_up_students

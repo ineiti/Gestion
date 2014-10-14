@@ -12,7 +12,7 @@ class ComptaTransfer < View
 
     gui_hbox do
       gui_vbox :nogroup do
-        show_entity_person_lazy :persons, :single, :callback => true
+        show_entity_person :persons, :single, :callback => true
         show_date :upto
         show_button :do_transfer, :update
       end

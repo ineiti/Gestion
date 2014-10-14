@@ -7,8 +7,8 @@ class ReportComptaFlat < View
 
     gui_hboxg do
       gui_vboxg :nogroup do
-        show_entity_account_lazy :account_archive, :drop, :callback => true
-        show_entity_account_lazy :account_list, :single, 
+        show_entity_account :account_archive, :drop, :callback => true
+        show_entity_account :account_list, :single, 
           :width => 400, :flex => 1, :callback => true
       end
       gui_vbox :nogroup do

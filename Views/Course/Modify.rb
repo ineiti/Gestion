@@ -49,7 +49,7 @@ class CourseModify < View
           end
           gui_window :ask_double do
             show_str :double_name
-            show_entity_person_lazy :double_proposition, :single, :full_name,
+            show_entity_person :double_proposition, :single, :full_name,
                                     :width => 350, :maxheight => 250
             show_button :accept, :create_new, :cancel
           end
@@ -63,11 +63,11 @@ class CourseModify < View
             show_button :print_next, :close
           end
           gui_window :transfer do
-            show_entity_course_lazy :transfer_course, :drop, :name
+            show_entity_course :transfer_course, :drop, :name
             show_button :do_transfer, :close
           end
           gui_window :win_edit_name do
-            show_entity_courseType_lazy :wen_ctype, :drop, :name
+            show_entity_courseType :wen_ctype, :drop, :name
             show_str :wen_name, :width => 200
             show_list_drop :wen_overwrite, '%w( no yes )'
             show_button :wen_save, :close

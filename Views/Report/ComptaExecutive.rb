@@ -9,7 +9,7 @@ class ReportComptaExecutive < View
     gui_hboxg do
       gui_vbox :nogroup do
         gui_vboxg :nogroup do
-          show_entity_report :reports, :single, :name, :callback => true,
+          show_entity_report_all :reports, :single, :name, :callback => true,
             :flexheight => 1
           show_button :report_add, :report_delete
         end
@@ -21,7 +21,7 @@ class ReportComptaExecutive < View
       end
       gui_vboxg :nogroup do
         show_str :name
-        show_entity_reportAccount_lazy :accounts, :single,
+        show_entity_reportAccount :accounts, :single,
           :flexheight => 1, :width => 300
         show_button :account_add, :account_del, :account_edit
         show_button :account_up, :account_down
@@ -29,9 +29,9 @@ class ReportComptaExecutive < View
 
       gui_window :win_account do
         gui_vbox :nogroup do
-          show_entity_account_lazy :root, :drop, :width => 400,
+          show_entity_account :root, :drop, :width => 400,
             :callback => true
-          show_entity_account_lazy :account, :drop
+          show_entity_account :account, :drop
           show_int :level
           show_button :account_add_win, :account_save_win, :close
         end

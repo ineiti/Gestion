@@ -5,7 +5,7 @@ class LibraryPerson < View
 
     gui_hboxg do
       gui_vboxg :nogroup do
-        show_entity_person_lazy :users, :single, :to_list_id,
+        show_entity_person :users, :single, :to_list_id,
                                 :callback => true, :flexheight => 1
       end
       gui_vboxg :nogroup do

@@ -12,7 +12,7 @@ class CashboxReport < View
       gui_vbox :nogroup do
         show_list_single :report_type, :callback => true, :maxheight => 160
         show_date :report_start, :callback => :date
-        show_entity_course_lazy :course, :single, :name, 
+        show_entity_course :course, :single, :name, 
           lambda{|c| c.entries}, :callback => true, :flexheight => 1
         show_print :print
       end

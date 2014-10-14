@@ -12,7 +12,7 @@ class ComptaCourse < View
     
     gui_hboxg do
       gui_vbox :nogroup do
-        show_entity_course_lazy :courses, :single, :name,
+        show_entity_course :courses, :single, :name,
           :flexheight => 1, :callback => true, :width => 100
       end
       gui_vbox do

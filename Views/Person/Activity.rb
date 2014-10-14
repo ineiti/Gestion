@@ -20,7 +20,7 @@ class PersonActivity < View
       gui_window :add_activity do
         gui_hboxg do
           gui_vboxg :nogroup do
-            show_entity_activities :activity, :single, :name, :callback => true
+            show_entity_activities_all :activity, :single, :name, :callback => true
           end
           gui_vboxg :nogroup do
             show_block_ro :show

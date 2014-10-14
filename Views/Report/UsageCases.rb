@@ -12,7 +12,7 @@ class ReportUsageCases < View
       gui_hbox :nogroup do
         gui_vbox :nogroup do
           vtlp_list :usage_list, 'name'
-          #show_entity_usage :usage, :single, :name, :callback => true,
+          #show_entity_usage_all :usage, :single, :name, :callback => true,
           #                  :flexheight => 1
           show_button :delete, :new
         end

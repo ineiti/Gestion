@@ -10,7 +10,7 @@ class ReportCourse < View
 
     gui_hboxg do
       gui_vboxg :nogroup do
-        show_entity_course_lazy :course, :single, :name, 
+        show_entity_course :course, :single, :name, 
           lambda{|c| c.entries}, :callback => true, :flexheight => 1
         show_print :print
       end

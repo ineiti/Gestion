@@ -36,7 +36,7 @@ class CourseTabs < View
     gui_window :add_course do
       gui_hbox :nogroup do
         gui_vbox :nogroup do
-          show_entity_courseType :new_ctype, :drop, :name
+          show_entity_courseType_all :new_ctype, :drop, :name
           show_str :name_date
           show_button :new_course, :close
         end
