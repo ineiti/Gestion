@@ -93,7 +93,7 @@ class NetworkShare < View
       end
     rescue NoMethodError
     end
-    reply( :empty_only, [ :users ] ) +
+    reply( :empty, [ :users ] ) +
       reply( :update, 
       :users => users_update( session ) ) +
       %w( domain hostname ).collect{|d|

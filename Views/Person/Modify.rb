@@ -37,7 +37,7 @@ class PersonModify < View
   def rpc_button( session, name, data )
     dputs( 2 ){ "Pressed button #{name} with #{data.inspect}" }
     person = Persons.match_by_person_id( data['person_id'] )
-    rep = [] #reply( 'empty' )
+    rep = [] #reply( :empty )
     owner = session.owner
     if person
       case name
@@ -46,12 +46,12 @@ class PersonModify < View
             ( owner.permissions.index( :center ) && 
               person.login_name =~ /^#{owner.login_name}_/ )
           person.password = data['new_password']
-          rep = reply( :empty_only, [:new_password] ) +
+          rep = reply( :empty, [:new_password] ) +
             reply( :update, :password_plain => person.password_plain )
         end
       when 'save'
         log_msg :persons, "#{session.owner.login_name} saves #{data.inspect}"
-        rep = reply( 'update', Persons.save_data( data ) )
+        rep = reply( :update, Persons.save_data( data ) )
       when 'print_student'
         rep = rpc_print( session, name, data )
         person.lp_cmd = cmd_printer( session, name )
@@ -74,7 +74,7 @@ class PersonModify < View
       rep = { "#{field}" => data }
     end
     update_layout( session ) +
-      reply( 'update', rep ) + rpc_update( session )
+      reply( :update, rep ) + rpc_update( session )
   end
 
   def rpc_list_choice( session, name, data )

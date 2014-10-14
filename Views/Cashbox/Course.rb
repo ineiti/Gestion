@@ -44,7 +44,7 @@ class CashboxCourse < View
   end
   
   def rpc_list_choice_courses( session, data )
-    reply( :empty, :students ) +
+    reply( :empty_fields, :students ) +
       reply( :update, :students => data._courses.list_students( true ) )
   end
   
@@ -88,7 +88,7 @@ class CashboxCourse < View
 
   def rpc_button_move( session, data )
     if data._students && data._courses
-      reply( :empty_only, :move_students ) +
+      reply( :empty, :move_students ) +
           reply( :window_show, :win_move ) +
           reply( :update, :move_students => data._courses.list_students( true ) )
     end
@@ -112,8 +112,8 @@ class CashboxCourse < View
     else
       []
     end +
-      reply( :empty, :students ) +
-      reply( :empty, :courses ) +
+      reply( :empty_fields, :students ) +
+      reply( :empty_fields, :courses ) +
       reply( :update, :courses => Courses.list_courses_entries )
   end
   

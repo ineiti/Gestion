@@ -25,6 +25,6 @@ class TaskWorker < View
     if not rep
       rep = { "#{field}" => data }
     end
-    reply( 'update', rep ) + rpc_update( session )
+    reply( :update, rep ) + rpc_update( session )
   end
 end

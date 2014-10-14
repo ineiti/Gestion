@@ -110,7 +110,7 @@ class PersonTabs < View
       result = result[0..19]
     end
 
-    ret = reply(:empty, [:persons]) +
+    ret = reply(:empty_fields, [:persons]) +
         reply(:update, {:persons => result.collect { |p|
           p.to_list
         }, :search => s})
@@ -121,7 +121,7 @@ class PersonTabs < View
       end
     else
       ret += reply(:fade_in, :parent) +
-          reply(:child, reply(:empty))
+          reply(:child, reply(:empty_fields))
     end
 
     ret + reply(:focus, :search)
@@ -150,7 +150,7 @@ class PersonTabs < View
 
   def rpc_button_add(session, data)
     reply(:window_show, :add_person) +
-        reply(:empty_only, [:complete_name, :login_prop]) +
+        reply(:empty, [:complete_name, :login_prop]) +
         reply(:hide, [:family_name, :first_name])
   end
 

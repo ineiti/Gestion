@@ -43,12 +43,12 @@ class ReportComptaFlat < View
   def update_list( account = [] )
     account.class == Account or account = AccountRoot.current
 
-    reply( :empty, :account_list ) +
+    reply( :empty_fields, :account_list ) +
       reply( :update, :account_list => account.listp_path )
   end
   
   def update_archive
-    reply( :empty, :account_archive ) +
+    reply( :empty_fields, :account_archive ) +
       reply( :update_silent, :account_archive => [[0, "Actual"]].concat( 
         if archive = AccountRoot.archive
           archive.accounts.collect{|a|

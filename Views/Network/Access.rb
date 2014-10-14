@@ -35,7 +35,7 @@ class NetworkAccess < View
     else
       ["Always"]
     end
-    reply( :empty_only, [:access_times_view] ) +
+    reply( :empty, [:access_times_view] ) +
       reply( :update, :access_times_view => ats )
   end
   
@@ -54,12 +54,12 @@ class NetworkAccess < View
       members = []
     end
     members.size == 0 and members = [[ 0, "All users" ]]
-    return reply( :empty_only, [:members_view] ) +
+    return reply( :empty, [:members_view] ) +
       reply( :update, :members_view => members )
   end
   
   def rpc_button_new( session, data )
-    reply( :empty, [:access_times_view] ) +
+    reply( :empty_fields, [:access_times_view] ) +
       update_members(nil) +
       vtlp_update_list( session )
   end
@@ -99,7 +99,7 @@ class NetworkAccess < View
         group.members.push person.login_name
       end
       update_members( group ) +
-        reply( :empty_only, [:login_name])
+        reply( :empty, [:login_name])
     end
   end
   
@@ -114,7 +114,7 @@ class NetworkAccess < View
   alias_method :rpc_button_save_old, :rpc_button_save
   def rpc_button_save( session, data )
     rpc_button_save_old( session, data ) +
-      reply( :empty_only, [:access_times_view, :members_view])
+      reply( :empty, [:access_times_view, :members_view])
   end
   
   alias_method :rpc_list_choice_old, :rpc_list_choice
@@ -125,7 +125,7 @@ class NetworkAccess < View
       if group = AccessGroups.match_by_accessgroup_id( args[0]['groups'][0])
         ret += update_access_times( group ) + update_members( group )
       else
-        ret += reply( :empty_only, [:access_times_view])
+        ret += reply( :empty, [:access_times_view])
       end
       return ret
     end

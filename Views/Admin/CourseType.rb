@@ -47,7 +47,7 @@ class AdminCourseType < View
   end
 
   def rpc_update_view(session)
-    reply(:empty, :account_base) +
+    reply(:empty_fields, :account_base) +
         reply(:update, :account_base => AccountRoot.actual.listp_path) +
         reply_visible(ConfigBase.has_function?(:accounting_courses),
                       :account_base)
@@ -61,7 +61,7 @@ class AdminCourseType < View
     reply_one_two(show_status, :close, :download) +
         reply_one_two(show_status, :status, :ctypes_server).concat(
             show_status ? reply(:update, status: status) :
-                reply(:empty_only, :ctypes_server) +
+                reply(:empty, :ctypes_server) +
                     reply(:update, ctypes_server: list)
         ).flatten
   end

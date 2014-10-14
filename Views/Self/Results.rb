@@ -11,7 +11,7 @@ class SelfResults < View
   end
 
   def rpc_button_update( session, data )
-    reply( :empty, [ :results ] ) +
+    reply( :empty_fields, [ :results ] ) +
     reply( :update, :results => Quizs.results )
   end
 end

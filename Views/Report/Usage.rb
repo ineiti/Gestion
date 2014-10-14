@@ -35,7 +35,7 @@ class ReportUsage < View
     return [] unless data._usage
     table = data._usage.collect_data(data._from.date_from_web,
                                      data._to.date_from_web)
-    reply(:empty_only, :usage_report) +
+    reply(:empty, :usage_report) +
         reply(:update, {:usage_report => table,
                         from: data._from, to: data._to})
   end

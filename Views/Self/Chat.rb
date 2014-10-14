@@ -58,7 +58,7 @@ class SelfChat < View
     @@disc.data_str.push("#{Time.now.strftime('%H:%M')} - " +
                              "#{name}: #{data._talk}")
     log_msg "chat", "#{name} says - #{data._talk}"
-    ret + reply(:empty_only, [:talk]) +
+    ret + reply(:empty, [:talk]) +
         rpc_update(session)
   end
 end

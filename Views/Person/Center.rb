@@ -18,7 +18,7 @@ class PersonCenter < View
   end
   
   def reply_person( p )
-    reply( :empty, [:permissions] ) +
+    reply( :empty_fields, [:permissions] ) +
       reply( :update, :permissions => %w( teacher center_director ) ) +
       reply( :update, :login_name => p.login_name, :person_id => p.person_id,
       :role_diploma => p.role_diploma, 

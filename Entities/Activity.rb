@@ -15,11 +15,28 @@ class Activities < Entities
 
     value_block :hidden
     value_str :card_filename
+    value_list :tags, '%w( library internet club )'
   end
 
   def files
     Dir.glob(get_config('.', :Entities, :Courses, :dir_diplomas) + '/*.{ods,odg}').
         collect { |f| f.cut(/^.*\//) }
+  end
+
+  def tagged(*tags)
+    tags.inspect
+    Activities.search_all_.select { |a|
+      (tags - a.tags).length == 0
+    }
+  end
+
+  def tagged_users(tags)
+    tagged(tags).collect { |a|
+      aps = ActivityPayments.search_by_activity( a )
+      ActivityPayments.active_now( aps ).collect{|ap|
+        ap.person_paid
+      }
+    }.flatten.uniq
   end
 end
 
@@ -61,11 +78,11 @@ class ActivityPayments < Entities
     value_date :date_end
   end
 
-  def week_start(date)
+  def self.week_start(date)
     date - date.cwday
   end
 
-  def get_one_period(date, period, ceil = false)
+  def self.get_one_period(date, period, ceil = false)
     [date,
      case period.to_s
        when /day/
@@ -80,7 +97,7 @@ class ActivityPayments < Entities
   end
 
   # Get start and end of a period respecting overlap lesser periods before
-  def get_period(date, period, overlap=0)
+  def self.get_period(date, period, overlap=0)
     case period.to_s
       when /day/
         return [date - overlap, date]
@@ -97,7 +114,7 @@ class ActivityPayments < Entities
     get_one_period(start, period, ceil)
   end
 
-  def pay(act, p_paid, p_cashed, d_today = Date.today)
+  def self.pay(act, p_paid, p_cashed, d_today = Date.today)
     mov = Movements.create("#{p_paid.login_name} paid #{p_cashed.login_name} #{act.cost} "+
                                "for #{act.name}", Date.today, act.cost_mov,
                            p_cashed.account_due, ConfigBase.account_activities)
@@ -112,13 +129,18 @@ class ActivityPayments < Entities
                             movement: mov, date_start: date_start, date_end: date_end)
   end
 
-  def active_for(s, d = Date.today)
-    for_user(s).select { |ap|
+  def self.active_now(actp, d = Date.today)
+    return [] unless actp
+    actp.select { |ap|
       ap.date_start <= d and d <= ap.date_end
     }
   end
 
-  def for_user(s)
+  def self.active_for(s, d = Date.today)
+    active_now(for_user(s), d)
+  end
+
+  def self.for_user(s)
     ActivityPayments.matches_by_person_paid(s)
   end
 end
@@ -136,11 +158,11 @@ class ActivityPayment < Entity
     st = person_paid
     date = `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"`
     replace = {NAME1: st.first_name, NAME2: st.family_name,
-    BDAY: st.birthday, ADDRESS: st.address, TOWN: st.town,
-    TEL: st.phone, UNAME: st.login_name, PASS: st.password_plain,
-    EMAIL: st.email, PROFESSION: st.profession, STUDY_LEVEL: st.school_grade,
-    DATE: date, PRICE: activity.cost,
-    DATE_START: date_start, DATE_END: date_end}
+               BDAY: st.birthday, ADDRESS: st.address, TOWN: st.town,
+               TEL: st.phone, UNAME: st.login_name, PASS: st.password_plain,
+               EMAIL: st.email, PROFESSION: st.profession, STUDY_LEVEL: st.school_grade,
+               DATE: date, PRICE: activity.cost,
+               DATE_START: date_start, DATE_END: date_end}
 
     fname = "#{st.person_id.to_s.rjust(6, '0')}-#{st.full_name.gsub(/ /, '_')}"
     dputs(3) { "Replace is #{replace.inspect} - fname is #{fname}" }

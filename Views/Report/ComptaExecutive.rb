@@ -51,13 +51,13 @@ class ReportComptaExecutive < View
   end
   
   def update_account( root = AccountRoot.actual, account = nil )
-    reply( :empty_only, :account ) +
+    reply( :empty, :account ) +
       reply( :update, :account => root.listp_path ) +
       reply( :update, :account => [ (account.class == Account ) ? account.id : 0] )
   end
   
   def update_root( root = AccountRoot.actual )
-    reply( :empty_only, :root ) +
+    reply( :empty, :root ) +
       reply( :update_silent, :root => [
         [AccountRoot.actual.id, "Actual"]].concat(
         AccountRoot.archive.listp_path( 1 )[1..-1]).concat(
@@ -65,12 +65,12 @@ class ReportComptaExecutive < View
   end
   
   def update_reports
-    reply( :empty_only, :reports ) +
+    reply( :empty, :reports ) +
       reply( :update, :reports => Reports.listp_name )    
   end
   
   def update_report( report, account = nil )
-    reply( :empty_only, :accounts ) +
+    reply( :empty, :accounts ) +
       reply( :update, :name => report.name ) +
       reply( :update, :accounts => report.listp_accounts ) +
       reply( :update, :accounts => ( account.class == Entities::ReportAccount )? 
@@ -146,7 +146,7 @@ class ReportComptaExecutive < View
         update_reports
     when /add/
       reply( :window_show, :win_report ) +
-        reply( :empty_only, :report_name )
+        reply( :empty, :report_name )
     when /del/
       data._reports != [] and data._reports.delete
       rpc_update( session )
@@ -172,7 +172,7 @@ class ReportComptaExecutive < View
   
   def rpc_list_choice_reports( session, data )
     return if data._reports == []
-    reply( :empty_only, :accounts ) +
+    reply( :empty, :accounts ) +
       update_report( data._reports )
   end
   

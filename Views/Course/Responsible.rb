@@ -38,7 +38,7 @@ class CourseResponsible < View
   end
   
   def rpc_update( session )
-    reply( :empty, [:persons] ) +
+    reply( :empty_fields, [:persons] ) +
       reply( :update, :persons => Persons.listp_responsible( session ) )
   end
 end

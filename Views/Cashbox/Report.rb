@@ -38,7 +38,7 @@ class CashboxReport < View
   
   def rpc_update( session )
     super( session ) +
-      reply( :empty, [ :course, :report_type ] ) +
+      reply( :empty_fields, [ :course, :report_type ] ) +
       reply( :update, :report_type => 
         %w( Course Due_Daily Due_All Paid_All ).
         map.with_index{|d,i|
@@ -76,7 +76,7 @@ class CashboxReport < View
   def rpc_list_choice_report_type( session, data )
     dputs(3){"report is #{data._report_start.inspect}"}
     date = Date.parse( data._report_start.to_s )
-    ret = reply( :empty_only, :report )
+    ret = reply( :empty, :report )
     
     case report = data._report_type.first
     when 1

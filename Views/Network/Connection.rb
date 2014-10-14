@@ -42,7 +42,7 @@ class NetworkConnection < View
     if isps = /^.(.*).$/.match( $lib_net.print(:ISPs) )
       isps = isps[1].split
       dputs(3){"ISPs is #{isps}"}
-      reply( :empty_only, :connection ) +
+      reply( :empty, :connection ) +
         reply( :update, :connection => isps ) +
         super
     else

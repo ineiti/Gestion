@@ -11,10 +11,16 @@ class TC_Activity < Test::Unit::TestCase
 
     @library = Activities.create(name: 'library', cost: 3_000,
                                  payment_period: %w(yearly), start_type: %w(period_overlap),
-                                 card_filename: %w( Diplomas/library_card.odg ))
+                                 card_filename: %w( Diplomas/library_card.odg ),
+                                 tags: [:library])
     @internet = Activities.create(name: 'internet', cost: 10_000,
                                   payment_period: %w(monthly), start_type: %w(payment),
-                                  card_filename: %w( Diplomas/library_card.odg))
+                                  card_filename: %w( Diplomas/library_card.odg),
+                                  tags: [:internet])
+    @library_plus = Activities.create(name: 'library_internet', cost: 20_000,
+                                      payment_period: %w(monthly), start_type: %w(payment),
+                                      card_filename: %w( Diplomas/library_card.odg),
+                                      tags: [:internet, :library])
 
     @admin = Persons.create(login_name: 'admin', permissions: %w(admin))
     @secretary = Persons.create(login_name: 'secretary', permissions: %w(secretary))
@@ -83,5 +89,20 @@ class TC_Activity < Test::Unit::TestCase
   def test_print
     pay1 = ActivityPayments.pay(@library, @student_1, @secretary)
     assert pay1.print
+  end
+
+  def test_tags
+    assert_equal [@internet, @library_plus], Activities.tagged(:internet)
+    assert_equal [@library, @library_plus], Activities.tagged(:library)
+    assert_equal [@library_plus], Activities.tagged(:library, :internet)
+    assert_equal [], Activities.tagged(:club)
+
+    assert_equal [], Activities.tagged_users( :library )
+
+    d = Date.new(2014, 10, 10)
+    pay1 = ActivityPayments.pay(@library, @student_1, @secretary, d)
+    pay2 = ActivityPayments.pay(@internet, @student_1, @secretary, d)
+    pay3 = ActivityPayments.pay(@internet, @student_2, @secretary, d)
+    assert_equal [@student_1], Activities.tagged_users( :library )
   end
 end

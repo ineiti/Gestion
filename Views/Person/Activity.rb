@@ -3,6 +3,7 @@ class PersonActivity < View
 
   def layout
     @update = true
+    @visible = false
     @order = 140
 
     @functions_need = [:cashbox]
@@ -36,6 +37,10 @@ class PersonActivity < View
     end
   end
 
+  def rpc_update( session )
+    reply_print( session )
+  end
+
   def get_person(p)
     (p.class == Array) ? get_person(p.first) : p
   end
@@ -51,7 +56,7 @@ class PersonActivity < View
 
   def rpc_button_add_act(session, data)
     reply(:window_show, :add_activity) +
-        reply(:empty_only, :activity) +
+        reply(:empty, :activity) +
         reply(:update, :activity => Activities.listp_name)
   end
 
@@ -79,7 +84,7 @@ class PersonActivity < View
       [act.activitypayment_id, [act.activity.name, act.activity.cost,
                                 act.date_start, act.date_end]]
     }.sort { |a, b| a[3] <=> b[3] }.reverse
-    reply(:empty_only, :activities) +
+    reply(:empty, :activities) +
         reply(:update, :activities => act_table) +
         reply(:update, :date_start => Date.today.to_web)
   end

@@ -28,7 +28,7 @@ class AdminBackup < View
     Entities.save_all
     log_msg :backup, "Creating new backup"
     `#{GESTION_DIR}/Binaries/backup`
-    reply( :empty, [ :backups ] ) + 
+    reply( :empty_fields, [ :backups ] ) +
       reply( :update, :backups => list_backups )
   end
 	

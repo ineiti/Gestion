@@ -80,7 +80,7 @@ class NetworkTigo < View
       $lib_net.async :isp_tigo_credit_add, code
     rescue NoMethodError
     end
-    rpc_update( session ) + reply( :empty_only, [:code])
+    rpc_update( session ) + reply( :empty, [:code])
   end
 
   def rpc_button_add_promotion( session, data )

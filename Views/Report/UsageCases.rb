@@ -43,13 +43,13 @@ class ReportUsageCases < View
              else
                ''
              end
-    reply( :empty_only, %w( file_source file_filtered ) ) +
+    reply( :empty, %w( file_source file_filtered ) ) +
         reply( :update, :file_source => file_s ) +
         reply( :update, :file_filtered => file_f[0..100].join("\n"))
   end
 
   def rpc_update(session)
-    reply(:empty_only, :file_data) +
+    reply(:empty, :file_data) +
         if ul = Usages.match_by_id(session.s_data._usage_list)
           reply(:update, :file_data => ul.fetch_files)
         else

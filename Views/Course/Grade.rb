@@ -62,7 +62,7 @@ class CourseGrade < View
 
   def rpc_update( session )
     super( session ) +
-      reply( :empty, [:students] ) +
+      reply( :empty_fields, [:students] ) +
       [ :prepare_files, :fetch_files, :transfer_files, 
       :last_synched, :sync_server, :upload, :files_saved ].collect{|b|
       reply( :hide, b )
@@ -117,7 +117,7 @@ class CourseGrade < View
       if course
         dputs( 3 ){ "replying" }
         ret = rpc_update( session ) +
-          #reply(:empty, [:students]) +
+          #reply(:empty_fields, [:students]) +
         update_form_data( course ) +
           reply(:update, {:courses => [course_id]}) +
           reply(:focus, :mean1 )
@@ -191,7 +191,7 @@ class CourseGrade < View
       data['students'] = course[:students][( saved + 1 ) % course[:students].size]
       dputs( 2 ){ "Next student is #{data['students'].inspect}" }
 
-      reply( :empty, :students ) +
+      reply( :empty_fields, :students ) +
         update_grade( data ) +
         reply( :update, :students => course[:students] ) +
         reply( :update, :students => [data['students'][0]] ) +

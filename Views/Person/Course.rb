@@ -22,12 +22,12 @@ class PersonCourse < View
   end
   
   def rpc_update( session )
-    reply( :empty, [:courses] )
+    reply( :empty_fields, [:courses] )
   end
   
   def rpc_list_choice( session, name, args )
     dputs( 3 ){ "args is #{args.inspect}" }
-    ret = reply( :empty, [:courses] )
+    ret = reply( :empty_fields, [:courses] )
     if name == "persons" and args['persons']
       p = Entities.Persons.match_by_login_name( args['persons'].flatten[0] )
       if p
@@ -40,7 +40,7 @@ class PersonCourse < View
 
   def rpc_button_add( session, args )
     if args['persons'].flatten.length > 0
-      reply( :empty_only, [ :courses_available ] ) +
+      reply( :empty, [ :courses_available ] ) +
         reply( :update, :courses_available => 
           ( Entities.Courses.list_courses - 
             Entities.Courses.list_courses_for_person( args['persons'].flatten[0] ) ) ) +

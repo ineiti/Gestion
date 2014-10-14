@@ -34,14 +34,14 @@ class ComptaCourse < View
     AccountRoot.actual.get_tree{|a|
       acc.push [ a.global_id, a.path ]
     }
-    reply( :empty_only, :new_account ) +
+    reply( :empty, :new_account ) +
       reply( :update, { :new_account => acc.sort{|a,b| a[1] <=> b[1] } }) +
       reply( :window_show, :win_new_account )
   end
   
   def rpc_button_save( session, data )
     dputs(4){"save with #{data.inspect} - #{data._courses} - #{data._account_path}"}
-    reply( :empty, :new_account_path ) +
+    reply( :empty_fields, :new_account_path ) +
       if course = data._courses
       if ap = data._account_path and
           acc = Accounts.find_by_path(ap)
@@ -80,7 +80,7 @@ class ComptaCourse < View
     dputs(4){"name is #{name} - data is #{data.inspect}"}
     if course = data._courses
       dputs(3){"Course is #{course.inspect}"}
-      reply( :empty, [:account_path] ) +
+      reply( :empty_fields, [:account_path] ) +
         if course.entries and course.entries != []
         reply( :update, :account_path => course.entries.path )
       else
@@ -90,7 +90,7 @@ class ComptaCourse < View
   end
   
   def rpc_update( session )
-    reply( :empty, :courses ) +
+    reply( :empty_fields, :courses ) +
       reply( :update, :courses => Courses.list_courses(session))
   end
 end

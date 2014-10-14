@@ -26,7 +26,7 @@ class ReportCourse < View
   
   def rpc_update( session )
     super( session ) +
-      reply( :empty, :course ) +
+      reply( :empty_fields, :course ) +
       reply( :update, :course => Courses.list_courses_entries(session) ) +
       reply_print( session )
   end
@@ -38,7 +38,7 @@ class ReportCourse < View
   
   def rpc_list_choice_course( session, data )
     dputs(3){"report is #{data._report_start.inspect}"}
-    ret = reply( :empty_only, :report )
+    ret = reply( :empty, :report )
     
     if data._course != []
       ret += reply( :update, :report => data._course.report_list )

@@ -42,14 +42,14 @@ class ComptaTransfer < View
 
   def rpc_update(session)
     dputs(3) { "rpc_update with #{session.inspect}" }
-    reply(:empty, :persons) +
+    reply(:empty_fields, :persons) +
         reply(:update, :persons => Persons.listp_account_due) +
         reply(:update, :upto => Date.today.to_web) +
         reply_print(session)
   end
 
   def rpc_list_choice_persons(session, data)
-    reply(:empty, :report) +
+    reply(:empty_fields, :report) +
         reply(:update, :upto => data._upto) +
         reply(:update, :report => data._persons.report_list(:all,
                                                             data._upto.date_from_web))

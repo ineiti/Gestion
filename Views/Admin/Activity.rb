@@ -19,6 +19,7 @@ class AdminActivity < View
         show_block :default
         show_block :show
         show_list_drop :card_filename, 'Activities.files.sort'
+        show_field :tags
         show_button :save
       end
     end

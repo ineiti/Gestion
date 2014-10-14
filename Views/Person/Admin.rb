@@ -32,9 +32,9 @@ class PersonAdmin < View
   def rpc_button( session, name, data )
     dputs( 3 ){ "Pressed button #{name} with #{data.inspect}" }
     person = Persons.match_by_person_id( data['person_id'] )
-    rep = reply( 'empty' )
+    rep = reply( :empty )
     if person
-      #rep += reply( 'empty', [:internet_none])
+      #rep += reply( :empty_fields, [:internet_none])
       case name
       when "add_block"
         if not person.internet_none
@@ -53,7 +53,7 @@ class PersonAdmin < View
         end
       when "save"
         # "internet_none" only reflects chosen entries, not the available ones per se!
-        #       rep += reply( 'update', Persons.save_data( data ) )
+        #       rep += reply( :update, Persons.save_data( data ) )
         # data.delete("internet_none")
         log_msg :persons, "#{session.owner.login_name} saves #{data.inspect}"
         Persons.save_data( data )
@@ -70,17 +70,17 @@ class PersonAdmin < View
       rep = { "#{field}" => data }
     end
     update_layout( session ) +
-    reply( 'update', rep ) + rpc_update( session )
+    reply( :update, rep ) + rpc_update( session )
   end
   
   def rpc_list_choice( session, name, data )
     if name == "persons"
       dputs( 2 ){ "Got data: #{data.inspect}" }
       if p = Persons.match_by_login_name( data['persons'].flatten[0])
-        #reply( :empty, [:internet_none] ) +
-        reply( :empty, [:permissions] ) +
+        #reply( :empty_fields, [:internet_none] ) +
+        reply( :empty_fields, [:permissions] ) +
         reply( :update, :permissions => Permission.list.sort) +
-        reply( :empty, [:groups] ) +
+        reply( :empty_fields, [:groups] ) +
         reply( :update, :groups => eval( Persons.get_value( :groups ).list ) ) +
         reply( :update, p )
       end

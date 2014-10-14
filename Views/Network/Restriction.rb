@@ -12,9 +12,9 @@ class NetworkRestriction < View
   def rpc_update( session )
     restricted = $lib_net.call :captive_restriction_get
     if restricted.length > 0
-      reply( 'update', :state => "Restricted internet, only allowed for:<br><pre>#{ restricted }</pre>" )
+      reply( :update, :state => "Restricted internet, only allowed for:<br><pre>#{ restricted }</pre>" )
     else
-      reply( 'update', :state => "No restriction in place" )
+      reply( :update, :state => "No restriction in place" )
     end
   end
 

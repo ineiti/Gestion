@@ -66,16 +66,16 @@ class SelfServices < View
     data.delete( "services_total" )
     data.delete( "account_total_due" )
     actor.pay_service( services_total, SelfServices.cash_msg( data ) )
-    reply( 'empty', nil ) + rpc_update( session )
+    reply( :empty_fields, nil ) + rpc_update( session )
   end
   
   def rpc_update( session )
-    reply( 'update', { :account_total_due => session.owner.account_total_due } )
+    reply( :update, { :account_total_due => session.owner.account_total_due } )
   end
   
   def rpc_update_with_values( session, values = nil )
     dputs( 3 ){ "Got values: #{values.inspect}" }
-    reply( 'update', { :services_total => calc_total( values ) } )
+    reply( :update, { :services_total => calc_total( values ) } )
   end
   
   def rpc_callback( session, name, data )
@@ -83,4 +83,3 @@ class SelfServices < View
   end
 
 end
-

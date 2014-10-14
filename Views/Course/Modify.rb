@@ -90,12 +90,6 @@ class CourseModify < View
     end
   end
 
-=begin
-  def rpc_button_add_students( session, data )
-    reply( "window_show", "students_win" )
-  end
-=end
-
   def rpc_button_bulk_add(session, data)
     if data['name']
       reply(:window_show, 'students_bulk')
@@ -103,7 +97,7 @@ class CourseModify < View
   end
 
   def update_students(course)
-    reply(:empty_only, :students) +
+    reply(:empty, :students) +
         reply(:update, :students => course.list_students)
   end
 
@@ -131,7 +125,7 @@ class CourseModify < View
     return if data._students.length == 0
 
     reply(:window_show, :transfer) +
-        reply(:empty_only, :transfer_course) +
+        reply(:empty, :transfer_course) +
         reply(:update, :transfer_course => Courses.list_courses(session))
   end
 
@@ -197,7 +191,7 @@ class CourseModify < View
         dputs(3) { "Printing-cmd is #{cmd.inspect}" }
         %x[ #{cmd} ]
       when 4..10
-        dputs(3) { "Hiding" }
+        dputs(3) { 'Hiding' }
         ret = reply(:window_hide)
       else
         dputs(3) { "Oups - step is #{var._step.inspect}" }
@@ -249,11 +243,11 @@ class CourseModify < View
               collect { |t, s| "<li>#{s}</li>" }.join('')
 
           ret + reply(:window_show, :missing_data) +
-              reply('update', :missing => 'One of the following is missing:<ul>' +
+              reply(:update, :missing => 'One of the following is missing:<ul>' +
                   "#{str}</ul>")
         else
           ret + reply(:window_show, :missing_data) +
-              reply('update', :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>")
+              reply(:update, :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>")
       end
     end
   end
@@ -270,7 +264,7 @@ class CourseModify < View
     session.s_data[:perhaps_double] ||= []
     if data['names'] and users = data['names'].split("\n")
       prefix = ConfigBase.has_function?(:course_server) ?
-          "#{session.owner.login_name}_" : ""
+          "#{session.owner.login_name}_" : ''
       name = users.shift
       login_name = Persons.create_login_name(name)
       if not (person = Persons.match_by_login_name(prefix + name))
@@ -291,7 +285,7 @@ class CourseModify < View
           reply(:callback_button, :bulk_students)
     else
       update_students(course) +
-          reply(:update, {:names => ""}) +
+          reply(:update, {:names => ''}) +
           reply(:window_hide) +
           present_doubles(session, course)
     end
@@ -308,13 +302,13 @@ class CourseModify < View
       prop = Persons.search_by_login_name("^#{prefix}#{login_name}[0-9]*$").
           collect { |p|
         courses = Courses.matches_by_students(p.login_name).collect { |c| c.name }.
-            join("-")
+            join('-')
         [p.person_id, "#{p.full_name}:#{p.login_name}:#{courses}"]
       }
       dputs(4) { "Proposition is #{prop.inspect}" }
       reply(:window_show, :ask_double) +
           reply(:update, :double_name => name) +
-          reply(:empty_only, [:double_proposition]) +
+          reply(:empty, [:double_proposition]) +
           reply(:update, :double_proposition => prop.concat([prop.first[0]]))
     else
       reply(:window_hide)
@@ -336,7 +330,7 @@ class CourseModify < View
   def rpc_button_create_new(session, data)
     course = Courses.match_by_name(data['name'])
     prefix = ConfigBase.has_function?(:course_server) ?
-        "#{session.owner.login_name}_" : ""
+        "#{session.owner.login_name}_" : ''
     name = data['double_name']
     course.students_add Persons.create({:first_name => name,
                                         :login_name_prefix => prefix,
@@ -353,17 +347,14 @@ class CourseModify < View
   end
 
   def rpc_list_choice(session, name, args)
-    #Calling rpc_list_choice with [["courses", {"courses"=>["base_25"], "name_base"=>["base"]}]]
     dputs(3) { "rpc_list_choice with #{name} - #{args.inspect}" }
     if name == 'courses' and args['courses'].length > 0
       course_id = args['courses'][0]
       dputs(3) { "replying for course_id #{course_id}" }
       course = Courses.match_by_course_id(course_id)
-      reply('empty', [:students]) +
+      reply(:empty_fields, [:students]) +
           update_form_data(course) +
-          reply('update', {:courses => [course_id]})
-      #else
-      #  reply("empty", [:students])
+          reply(:update, {:courses => [course_id]})
     end
   end
 
@@ -379,7 +370,7 @@ class CourseModify < View
   end
 
   def rpc_update(session)
-    reply(:empty, :students) +
+    reply(:empty_fields, :students) +
         super(session) +
         reply_print(session) +
         hide_if_center(session) +
@@ -398,8 +389,8 @@ class CourseModify < View
     fields = %w( teacher assistant responsible )
 
     super(session) +
-        reply(:empty, fields) +
-        reply(:update, :assistant => [[0, "---"]]) +
+        reply(:empty_fields, fields) +
+        reply(:update, :assistant => [[0, '---']]) +
         fields.collect { |p|
           reply(:update, p => resps)
         }.flatten
@@ -414,7 +405,7 @@ class CourseModify < View
     if course
       log_msg :CourseModify, course
       reply(:window_show, :win_edit_name) +
-          reply(:empty_only, :wen_ctype) +
+          reply(:empty, :wen_ctype) +
           reply(:update, :wen_ctype => CourseTypes.listp_name +
               [course.ctype.coursetype_id],
                 :wen_name => course.name)
@@ -446,7 +437,7 @@ class CourseModify < View
       course.data_set_hash(data._wen_ctype.to_hash.except(:name), true)
     end
     reply(:window_hide) +
-        reply(:parent, reply(:empty, [:courses]) +
+        reply(:parent, reply(:empty_fields, [:courses]) +
             reply(:update, :courses => Entities.Courses.list_courses(session) +
                 data._courses))
   end

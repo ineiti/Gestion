@@ -9,7 +9,7 @@ class CashboxActivity < View
 
     gui_hboxg do
       gui_vboxg :nogroup do
-        show_entity_activity :activities, :list, :name, :flexheight => 1, :width => 200,
+        show_entity_activity :activities, :single, :name, :flexheight => 1, :width => 200,
                              :callback => true
         show_block_ro :show
       end
@@ -18,10 +18,8 @@ class CashboxActivity < View
           show_entity_person_lazy :students, :multi, :full_name,
                                   :flexheight => 1, :callback => true, :width => 300
           show_str :full_name
-        end
-        gui_hbox :nogroup do
-          show_print :new_student, :existing_student, :signed_up_students,
-                     :print_student
+          show_button :new_student, :search_student, :signed_up_students
+          show_print :print_activity
         end
       end
       gui_vboxg :nogroup do
@@ -34,25 +32,34 @@ class CashboxActivity < View
 
       gui_window :printing do
         show_html :msg_print
-        show_button :close
+        show_int_hidden :step
+        show_button :print_next, :close
       end
     end
+  end
+
+  def rpc_update(session)
+    reply_print(session) +
+        reply(:update, :date_start => Date.today.to_web)
   end
 
   def rpc_button_pay_act(session, data)
     return unless (data._activities and data._students.length == 1)
     ActivityPayments.pay(data._activities, data._students.first, session.owner,
                          Date.from_web(data._date_start))
-    reply(:window_hide)
+    reply(:window_hide) +
+        rpc_list_choice_students(session, data)
   end
 
   def rpc_button_delete(session, data)
     return unless (data._activities and data._students.length == 1 and
         data._table_activities.length == 1)
-    if data._activities.movement.account_src == data._activities.person_cashed.account_due
-      data._activities.movement.delete
-      data._activities.delete
-      rpc_list_choice_persons(session, data)
+
+    act = ActivityPayments.match_by_activitypayment_id(data._table_activities.first)
+    if act.movement.account_src == act.person_cashed.account_due
+      act.movement.delete
+      act.delete
+      rpc_list_choice_students(session, data)
     else
       reply(:window_show, :printing)+
           reply(:update, :msg_print => 'Ce mouvement est déjà comptabilisé')
@@ -60,66 +67,119 @@ class CashboxActivity < View
   end
 
   def rpc_button_signed_up_students(session, data)
-    #dp data._activities
-    #dp ActivityPayments.search_by_activity( data._activities )
-    reply(:empty_only, :students) +
+    reply(:empty, :students) +
         reply(:update, :students =>
             ActivityPayments.search_by_activity(data._activities).collect { |ap|
-              ap.person_paid.to_list
+              ap.person_paid.to_list_id
             })
   end
 
   def rpc_button_new_student(session, data)
-
+    student = Persons.create({first_name: data._full_name})
+    data._full_name = student.login_name
+    rpc_button_search_student(session, data) +
+        reply(:update, students: [student.person_id])
   end
 
-  def rpc_button_existing_student(session, data)
+  def rpc_button_search_student(session, data)
     Persons.search_in(data._full_name, :students)
   end
 
   def rpc_list_choice_activities(session, data)
-    reply(:update, data._activities.first.to_hash) +
+    reply(:empty_fields_update, data._activities.to_hash) +
         rpc_button_signed_up_students(session, data)
   end
 
-  def rpc_list_choice_persons(session, data)
-    return unless student = Persons.match_by_login_name(get_person(data._persons))
+  def rpc_list_choice_students(session, data)
+    return reply(:empty, %w(full_name table_activities)) unless data._students.length == 1
 
-    act_table = ActivityPayments.for_user(student).collect { |act|
-      [act.activitypayment_id, [act.activity.name, act.activity.cost,
-                                act.date_start, act.date_end]]
-    }.sort { |a, b| a[3] <=> b[3] }.reverse
-    reply(:empty_only, :activities) +
-        reply(:update, :activities => act_table) +
+    act_table = ActivityPayments.for_user(data._students.first).collect { |act|
+      [act.activitypayment_id, [act.date_start, act.date_end]]
+    }.sort { |a, b| a[1] <=> b[1] }.reverse
+    reply(:empty_update, :table_activities => act_table) +
         reply(:update, :date_start => Date.today.to_web)
   end
 
-  def rpc_button_print_activity(session, data)
-    return unless student = Persons.match_by_login_name(get_person(data._persons))
-    act =
-        if data._activities.length == 0
-          ActivityPayments.for_user(student).sort { |a, b| a.date_start <=> b.date_start }.
-              reverse.first
+  def rpc_button_print_activity_steps(session, data)
+    dputs_func
+    ret = reply(:callback_button, :print_activity_steps)
+    var = session.s_data._print_activity
+    dputs(3) { "Doing with data #{var.inspect} step is #{var._step.inspect}" }
+    case var._step
+      when 1
+        dputs(3) { 'Showing prepare-window' }
+        var._students = var._activities.collect { |a| a.person_paid.login_name }
+        ret += reply(:window_show, :printing) +
+            reply(:update, :msg_print => 'Preparing students: <br><br>' +
+                var._students.each_slice(5).collect { |s| s.join(', ') }.
+                    join(',<br>')) +
+            reply(:hide, :print_next)
+      when 2
+        dputs(3) { 'Printing pdfs' }
+        files = var._activities.collect { |act| act.print }
+        var._pages = OpenPrint.print_nup_duplex(files, 'activity_cards')
+        cmd = cmd_printer(session, :print_activity)
+        dputs(3) { "Command is #{cmd} with pages #{var._pages.inspect}" }
+        if not cmd
+          ret = reply(:window_show, :printing) +
+              reply(:update, :msg_print => 'Click on one of the links:<ul>' +
+                  var._pages.collect { |r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
+                  '</ul>')
+          var._step = 9
+        elsif var._pages.length > 0
+          ret = reply(:window_show, :printing) +
+              reply(:update, :msg_print => 'Impression de la page face en cours pour<ul>' +
+                  "<li>#{var._students.join('</li><li>')}</li></ul>" +
+                  "<br>Cliquez sur 'suivant' pour imprimer les pages arrières") +
+              reply(:unhide, :print_next)
+          cmd += " #{var._pages[0]}"
+          dputs(3) { "Printing-cmd is #{cmd.inspect}" }
+          %x[ #{cmd} ]
         else
-          ActivityPayments.match_by_activitypayment_id(data._activities.first)
+          var._step = 9
         end
-
-    rep = rpc_print(session, :print_activity, data)
-    lp_cmd = cmd_printer(session, :print_activity)
-    files = OpenPrint.print_nup_duplex([act.print])
-    if lp_cmd
-      %x[ #{lp_cmd} #{files.pop} ]
-      %x[ #{lp_cmd} #{files.pop} ]
-      rep += reply(:window_show, :printing) +
-          reply(:update, :msg_print => "Printing is finished on #{lp_cmd.sub(/.* /, '')}")
-    else
-      rep += reply(:window_show, :printing) +
-          reply(:update, :msg_print => 'Click on one of the links:<ul>' +
-              files.collect { |r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
-              '</ul>')
+      when 3
+        cmd = cmd_printer(session, :print_activity)
+        dputs(3) { "Command is #{cmd} with pages #{var._pages.inspect}" }
+        ret = reply(:window_show, :printing) +
+            reply(:update, :msg_print => 'Impression de la page face arrière en cours<ul>' +
+                "<li>#{var._students.join('</li><li>')}</li></ul>") +
+            reply(:hide, :print_next)
+        cmd += " -o outputorder=reverse #{var._pages[1]}"
+        dputs(3) { "Printing-cmd is #{cmd.inspect}" }
+        %x[ #{cmd} ]
+      when 4..10
+        dputs(3) { 'Hiding' }
+        ret = reply(:window_hide)
+      else
+        dputs(3) { "Oups - step is #{var._step.inspect}" }
     end
 
-    return rep
+    var._step += 1
+    session.s_data[:print_activity] = var
+    dputs(3) { "Ret is #{ret.inspect}" }
+    return ret
   end
+
+  def rpc_button_print_activity(session, data)
+    return unless data._students.length >= 1
+    acts = data._students.collect { |s|
+      if data._table_activities.length == 0
+        ActivityPayments.for_user(s).sort { |a, b| a.date_start <=> b.date_start }.
+            reverse.first
+      else
+        ActivityPayments.match_by_activitypayment_id(data._table_activities.first)
+      end
+    }
+
+    ret = rpc_print(session, :print_activity, data)
+    session.s_data._print_activity = {step: 1, activities: acts}
+    return ret + rpc_button_print_activity_steps(session, data)
+  end
+
+  def rpc_button_print_next(session, data)
+    rpc_button_print_activity_steps(session, data)
+  end
+
 end
 

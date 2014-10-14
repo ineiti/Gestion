@@ -469,7 +469,7 @@ class Persons < Entities
   def Persons.search_in(str, field = nil, center: nil)
     # Don't search if there are few caracters and lots of Persons
     if (not str or str.length < 3) and (Entities.Persons.new_id.values[0] > 100)
-      field ? View.reply( :empty_only, field ) : []
+      field ? View.reply(:empty, field) : []
     end
 
     # Search all these fields and merge the results
@@ -504,8 +504,10 @@ class Persons < Entities
     end
 
     if field
-      return View.reply(:empty_only, field) +
-          View.reply(:update, {field => result.collect { |p| p.to_list }})
+      return View.reply(:empty, field) +
+          View.reply(:update, {field => result.collect { |p| p.to_list_id }})
+    else
+      result
     end
   end
 end
@@ -852,6 +854,10 @@ class Person < Entity
     [login_name, "#{full_name} - #{login_name}:#{password_plain}"]
   end
 
+  def to_list_id
+    [person_id, "#{full_name} - #{login_name}:#{password_plain}"]
+  end
+
   def session
     Sessions.match_by_sid(self.session_id)
   end
@@ -1082,5 +1088,9 @@ class Person < Entity
       end
     end
     file
+  end
+
+  def to_frontend
+    to_list_id
   end
 end

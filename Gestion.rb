@@ -45,6 +45,7 @@ begin
   Permission.add('quiz', 'SelfChat,SelfConcours,SelfResults', '')
   Permission.add('internet', 'SelfInternet,SelfChat', 'default')
   Permission.add('student', '', 'internet')
+  Permission.add('librarian', 'LibraryUsers,FlagInternetFree', 'student')
   Permission.add('assistant', 'TaskEdit,FlagInternetFree', 'student')
   Permission.add('teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
       'FlagResponsible', 'assistant')
