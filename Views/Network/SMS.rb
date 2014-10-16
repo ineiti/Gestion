@@ -26,11 +26,16 @@ class NetworkSMS < View
           show_button :inject_sms
         end
         gui_vbox :nogroup do
+          show_text :ussd
+          show_button :send_ussd
+        end
+        gui_vbox :nogroup do
           show_button :connect, :disconnect
         end
       end
       gui_vboxg :nogroup do
         show_text :sms_received, :flexheight => 1
+        show_text :ussd_received, :flexheight => 1
       end
     end
   end
@@ -67,5 +72,12 @@ class NetworkSMS < View
   def rpc_button_disconnect(session, data)
     SMScontrol.state_goal = Network::MODEM_DISCONNECTED
     rpc_update(session)
+  end
+
+  def rpc_button_send_ussd( session, data )
+    SMScontrol.modem.ussd_send(data._ussd)
+    rpc_update( session ) +
+        reply( :empty_update, :ussd_received =>
+            SMScontrol.modem.ussd_list.inspect )
   end
 end
