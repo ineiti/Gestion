@@ -4,6 +4,8 @@ Important notices for versions:
   - added librarian
   - added activities
   - synchronisation of exams
+  - _id of 0 should not be used anymore! Unfortunately this is difficult to
+   update... Migrate with vi/sed
 
 - 140830: 1.5.3
   - reworked synchronisation of exams when only some changed
