@@ -1,8 +1,4 @@
-require 'network/modem'
-require 'network/smscontrol'
-
 class NetworkSMS < View
-  include Network
 
   def layout
     @functions_need = [:sms_control]
@@ -22,11 +18,16 @@ class NetworkSMS < View
           show_str_ro :vpn
         end
         gui_vbox :nogroup do
-          show_text :sms
+          show_str :sms_fake
           show_button :inject_sms
         end
         gui_vbox :nogroup do
-          show_text :ussd
+          show_str :sms_number
+          show_str :sms_text
+          show_button :send_sms
+        end
+        gui_vbox :nogroup do
+          show_str :ussd
           show_button :send_ussd
         end
         gui_vbox :nogroup do
@@ -36,6 +37,7 @@ class NetworkSMS < View
       gui_vboxg :nogroup do
         show_text :sms_received, :flexheight => 1
         show_text :ussd_received, :flexheight => 1
+        show_list_drop :operator, 'Network::Operator.operators'
       end
     end
   end
@@ -48,12 +50,13 @@ class NetworkSMS < View
                            'sed -e "s/OpenVPN.*//"') :
         System.run_str('pgrep openvpn')
     reply(:update,
-          :state_now => SMScontrol.state_now, :state_goal => SMScontrol.state_goal,
-          :transfer => SMScontrol.state_traffic, :promotion => SMScontrol.max_traffic,
+          :state_now => $SMScontrol.state_now, :state_goal => $SMScontrol.state_goal,
+          :transfer => $SMScontrol.state_traffic, :promotion => $SMScontrol.state_traffic,
           :emails => emails, :vpn => vpns,
           :sms_received => SMSs.last(5).reverse.collect { |sms|
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
-          }.join("\n"))
+          }.join("\n"),
+          :ussd_received => $SMScontrol.modem.ussd_list.inspect)
   end
 
   def rpc_update_async(session)
@@ -61,23 +64,28 @@ class NetworkSMS < View
   end
 
   def rpc_button_inject_sms(session, data)
-    SMScontrol.inject_sms(data._sms)
+    $SMScontrol.inject_sms(data._sms_fake)
+  end
+
+  def rpc_button_send_sms(session, data)
+    $SMScontrol.modem.sms_send(data._sms_number, data._sms_text)
   end
 
   def rpc_button_connect(session, data)
-    SMScontrol.state_goal = Network::MODEM_CONNECTED
+    $SMScontrol.state_goal = Network::MODEM_CONNECTED
     rpc_update(session)
   end
 
   def rpc_button_disconnect(session, data)
-    SMScontrol.state_goal = Network::MODEM_DISCONNECTED
+    $SMScontrol.state_goal = Network::MODEM_DISCONNECTED
     rpc_update(session)
   end
 
-  def rpc_button_send_ussd( session, data )
-    SMScontrol.modem.ussd_send(data._ussd)
-    rpc_update( session ) +
-        reply( :empty_update, :ussd_received =>
-            SMScontrol.modem.ussd_list.inspect )
+  def rpc_button_send_ussd(session, data)
+    begin
+      $SMScontrol.modem.ussd_send(data._ussd)
+    rescue 'USSDinprogress' => e
+    end
+    rpc_update(session)
   end
 end

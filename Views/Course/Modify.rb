@@ -26,6 +26,7 @@ class CourseModify < View
           gui_vbox :nogroup do
             show_block :name
             show_arg :name, :ro => true
+            #show_arg :ctype, :all => true
             show_block :calendar
             show_block :teacher
             show_button :edit_name
@@ -423,11 +424,11 @@ class CourseModify < View
           c != course
         nbr += 1
       end
-      dputs(2) { "Found #{nbr} for #{base}" }
+      dputs(3) { "Found #{nbr} for #{base}" }
       data._wen_name = "#{base}-#{nbr}"
     end
     data._wen_name.sub!(/#{course.ctype.name}_/, "#{data._wen_ctype.name}_")
-    dputs(2) { "data._wen_name is now #{data._wen_name}" }
+    dputs(3) { "data._wen_name is now #{data._wen_name}" }
     course.ctype = data._wen_ctype
     course.name = data._wen_name
     if course.entries

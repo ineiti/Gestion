@@ -19,7 +19,7 @@ class Courses < Entities
   def setup_data
 
     value_block :name
-    value_entity_courseType_ro :ctype, :drop, :name
+    value_entity_courseType_ro_all :ctype, :drop, :name
     value_str :name
 
     value_block :calendar

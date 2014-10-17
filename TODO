@@ -4,6 +4,10 @@ WORKING:
         - Adding ScheduleType to schools
 
 BUGS:
+        - Course::ctype must have _all argument, else it fails - logic?
+            - either allow for showing of element only in update_form_data
+              and perhaps others (check where)
+            - or define _all by default for all :drop
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?

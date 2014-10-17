@@ -158,12 +158,13 @@ else
 
   if ConfigBase.has_function? :sms_control
     dputs(1) { 'Starting sms-control' }
+    $SMScontrol = Network::SMScontrol.new(:Tigo)
     $sms_control = Thread.new {
       loop {
         begin
-          Network::SMScontrol.check_connection
-          Network::SMScontrol.check_sms
-          dputs(2) { Network::SMScontrol.state_to_s }
+          $SMScontrol.check_connection
+          $SMScontrol.check_sms
+          dputs(2) { $SMScontrol.state_to_s }
           sleep 10
         rescue Exception => e
           dputs(0) { 'Error with SMScontrol' }

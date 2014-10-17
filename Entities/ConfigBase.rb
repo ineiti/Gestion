@@ -6,7 +6,7 @@ class ConfigBases < Entities
     value_int :max_upload_size
     value_str :server_url
     value_str :label_url
-    value_entity_account :account_activities, :drop, :path
+    value_entity_account_all :account_activities, :drop, :path
 
     @@functions = %w( network internet share 
     courses course_server course_client internet_simple
@@ -17,7 +17,8 @@ class ConfigBases < Entities
                         :internet => [:internet_simple, :internet_libnet],
                         :courses => [:course_server, :course_client, :accounting_courses],
                         :accounting => [:accounting_courses],
-                        :cashbox => [:accounting_courses]
+                        :cashbox => [:accounting_courses],
+                        :activities => [:library]
     }
     @@functions_conflict = [[:course_server, :course_client]]
   end
