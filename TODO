@@ -4,6 +4,7 @@ WORKING:
         - Adding ScheduleType to schools
 
 BUGS:
+        - Persons::print_student prints card on A4!
         - Course::ctype must have _all argument, else it fails - logic?
             - either allow for showing of element only in update_form_data
               and perhaps others (check where)

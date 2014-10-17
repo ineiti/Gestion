@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.5\n"
 "POT-Creation-Date: 2014-10-14 16:59+0100\n"
-"PO-Revision-Date: 2014-10-14 17:02+0100\n"
+"PO-Revision-Date: 2014-10-17 16:40+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: French <fr@profeda.org>\n"
 "Language: \n"
@@ -633,7 +633,7 @@ msgstr "Ville"
 #. Comes from file Entities/Person.rb and line is     value_str :profession
 #: ../Entities/Person.rb:44
 msgid "profession"
-msgstr "Filière"
+msgstr "Activité"
 
 #. Comes from file Entities/Person.rb and line is     value_str :school_grade
 #: ../Entities/Person.rb:45
