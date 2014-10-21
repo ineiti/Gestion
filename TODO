@@ -1,7 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - Adding ScheduleType to schools
 
 BUGS:
         - Persons::print_student prints card on A4!
@@ -27,6 +26,7 @@ UI:
          tabs can be added
 
 FEATURES:
+        - Adding ScheduleType to schools
         - Add Language-evaluations for MaN
         - LibNet:
           - Feature: rewrite in Ruby

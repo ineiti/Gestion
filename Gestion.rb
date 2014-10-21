@@ -156,9 +156,9 @@ else
     }
   end
 
-  if ConfigBase.has_function? :sms_control
-    dputs(1) { 'Starting sms-control' }
-    $SMScontrol = Network::SMScontrol.new(:Tigo)
+  if ConfigBase.has_function?(:sms_control) and ConfigBase.operator
+    dputs(1) { "Starting sms-control with operator #{ConfigBase.operator}" }
+    $SMScontrol = Network::SMScontrol.new(ConfigBase.operator.first)
     $sms_control = Thread.new {
       loop {
         begin
@@ -212,7 +212,7 @@ else
   $sms_control and $sms_control.kill
   $show_time and $show_time.kill
 
-  Entities.save_all( notmp: true )
+  Entities.save_all(notmp: true)
 end
 
 

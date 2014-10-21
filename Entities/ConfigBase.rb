@@ -6,6 +6,7 @@ class ConfigBases < Entities
     value_int :max_upload_size
     value_str :server_url
     value_str :label_url
+    value_list_drop :operator, '%w( Tigo Airtel Tawali )'
     value_entity_account_all :account_activities, :drop, :path
 
     @@functions = %w( network internet share 
@@ -13,7 +14,7 @@ class ConfigBases < Entities
     internet_libnet sms_control
     inventory accounting quiz accounting_courses accounting_old
     cashbox email usage_report activities library ).sort.to_sym
-    @@functions_base = {:network => [:internet, :share, :internet_only, :email],
+    @@functions_base = {:network => [:internet, :share, :internet_only, :email, :sms_control],
                         :internet => [:internet_simple, :internet_libnet],
                         :courses => [:course_server, :course_client, :accounting_courses],
                         :accounting => [:accounting_courses],
