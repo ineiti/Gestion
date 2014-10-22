@@ -1,6 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
+        - Re-implementing Network in 5 minutes...
 
 BUGS:
         - Persons::print_student prints card on A4!
