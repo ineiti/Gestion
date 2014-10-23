@@ -138,10 +138,11 @@ else
 
   if ConfigBase.has_function? :internet
     dputs(1) { 'Starting internet' }
+    Internet.setup
     $internet = Thread.new {
       loop {
         begin
-          sleep 60
+          sleep 20
           if ConfigBase.has_function? :internet_only
             Internet::fetch_cash
           end

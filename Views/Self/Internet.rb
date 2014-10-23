@@ -33,7 +33,7 @@ class SelfInternet < View
       return 0
     else
       if session.owner and session.owner.internet_credit
-        return session.owner.internet_credit.to_i >= Operator.user_cost_max ?
+        return (session.owner.internet_credit.to_i >= Operator.user_cost_max) ?
             0 : 1
       else
         dputs(0) { "Error: Called with session.owner == nil! #{session.inspect}" }
@@ -45,9 +45,11 @@ class SelfInternet < View
   def update_connection_status(session)
     return reply(:hide, :connection_status) unless session.owner.has_role(:cybermanager)
     ret = reply(Internet.free(session.owner) ? :hide : :unhide, :internet_credit)
-    case (cc = can_connect(session))
+    cc = can_connect(session)
+    dputs(3) { "CanConnect is #{cc}" }
+    case cc
       when 0
-        status = Connection.status
+        status = Connection.status_old
         dputs(3) { "Connection-status is #{status.inspect}" }
         status = status.to_i
         if (0..4).include? status.to_i
@@ -64,14 +66,14 @@ class SelfInternet < View
         end
 
         ret += reply(:update, :connection_status =>
-            "Etat de la connexion:<br>" +
+            'Etat de la connexion:<br>' +
                 "<table width='150px'><tr>" +
                 connection_status +
-                "</tr></table>")
+                '</tr></table>')
       when 1
-        ret += reply(:update, :connection_status => "Not enough money in account")
+        ret += reply(:update, :connection_status => 'Not enough money in account')
       when 2
-        ret += reply(:update, :connection_status => "Restricted access due to teaching")
+        ret += reply(:update, :connection_status => 'Restricted access due to teaching')
       else
         ret += reply(:update, :connection_status => cc)
     end
@@ -89,9 +91,11 @@ class SelfInternet < View
     end
     show_button = :connect
     connected = Captive.user_connected session.owner.login_name
+    dputs(3) { "User #{session.owner.login_name} is connected: #{connected} " +
+        "and can_connect = #{can_connect(session)}" }
     if can_connect(session) == 0
       dputs(3) { "User_connected #{session.owner.login_name}: #{connected.inspect}" }
-      if connected == "yes"
+      if connected
         dputs(4) { "Showing disconnect because we're connected" }
         show_button = :disconnect
       elsif Operator.internet_left <= 100_000 and Operator.has_promo
@@ -102,15 +106,13 @@ class SelfInternet < View
       dputs(3) { "User #{session.owner.login_name} has connected-status: #{connected.inspect}" }
       show_button = :disconnect
     end
-    if show_button == :connect
-      return reply(:unhide, :connect) +
-          reply(:hide, :disconnect) +
-          reply(:update, :connection => '<img src="/Images/connection_no.png" height="50">')
+    if show_button == :disconnect && !connected
+      reply(:hide, [:connect, :disconnect])
     else
-      return reply(:hide, :connect) +
-          reply(:unhide, :disconnect) +
-          reply(:update, :connection => '<img src="/Images/connection_yes.png" height="50">')
-    end
+      reply_one_two(show_button == :connect, :connect, :disconnect)
+    end +
+        reply(:update, :connection =>
+            "<img src='/Images/connection_#{connected ? 'yes' : 'no'}.png' height='50'>")
   end
 
   def update_isp(session)
@@ -181,4 +183,5 @@ class SelfInternet < View
       rpc_update(session, true)
     end
   end
+
 end

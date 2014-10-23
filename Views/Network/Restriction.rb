@@ -12,8 +12,7 @@ class NetworkRestriction < View
   end
 
   def rpc_update( session )
-    restricted = Captive.restricted
-    if restricted.length > 0
+    if restricted = Captive.restricted
       reply( :update, :state => "Restricted internet, only allowed for:<br><pre>#{ restricted }</pre>" )
     else
       reply( :update, :state => 'No restriction in place')

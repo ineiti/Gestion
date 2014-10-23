@@ -92,8 +92,13 @@ end
 class ConfigBase < Entity
 
   def setup_instance
+  end
+
+  def send_config
     save_block_to_object :captive, Network::Captive
+    Network::Captive.clean_config
     save_block_to_object :operator, Network::Operator
+    Network::Operator.clean_config
   end
 
   def server_uri

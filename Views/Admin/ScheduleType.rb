@@ -2,7 +2,7 @@ class AdminScheduleType < View
   #include VTListPane
 
   def layout
-    @order=50
+    @order=350
     @update = true
 
     gui_hboxg do
