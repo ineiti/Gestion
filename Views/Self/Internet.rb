@@ -1,4 +1,6 @@
 class SelfInternet < View
+  include Network
+
   def layout
     set_data_class :Persons
     @order = 10
@@ -114,8 +116,12 @@ class SelfInternet < View
   def update_isp(session)
     show_status = true
     dputs(3) { "show_status is #{show_status.inspect}" }
-    reply(Operator.has_promo ? :unhide : :hide, :bytes_left) +
-        reply(show_status ? :unhide : :hide, :connection_status)
+    if Operator.present?
+      reply(Operator.has_promo ? :unhide : :hide, :bytes_left) +
+          reply(show_status ? :unhide : :hide, :connection_status)
+    else
+      []
+    end
   end
 
   def self.make_users_str(users)
@@ -149,7 +155,7 @@ class SelfInternet < View
         reply(:update, :internet_credit => session.owner.internet_credit.to_i) +
         reply(:update, :users_connected =>
             "#{users.split.count}: #{users_str}")
-    if Operator.has_promo
+    if Operator.present? && Operator.has_promo
       ret += reply(:update, :bytes_left => Operator.internet_left)
     end
     return ret

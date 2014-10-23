@@ -22,6 +22,7 @@ class ConfigBases < Entities
     value_block :operator
     value_int :cost_base
     value_int :cost_shared
+    value_str :allow_free
 
     @@functions = %w( network internet share 
     courses course_server course_client internet_simple
@@ -93,14 +94,6 @@ class ConfigBase < Entity
   def setup_instance
     save_block_to_object :captive, Network::Captive
     save_block_to_object :operator, Network::Operator
-  end
-
-  def save_block_to_object( block, obj )
-    ConfigBases.get_block_fields( block ).each{|f|
-      value = data_get( f )
-      ddputs(2){"Setting #{f} in #{block} to #{value}"}
-      obj.send( "#{f}=", value )
-    }
   end
 
   def server_uri

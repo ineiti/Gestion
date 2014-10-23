@@ -4,7 +4,7 @@ Internet - an interface for the internet-part of Markas-al-Nour.
 
 module Internet
   extend self
-  extend Network
+  include Network
 
   def fetch_users
     if (server = ConfigBase.internet_cash)
