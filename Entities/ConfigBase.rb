@@ -9,6 +9,20 @@ class ConfigBases < Entities
     value_list_drop :operator, '%w( Tigo Airtel Tawali )'
     value_entity_account_all :account_activities, :drop, :path
 
+    value_block :captive
+    value_str :prerouting
+    value_str :http_proxy
+    value_str :allow_dst
+    value_str :internal_ips
+    value_str :captive_dnat
+    value_str :openvpn_allow_double
+    value_str :allow_src_direct
+    value_str :allow_src_proxy
+
+    value_block :operator
+    value_int :cost_base
+    value_int :cost_shared
+
     @@functions = %w( network internet share 
     courses course_server course_client internet_simple
     internet_libnet sms_control
@@ -40,6 +54,8 @@ class ConfigBases < Entities
   end
 
 
+
+=begin
   def migrate
     ConfigBases.singleton
 
@@ -69,9 +85,24 @@ class ConfigBases < Entities
       end
     end
   end
+=end
 end
 
 class ConfigBase < Entity
+
+  def setup_instance
+    save_block_to_object :captive, Network::Captive
+    save_block_to_object :operator, Network::Operator
+  end
+
+  def save_block_to_object( block, obj )
+    ConfigBases.get_block_fields( block ).each{|f|
+      value = data_get( f )
+      ddputs(2){"Setting #{f} in #{block} to #{value}"}
+      obj.send( "#{f}=", value )
+    }
+  end
+
   def server_uri
     server_url =~ /^http/ ? server_url : "http://#{server_url}"
   end

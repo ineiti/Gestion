@@ -2,6 +2,11 @@
 
 WORKING:
         - Re-implementing Network in 5 minutes...
+            - Tearing out Libnet
+                - configuration-stuff that has been in libnet and that should go
+                    in ConfigBase:
+                    - user_cost_max, user_cost_min
+                    - allow_free
 
 BUGS:
         - Persons::print_student prints card on A4!

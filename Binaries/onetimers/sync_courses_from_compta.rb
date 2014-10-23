@@ -24,8 +24,6 @@ unless File.exists? 'data/'
   exit -1
 end
 
-$lib_net = LibNet.new(true)
-
 QooxView.init('../../Entities', '../../Views')
 
 course_accounts = []

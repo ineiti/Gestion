@@ -1,5 +1,6 @@
 class NetworkTigo < View
   def layout
+    @visible = false
     @update = true
     @auto_update_async = 10
     @auto_update_send_values = false

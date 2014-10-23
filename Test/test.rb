@@ -31,8 +31,6 @@ permissions_init
 
 %x[ rm -rf data* ]
 
-$lib_net = LibNet.new( true )
-
 QooxView.init( '../Entities', '../Views' )
 
 tests = Dir.glob( 'ge_*.rb' )

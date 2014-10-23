@@ -4,6 +4,7 @@ Internet - an interface for the internet-part of Markas-al-Nour.
 
 module Internet
   extend self
+  extend Network
 
   def fetch_users
     if (server = ConfigBase.internet_cash)
@@ -23,8 +24,8 @@ module Internet
             u.groups = [:freesurf] if free
           else
             u = Persons.create(:login_name => user, :password => pass,
-              :internet_credit => cash,
-              :groups => (free ? [:freesurf] : []))
+                               :internet_credit => cash,
+                               :groups => (free ? [:freesurf] : []))
           end
         }
       rescue
@@ -36,42 +37,35 @@ module Internet
   end
 
   def take_money
-    if users_connected = $lib_net.call(:users_connected)
+    if users_connected = Captive.users_connected
       users_connected.split.each { |u|
         dputs(3) { "User is #{u}" }
-        cost = $lib_net.call(:user_cost_now).to_i
+        cost = user_cost_now.to_i
 
-        isp = $lib_net.isp_params.to_sym
-        dputs(3) { "ISP-params is #{isp.inspect} and conn_type is #{isp._conn_type}" }
+        dputs(3) { "ISP is #{Operator.name} and conn_type is "+
+            "#{Operator._conn_type}" }
         user = Persons.match_by_login_name(u)
         if user
           dputs(3) { "Found user #{u}: #{user.full_name}" }
           if not (ag = AccessGroups.allow_user_now(u))[0]
             log_msg 'take_money', "Kicking user #{u} because of accessgroups: #{ag[1]}"
-            $lib_net.call(:user_disconnect_name,
-              "#{user.login_name}")
+            Captive.user_disconnect_name user.login_name
           elsif self.free(user)
             dputs(2) { "User #{u} goes free" }
-          elsif $lib_net.call(:isp_connection_status).to_i >= 3
+          elsif Connection.status == CONNECTED
             dputs(3) { "User #{u} will pay #{cost}" }
             if user.internet_credit.to_i >= cost
               dputs(3) { "Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}" }
               user.internet_credit = user.internet_credit.to_i - cost
             else
               log_msg 'take_money', "User #{u} has not enough money left - kicking"
-              $lib_net.call(:user_disconnect_name,
-                "#{user.login_name}")
+              Captive.user_disconnect_name user.login_name
             end
           end
         else
-          dputs(0) { "Error: LibNet said #{u} is connected, but couldn't find that user!" +
-              " Users connected: #{$lib_net.call(:users_connected).inspect}"}
+          dputs(0) { "Error: Captive said #{u} is connected, but couldn't find that user!" +
+              " Users connected: #{Captive.users_connected.inspect}" }
         end
-      }
-    end
-    if users_disconnected = $lib_net.call(:users_disconnected)
-      users_disconnected.split.each{|u|
-        log_msg 'take_money', "Kicked user #{u} because of inactivity"
       }
     end
   end
@@ -102,13 +96,11 @@ module Internet
   end
 
   def free(user)
-    isp = $lib_net.isp_params.to_sym
-    dputs(3) { "isp is #{isp.inspect}" }
-    case isp._allow_free
-    when /all/
-      return true
-    when /false/
-      return false
+    case ConfigBase.allow_free
+      when /all/
+        return true
+      when /false/
+        return false
     end
     if user.class != Person
       user = Persons.match_by_login_name(user)
@@ -134,11 +126,10 @@ module Internet
   end
 
   def connect_user(ip, name)
-    $lib_net.call(:user_connect, "#{ip} #{name} " +
-        "#{self.free(name) ? 'yes' : 'no'}")
+    Captive.user_connect ip, name, (self.free(name) ? 'yes' : 'no')
   end
 
-  def update_connection( ip, name )
+  def update_connection(ip, name)
     return "From #{ip} user #{name}"
   end
 end

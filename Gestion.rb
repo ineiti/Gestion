@@ -89,7 +89,7 @@ rescue Exception => e
     else
       puts e.inspect
       puts e.backtrace
-      dputs(0) { "Error: Couldn't load LibNet!" }
+      dputs(0) { "Error: Couldn't load things!" }
       dputs(0) { "#{e.inspect}" }
       dputs(0) { "#{e.to_s}" }
       puts e.backtrace

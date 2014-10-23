@@ -15,7 +15,7 @@ class NetworkBlock < View
   end
 
   def update_block( ips )
-    $lib_net.call( :captive_block, ips.collect{|ip| ip.sub(/ .*/,'') } )
+    Network::Captive.block ips.collect{|ip| ip.sub(/ .*/,'') }
   end
 
   def list_dhcp

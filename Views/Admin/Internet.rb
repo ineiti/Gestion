@@ -1,9 +1,8 @@
 class AdminInternet < View
+  extend Network
+
   def layout
-    #if not $lib_net
-      @visible = false
-    #  return
-    #end
+    @visible = false
 
     set_data_class :Persons
 
@@ -29,60 +28,60 @@ class AdminInternet < View
   end
 
   def auto_disconnect_get
-    dputs( 3 ){ "Auto disconenct with #{@file_ad} and #{File.exists? @file_ad}" }
-    File.exists?( @file_ad ) ? 'Yes' : 'No'
+    dputs(3) { "Auto disconenct with #{@file_ad} and #{File.exists? @file_ad}" }
+    File.exists?(@file_ad) ? 'Yes' : 'No'
   end
 
-  def update( session )
+  def update(session)
     emails = %x[ tail -n 1 /var/log/copy_email.log ]
-    { :credit_left => $lib_net.print( :CREDIT_LEFT ),
-      :promotion_left => $lib_net.print( :PROMOTION_LEFT ),
-      :mails => "<pre>#{ $lib_net.call( :mail_get_queue )}</pre>",
-      :transfer => "<pre>#{ emails } </pre>",
-      :auto_disconnect => [auto_disconnect_get] }
+    {:credit_left => Operator.credit_left,
+     :promotion_left => Operator.internet_left,
+     :mails => "<pre>#{ Mail.get_queue}</pre>",
+     :transfer => "<pre>#{ emails } </pre>",
+     :auto_disconnect => [auto_disconnect_get]}
   end
-	
-  def rpc_update( session )
-    buttons = reply( :unhide, :connect ) +
-      reply( :hide, :disconnect )
-    if $lib_net.call( :isp_connected ) == 'yes'
-      buttons = reply( :hide, :connect ) +
-        reply( :unhide, :disconnect )
+
+  def rpc_update(session)
+    buttons = reply(:unhide, :connect) +
+        reply(:hide, :disconnect)
+    if Connection.status == Connection::CONNECTED
+      buttons = reply(:hide, :connect) +
+          reply(:unhide, :disconnect)
     end
-    reply( :update, update( session ) ) +
-      buttons
-  end
-	
-  def rpc_show( session )
-    super( session ) +
-      rpc_update( session )
+    reply(:update, update(session)) +
+        buttons
   end
 
-  def rpc_button_connect( session, data )
-    $lib_net.call( :isp_connect )
-    rpc_update( session )
+  def rpc_show(session)
+    super(session) +
+        rpc_update(session)
   end
 
-  def rpc_button_disconnect( session, data )
-    $lib_net.call( :isp_disconnect )
-    rpc_update( session )
+  def rpc_button_connect(session, data)
+    Connection.start
+    rpc_update(session)
   end
 
-  def rpc_button_delete_emails( session, data )
-    $lib_net.call( :mail_start_copy )
-    rpc_show( session )
+  def rpc_button_disconnect(session, data)
+    Connection.stop
+    rpc_update(session)
   end
 
-  def rpc_list_choice( session, name, *args )
-    dputs( 3 ){ args.inspect }
+  def rpc_button_delete_emails(session, data)
+    Mail.start_copy
+    rpc_show(session)
+  end
+
+  def rpc_list_choice(session, name, *args)
+    dputs(3) { args.inspect }
     if args[0]['auto_disconnect']
       value = args[0]['auto_disconnect'][0]
-      dputs( 3 ){ "Going to set #{value}" }
+      dputs(3) { "Going to set #{value}" }
       if value and value == 'Yes'
-        File.new( @file_ad, 'w').close
+        File.new(@file_ad, 'w').close
       else
         if auto_disconnect_get == 'Yes'
-          File.unlink( @file_ad )
+          File.unlink(@file_ad)
         end
       end
     end
