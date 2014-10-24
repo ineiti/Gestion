@@ -8,6 +8,7 @@ class ConfigBases < Entities
     value_str :label_url
     value_list_drop :operator, '%w( Tigo Airtel Tawali )'
     value_entity_account_all :account_activities, :drop, :path
+    value_str :captive
 
     value_block :captive
     value_str :prerouting

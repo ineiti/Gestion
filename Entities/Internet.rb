@@ -8,9 +8,9 @@ module Internet
 
   def setup
     return unless Connection.available?
-    Captive.setup
+    ConfigBase.captive == 'true' and Captive.setup
     if ! Operator.present?
-      Operator.chose(:Direct)
+      Operator.chose(:Airtel)
     end
   end
 
