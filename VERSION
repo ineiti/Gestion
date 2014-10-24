@@ -1,5 +1,9 @@
 Important notices for versions:
 
+- 141023: 1.8.0
+  - Good-bye LibNet. It's been nice, but complicated. Hello to Network! You still have
+    a lot to learn...
+
 - 141014: 1.7.0
   - added librarian
   - added activities

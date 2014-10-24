@@ -1,14 +1,9 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - Re-implementing Network in 5 minutes...
-            - Tearing out Libnet
-                - configuration-stuff that has been in libnet and that should go
-                    in ConfigBase:
-                    - user_cost_max, user_cost_min
-                    - allow_free
 
 BUGS:
+        - Welcome-screen doesn't show message
         - Persons::print_student prints card on A4!
         - Course::ctype must have _all argument, else it fails - logic?
             - either allow for showing of element only in update_form_data
@@ -32,6 +27,10 @@ UI:
          tabs can be added
 
 FEATURES:
+        - Pruning out left-overs in LibNet -> Network transition
+            - files to be moved to Profeda
+            - config-values of operator (cost_base, cost_shared)
+            - Entity and taking care of values (int, str, bool, array)
         - Adding ScheduleType to schools
         - Add Language-evaluations for MaN
         - LibNet:
@@ -242,6 +241,8 @@ To check:
 
 
 ** FIXED **:
+        - F 141023: Re-implementing Network in 5 minutes...
+            - Tearing out Libnet
         - B 141014: Report::ComptaExecutive doesn't work when no archives found
         - Pr141014: reverse show_entity_lazy;show_entity to show_entity;show_entity_all
         - Pr141014: reverse update( :empty, :empty_only ) to update( :empty_all, :empty )
