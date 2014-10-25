@@ -12,7 +12,7 @@ class PersonTabs < View
       gui_window :add_person do
         show_str :complete_name, :width => 150
         show_str :login_prop
-        show_block :address
+        #show_block :address
         show_button :add_person, :close
       end
 

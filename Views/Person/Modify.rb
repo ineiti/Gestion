@@ -2,6 +2,7 @@
 
 class PersonModify < View
   include PrintButton
+
   def layout
     set_data_class :Persons
     @update = true
@@ -34,78 +35,79 @@ class PersonModify < View
     end
   end
 
-  def rpc_button( session, name, data )
-    dputs( 2 ){ "Pressed button #{name} with #{data.inspect}" }
-    person = Persons.match_by_person_id( data['person_id'] )
+  def rpc_button(session, name, data)
+    dputs(2) { "Pressed button #{name} with #{data.inspect}" }
+    person = Persons.match_by_person_id(data['person_id'])
+
     rep = [] #reply( :empty )
     owner = session.owner
     if person
       case name
-      when 'change_password'
-        if owner.has_all_rights_of( person ) ||
-            ( owner.permissions.index( :center ) && 
-              person.login_name =~ /^#{owner.login_name}_/ )
-          person.password = data['new_password']
-          rep = reply( :empty, [:new_password] ) +
-            reply( :update, :password_plain => person.password_plain )
-        end
-      when 'save'
-        log_msg :persons, "#{session.owner.login_name} saves #{data.inspect}"
-        rep = reply( :update, Persons.save_data( data ) )
-      when 'print_student'
-        rep = rpc_print( session, name, data )
-        person.lp_cmd = cmd_printer( session, name )
-        file = person.print
-        if file.class == String
-          rep += reply( :window_show, :printing ) +
-            reply( :update, :msg_print => 'Click to download:<ul>' +
-              "<li><a target='other' href=\"#{file}\">#{file}</a></li></ul>" )
-        end
-      when 'close'
-        rep = reply( :window_hide )
+        when 'change_password'
+          if owner.has_all_rights_of(person) ||
+              (owner.permissions.index(:center) &&
+                  person.login_name =~ /^#{owner.login_name}_/)
+            person.password = data['new_password']
+            rep = reply(:empty, [:new_password]) +
+                reply(:update, :password_plain => person.password_plain)
+          end
+        when 'save'
+          log_msg :persons, "#{session.owner.login_name} saves #{data.inspect}"
+          rep = reply(:update, Persons.save_data(data))
+        when 'print_student'
+          rep = rpc_print(session, name, data)
+          person.lp_cmd = cmd_printer(session, name)
+          file = person.print
+          if file.class == String
+            rep += reply(:window_show, :printing) +
+                reply(:update, :msg_print => 'Click to download:<ul>' +
+                    "<li><a target='other' href=\"#{file}\">#{file}</a></li></ul>")
+          end
+        when 'close'
+          rep = reply(:window_hide)
       end
     end
-    rep + rpc_update( session )
+    rep + rpc_update(session)
   end
 
-  def rpc_find( session, field, data )
-    rep = Persons.find( field, data )
+  def rpc_find(session, field, data)
+    rep = Persons.find(field, data)
     if not rep
-      rep = { "#{field}" => data }
+      rep = {"#{field}" => data}
     end
-    update_layout( session ) +
-      reply( :update, rep ) + rpc_update( session )
+    update_layout(session) +
+        reply(:update, rep) + rpc_update(session)
   end
 
-  def rpc_list_choice( session, name, data )
+  def rpc_list_choice(session, name, data)
     if name == 'persons'
-      dputs( 2 ){ "Got data: #{data.inspect}" }
-      if data['persons'][0] and 
-          p = Persons.match_by_login_name( data['persons'].flatten[0])
-        can_change = session.owner.has_all_rights_of( p )
-        change_pwd = [ :new_password, :password_plain, :change_password ].collect{|f|
-          reply( can_change ? :unhide : :hide, f )
-        }.flatten + reply( can_change ? :hide : :unhide, :not_allowed ) +
-          reply( :update, :not_allowed => "<b>Vous n'avez pas le droit<br>" +
-              'de changer ce mot de passe</b>')
-        dputs(4){"change_pwd is #{change_pwd.inspect}"}
-        reply( :empty ) + reply( :update, p ) + reply( :update, update( session ) ) +
-          reply( :focus, :credit_add ) + reply_print( session ) + change_pwd
+      dputs(2) { "Got data: #{data.inspect}" }
+      if data['persons'][0] and
+          p = Persons.match_by_login_name(data['persons'].flatten[0])
+        can_change = session.owner.has_all_rights_of(p)
+        change_pwd = [:new_password, :password_plain, :change_password].collect { |f|
+          reply(can_change ? :unhide : :hide, f)
+        }.flatten + reply(can_change ? :hide : :unhide, :not_allowed) +
+            reply(:update, :not_allowed => "<b>Vous n'avez pas le droit<br>" +
+                'de changer ce mot de passe</b>')
+        dputs(4) { "change_pwd is #{change_pwd.inspect}" }
+        reply(:empty) + reply(:update, p) + reply(:update, update(session)) +
+            reply(:focus, :credit_add) + reply_print(session) + change_pwd
       end
     end
   end
 
-  def update( session )
+  def update(session)
     if person = session.owner
-      {:your_account_total_due => person.account_total_due }
+      {:your_account_total_due => person.account_total_due}
     end
   end
-  
-  def rpc_update( session )
-    super( session ) +
-      reply( :parent, reply( :focus, :search ) ) +
-      reply_print( session ) +
-      ( session.owner.permissions.index('center') ?
-        reply( :hide, :print_student ) : [] )
+
+  def rpc_update(session)
+    super(session) +
+        reply(:parent, reply(:focus, :search)) +
+        reply_print(session) +
+        (session.owner.permissions.index('center') ?
+            reply(:hide, :print_student) : [])
   end
 end

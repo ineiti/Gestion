@@ -45,6 +45,8 @@ module Internet
   end
 
   def take_money
+    return unless Connection.available?
+
     Captive.cleanup
     Captive.users_connected.each { |u|
       dputs(3) { "User is #{u}" }
