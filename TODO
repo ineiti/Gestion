@@ -5,6 +5,8 @@ WORKING:
 BUGS:
         - Welcome-screen doesn't show message
         - Person::Modify.save kills data
+            - due to PersonTabs.add_user which also has block.address defined
+        - 4-pages not working anymore in Course::Diplomas
         - Persons::print_student prints card on A4!
         - Course::ctype must have _all argument, else it fails - logic?
             - either allow for showing of element only in update_form_data
@@ -28,6 +30,7 @@ UI:
          tabs can be added
 
 FEATURES:
+        - Courses::Diplomas.print - unselect table
         - Pruning out left-overs in LibNet -> Network transition
             - files to be moved to Profeda
             - config-values of operator (cost_base, cost_shared)

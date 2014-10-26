@@ -75,6 +75,7 @@ class CashboxActivity < View
   end
 
   def rpc_button_new_student(session, data)
+    return unless (data._full_name || data._full_name.to_s.length > 0)
     student = Persons.create({first_name: data._full_name})
     data._full_name = student.login_name
     rpc_button_search_student(session, data) +
@@ -82,6 +83,7 @@ class CashboxActivity < View
   end
 
   def rpc_button_search_student(session, data)
+    return unless (data._full_name || data._full_name.to_s.length > 0)
     Persons.search_in(data._full_name, :students)
   end
 
