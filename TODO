@@ -1,11 +1,17 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
+        - LibNet:
+          - Feature: rewrite in Ruby
+          - Make LibNet working at least on ArchLinux
+            - Network/Connections doesn't show variables
+            - think about connections / Provider / Hardware / Others
+              { PPP { Tigo, Airtel, Tawali } { E330, E303, Modem, ZTE },
+                PPPoE { Prestabist } { eth[0-9] },
+                Router { Simple, LibNet } { eth[0-9] } { address } }
 
 BUGS:
         - Welcome-screen doesn't show message
-        - Person::Modify.save kills data
-            - due to PersonTabs.add_user which also has block.address defined
         - 4-pages not working anymore in Course::Diplomas
         - Persons::print_student prints card on A4!
         - Course::ctype must have _all argument, else it fails - logic?
@@ -37,14 +43,6 @@ FEATURES:
             - Entity and taking care of values (int, str, bool, array)
         - Adding ScheduleType to schools
         - Add Language-evaluations for MaN
-        - LibNet:
-          - Feature: rewrite in Ruby
-          - Make LibNet working at least on ArchLinux
-            - Network/Connections doesn't show variables
-            - think about connections / Provider / Hardware / Others
-              { PPP { Tigo, Airtel, Tawali } { E330, E303, Modem, ZTE },
-                PPPoE { Prestabist } { eth[0-9] },
-                Router { Simple, LibNet } { eth[0-9] } { address } }
         - "Files/"
             - easy editing
             - updating in both ways
@@ -245,6 +243,8 @@ To check:
 
 
 ** FIXED **:
+        - B 141025: Person::Modify.save kills data
+            - due to PersonTabs.add_user which also has block.address defined
         - F 141023: Re-implementing Network in 5 minutes...
             - Tearing out Libnet
         - B 141014: Report::ComptaExecutive doesn't work when no archives found
