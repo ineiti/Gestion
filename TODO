@@ -109,9 +109,6 @@ Programming:
             - change all other non-entity fields, too
         - Add value_bool to list
             - use for "lsusb" and "lpstat"
-        - CSV-save
-            - use directory for old files
-            - link to newest file
         - Move Gestion::Reports to AfriCompta
         - CourseStats: when adding a course, account_entries is not updated
           -> should probably do a "watch account-changes and update if changed"
@@ -243,6 +240,9 @@ To check:
 
 
 ** FIXED **:
+        - P 141030: CSV-save
+            - use directory for old files
+            - before saving, move actual file to backup-folder
         - B 141025: Person::Modify.save kills data
             - due to PersonTabs.add_user which also has block.address defined
         - F 141023: Re-implementing Network in 5 minutes...
