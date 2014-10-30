@@ -8,7 +8,7 @@ class ConfigBases < Entities
     value_str :label_url
     value_list_drop :operator, 'Network::Operator.list_names'
     value_entity_account_all :account_activities, :drop, :path
-    value_str :captive
+    value_str :captive_dev
 
     value_block :captive
     value_str :prerouting
@@ -25,9 +25,10 @@ class ConfigBases < Entities
     value_int :cost_shared
     value_str :allow_free
 
-    @@functions = %w( network internet share 
-    courses course_server course_client internet_simple
-    internet_captive sms_control
+    @@functions = %w( network share
+    courses course_server course_client
+    internet internet_simple internet_captive
+    sms_control
     inventory accounting quiz accounting_courses accounting_old
     cashbox email usage_report activities library ).sort.to_sym
     @@functions_base = {:network => [:internet, :share, :internet_only, :email, :sms_control],

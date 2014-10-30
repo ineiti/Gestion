@@ -3,17 +3,22 @@ Internet - an interface for the internet-part of Markas-al-Nour.
 =end
 
 module Internet
+  attr_accessor :connection
   extend self
   include Network
 
   @connection = nil
 
   def setup
-    if ConfigBase.captive != 'false'
-      dev = Device.search_dev({name: ConfigBase.captive})
-      return unless dev.length > 0
-      @connection = Connection.new(dev)
-      Captive.setup
+    if ConfigBase.captive_dev != 'false'
+      dp dev = Device.search_dev({uevent: {interface: ConfigBase.captive_dev}})
+      if dev.length == 0
+        log_msg :Internet, "Couldn't find #{ConfigBase.captive_dev}"
+        Device.list
+        return
+      end
+      @connection = Connection.new(dev.first)
+      Captive.setup( @connection )
     end
   end
 
