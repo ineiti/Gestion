@@ -27,17 +27,27 @@ class ConfigBases < Entities
 
     @@functions = %w( network internet share 
     courses course_server course_client internet_simple
-    internet_libnet sms_control
+    internet_captive sms_control
     inventory accounting quiz accounting_courses accounting_old
     cashbox email usage_report activities library ).sort.to_sym
     @@functions_base = {:network => [:internet, :share, :internet_only, :email, :sms_control],
-                        :internet => [:internet_simple, :internet_libnet],
+                        :internet => [:internet_simple, :internet_captive],
                         :courses => [:course_server, :course_client, :accounting_courses],
                         :accounting => [:accounting_courses],
                         :cashbox => [:accounting_courses],
                         :activities => [:library]
     }
     @@functions_conflict = [[:course_server, :course_client]]
+  end
+
+  def migration_4(c)
+    if c._functions.index(:internet_libnet)
+      c._functions -= [:internet_libnet]
+      c._functions += [:internet_captive]
+    end
+    if ! c.welcome_text || c.welcome_text == ''
+      c.welcome_text = get_config('', :welcome_text)
+    end
   end
 
   def migration_3(c)
@@ -54,7 +64,6 @@ class ConfigBases < Entities
     c._internet_cash = get_config(nil, :LibNet, :internetCash)
     dputs(3) { "Migrating out: #{c.inspect}" }
   end
-
 
 
 =begin
@@ -108,7 +117,7 @@ class ConfigBase < Entity
 
   def get_url(url)
     if url.class == Symbol
-      url = ConfigBase.data_get( url )
+      url = ConfigBase.data_get(url)
     end
     url =~ /^https{0,1}:\/\// ? url : "http://#{url}"
   end

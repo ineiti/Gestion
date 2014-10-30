@@ -20,19 +20,19 @@ class Welcome < View
         return nil
       end
     else
-      if ( version_local = ConfigBase.version_local ) != ""
+      if ( version_local = ConfigBase.version_local ) != ''
         version_local = "-#{version_local}"
       end
       super +
         reply( :update, :version => VERSION_GESTION + version_local ) +
-        reply( :update, :links => get_config("", :welcome_text ) )
+        reply( :update, :links => ConfigBase.welcome_text )
     end
   end
 
   # On pressing of the login-button, we search for the user and check the password
   def rpc_button_login( session, args )
     dputs( 3 ){ "args is #{args.inspect}" }
-    login_name, password = args["username"].gsub(/ /,'').downcase, args["password"]
+    login_name, password = args['username'].gsub(/ /,'').downcase, args['password']
     person = Entities.Persons.match_by_login_name( login_name )
     if person
       dputs( 3 ){ "Person is #{person.inspect} and #{person.password}" }
@@ -46,13 +46,13 @@ class Welcome < View
       session.client_ip = RPCQooxdooHandler.get_ip( web_req )
       dputs( 3 ){ "Found login #{person.data_get(:person_id)} for #{login_name}" }
       dputs( 3 ){ "Session is #{session.inspect}" }
-      log_msg "Welcome", "Authenticated person #{person.login_name} from " +
+      log_msg :Welcome, "Authenticated person #{person.login_name} from " +
        "#{session.client_ip}"
       return reply( :session_id, person.session_id ) +
         reply( :list, View.list( session ) )
     else
       reply( :window_show, :login_failed ) +
-        reply( :update, :reason => person ? "Password wrong" : "User doesn't exist" )
+        reply( :update, :reason => person ? 'Password wrong' : "User doesn't exist" )
     end
   end
   
@@ -64,7 +64,7 @@ class Welcome < View
       session = Sessions.find_by_sid( ret.first._data )
       if ! session or ! session.owner
         return reply( :window_show, :login_failed ) +
-          reply( :update, :reason => "Please enter a valid login" )
+          reply( :update, :reason => 'Please enter a valid login')
       end
       if View.SelfInternet.can_connect( session ) == 0
         dputs(2){"Auto-connecting #{session.owner.login_name}"}
@@ -72,8 +72,8 @@ class Welcome < View
       end
       tabs = View.list( session )._views
       dputs(3){"Tabs starts as #{tabs.inspect}"}
-      selftabs = tabs.find{|v| v.first == "SelfTabs" }
-      tabs.delete_if{|v| v.first == "SelfTabs" }
+      selftabs = tabs.find{|v| v.first == 'SelfTabs' }
+      tabs.delete_if{|v| v.first == 'SelfTabs' }
       if selftabs
         tabs.unshift selftabs
       end

@@ -11,7 +11,6 @@ WORKING:
                 Router { Simple, LibNet } { eth[0-9] } { address } }
 
 BUGS:
-        - Welcome-screen doesn't show message
         - 4-pages not working anymore in Course::Diplomas
         - Persons::print_student prints card on A4!
         - Course::ctype must have _all argument, else it fails - logic?
@@ -240,6 +239,7 @@ To check:
 
 
 ** FIXED **:
+        - B 141030: Welcome-screen doesn't show message
         - P 141030: CSV-save
             - use directory for old files
             - before saving, move actual file to backup-folder
