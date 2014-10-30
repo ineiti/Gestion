@@ -103,7 +103,6 @@ class CashboxActivity < View
   end
 
   def rpc_button_print_activity_steps(session, data)
-    dputs_func
     ret = reply(:callback_button, :print_activity_steps)
     var = session.s_data._print_activity
     dputs(3) { "Doing with data #{var.inspect} step is #{var._step.inspect}" }

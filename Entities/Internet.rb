@@ -6,15 +6,20 @@ module Internet
   extend self
   include Network
 
+  @connection = nil
+
   def setup
-    return unless Connection.available?
-    ConfigBase.captive == 'true' and Captive.setup
-    if ! Operator.present?
-      Operator.chose(:Airtel)
+    if ConfigBase.captive != 'false'
+      dev = Device.search_dev({name: ConfigBase.captive})
+      return unless dev.length > 0
+      @connection = Connection.new(dev)
+      Captive.setup
     end
   end
 
   def fetch_users
+    return until @connection
+
     if (server = ConfigBase.internet_cash)
       begin
         ret = Net::HTTP.get(server, '/internetCash/fetch_users')
@@ -45,7 +50,7 @@ module Internet
   end
 
   def take_money
-    return unless Connection.available?
+    return until @connection
 
     Captive.cleanup
     Captive.users_connected.each { |u|
@@ -135,6 +140,8 @@ module Internet
   end
 
   def connect_user(ip, name)
+    return until @connection
+
     Captive.user_connect ip, name, (self.free(name) ? 'yes' : 'no')
   end
 

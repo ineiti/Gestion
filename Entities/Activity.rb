@@ -125,6 +125,8 @@ class ActivityPayments < Entities
           when /period/, /period_overlap/
             get_period(d_today, act.payment_period, act.overlap.to_i)
         end
+
+    log_msg :ActivityPayments, "#{date_start} - #{date_end}: #{mov.inspect}"
     ActivityPayments.create(activity: act, person_paid: p_paid, person_cashed: p_cashed,
                             movement: mov, date_start: date_start, date_end: date_end)
   end
@@ -162,7 +164,7 @@ class ActivityPayment < Entity
                TEL: st.phone, UNAME: st.login_name, PASS: st.password_plain,
                EMAIL: st.email, PROFESSION: st.profession, STUDY_LEVEL: st.school_grade,
                DATE: date, PRICE: activity.cost,
-               DATE_START: date_start, DATE_END: date_end}
+               DATE_START: date_start, DATE_END: date_end, ID: activitypayment_id}
 
     fname = "#{st.person_id.to_s.rjust(6, '0')}-#{st.full_name.gsub(/ /, '_')}"
     dputs(3) { "Replace is #{replace.inspect} - fname is #{fname}" }

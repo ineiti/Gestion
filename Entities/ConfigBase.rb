@@ -6,7 +6,7 @@ class ConfigBases < Entities
     value_int :max_upload_size
     value_str :server_url
     value_str :label_url
-    value_list_drop :operator, '%w( Tigo Airtel Tawali )'
+    value_list_drop :operator, 'Network::Operator.list_names'
     value_entity_account_all :account_activities, :drop, :path
     value_str :captive
 
