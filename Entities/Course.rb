@@ -129,10 +129,6 @@ class Courses < Entities
     sort_courses(ret)
   end
 
-  def list_name_base
-    return %w( base maint int net site )
-  end
-
   def self.create_ctype(ctype, date, creator = nil)
     needs_center = (ConfigBase.has_function?(:course_server) and
         (creator and creator.has_permission?(:center)))

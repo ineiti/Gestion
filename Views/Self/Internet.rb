@@ -140,7 +140,7 @@ class SelfInternet < View
   end
 
   def rpc_update(session, nobutton = false)
-    @connection = Internet.connection
+    @connection = Internet.connection or return []
     @operator = @connection.operator
     @device = @connection.device
 
