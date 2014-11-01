@@ -1,7 +1,7 @@
 class NetworkConnection < View
   def layout
     set_data_class :ConfigBases
-    @visible = false
+    #@visible = false
     @update = true
     @functions_need = [:internet]
 
