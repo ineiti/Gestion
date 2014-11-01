@@ -3,7 +3,7 @@ Internet - an interface for the internet-part of Markas-al-Nour.
 =end
 
 module Internet
-  attr_accessor :connection
+  attr_accessor :connection, :operator, :device
   extend self
   include Network
 
@@ -11,13 +11,15 @@ module Internet
 
   def setup
     if ConfigBase.captive_dev != 'false'
-      dp dev = Device.search_dev({uevent: {interface: ConfigBase.captive_dev}})
+      dev = Device.search_dev({uevent: {interface: ConfigBase.captive_dev}})
       if dev.length == 0
         log_msg :Internet, "Couldn't find #{ConfigBase.captive_dev}"
         Device.list
         return
       end
       @connection = Connection.new(dev.first)
+      @operator = @connection.operator
+      @device = @connection.device
       Captive.setup( @connection )
     end
   end
@@ -55,15 +57,16 @@ module Internet
   end
 
   def take_money
+    dputs_func
     return until @connection
 
     Captive.cleanup
     Captive.users_connected.each { |u|
       dputs(3) { "User is #{u}" }
-      cost = Captive.user_cost_now.to_i
+      cost = @operator.user_cost_now.to_i
 
-      dputs(3) { "ISP is #{Operator.name} and conn_type is "+
-          "#{Operator.connection_type}" }
+      dputs(3) { "ISP is #{@operator.name} and conn_type is "+
+          "#{@operator.connection_type}" }
       user = Persons.match_by_login_name(u)
       if user
         dputs(3) { "Found user #{u}: #{user.full_name}" }
@@ -72,7 +75,7 @@ module Internet
           Captive.user_disconnect_name user.login_name
         elsif self.free(user)
           dputs(2) { "User #{u} goes free" }
-        elsif Connection.status == Connection::CONNECTED
+        elsif @connection.status == Device::CONNECTED
           dputs(3) { "User #{u} will pay #{cost}" }
           if user.internet_credit.to_i >= cost
             dputs(3) { "Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}" }

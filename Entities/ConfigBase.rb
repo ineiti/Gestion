@@ -103,6 +103,7 @@ end
 class ConfigBase < Entity
 
   def setup_instance
+    send_config
   end
 
   def send_config

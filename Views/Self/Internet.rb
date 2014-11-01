@@ -33,7 +33,7 @@ class SelfInternet < View
       return 0
     else
       if session.owner and session.owner.internet_credit
-        return (session.owner.internet_credit.to_i >= @operator.user_cost_max) ?
+        return (session.owner.internet_credit.to_i >= Internet.operator.user_cost_max) ?
             0 : 1
       else
         dputs(0) { "Error: Called with session.owner == nil! #{session.inspect}" }
@@ -49,7 +49,7 @@ class SelfInternet < View
     dputs(3) { "CanConnect is #{cc}" }
     case cc
       when 0
-        status = @connection.status_old
+        status = Internet.connection.status_old
         dputs(3) { "Connection-status is #{status.inspect}" }
         status = status.to_i
         if (0..4).include? status.to_i
@@ -98,7 +98,7 @@ class SelfInternet < View
       if connected
         dputs(4) { "Showing disconnect because we're connected" }
         show_button = :disconnect
-      elsif @operator.internet_left <= 100_000 and @operator.has_promo
+      elsif Internet.operator.internet_left <= 100_000 and Internet.operator.has_promo
         dputs(4) { 'Showing disconnect because there is no promotion left' }
         show_button = :disconnect
       end
@@ -118,7 +118,7 @@ class SelfInternet < View
   def update_isp(session)
     show_status = true
     dputs(3) { "show_status is #{show_status.inspect}" }
-    reply(@operator.has_promo ? :unhide : :hide, :bytes_left) +
+    reply(Internet.operator.has_promo ? :unhide : :hide, :bytes_left) +
         reply(show_status ? :unhide : :hide, :connection_status)
   end
 
@@ -140,10 +140,6 @@ class SelfInternet < View
   end
 
   def rpc_update(session, nobutton = false)
-    @connection = Internet.connection or return []
-    @operator = @connection.operator
-    @device = @connection.device
-
     users = Captive.users_connected
     users_str = SelfInternet.make_users_str(users)
     dputs(4) { "session is #{session.inspect}" }
@@ -156,9 +152,9 @@ class SelfInternet < View
         update_isp(session) +
         reply(:update, :internet_credit => session.owner.internet_credit.to_i) +
         reply(:update, :users_connected =>
-            "#{users.split.count}: #{users_str}")
-    if @operator.has_promo
-      ret += reply(:update, :bytes_left => @operator.internet_left)
+            "#{users.count}: #{users_str}")
+    if Internet.operator.has_promo
+      ret += reply(:update, :bytes_left => Internet.operator.internet_left)
     end
     return ret
   end
@@ -170,7 +166,7 @@ class SelfInternet < View
 
   def rpc_button_connect(session, data)
     if session.web_req
-      log_msg :internet, "#{session.owner.login_name} connects"
+      log_msg :internet, "#{session.owner.login_name} connects with #{session.inspect}"
       Captive.user_connect session.client_ip, session.owner.login_name
       rpc_update(session, true)
     end

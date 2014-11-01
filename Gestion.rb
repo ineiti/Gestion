@@ -142,7 +142,12 @@ else
     $internet = Thread.new {
       loop {
         begin
-          sleep 60
+          if false
+            dputs(0) { 'Internet-sleep is on 10!' }
+            sleep 10
+          else
+            sleep 60
+          end
           if ConfigBase.has_function? :internet_only
             Internet::fetch_cash
           end

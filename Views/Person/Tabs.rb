@@ -12,17 +12,6 @@ class PersonTabs < View
       gui_window :add_person do
         show_str :complete_name, :width => 150
         show_str :login_prop
-        show_str :first_name, :ldap_name => 'sn'
-        show_str :family_name, :ldap_name => 'givenname'
-        show_list_drop :gender, '%w( male female n/a )'
-        show_date :birthday
-        show_str :address
-        show_str :phone, :ldap_name => 'mobile'
-        show_str :email, :ldap_name => 'mail'
-        show_str :town, :ldap_name => 'l'
-        show_str :country, :ldap_name => 'st'
-        show_str :profession
-        show_str :school_grade
         #show_block :address
         show_button :add_person, :close
       end
