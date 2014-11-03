@@ -57,7 +57,6 @@ module Internet
   end
 
   def take_money
-    dputs_func
     return until @connection
 
     Captive.cleanup

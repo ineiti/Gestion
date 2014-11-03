@@ -1,5 +1,9 @@
 Important notices for versions:
 
+- 141031: 1.8.1
+  - Saving-error in QooxView::Storages::CSV - again. Looking forward to migrate to
+    ActiveRecord one day - cleaned up the data/-directory, should be more nice now.
+
 - 141023: 1.8.0
   - Good-bye LibNet. It's been nice, but complicated. Hello to Network! You still have
     a lot to learn...

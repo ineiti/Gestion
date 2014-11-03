@@ -1,18 +1,13 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - LibNet:
-          - Feature: rewrite in Ruby
-          - Make LibNet working at least on ArchLinux
-            - Network/Connections doesn't show variables
-            - think about connections / Provider / Hardware / Others
-              { PPP { Tigo, Airtel, Tawali } { E330, E303, Modem, ZTE },
-                PPPoE { Prestabist } { eth[0-9] },
-                Router { Simple, LibNet } { eth[0-9] } { address } }
+        - Making SMSControl work again with Network::Connection
+            - plug / unplug stick while running
 
 BUGS:
         - 4-pages not working anymore in Course::Diplomas
         - Persons::print_student prints card on A4!
+
         - Course::ctype must have _all argument, else it fails - logic?
             - either allow for showing of element only in update_form_data
               and perhaps others (check where)
@@ -37,10 +32,9 @@ UI:
 FEATURES:
         - Courses::Diplomas.print - unselect table
         - Pruning out left-overs in LibNet -> Network transition
-            - files to be moved to Profeda
-            - config-values of operator (cost_base, cost_shared)
             - Entity and taking care of values (int, str, bool, array)
         - Adding ScheduleType to schools
+        	- Courses::Days - add other days to the list
         - Add Language-evaluations for MaN
         - "Files/"
             - easy editing
@@ -52,7 +46,6 @@ FEATURES:
           - CourseGrade - add comment to file-uploads, so people know what to
             upload
           - adding files to be print by teachers, like exams and others?
-    	- Courses::Days - add other days to the list
         - CourseDiplomas: display random-id if available
           - only add center-ids when a course is "certified"
           - Admin:Backup - "send server", "fetch server", "download backup", "upload backup"
@@ -239,6 +232,14 @@ To check:
 
 
 ** FIXED **:
+        - P 141101: LibNet:
+          - Feature: rewrite in Ruby
+          - Make LibNet working at least on ArchLinux
+            - Network/Connections doesn't show variables
+            - think about connections / Provider / Hardware / Others
+              { PPP { Tigo, Airtel, Tawali } { E330, E303, Modem, ZTE },
+                PPPoE { Prestabist } { eth[0-9] },
+                Router { Simple, LibNet } { eth[0-9] } { address } }
         - B 141030: Welcome-screen doesn't show message
         - P 141030: CSV-save
             - use directory for old files
