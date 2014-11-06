@@ -1,6 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
+        - Network::captive
+            - when a user disconnects, forward-blocking is not enabled
         - Making SMSControl work again with Network::Connection
             - plug / unplug stick while running
 
