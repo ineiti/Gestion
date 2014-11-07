@@ -18,15 +18,15 @@ class AdminCredit < View
         log_msg :admincredit, "Setting credit of #{u}:#{user.full_name} to #{c}"
         user.internet_credit = c.to_i
         if not user.permissions 
-          user.permissions = ["internet"]
-        elsif not user.permissions.index( "internet" )
-          user.permissions.push "internet"
+          user.permissions = ['internet']
+        elsif not user.permissions.index('internet')
+          user.permissions.push 'internet'
         end
       else
         dputs(0){"Error: Didn't find #{u}"}
       end
     }
     Entities.save_all
-    reply( :empty )
+    reply( :empty_fields )
   end
 end

@@ -75,7 +75,7 @@ class CourseGrade < View
   end
 
   def update_grade( d )
-    ret = []
+    ret = reply(:empty_fields)
     c_id, p_name = d['courses'][0], d['students'][0]
     if p_name and c_id
       person = Persons.match_by_login_name( p_name )
@@ -86,8 +86,6 @@ class CourseGrade < View
           to_means_true( course ){|i| 
           reply( :update, "mean#{i}" => grade.means[i-1])
         }.flatten
-      else
-        ret = reply( :empty )
       end
       ret += update_form_data( person ) +
         update_files_saved( course, p_name )
@@ -109,13 +107,13 @@ class CourseGrade < View
 
   def rpc_list_choice( session, name, args )
     dputs( 3 ){ "rpc_list_choice with #{name} - #{args.inspect}" }
-    ret = reply( :empty )
+    ret = reply( :empty_fields )
     case name
-    when "courses"
+    when 'courses'
       course_id = args['courses'][0]
       course = Courses.match_by_course_id(course_id)
       if course
-        dputs( 3 ){ "replying" }
+        dputs( 3 ){ 'replying' }
         ret = rpc_update( session ) +
           #reply(:empty_fields, [:students]) +
         update_form_data( course ) +
@@ -124,8 +122,8 @@ class CourseGrade < View
         if course.students.size > 0
           first = course.list_students[0][0]
           ret += reply(:update, {:students => [first]} ) +
-            update_grade( {"courses" => [course.course_id],
-              "students" => [first]})
+            update_grade( {'courses' => [course.course_id],
+              'students' => [first]})
         end
 
         ret += to_means( course ){|s, i| 
@@ -134,16 +132,17 @@ class CourseGrade < View
 
         dputs(3){"CType is #{course.ctype.inspect} - #{course.ctype.files_needed.inspect}"}
         buttons = []
-        if (course.ctype.diploma_type[0] != "simple") and
+        if (course.ctype.diploma_type[0] != 'simple') and
             (course.ctype.files_needed.to_i > 0)
-          dputs(3){"Putting buttons"}
+          dputs(3){ 'Putting buttons'
+          }
         
           buttons.push :transfer_files, :upload, :files_saved
-          if Shares.match_by_name( "CourseFiles" )
+          if Shares.match_by_name('CourseFiles')
             buttons.push :prepare_files, :fetch_files
           end
         end
-        if course.ctype.diploma_type[0] == "accredited" and
+        if course.ctype.diploma_type[0] == 'accredited' and
             ConfigBase.has_function?( :course_client )
           buttons.push :sync_server
         end
@@ -153,7 +152,7 @@ class CourseGrade < View
         
         dputs(4){"Course is #{course} - ret is #{ret.inspect}"}
       end
-    when "students"
+    when 'students'
       ret += update_grade( args )
     end
     ret + reply( :focus, :mean1 )
@@ -200,12 +199,12 @@ class CourseGrade < View
   end
   
   def rpc_button_transfer_files( session, data )
-    ret = reply( :update, :txt => "no students" ) +
+    ret = reply( :update, :txt => 'no students') +
       reply( :hide, :upload )
     if course = Courses.match_by_course_id( data['courses'][0])
       if file = course.zip_create
         @files.data_str.push file
-        ret = reply( :update, :txt => "Download skeleton: " +
+        ret = reply( :update, :txt => 'Download skeleton: ' +
             "<a target='other' href='/tmp/#{file}'>#{file}</a>" ) +
           reply( :unhide, :upload )
       end
@@ -240,7 +239,7 @@ class CourseGrade < View
   def rpc_update_with_values( session, data )
     ret = []
     if course = Courses.match_by_course_id( data['courses'][0])
-      ret = reply( :update, :synching => "Sync-state:<ul>" + course.sync_state )
+      ret = reply( :update, :synching => 'Sync-state:<ul>' + course.sync_state )
       if course.sync_state =~ /(finished|Error:)/
         ret += reply( :auto_update, 0 )
       end
@@ -249,7 +248,7 @@ class CourseGrade < View
   end
 
   def rpc_button_sync_server( session, data )
-    log_msg :grade, "Syncing with server"
+    log_msg :grade, 'Syncing with server'
     if course = Courses.match_by_course_id( data['courses'][0])
       course.sync_start
 
@@ -258,7 +257,7 @@ class CourseGrade < View
         rpc_update_with_values( session, data )
     else
       reply( :window_show, :sync ) +
-        reply( :update, :synching => "Please chose a course first")
+        reply( :update, :synching => 'Please chose a course first')
     end
   end
   

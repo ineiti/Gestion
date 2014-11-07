@@ -351,7 +351,7 @@ class Courses < Entities
   def icc_exams(tr)
     tr._tid.gsub!(/[^a-zA-Z0-9_-]/, '')
     file = "/tmp/#{tr._tid}.zip"
-    File.open(file, 'w') { |f| f.write Base64::decode64(tr._data._zip ) }
+    File.open(file, 'w') { |f| f.write Base64::decode64(tr._data._zip) }
     if course = Courses.match_by_name(center_course_name(tr._data._course, tr._user))
       dputs(3) { 'Updating exams' }
       course.zip_read(file)
@@ -581,9 +581,9 @@ base_gestion
         [/Teacher/, teacher.full_name],
         [/Course_name/, name],
         [/2010-08-20/, dstart.to_s],
-        [/20.08.10/, dstart.strftime("%d/%m/%y")],
+        [/20.08.10/, dstart.strftime('%d/%m/%y')],
         [/2010-10-20/, dend.to_s],
-        [/20.10.10/, dend.strftime("%d/%m/%y")],
+        [/20.10.10/, dend.strftime('%d/%m/%y')],
         [/123/, students.count],
         [/321/, duration],
     ])
@@ -594,16 +594,16 @@ base_gestion
       return false
     end
     stud_nr = 1
-    studs = students.sort.collect { |s|
+    studs = students.collect { |s|
       stud = Entities.Persons.match_by_login_name(s)
       stud_str = stud_nr.to_s.rjust(2, '0')
       stud_nr += 1
       [[/Nom#{stud_str}/, stud.full_name],
        [/Login#{stud_str}/, stud.login_name],
        [/Passe#{stud_str}/, stud.password_plain]]
-    }
+    }.sort_by { |a| a[0][1] }
     (stud_nr..30).each { |s|
-      studs.push [[/Nom#{s.to_s.rjust(2, '0')}/, ""]]
+      studs.push [[/Nom#{s.to_s.rjust(2, '0')}/, '']]
     }
     dputs(3) { "Students are: #{studs.inspect}" }
 
@@ -619,9 +619,9 @@ base_gestion
         [/Course_name/, name],
         [/Center_name/, center.full_name],
         [/2010-08-20/, dstart.to_s],
-        [/20.08.10/, dstart.strftime("%d/%m/%y")],
+        [/20.08.10/, dstart.strftime('%d/%m/%y')],
         [/2010-10-20/, dend.to_s],
-        [/20.10.10/, dend.strftime("%d/%m/%y")],
+        [/20.10.10/, dend.strftime('%d/%m/%y')],
         [/123/, students.count],
         [/321/, duration],
     ])
@@ -1043,7 +1043,7 @@ base_gestion
   def sync_transfer(field, transfer = '', json = true)
     ss = @sync_state
     ret = ICC.transfer(Persons.center, "Courses.#{field}", transfer,
-                        url: ConfigBase.get_url(:server_url), json: json) { |s|
+                       url: ConfigBase.get_url(:server_url), json: json) { |s|
       @sync_state = "#{ss} #{s}" }
     @sync_state = ss
     ret

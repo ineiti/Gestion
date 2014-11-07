@@ -39,7 +39,7 @@ class PersonModify < View
     dputs(2) { "Pressed button #{name} with #{data.inspect}" }
     person = Persons.match_by_person_id(data['person_id'])
 
-    rep = [] #reply( :empty )
+    rep = []
     owner = session.owner
     if person
       case name

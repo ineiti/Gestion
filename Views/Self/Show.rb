@@ -25,21 +25,18 @@ class SelfShow < View
     dputs( 3 ){ "Pressed button #{name} with #{data.inspect}" }
     person = session.owner
     case name
-    when "change_password"
+    when 'change_password'
       person.password = data['new_password']
-    when "save"
+    when 'save'
       person.data_set_hash( data )
-    when "logout"
+    when 'logout'
       return reply( 'reload' )
     end
     return nil
   end
   
-#  def rpc_show( session )
-#    super( session ) + [ { :cmd => "update", :data => update( session ) } ]
-#  end
   def rpc_update( session )
-    reply( :empty ) +
+    reply( :empty_fields ) +
       reply( :update, session.owner.to_hash )
   end
 end

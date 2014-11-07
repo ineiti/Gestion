@@ -5,6 +5,9 @@ WORKING:
             - when a user disconnects, forward-blocking is not enabled
         - Making SMSControl work again with Network::Connection
             - plug / unplug stick while running
+        - Course::Print - names are not sorted
+        - Course::Grade - note is not deleted when changing from one user to the next
+            - verify also others where these things should be deleted
 
 BUGS:
         - 4-pages not working anymore in Course::Diplomas

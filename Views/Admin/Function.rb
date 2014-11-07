@@ -22,7 +22,7 @@ class AdminFunction < View
   end
   
   def rpc_update( session )
-    reply( :empty ) +
+    reply( :empty_fields ) +
       update_form_data( ConfigBases.singleton )
   end
   

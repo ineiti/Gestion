@@ -100,13 +100,13 @@ class Grade < Entity
     case value
       when 10..11.5 then
         'P'
-      when 12..14 then
+      when 12..13 then
         'AB'
-      when 14.5..16.5 then
+      when 14..15.5 then
         'B'
-      when 17..18.5 then
+      when 16..17.5 then
         'TB'
-      when 19..20 then
+      when 18..20 then
         'E'
       else
         'NP'
