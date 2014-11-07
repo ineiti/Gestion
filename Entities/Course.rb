@@ -595,13 +595,14 @@ base_gestion
     end
     stud_nr = 1
     studs = students.collect { |s|
-      stud = Entities.Persons.match_by_login_name(s)
+      Entities.Persons.match_by_login_name(s)
+    }.sort_by{ |s| s.full_name}.collect{ |stud|
       stud_str = stud_nr.to_s.rjust(2, '0')
       stud_nr += 1
       [[/Nom#{stud_str}/, stud.full_name],
        [/Login#{stud_str}/, stud.login_name],
        [/Passe#{stud_str}/, stud.password_plain]]
-    }.sort_by { |a| a[0][1] }
+    }
     (stud_nr..30).each { |s|
       studs.push [[/Nom#{s.to_s.rjust(2, '0')}/, '']]
     }
@@ -632,31 +633,31 @@ base_gestion
     dputs(3) { "Course is #{name} - student is #{student} - ctype is #{ctype.inspect} and grade is " +
         "#{grade.inspect} - #{grade.to_s}" }
 
-    state = if (ctype.diploma_type[0] == "accredited") and grade and
+    state = if (ctype.diploma_type[0] == 'accredited') and grade and
         (not grade.random)
-              "not synched"
-            elsif ((ctype.diploma_type[0] != "simple") and
+              'not synched'
+            elsif ((ctype.diploma_type[0] != 'simple') and
                 (exam_files(student).count < ctype.files_needed.to_i))
-              "incomplete"
-            elsif (not grade) or (grade.to_s == "NP")
-              "not passed"
+              'incomplete'
+            elsif (not grade) or (grade.to_s == 'NP')
+              'not passed'
             elsif update
               if get_files.find { |f| f =~ /^[0-9]+-#{student.login_name}\./ }
-                "done"
+                'done'
               else
-                "not created"
+                'not created'
               end
             else
-              "queued"
+              'queued'
             end
     mean = if grade and grade.mean
              grade.mean
            else
-             "-"
+             '-'
            end
     dputs(4) { "State is #{state}" }
     ln = student.login_name
-    @make_pdfs_state[ln] = [mean, state, get_diploma_filename(ln, "pdf", false)]
+    @make_pdfs_state[ln] = [mean, state, get_diploma_filename(ln, 'pdf', false)]
 
     [grade, state]
   end
@@ -669,13 +670,13 @@ base_gestion
     #      ( exam_files( student ).count >= ctype.files_needed.to_i ) ) and
     #    ( ( ctype.diploma_type[0] == "accredited" ) and grade.random )
     #  @make_pdfs_state[student.login_name] = [ grade.mean, "queued" ]
-    if state != "queued"
+    if state != 'queued'
       FileUtils.rm(file)
     else
       dputs(3) { "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
       Zip::File.open(file) { |z|
         dputs(5) { "Cours is #{self.inspect}" }
-        doc = z.read("content.xml")
+        doc = z.read('content.xml')
         doc.force_encoding(Encoding::UTF_8)
         dputs(5) { doc.inspect }
         dputs(5) { "Contents is: #{contents.inspect}" }
@@ -697,12 +698,12 @@ base_gestion
                     cont.split("\n").join(desc_p))
         end
         doc.gsub!(/-TEACHER-/, teacher.full_name)
-        role_diploma = "Enseignant informatique"
+        role_diploma = 'Enseignant informatique'
         if teacher.role_diploma.to_s.length > 0
           role_diploma = teacher.role_diploma
         end
         doc.gsub!(/-TEACHER_ROLE-/, role_diploma)
-        role_diploma = "Responsable informatique"
+        role_diploma = 'Responsable informatique'
         if responsible.role_diploma.to_s.length > 0
           role_diploma = responsible.role_diploma
         end
@@ -721,11 +722,11 @@ base_gestion
         doc.gsub!(/-URL_LABEL-/, grade.get_url_label)
         c = center
         doc.gsub!(/-CENTER_NAME-/, c.full_name)
-        doc.gsub!(/-CENTER_ADDRESS-/, c.address || "")
-        doc.gsub!(/-CENTER_PLACE-/, c.town || "")
-        doc.gsub!(/-CENTER_PHONE-/, c.phone || "")
-        doc.gsub!(/-CENTER_EMAIL-/, c.email || "")
-        z.get_output_stream("content.xml") { |f|
+        doc.gsub!(/-CENTER_ADDRESS-/, c.address || '')
+        doc.gsub!(/-CENTER_PLACE-/, c.town || '')
+        doc.gsub!(/-CENTER_PHONE-/, c.phone || '')
+        doc.gsub!(/-CENTER_EMAIL-/, c.email || '')
+        z.get_output_stream('content.xml') { |f|
           f.write(doc)
         }
         z.commit
@@ -733,7 +734,7 @@ base_gestion
     end
   end
 
-  def get_diploma_filename(student, ext = "odt", diplomadir = true)
+  def get_diploma_filename(student, ext = 'odt', diplomadir = true)
     digits = students.size.to_s.size
     counter = students.index(student) + 1
     str = diplomadir ? dir_diplomas : name

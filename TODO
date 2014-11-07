@@ -5,14 +5,8 @@ WORKING:
             - when a user disconnects, forward-blocking is not enabled
         - Making SMSControl work again with Network::Connection
             - plug / unplug stick while running
-        - Course::Print - names are not sorted
-        - Course::Grade - note is not deleted when changing from one user to the next
-            - verify also others where these things should be deleted
 
 BUGS:
-        - 4-pages not working anymore in Course::Diplomas
-        - Persons::print_student prints card on A4!
-
         - Course::ctype must have _all argument, else it fails - logic?
             - either allow for showing of element only in update_form_data
               and perhaps others (check where)
@@ -35,7 +29,7 @@ UI:
          tabs can be added
 
 FEATURES:
-        - Courses::Diplomas.print - unselect table
+        - Make a NupPrint for OpenPrint
         - Pruning out left-overs in LibNet -> Network transition
             - Entity and taking care of values (int, str, bool, array)
         - Adding ScheduleType to schools
@@ -237,6 +231,11 @@ To check:
 
 
 ** FIXED **:
+        - B 141107: Persons::print_student prints card on A4!
+        - F 141107: Courses::Diplomas.print - unselect table
+        - F 141107: Course::Print - names are not sorted
+        - B 141107: Course::Grade - note is not deleted when changing from one user to the next
+            - verify also others where these things should be deleted
         - P 141101: LibNet:
           - Feature: rewrite in Ruby
           - Make LibNet working at least on ArchLinux

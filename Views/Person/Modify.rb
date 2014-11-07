@@ -29,7 +29,7 @@ class PersonModify < View
 
       gui_window :printing do
         show_html :msg_print
-        show_button :close
+        show_button :next_page, :close
       end
 
     end
@@ -56,17 +56,31 @@ class PersonModify < View
           rep = reply(:update, Persons.save_data(data))
         when 'print_student'
           rep = rpc_print(session, name, data)
-          person.lp_cmd = cmd_printer(session, name)
-          file = person.print
-          if file.class == String
+          person.lp_cmd = nil
+          files = OpenPrint.print_nup_duplex(person.print, base = nil)
+          if lpr = cmd_printer(session, name)
+            rep += reply(:window_show, :printing) +
+                reply(:unhide, :next_page) +
+                reply(:update, :msg_print => 'Printing front page')
+            System.run_bool("#{lpr} #{files.first}")
+            session.s_data._person_page = files.last
+          else
             rep += reply(:window_show, :printing) +
                 reply(:update, :msg_print => 'Click to download:<ul>' +
-                    "<li><a target='other' href=\"#{file}\">#{file}</a></li></ul>")
+                    files.collect { |file|
+                      "<li><a target='other' href=\"#{file}\">#{file}</a></li>" }.join +
+                    '</ul>') +
+                reply(:hide, :next_page)
           end
+        when 'next_page'
+          System.run_bool("#{cmd_printer(session, :print_student)} #{session.s_data._person_page}")
+          reply(:update, :msg_print => 'Printing back page') +
+              reply(:hide, :next_page)
         when 'close'
           rep = reply(:window_hide)
       end
     end
+
     rep + rpc_update(session)
   end
 
@@ -110,4 +124,5 @@ class PersonModify < View
         (session.owner.permissions.index('center') ?
             reply(:hide, :print_student) : [])
   end
+
 end
