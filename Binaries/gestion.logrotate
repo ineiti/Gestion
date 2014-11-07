@@ -1,0 +1,22 @@
+/var/log/gestion/gestion.log {
+  daily
+  copytruncate
+  rotate 30
+  mail root@localhost
+  postrotate
+    /opt/profeda/Gestion/Binaries/log_scan_errors
+  endscript
+  nocompress
+}
+
+/var/log/gestion/events.log {
+  daily
+  copytruncate
+  rotate 30
+  mail root@localhost
+  prerotate
+    echo "Events from logrotate" | mail -s "Events from $( hostname )" -a /var/log/gestion/events.log root@localhost
+  endscript
+  nocompress
+}
+
