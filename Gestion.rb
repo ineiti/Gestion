@@ -162,9 +162,12 @@ else
     }
   end
 
-  if ConfigBase.has_function?(:sms_control) and ConfigBase.operator
-    dputs(1) { "Starting sms-control with operator #{ConfigBase.operator}" }
-    $SMScontrol = Network::SMScontrol.new(ConfigBase.operator.first)
+  if ConfigBase.has_function?(:sms_control)
+    if na = ConfigBase.network_actions
+      require na
+    end
+    dputs(1) { 'Starting sms-control' }
+    $SMScontrol = Network::SMScontrol.new
     $sms_control = Thread.new {
       loop {
         begin

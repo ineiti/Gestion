@@ -63,7 +63,7 @@
 
   <ul>
     <li>Modem is 
-      <%= $SMScontrol.modem ? "present" : "MISSING" %></li>
+      <%= $SMScontrol.connection ? "present" : "MISSING" %></li>
     <li>Internet is
       <%= $SMScontrol.is_connected ? 'CONNECTED' : 'disconnected' %></li>
     <li>Promotion left: <%= $SMScontrol.state_traffic / 1000 %>k

@@ -1,4 +1,7 @@
+require 'network'
+
 class NetworkSMS < View
+  include Network
 
   def layout
     @functions_need = [:sms_control]
@@ -56,7 +59,7 @@ class NetworkSMS < View
           :sms_received => SMSs.last(5).reverse.collect { |sms|
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
           }.join("\n"),
-          :ussd_received => $SMScontrol.modem.ussd_list.inspect)
+          :ussd_received => $SMScontrol.device.ussd_list.inspect)
   end
 
   def rpc_update_async(session)
@@ -72,12 +75,12 @@ class NetworkSMS < View
   end
 
   def rpc_button_connect(session, data)
-    $SMScontrol.state_goal = Network::MODEM_CONNECTED
+    $SMScontrol.state_goal = Device::CONNECTED
     rpc_update(session)
   end
 
   def rpc_button_disconnect(session, data)
-    $SMScontrol.state_goal = Network::MODEM_DISCONNECTED
+    $SMScontrol.state_goal = Device::DISCONNECTED
     rpc_update(session)
   end
 
