@@ -59,7 +59,8 @@ class NetworkSMS < View
           :sms_received => SMSs.last(5).reverse.collect { |sms|
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
           }.join("\n"),
-          :ussd_received => $SMScontrol.device.ussd_list.inspect)
+          :ussd_received => $SMScontrol.device.ussd_list.inspect,
+          :operator => $SMScontrol.operator.name)
   end
 
   def rpc_update_async(session)

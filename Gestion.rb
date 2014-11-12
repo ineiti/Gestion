@@ -148,9 +148,6 @@ else
           else
             sleep 60
           end
-          if ConfigBase.has_function? :internet_only
-            Internet::fetch_cash
-          end
           Internet::take_money
         rescue Exception => e
           dputs(0) { "Error: couldn't take internet-money" }

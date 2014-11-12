@@ -62,8 +62,8 @@
   <h1>Information about SMS-control</h1>
 
   <ul>
-    <li>Modem is 
-      <%= $SMScontrol.connection ? "present" : "MISSING" %></li>
+    <li>Operator is
+      <%= ( $SMScontrol.operator and $SMScontrol.operator.name ) || 'MISSING' %></li>
     <li>Internet is
       <%= $SMScontrol.is_connected ? 'CONNECTED' : 'disconnected' %></li>
     <li>Promotion left: <%= $SMScontrol.state_traffic / 1000 %>k

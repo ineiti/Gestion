@@ -3,29 +3,47 @@ Internet - an interface for the internet-part of Markas-al-Nour.
 =end
 
 module Internet
-  attr_accessor :connection, :operator, :device
+  attr_accessor :operator, :device
   extend self
   include Network
 
-  @connection = nil
+  @operator = nil
 
   def setup
     if ConfigBase.captive_dev != 'false'
+      @device = nil
+      Network::Device.add_observer(self)
+
       dev = Device.search_dev({uevent: {interface: ConfigBase.captive_dev}})
       if dev.length == 0
         log_msg :Internet, "Couldn't find #{ConfigBase.captive_dev}"
         Device.list
         return
       end
-      @connection = Connection.new(dev.first)
-      @operator = @connection.operator
-      @device = @connection.device
-      Captive.setup( @connection )
+      update('add', dev.first )
+    end
+  end
+
+  def update(operation, dev)
+    return unless dev
+    case operation
+      when /del/
+        if @device == dev
+          log_msg :Internet, "Lost device #{@device}"
+          @device = nil
+        end
+      when /add/
+        if !@device
+          @device = dev
+          @operator = @device.operator
+          Captive.setup( @device )
+          log_msg :Internet, "Got new device #{@device}"
+        end
     end
   end
 
   def fetch_users
-    return until @connection
+    return until @operator
 
     if (server = ConfigBase.internet_cash)
       begin
@@ -57,7 +75,7 @@ module Internet
   end
 
   def take_money
-    return until @connection
+    return until @operator
 
     Captive.cleanup
     Captive.users_connected.each { |u|
@@ -74,7 +92,7 @@ module Internet
           Captive.user_disconnect_name user.login_name
         elsif self.free(user)
           dputs(2) { "User #{u} goes free" }
-        elsif @connection.status == Device::CONNECTED
+        elsif @device.connection_status == Device::CONNECTED
           dputs(3) { "User #{u} will pay #{cost}" }
           if user.internet_credit.to_i >= cost
             dputs(3) { "Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}" }
@@ -148,7 +166,7 @@ module Internet
   end
 
   def connect_user(ip, name)
-    return until @connection
+    return until @operator
 
     Captive.user_connect ip, name, (self.free(name) ? 'yes' : 'no')
   end
