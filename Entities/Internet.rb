@@ -92,8 +92,9 @@ module Internet
   end
 
   def active_course_for(user)
+    dputs_func
     # We want an exact match, so we put the name between ^ and $
-    courses = Entities.Courses.search_by_students("^#{user.login_name}$")
+    courses = Courses.search_by_students("^#{user.login_name}$")
     if courses
       dputs(3) { "Courses : #{courses.inspect}" }
       courses.each { |c|

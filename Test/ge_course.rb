@@ -115,15 +115,22 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_search
-    courses_admin2 = Entities.Courses.search_by_students("admin2")
+    courses_admin2 = Courses.search_by_students('^admin2$')
     assert_equal 1, courses_admin2.length
-    RPCQooxdooHandler.request(1, "View.CourseModify", "button", [["default", "bulk_students",
-                                                                  {"name" => "net_1001", "names" => "Dmin A"}]])
-    RPCQooxdooHandler.request(1, "View.CourseModify", "button", [["default", "create_new",
-                                                                  {"name" => "net_1001", "double_name" => "Dmin A"}]])
-    courses_admin2 = Entities.Courses.search_by_students("admin2")
-    courses_admin3 = Entities.Courses.search_by_students("admin3")
-    courses_surf = Entities.Courses.search_by_students("surf")
+    Entities.save_all
+    Entities.delete_all_data( true )
+    Entities.load_all
+    dp Courses.search_all_.inspect
+    courses_admin2 = Courses.search_by_students('^admin2$')
+    assert_equal 1, courses_admin2.length
+
+    RPCQooxdooHandler.request(1, 'View.CourseModify', 'button', [['default', 'bulk_students',
+                                                                  {'name' => 'net_1001', 'names' => 'Dmin A'}]])
+    RPCQooxdooHandler.request(1, 'View.CourseModify', 'button', [['default', 'create_new',
+                                                                  {'name' => 'net_1001', 'double_name' => 'Dmin A'}]])
+    courses_admin2 = Courses.search_by_students('admin2')
+    courses_admin3 = Courses.search_by_students('admin3')
+    courses_surf = Courses.search_by_students('surf')
     assert_equal 1, courses_admin2.length, Courses.search_all.inspect
     assert_equal 1, courses_admin3.length, Courses.search_all.inspect
     assert_equal 3, courses_surf.length

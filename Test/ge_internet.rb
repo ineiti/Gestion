@@ -245,4 +245,19 @@ class TC_Internet < Test::Unit::TestCase
     #assert_fail "Shall test for ip-address in header"
   end
 
+  def test_active_course
+    user_1 = Persons.create( login_name: 'user1' )
+    user_2 = Persons.create( login_name: 'user1' )
+    course = Courses.create( name: 'internet', students: [user_1.login_name, user_2.login_name])
+
+    assert_equal false, Internet.active_course_for( user_1 )
+    assert_equal false, Internet.active_course_for( user_2 )
+
+    course.start = Date.yesterday.strftime('%d.%m.%Y')
+    course.end = Date.tomorrow.strftime('%d.%m.%Y')
+
+    assert_equal true, Internet.active_course_for( user_1 )
+    assert_equal true, Internet.active_course_for( user_2 )
+  end
+
 end

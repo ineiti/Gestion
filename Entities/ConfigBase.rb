@@ -9,6 +9,7 @@ class ConfigBases < Entities
     value_list_drop :operator, 'Network::Operator.list_names'
     value_entity_account_all :account_activities, :drop, :path
     value_str :captive_dev
+    value_str :network_actions
 
     value_block :captive
     value_str :prerouting

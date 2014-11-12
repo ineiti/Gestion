@@ -40,7 +40,7 @@ class NetworkSMS < View
       gui_vboxg :nogroup do
         show_text :sms_received, :flexheight => 1
         show_text :ussd_received, :flexheight => 1
-        show_list_drop :operator, 'Network::Operator.operators'
+        show_list_drop :operator, 'Network::Operator.operators.collect{|op| op.first}'
       end
     end
   end
@@ -85,10 +85,7 @@ class NetworkSMS < View
   end
 
   def rpc_button_send_ussd(session, data)
-    begin
-      $SMScontrol.modem.ussd_send(data._ussd)
-    rescue 'USSDinprogress' => e
-    end
+    $SMScontrol.device.ussd_send(data._ussd)
     rpc_update(session)
   end
 end
