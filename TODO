@@ -4,7 +4,7 @@ WORKING:
         - Network::captive
             - when a user disconnects, forward-blocking is not enabled -> CHECK
         - Making SMSControl work again with Network::Connection
-            - plug / unplug stick while running
+            - plug / unplug stick while running -> Check
 
 BUGS:
         - Course::ctype must have _all argument, else it fails - logic?
