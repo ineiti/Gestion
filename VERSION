@@ -1,5 +1,9 @@
 Important notices for versions:
 
+- 141113: 1.8.2
+  - much better integration of serialmodems
+  - correctly using network::captive
+
 - 141031: 1.8.1
   - Saving-error in QooxView::Storages::CSV - again. Looking forward to migrate to
     ActiveRecord one day - cleaned up the data/-directory, should be more nice now.
