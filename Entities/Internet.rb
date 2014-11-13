@@ -110,7 +110,6 @@ module Internet
   end
 
   def active_course_for(user)
-    dputs_func
     # We want an exact match, so we put the name between ^ and $
     courses = Courses.search_by_students("^#{user.login_name}$")
     if courses
