@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <meta http-equiv="refresh" content="15" />
+  <meta http-equiv="refresh" content="15"/>
   <title>Statistiques sur la clé Internet</title>
   <style>
       body {
@@ -63,25 +63,37 @@
 
   <ul>
     <li>Operator is
-      <%= ( $SMScontrol.operator and $SMScontrol.operator.name ) || 'MISSING' %></li>
+      <%= begin
+            $SMScontrol.operator.name
+          rescue NoMethodError => e
+            'MISSING'
+          end %></li>
     <li>Internet is
-      <%= $SMScontrol.is_connected ? 'CONNECTED' : 'disconnected' %></li>
-    <li>Promotion left: <%= $SMScontrol.state_traffic / 1000 %>k
+      <%=  begin
+             $SMScontrol.is_connected ? 'CONNECTED' : 'disconnected'
+           rescue NoMethodError => e
+             'MISSING'
+           end %></li>
+    <li>Promotion left: <%= begin
+                              $SMScontrol.state_traffic / 1000
+                            rescue NoMethodError => e
+                              'MISSING'
+                            end %>k
     </li>
     <li>Last SMS received:
       <ul>
         <%=
-           SMSs.last(5).reverse.collect { |sms|
-             "<li>#{sms.date}::#{sms.phone}:: ::#{sms.text}</li>"
-           }.join
+            SMSs.last(5).reverse.collect { |sms|
+              "<li>#{sms.date}::#{sms.phone}:: ::#{sms.text}</li>"
+            }.join
         %></ul>
     </li>
     <li>
       <%= if mails = /.* ([0-9]+) Request.*/.match(%x[ postqueue -p | tail -n 1 ])
-           "#{mails[1]} mails in queue"
-         else
-           'No mails in queue'
-         end
+            "#{mails[1]} mails in queue"
+          else
+            'No mails in queue'
+          end
       %></li>
   </ul>
 </div>

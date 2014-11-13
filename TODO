@@ -7,6 +7,7 @@ WORKING:
             - plug / unplug stick while running -> Check
 
 BUGS:
+        - when ctrl-c during loading of long .csv-list, save saves the wrong list!
         - Course::ctype must have _all argument, else it fails - logic?
             - either allow for showing of element only in update_form_data
               and perhaps others (check where)

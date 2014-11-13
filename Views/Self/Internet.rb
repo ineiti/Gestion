@@ -49,7 +49,7 @@ class SelfInternet < View
     dputs(3) { "CanConnect is #{cc}" }
     case cc
       when 0
-        status = Internet.connection.status_old
+        status = Internet.device.connection_status_old
         dputs(3) { "Connection-status is #{status.inspect}" }
         status = status.to_i
         if (0..4).include? status.to_i
