@@ -159,6 +159,10 @@ else
     end
     dputs(1) { 'Starting sms-control' }
     $SMScontrol = Network::SMScontrol.new
+    if ConfigBase.has_function? :sms_control_autocharge
+      $SMScontrol.autocharge = true
+    end
+
     $sms_control = Thread.new {
       loop {
         rescue_all 'Error with SMScontrol' do

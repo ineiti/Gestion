@@ -1,7 +1,10 @@
 require 'network'
+require 'helperclasses'
 
 class NetworkSMS < View
   include Network
+  include HelperClasses
+  extend HelperClasses
 
   def layout
     @functions_need = [:sms_control]
@@ -20,6 +23,8 @@ class NetworkSMS < View
           show_str_ro :emails
           show_str_ro :vpn
         end
+      end
+      gui_vbox :nogroup do
         gui_vbox :nogroup do
           show_str :sms_fake
           show_button :inject_sms
@@ -72,7 +77,7 @@ class NetworkSMS < View
   end
 
   def rpc_button_send_sms(session, data)
-    $SMScontrol.modem.sms_send(data._sms_number, data._sms_text)
+    $SMScontrol.device.sms_send(data._sms_number, data._sms_text)
   end
 
   def rpc_button_connect(session, data)

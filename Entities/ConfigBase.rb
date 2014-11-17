@@ -29,7 +29,7 @@ class ConfigBases < Entities
     @@functions = %w( network share
     courses course_server course_client
     internet internet_simple internet_captive
-    sms_control
+    sms_control sms_control_autocharge
     inventory accounting quiz accounting_courses accounting_old
     cashbox email usage_report activities library ).sort.to_sym
     @@functions_base = {:network => [:internet, :share, :internet_only, :email, :sms_control],
@@ -37,7 +37,8 @@ class ConfigBases < Entities
                         :courses => [:course_server, :course_client, :accounting_courses],
                         :accounting => [:accounting_courses],
                         :cashbox => [:accounting_courses],
-                        :activities => [:library]
+                        :activities => [:library],
+                        :sms_control => [:sms_control_autocharge]
     }
     @@functions_conflict = [[:course_server, :course_client]]
   end
