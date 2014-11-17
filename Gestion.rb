@@ -2,6 +2,10 @@
 # encoding: UTF-8
 require './Dependencies'
 Dependencies.load_path
+
+require 'helperclasses'
+include HelperClasses::System
+
 Encoding.default_external = Encoding::UTF_8
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
@@ -123,15 +127,10 @@ else
     dputs(1) { 'Starting autosave' }
     $autosave = Thread.new {
       loop {
-        begin
-          Entities.save_all
-        rescue Exception => e
-          dputs(0) { "Error: couldn't save all" }
-          dputs(0) { "#{e.inspect}" }
-          dputs(0) { "#{e.to_s}" }
-          puts e.backtrace
-        end
         sleep get_config(2 * 60, :autosave, :timer)
+        rescue_all "Error: couldn't save all" do
+          Entities.save_all
+        end
       }
     }
   end
@@ -141,7 +140,7 @@ else
     Internet.setup
     $internet = Thread.new {
       loop {
-        begin
+        rescue_all "Couldn't take internet-money" do
           if false
             dputs(0) { 'Internet-sleep is on 10!' }
             sleep 10
@@ -149,11 +148,6 @@ else
             sleep 60
           end
           Internet::take_money
-        rescue Exception => e
-          dputs(0) { "Error: couldn't take internet-money" }
-          dputs(0) { "#{e.inspect}" }
-          dputs(0) { "#{e.to_s}" }
-          puts e.backtrace
         end
       }
     }
@@ -167,16 +161,11 @@ else
     $SMScontrol = Network::SMScontrol.new
     $sms_control = Thread.new {
       loop {
-        begin
+        rescue_all 'Error with SMScontrol' do
           $SMScontrol.check_connection
           $SMScontrol.check_sms
           dputs(2) { $SMScontrol.state_to_s }
           sleep 10
-        rescue Exception => e
-          dputs(0) { 'Error with SMScontrol' }
-          dputs(0) { "#{e.inspect}" }
-          dputs(0) { "#{e.to_s}" }
-          puts e.backtrace
         end
       }
     }
@@ -197,16 +186,11 @@ else
   }
 
   catch :ctrl_c do
-    begin
+    rescue_all 'Error: QooxView aborted' do
       log_msg :main, "Started Gestion on port #{webrick_port}"
       images_path = File.join(File.expand_path(File.dirname(__FILE__)), 'Images')
       RPCQooxdooHandler.add_file_path(:Images, images_path)
       QooxView::startWeb webrick_port
-    rescue Exception => e
-      dputs(0) { 'Error: QooxView aborted' }
-      dputs(0) { "#{e.inspect}" }
-      dputs(0) { "#{e.to_s}" }
-      puts e.backtrace
     end
   end
 

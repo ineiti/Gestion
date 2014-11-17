@@ -10,6 +10,10 @@ StorageHandler:
   Replace:
     LDAP: CSV
 
+StorageType:
+  CSV:
+    backup_count: 5
+
 #autosave: true
 #  timer: 120
 

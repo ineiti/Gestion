@@ -3,8 +3,8 @@
 WORKING:
 
 BUGS:
-        - where is Storages::CSV::backup in config.yaml?
-        - when ctrl-c during loading of long .csv-list, save saves the wrong list!
+        - CSV-load: if no .csv-file is there, check if there is one in backup/*
+
         - Course::ctype must have _all argument, else it fails - logic?
             - either allow for showing of element only in update_form_data
               and perhaps others (check where)
@@ -229,6 +229,10 @@ To check:
 
 
 ** FIXED **:
+        - B 141114: when ctrl-c during loading of long .csv-list, save_all saves the wrong list!
+            - in fact it is when crashing during "auto-save" - still, it should be able
+             to recover
+        - B 141113: where is Storages::CSV::backup in config.yaml?
         - B 141113: Network::captive
             - when a user disconnects, forward-blocking is not enabled -> CHECK
         - B 141113: Making SMSControl work again with Network::Connection

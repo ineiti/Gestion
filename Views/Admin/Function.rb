@@ -14,7 +14,7 @@ class AdminFunction < View
         gui_vbox :nogroup do
           show_block :narrow
           show_block :vars
-          show_arg :server_url, :width => 200
+          show_arg :server_url, :width => 300
         end
       end
       show_button :save
