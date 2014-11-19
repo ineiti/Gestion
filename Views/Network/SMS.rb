@@ -23,8 +23,6 @@ class NetworkSMS < View
           show_str_ro :emails
           show_str_ro :vpn
         end
-      end
-      gui_vbox :nogroup do
         gui_vbox :nogroup do
           show_str :sms_fake
           show_button :inject_sms

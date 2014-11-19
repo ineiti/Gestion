@@ -28,6 +28,7 @@ UI:
 
 FEATURES:
         - Make a NupPrint for OpenPrint
+        - Block traffic in dp-man if server has "restriction"
         - Pruning out left-overs in LibNet -> Network transition
             - Entity and taking care of values (int, str, bool, array)
         - Adding ScheduleType to schools
