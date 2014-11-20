@@ -37,7 +37,7 @@ class PersonModify < View
 
   def rpc_button(session, name, data)
     dputs(2) { "Pressed button #{name} with #{data.inspect}" }
-    person = Persons.match_by_person_id(data['person_id'])
+    dp person = Persons.match_by_person_id(data['person_id'])
 
     rep = []
     owner = session.owner
@@ -74,7 +74,7 @@ class PersonModify < View
           end
         when 'next_page'
           System.run_bool("#{cmd_printer(session, :print_student)} #{session.s_data._person_page}")
-          reply(:update, :msg_print => 'Printing back page') +
+          rep += reply(:update, :msg_print => 'Printing back page') +
               reply(:hide, :next_page)
         when 'close'
           rep = reply(:window_hide)

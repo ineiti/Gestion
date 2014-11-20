@@ -5,6 +5,7 @@ Dependencies.load_path
 
 require 'helperclasses'
 include HelperClasses::System
+include HelperClasses
 
 Encoding.default_external = Encoding::UTF_8
 

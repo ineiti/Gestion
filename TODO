@@ -230,6 +230,11 @@ To check:
 
 
 ** FIXED **:
+        - B 141120: Views::Persons::Modify
+            - <enter> in 'search' on big lists takes a long time
+            - when adding a new person,
+                - 'password_plain' stays
+                - Persons::Admin stays, too
         - B 141114: when ctrl-c during loading of long .csv-list, save_all saves the wrong list!
             - in fact it is when crashing during "auto-save" - still, it should be able
              to recover

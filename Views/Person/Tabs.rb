@@ -76,7 +76,7 @@ class PersonTabs < View
     s = data['search']
 
     # Don't search if there are few caracters and lots of Persons
-    if (not s or s.length < 3) and (Entities.Persons.new_id.values[0] > 100)
+    if (not s or s.length < 3) and (Persons.data.length > 100)
       return reply(:focus, :search)
     end
 
@@ -159,8 +159,8 @@ class PersonTabs < View
     dputs(3) { "Pressed button accept with #{data.inspect}" }
     person = Persons.create_person(data._complete_name, session.owner,
                                    data._login_prop)
-    person.data_set_hash(data.reject { |k, v|
-      k =~ /(family_name|first_name|login_name|person_id)/ })
+    #person.data_set_hash(data.reject { |k, v|
+    #  k =~ /(family_name|first_name|login_name|person_id)/ })
 
     reply(:window_hide) +
         rpc_callback_search(session, 'search' => person.login_name)
