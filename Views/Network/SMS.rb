@@ -3,8 +3,6 @@ require 'helperclasses'
 
 class NetworkSMS < View
   include Network
-  include HelperClasses
-  extend HelperClasses
 
   def layout
     @functions_need = [:sms_control]
