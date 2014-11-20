@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - Courses::Modify - problem with room - more general?
         - CSV-load: if no .csv-file is there, check if there is one in backup/*
 
         - Course::ctype must have _all argument, else it fails - logic?
