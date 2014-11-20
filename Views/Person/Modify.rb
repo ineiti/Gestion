@@ -37,7 +37,7 @@ class PersonModify < View
 
   def rpc_button(session, name, data)
     dputs(2) { "Pressed button #{name} with #{data.inspect}" }
-    dp person = Persons.match_by_person_id(data['person_id'])
+    person = Persons.match_by_person_id(data['person_id'])
 
     rep = []
     owner = session.owner
@@ -57,13 +57,13 @@ class PersonModify < View
         when 'print_student'
           rep = rpc_print(session, name, data)
           person.lp_cmd = nil
-          files = OpenPrint.print_nup_duplex(person.print, base = nil)
+          files = person.print
           if lpr = cmd_printer(session, name)
             rep += reply(:window_show, :printing) +
                 reply(:unhide, :next_page) +
                 reply(:update, :msg_print => 'Printing front page')
-            System.run_bool("#{lpr} #{files.first}")
-            session.s_data._person_page = files.last
+            System.run_bool( "#{lpr} -P 1 -o media=a6 #{files}")
+            session.s_data._person_page = files
           else
             rep += reply(:window_show, :printing) +
                 reply(:update, :msg_print => 'Click to download:<ul>' +
@@ -73,11 +73,11 @@ class PersonModify < View
                 reply(:hide, :next_page)
           end
         when 'next_page'
-          System.run_bool("#{cmd_printer(session, :print_student)} #{session.s_data._person_page}")
+          System.run_bool( "#{cmd_printer(session, :print_student)} -P 2 -o media=a6 #{session.s_data._person_page}")
           rep += reply(:update, :msg_print => 'Printing back page') +
               reply(:hide, :next_page)
         when 'close'
-          rep = reply(:window_hide)
+          rep += reply(:window_hide)
       end
     end
 
