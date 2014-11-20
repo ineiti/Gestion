@@ -3,7 +3,6 @@
 WORKING:
 
 BUGS:
-        - Courses::Modify - problem with room - more general?
         - CSV-load: if no .csv-file is there, check if there is one in backup/*
 
         - Course::ctype must have _all argument, else it fails - logic?
@@ -231,6 +230,7 @@ To check:
 
 
 ** FIXED **:
+        - B 141120: Courses::Modify - problem with room - more general?
         - B 141120: Views::Persons::Modify
             - <enter> in 'search' on big lists takes a long time
             - when adding a new person,

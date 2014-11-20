@@ -6,7 +6,7 @@ class Computers < Entities
   def setup_data
     value_block :identity
     value_str :name_service
-    value_entity_room :room, :drop, :name
+    value_entity_room_all :room, :drop, :name
     value_str :name_place
     
     value_block :performance

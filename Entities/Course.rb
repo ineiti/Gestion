@@ -27,17 +27,17 @@ class Courses < Entities
     value_date :end
     value_date :sign
     value_int :duration
-    value_list_drop :dow, "%w( lu-me-ve ma-je-sa lu-ve ma-sa )"
-    value_list_drop :hours, "%w( 9-12 16-18 9-11 )"
-    value_entity_room :classroom, :drop, :name
+    value_list_drop :dow, '%w( lu-me-ve ma-je-sa lu-ve ma-sa )'
+    value_list_drop :hours, '%w( 9-12 16-18 9-11 )'
+    value_entity_room_all :classroom, :drop, :name
 
     value_block :students
     value_list :students
 
     value_block :teacher
-    value_entity_person_lazy :teacher, :drop, :full_name
-    value_entity_person_empty_lazy :assistant, :drop, :full_name
-    value_entity_person_lazy :responsible, :drop, :full_name
+    value_entity_person :teacher, :drop, :full_name
+    value_entity_person_empty :assistant, :drop, :full_name
+    value_entity_person :responsible, :drop, :full_name
 
     value_block :center
     value_entity_person_empty :center, :drop, :full_name,
@@ -56,7 +56,7 @@ class Courses < Entities
     value_int :entry_total
 
     value_block :account
-    value_entity_account_empty_lazy :entries, :drop, :path
+    value_entity_account_empty :entries, :drop, :path
 
     @dir_diplomas ||= 'Diplomas'
     @dir_exas ||= 'Exas'
