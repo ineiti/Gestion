@@ -266,6 +266,8 @@ class Courses < Entities
   end
 
   def icc_users(tr)
+    dputs_func
+
     users = tr._data
     dputs(3) { "users are #{users.inspect}" }
     users.each { |s|
@@ -278,7 +280,12 @@ class Courses < Entities
       %w( person_id groups ).each { |f|
         s.delete f.to_sym
       }
-      s._permissions = s._permissions & %w( teacher center )
+      s._permissions = if s._permissions
+                         s._permissions & %w( teacher center )
+                       else
+                         dputs(0){"User #{s._login_name} has no permissions!"}
+                         []
+                       end
       dputs(3) { "Person is #{s.inspect}" }
       dputs(4) { "Looking for #{s._login_name}" }
       if stud = Persons.match_by_login_name(s._login_name)
@@ -596,7 +603,7 @@ base_gestion
     stud_nr = 1
     studs = students.collect { |s|
       Entities.Persons.match_by_login_name(s)
-    }.sort_by{ |s| s.full_name}.collect{ |stud|
+    }.sort_by { |s| s.full_name }.collect { |stud|
       stud_str = stud_nr.to_s.rjust(2, '0')
       stud_nr += 1
       [[/Nom#{stud_str}/, stud.full_name],

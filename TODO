@@ -4,7 +4,6 @@ WORKING:
 
 BUGS:
         - CSV-load: if no .csv-file is there, check if there is one in backup/*
-
         - Course::ctype must have _all argument, else it fails - logic?
             - either allow for showing of element only in update_form_data
               and perhaps others (check where)
@@ -27,6 +26,8 @@ UI:
          tabs can be added
 
 FEATURES:
+        - confirmation-window upon deletion of course and student
+        - write to log WHO deleted a course or a student
         - Make a NupPrint for OpenPrint
         - Block traffic in dp-man if server has "restriction"
         - Pruning out left-overs in LibNet -> Network transition

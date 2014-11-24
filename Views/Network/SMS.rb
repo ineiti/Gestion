@@ -77,6 +77,7 @@ class NetworkSMS < View
   end
 
   def rpc_button_connect(session, data)
+    $SMScontrol.operator.internet_left = 100_000_000
     $SMScontrol.state_goal = Device::CONNECTED
     rpc_update(session)
   end
