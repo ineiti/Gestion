@@ -53,6 +53,8 @@ class NetworkSMS < View
         System.run_str('systemctl list-units --no-legend openvpn@* | '+
                            'sed -e "s/OpenVPN.*//"') :
         System.run_str('pgrep openvpn')
+    ussds = $SMScontrol.device ? $SMScontrol.device.ussd_list.inspect : 'Down'
+    operator = $SMScontrol.operator ? $SMScontrol.operator.name : ''
     reply(:update,
           :state_now => $SMScontrol.state_now, :state_goal => $SMScontrol.state_goal,
           :transfer => $SMScontrol.state_traffic, :promotion => $SMScontrol.state_traffic,
@@ -60,8 +62,8 @@ class NetworkSMS < View
           :sms_received => SMSs.last(5).reverse.collect { |sms|
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
           }.join("\n"),
-          :ussd_received => $SMScontrol.device.ussd_list.inspect,
-          :operator => $SMScontrol.operator.name)
+          :ussd_received => ussds,
+          :operator => operator)
   end
 
   def rpc_update_async(session)
