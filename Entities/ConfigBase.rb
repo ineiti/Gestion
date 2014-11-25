@@ -25,6 +25,7 @@ class ConfigBases < Entities
     value_int :cost_base
     value_int :cost_shared
     value_str :allow_free
+    value_str :phone_main
 
     @@functions = %w( network share
     courses course_server course_client

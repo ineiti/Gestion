@@ -98,7 +98,7 @@ class SelfInternet < View
       if connected
         dputs(4) { "Showing disconnect because we're connected" }
         show_button = :disconnect
-      elsif Internet.operator.internet_left <= 100_000 and Internet.operator.has_promo
+      elsif Internet.operator.has_promo && Internet.operator.internet_left <= 100_000
         dputs(4) { 'Showing disconnect because there is no promotion left' }
         show_button = :disconnect
       end

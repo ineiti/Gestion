@@ -25,12 +25,14 @@ module Internet
   end
 
   def update(operation, dev)
+    dp "#{operation} - #{dev}"
     return unless dev
     case operation
       when /del/
         if @device == dev
           log_msg :Internet, "Lost device #{@device}"
           @device = nil
+          Captive.accept_all
         end
       when /add/
         if !@device

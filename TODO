@@ -4,10 +4,13 @@ WORKING:
 
 BUGS:
         - CSV-load: if no .csv-file is there, check if there is one in backup/*
-        - Course::ctype must have _all argument, else it fails - logic?
-            - either allow for showing of element only in update_form_data
-              and perhaps others (check where)
-            - or define _all by default for all :drop
+        - Transferring data to server: it seems like ALL random-ids are transferred
+          back!
+        - Cours::Modify::change_name - doesn't allow 1411-2 if 1411-1 and 1411-3 present
+            -> probably only in case it gets deleted first, as the _match_ doesn't get
+            updated -> neither
+        - Cours::Modify::change_name - if exams present, copy them over!
+
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?

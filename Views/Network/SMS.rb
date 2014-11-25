@@ -6,7 +6,7 @@ class NetworkSMS < View
 
   def layout
     @functions_need = [:sms_control]
-    @order = 100
+    @order = 10
     @update = true
     @auto_update_async = 10
     @auto_update_send_values = false
@@ -41,7 +41,7 @@ class NetworkSMS < View
       gui_vboxg :nogroup do
         show_text :sms_received, :flexheight => 1
         show_text :ussd_received, :flexheight => 1
-        show_list_drop :operator, 'Network::Operator.operators.collect{|op| op.first}'
+        show_str_ro :operator
       end
     end
   end
