@@ -5,6 +5,7 @@ class PersonCenter < View
     set_data_class :Persons
     @update = true
     @order = 40
+    @functions_need = [:course_server]
 
     gui_vbox do
       gui_hbox :nogroup do

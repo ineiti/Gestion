@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 141126: 1.8.3
+  - first more or less usable Airtel-implementation
+
 - 141113: 1.8.2
   - much better integration of serialmodems
   - correctly using network::captive

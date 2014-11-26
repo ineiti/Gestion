@@ -12,7 +12,7 @@ Encoding.default_external = Encoding::UTF_8
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad.
 
-VERSION_GESTION='1.8.2'
+VERSION_GESTION='1.8.3'
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -59,12 +59,12 @@ begin
       'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
       'FlagAddInternet,CourseStats,CoursePrint,PersonActivity', 'assistant')
   Permission.add('accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
-      'ComptaReport,ComptaShow,Cashbox.*,Report.*', 'secretary')
+      'ComptaReport,ComptaShow,ComptaEdit.*,Cashbox.*,Report.*', 'secretary')
   Permission.add('maintenance', 'Inventory.*', 'default')
   Permission.add('cybermanager', 'PersonCredit,NetworkTigo,FlagAddInternet,' +
       'FlagPersonAdd,CashboxService,NetworkSMS', '')
   Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
-      'PersonAdmin,PersonCourse,NetworkConnection,CourseStats,Report.*',
+      'PersonAdmin,PersonCourse,NetworkConnection,CourseStats,Report.*,AdminBackup',
                  'secretary,cybermanager,teacher')
   Permission.add('center', 'CourseModify,FlagAdminCourse,CourseGrade,' +
       'FlagPersonAdd,FlagPersonDelete,PersonModify,CourseDiploma,' +

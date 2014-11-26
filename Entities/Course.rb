@@ -1063,8 +1063,7 @@ base_gestion
 
     dputs(4) { 'Responsibles' }
     @sync_state = sync_s += '<li>Transferring responsibles: '
-    users = [teacher.login_name, responsible.login_name, center.login_name]
-    assistant and users.push assistant.login_name
+    users = [teacher, responsible, center, assistant].compact.collect{|n| n.login_name}
     ret = sync_transfer(:users, users.collect { |s|
       Persons.match_by_login_name(s)
     }.compact)

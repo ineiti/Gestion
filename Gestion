@@ -16,6 +16,11 @@ if [ "$( which ruby )" -a "$1" != "--install" ]; then
       echo "Not started as root, doing nothing"
     fi
   fi
+  if [ -f dorestore ]; then
+    mv data backup_data.$( date +%Y-%m-%d_%H.%M.%S )
+    tar xf Backups/$( cat dorestore )
+    rm dorestore
+  fi
   ./Gestion.rb $@
 else
   if [ "$1" = "--install" ]; then

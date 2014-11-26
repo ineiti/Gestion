@@ -8,13 +8,25 @@ class ComptaEditAccounts < View
       gui_vboxg :nogroup do
         show_entity_account :account_archive, :drop, :callback => true
         show_entity_account :account_list, :single,
-                                 :width => 400, :flex => 1, :callback => true
+                            :width => 400, :flex => 1, :callback => true
+        show_button :delete, :new
       end
       gui_vbox :nogroup do
         show_str :name
         show_str :desc, :width => 300
         show_int :total
         show_button :save, :account_update
+      end
+
+      gui_window :account_new do
+        show_str :name_new, :width => 300
+        show_str :desc_new
+        show_button :add_account, :close
+      end
+
+      gui_window :msg_win do
+        show_html :msg
+        show_button :close
       end
     end
   end
@@ -25,9 +37,38 @@ class ComptaEditAccounts < View
     end
   end
 
-  def rpc_button_save( session, data )
+  def rpc_button_save(session, data)
     if (acc = data._account_list).class == Account
       acc.desc, acc.name = data._desc, data._name
+      update_list
+    end
+  end
+
+  def rpc_button_new(session, data)
+    if data._account_list.class == Account
+      reply(:window_show, :account_new) +
+          reply(:empty, %w( name_new desc_new ))
+    else
+      reply(:window_show, :msg_win) +
+          reply(:update, :msg => "Choisir un compte parent d'abord")
+    end
+  end
+
+  def rpc_button_add_account(session, data)
+    if (acc = data._account_list).class == Account
+      return unless data._name_new.to_s.length > 0
+      new_acc = Accounts.create(data._name_new, data._desc_new, acc)
+      update_list(data._account_archive) +
+          reply(:update, :account_list => new_acc.id) +
+          reply(:window_hide)
+    end
+  end
+
+  def rpc_button_delete(session, data)
+    if (acc = data._account_list).class == Account
+      return unless acc.is_empty
+      acc.delete
+      update_list(data._account_archive)
     end
   end
 

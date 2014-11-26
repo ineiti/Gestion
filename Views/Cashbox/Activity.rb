@@ -5,7 +5,7 @@ class CashboxActivity < View
     @update = true
     @order = 140
 
-    @functions_need = [:cashbox]
+    @functions_need = [:activities]
 
     gui_hboxg do
       gui_vboxg :nogroup do

@@ -16,7 +16,7 @@ class NetworkSMS < View
         gui_vbox :nogroup do
           show_str_ro :state_now
           show_str_ro :state_goal
-          show_int_ro :transfer
+          show_int_ro :credit
           show_int_ro :promotion
           show_str_ro :emails
           show_str_ro :vpn
@@ -57,7 +57,7 @@ class NetworkSMS < View
     operator = $SMScontrol.operator ? $SMScontrol.operator.name : ''
     reply(:update,
           :state_now => $SMScontrol.state_now, :state_goal => $SMScontrol.state_goal,
-          :transfer => $SMScontrol.state_traffic, :promotion => $SMScontrol.state_traffic,
+          :credit => $SMScontrol.state_credit, :promotion => $SMScontrol.state_traffic,
           :emails => emails, :vpn => vpns,
           :sms_received => SMSs.last(5).reverse.collect { |sms|
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"

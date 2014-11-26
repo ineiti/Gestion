@@ -1,12 +1,3 @@
 #!/bin/bash
 
-. $( dirname $0 )/lib_backup
-DATE=$1
-
-sleep 2
-touch /tmp/stop_gestion
-$WDIR/Binaries/kill_gestion
-sleep 2
-echo Going to restore $BACKUP_DIR/$DATE > /tmp/restore
-tar -C $WDIR -Pxzf $BACKUP_DIR/$DATE
-$WDIR/Binaries/start_gestion
+nohup $( dirname $0 )/restore_do $1 &

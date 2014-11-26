@@ -81,7 +81,7 @@ class AdminCourseType < View
         end
     reply(:window_show, :win_from_server).concat(
         [status_list(true, status: status),
-         (downloading ? reply(:callback_button, :download_list) : reply)]).flatten
+         (downloading ? reply(:callback_button, :download_list) : reply(:update))]).flatten
   end
 
   def rpc_button_download_list(session, data)

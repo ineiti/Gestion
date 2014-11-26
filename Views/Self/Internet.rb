@@ -49,7 +49,7 @@ class SelfInternet < View
     dputs(3) { "CanConnect is #{cc}" }
     case cc
       when 0
-        status = Internet.device.connection_status_old
+        status = Internet.device ? Internet.device.connection_status_old : 0
         dputs(3) { "Connection-status is #{status.inspect}" }
         status = status.to_i
         if (0..4).include? status.to_i
@@ -98,7 +98,8 @@ class SelfInternet < View
       if connected
         dputs(4) { "Showing disconnect because we're connected" }
         show_button = :disconnect
-      elsif Internet.operator.has_promo && Internet.operator.internet_left <= 100_000
+      elsif Internet.operator &&
+          Internet.operator.has_promo && Internet.operator.internet_left <= 100_000
         dputs(4) { 'Showing disconnect because there is no promotion left' }
         show_button = :disconnect
       end
@@ -118,7 +119,8 @@ class SelfInternet < View
   def update_isp(session)
     show_status = true
     dputs(3) { "show_status is #{show_status.inspect}" }
-    reply(Internet.operator.has_promo ? :unhide : :hide, :bytes_left) +
+    promo = ( Internet.operator && Internet.operator.has_promo ) ? :unhide : :hide
+    reply(promo, :bytes_left) +
         reply(show_status ? :unhide : :hide, :connection_status)
   end
 
@@ -153,7 +155,7 @@ class SelfInternet < View
         reply(:update, :internet_credit => session.owner.internet_credit.to_i) +
         reply(:update, :users_connected =>
             "#{users.count}: #{users_str}")
-    if Internet.operator.has_promo
+    if Internet.operator && Internet.operator.has_promo
       ret += reply(:update, :bytes_left => Internet.operator.internet_left)
     end
     return ret

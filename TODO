@@ -1,8 +1,30 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
+TODO:
+        - unddputs
+        - dputs_func in QV::Stor::CSV
+
 WORKING:
+        - Courses::Grades can have more than the necessary files
+        - Courses::Grades crashes if non-existent students are in list
+        - Courses::Grades::synchronising crashes a lot - for example when no
+            connection available
+        - AdminBackup
+            x faire marcher
+            - faire un lien pour télécharger et un lien pour mettre
+        - account editing
+            x no new account if nothing selected
+            x add EditMovements::edit
+            - add EditAccounts::move
+        - CourseType - add drop: "internet_always, internet_course, none"
+        - Self::Internet - no "make connection" if no Internet.operator
+        - Self::Internet without stick breaks
+        - Network::SMS - add credit
+        - SMScontrol - check why always SMSs
 
 BUGS:
+        - Person::Modify - Sex doesn't work
+        - *242*10# - "Apologies, there has been a system error. Please try again later"
         - CSV-load: if no .csv-file is there, check if there is one in backup/*
         - Transferring data to server: it seems like ALL random-ids are transferred
           back!
