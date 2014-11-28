@@ -24,7 +24,9 @@ class SelfInternet < View
   # 1 - no money left
   # 2 - restrictions
   # 3 - AccessGroups-rules
+  # 4 - no internet available
   def can_connect(session)
+    return 4 unless Internet.operator
     if not (ag = AccessGroups.allow_user_now(session.owner))[0]
       return ag[1]
     elsif Captive.restricted
@@ -74,8 +76,10 @@ class SelfInternet < View
         ret += reply(:update, :connection_status => 'Not enough money in account')
       when 2
         ret += reply(:update, :connection_status => 'Restricted access due to teaching')
-      else
+      when 3
         ret += reply(:update, :connection_status => cc)
+      when 4
+        ret += reply(:update, :connection_status => 'No internet connection available')
     end
     return ret
   end
@@ -119,7 +123,7 @@ class SelfInternet < View
   def update_isp(session)
     show_status = true
     dputs(3) { "show_status is #{show_status.inspect}" }
-    promo = ( Internet.operator && Internet.operator.has_promo ) ? :unhide : :hide
+    promo = (Internet.operator && Internet.operator.has_promo) ? :unhide : :hide
     reply(promo, :bytes_left) +
         reply(show_status ? :unhide : :hide, :connection_status)
   end
@@ -156,7 +160,10 @@ class SelfInternet < View
         reply(:update, :users_connected =>
             "#{users.count}: #{users_str}")
     if Internet.operator && Internet.operator.has_promo
-      ret += reply(:update, :bytes_left => Internet.operator.internet_left)
+      left = Internet.operator.internet_left.to_s.tap do |s|
+        :go while s.gsub!(/^([^.]*)(\d)(?=(\d{3})+)/, "\\1\\2 ")
+      end
+      ret += reply(:update, :bytes_left => left)
     end
     return ret
   end
