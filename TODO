@@ -23,8 +23,15 @@ WORKING:
         - SMScontrol - check why always SMSs
 
 BUGS:
+        - When usb-key is missing, put SMScontrol::state_goal to DISCONNECT
+        - problem with sms not received when *342*2#
+        - replace *342*2# with *242#
+        - /dev/ttyUSB3 not recognized anymore as error
+        - When changing account-name in Compta::Edit, it isn't changed in
+            Person::accounts
         - Person::Modify - Sex doesn't work
         - *242*10# - "Apologies, there has been a system error. Please try again later"
+        - *342# - "Apologies, there has been a system error. Please try again later"
         - CSV-load: if no .csv-file is there, check if there is one in backup/*
         - Transferring data to server: it seems like ALL random-ids are transferred
           back!
