@@ -20,8 +20,8 @@ class InternetWifi < RPCQooxdooPath
             log_msg :InternetWifi, "Authenticated person #{person.login_name} from " +
                 "#{session.client_ip} and redirecting"
           end
-          #addr = 'localhost:3302'
           addr = 'admin.profeda.org'
+          #addr = 'localhost:3302'
           return "
 <!DOCTYPE HTML>
 <html lang='fr-FR'>

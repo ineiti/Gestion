@@ -16,6 +16,7 @@ class SelfInternet < View
       show_int_ro :users_connected
       show_int_ro :bytes_left
       show_html :connection, :width => 100
+      show_html :auto_connection
       show_button :connect, :disconnect
     end
   end
@@ -165,6 +166,11 @@ class SelfInternet < View
       end
       ret += reply(:update, :bytes_left => left)
     end
+    o = session.owner
+    ret += reply(:update, auto_connection:
+        'Bookmark for '+
+            "<a href='http://internet.wifi/connect.cgi?user=#{o.login_name}&pass=#{o.password}'>" +
+            'Internet-connection</a>')
     return ret
   end
 
