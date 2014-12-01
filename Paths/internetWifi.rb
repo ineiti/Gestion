@@ -5,6 +5,8 @@ class InternetWifi < RPCQooxdooPath
     dputs(4) { "InternetWifi: #{req.inspect} - #{req.path} - #{ip}" }
     if req.request_method == 'GET'
       case path
+        when /users.cgi/
+          return 'mac'
         when /connect.cgi/
           dp query.inspect
           login_name, password = query._user, query._pass
@@ -15,8 +17,8 @@ class InternetWifi < RPCQooxdooPath
             session.web_req = req
             session.client_ip = RPCQooxdooHandler.get_ip(req)
             dp session.inspect
-            ddputs(3) { "Found login #{person.data_get(:person_id)} for #{login_name}" }
-            ddputs(3) { "Session is #{session.inspect}" }
+            dputs(3) { "Found login #{person.data_get(:person_id)} for #{login_name}" }
+            dputs(3) { "Session is #{session.inspect}" }
             log_msg :InternetWifi, "Authenticated person #{person.login_name} from " +
                 "#{session.client_ip} and redirecting"
           end

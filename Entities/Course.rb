@@ -283,7 +283,7 @@ class Courses < Entities
       s._permissions = if s._permissions
                          s._permissions & %w( teacher center )
                        else
-                         dputs(0){"User #{s._login_name} has no permissions!"}
+                         dputs(0) { "User #{s._login_name} has no permissions!" }
                          []
                        end
       dputs(3) { "Person is #{s.inspect}" }
@@ -390,19 +390,20 @@ class Course < Entity
     end
 
     check_students_dir
-    @make_pdfs_state = {"0" => 'undefined'}
+    @make_pdfs_state = {'0' => 'undefined'}
     @only_psnup = false
   end
 
   def update_state
-    if @make_pdfs_state["0"] == "undefined"
+    if @make_pdfs_state['0'] == 'undefined'
       @make_pdfs_state = {}
-      students.each { |s|
+      students.collect { |s|
         dputs(3) { "Working on #{s}" }
-        student = Persons.match_by_login_name(s)
-        get_grade_args(student, true)
+        Persons.match_by_login_name(s)
+      }.compact.each { |s|
+        get_grade_args(s, true)
       }
-      @make_pdfs_state["0"] = 'done'
+      @make_pdfs_state['0'] = 'done'
     end
   end
 
@@ -1063,7 +1064,7 @@ base_gestion
 
     dputs(4) { 'Responsibles' }
     @sync_state = sync_s += '<li>Transferring responsibles: '
-    users = [teacher, responsible, center, assistant].compact.collect{|n| n.login_name}
+    users = [teacher, responsible, center, assistant].compact.collect { |n| n.login_name }
     ret = sync_transfer(:users, users.collect { |s|
       Persons.match_by_login_name(s)
     }.compact)

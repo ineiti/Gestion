@@ -264,7 +264,7 @@ class CourseGrade < View
   def rpc_button_upload( session, data, window_show = true )
     data.to_sym!
     course = Courses.match_by_course_id( data._courses[0])
-    student = Entities.Persons.match_by_login_name( data._students[0])
+    student = Persons.match_by_login_name( data._students[0])
     files_needed = course.ctype.files_needed.to_i
     exam_files = course.exam_files( student )
     dputs(3){"Exam-files = #{exam_files.inspect}"}

@@ -22,17 +22,13 @@ class NetworkSMS < View
           show_str_ro :vpn
         end
         gui_vbox :nogroup do
-          show_str :sms_fake
-          show_button :inject_sms
-        end
-        gui_vbox :nogroup do
           show_str :sms_number
           show_str :sms_text
           show_button :send_sms
         end
         gui_vbox :nogroup do
           show_str :ussd
-          show_button :send_ussd
+          show_button :send_ussd, :add_credit
         end
         gui_vbox :nogroup do
           show_button :connect, :disconnect
@@ -70,12 +66,13 @@ class NetworkSMS < View
     rpc_update(session)
   end
 
-  def rpc_button_inject_sms(session, data)
-    $SMScontrol.inject_sms(data._sms_fake)
-  end
 
   def rpc_button_send_sms(session, data)
-    $SMScontrol.device.sms_send(data._sms_number, data._sms_text)
+    if data._sms_number.to_s.length == 0
+      $SMScontrol.inject_sms(data._sms_text)
+    else
+      $SMScontrol.device.sms_send(data._sms_number, data._sms_text)
+    end
   end
 
   def rpc_button_connect(session, data)
@@ -91,6 +88,11 @@ class NetworkSMS < View
 
   def rpc_button_send_ussd(session, data)
     $SMScontrol.device.ussd_send(data._ussd)
+    rpc_update(session)
+  end
+
+  def rpc_button_add_credit(session, data)
+    $SMScontrol.operator.credit_add(data._ussd)
     rpc_update(session)
   end
 end

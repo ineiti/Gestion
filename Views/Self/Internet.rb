@@ -122,11 +122,10 @@ class SelfInternet < View
   end
 
   def update_isp(session)
-    show_status = true
-    dputs(3) { "show_status is #{show_status.inspect}" }
     promo = (Internet.operator && Internet.operator.has_promo) ? :unhide : :hide
+    ddputs(3) { "promo is #{promo}" }
     reply(promo, :bytes_left) +
-        reply(show_status ? :unhide : :hide, :connection_status)
+        reply(:unhide, :connection_status)
   end
 
   def self.make_users_str(users)

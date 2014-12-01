@@ -62,7 +62,7 @@ class PersonModify < View
             rep += reply(:window_show, :printing) +
                 reply(:unhide, :next_page) +
                 reply(:update, :msg_print => 'Printing front page')
-            System.run_bool( "#{lpr} -P 1 -o media=a6 #{files}")
+            System.run_bool("#{lpr} -P 1 -o media=a6 #{files}")
             session.s_data._person_page = files
           else
             rep += reply(:window_show, :printing) +
@@ -73,7 +73,7 @@ class PersonModify < View
                 reply(:hide, :next_page)
           end
         when 'next_page'
-          System.run_bool( "#{cmd_printer(session, :print_student)} -P 2 -o media=a6 #{session.s_data._person_page}")
+          System.run_bool("#{cmd_printer(session, :print_student)} -P 2 -o media=a6 #{session.s_data._person_page}")
           rep += reply(:update, :msg_print => 'Printing back page') +
               reply(:hide, :next_page)
         when 'close'
@@ -105,7 +105,8 @@ class PersonModify < View
             reply(:update, :not_allowed => "<b>Vous n'avez pas le droit<br>" +
                 'de changer ce mot de passe</b>')
         dputs(4) { "change_pwd is #{change_pwd.inspect}" }
-        reply(:empty_all) + reply(:update, p) + reply(:update, update(session)) +
+        reply(:empty_fields) + reply(:update, p) +
+            reply(:update, update(session)) +
             reply(:focus, :credit_add) + reply_print(session) + change_pwd
       end
     end

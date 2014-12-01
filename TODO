@@ -1,45 +1,17 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
-TODO:
-        - unddputs
-        - dputs_func in QV::Stor::CSV
-
 WORKING:
-        - Courses::Grades can have more than the necessary files
-        - Courses::Grades crashes if non-existent students are in list
-        - Courses::Grades::synchronising crashes a lot - for example when no
-            connection available
-        - AdminBackup
-            x faire marcher
-            - faire un lien pour télécharger et un lien pour mettre
-        - account editing
-            x no new account if nothing selected
-            x add EditMovements::edit
-            - add EditAccounts::move
-        - CourseType - add drop: "internet_always, internet_course, none"
-        - Self::Internet - no "make connection" if no Internet.operator
-        - Self::Internet without stick breaks
-        - Network::SMS - add credit
-        - SMScontrol - check why always SMSs
 
 BUGS:
-        - When usb-key is missing, put SMScontrol::state_goal to DISCONNECT
-        - problem with sms not received when *342*2#
-        - replace *342*2# with *242#
-        - /dev/ttyUSB3 not recognized anymore as error
-        - When changing account-name in Compta::Edit, it isn't changed in
-            Person::accounts
-        - Person::Modify - Sex doesn't work
-        - *242*10# - "Apologies, there has been a system error. Please try again later"
-        - *342# - "Apologies, there has been a system error. Please try again later"
         - CSV-load: if no .csv-file is there, check if there is one in backup/*
+        - problem with sms not received when *342*2#
+        - When changing account-name in Compta::Edit, it isn't changed in
+            Person::accounts -> change Person::accounts to real account
+        - Courses::Grades can have more than the necessary files
+        - sometimes Self::Internet doesn't show bytes left
+
         - Transferring data to server: it seems like ALL random-ids are transferred
           back!
-        - Cours::Modify::change_name - doesn't allow 1411-2 if 1411-1 and 1411-3 present
-            -> probably only in case it gets deleted first, as the _match_ doesn't get
-            updated -> neither
-        - Cours::Modify::change_name - if exams present, copy them over!
-
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
@@ -58,6 +30,15 @@ UI:
          tabs can be added
 
 FEATURES:
+        - limit speed upon reaching threshold
+        - Cours::Modify::change_name - if exams present, copy them over!
+        - AdminBackup
+            - faire un lien pour télécharger et un lien pour mettre
+        - add EditAccounts::move
+        - CourseType - add drop: "internet_always, internet_course, none"
+        - move Admin::Functions::activities to Admin::Activities
+        - better display in Course::Grades with regard to files, perhaps direct
+            download of student-files
         - confirmation-window upon deletion of course and student
         - write to log WHO deleted a course or a student
         - Make a NupPrint for OpenPrint
@@ -263,6 +244,24 @@ To check:
 
 
 ** FIXED **:
+        - B 141201: Person::Modify - gender doesn't work
+        - B 141201: /dev/ttyUSB3 not recognized anymore as error
+        - F 141201: *242*10# - "Apologies, there has been a system error. Please try again later"
+        - F 141201: *342# - "Apologies, there has been a system error. Please try again later"
+        - F 141201: replace *342*2# with *242#
+        - B 141201: When usb-key is missing, put SMScontrol::state_goal to DISCONNECT
+        - F 141201: account editing
+            - no new account if nothing selected
+            - add EditMovements::edit
+        - F 141201: AdminBackup
+            - faire marcher
+        - B 141201: Courses::Diplomas crashes if non-existent students are in list
+        - B 141201: Courses::Grades::synchronising crashes a lot - for example when no
+            connection available
+        - UI141130: Network::SMS - add credit - merge 'inject' and 'send sms'
+        - B 141130: SMScontrol - check why always SMSs - wrong handling in Airtel-part
+        - B 141130: Self::Internet - no "make connection" if no Internet.operator
+        - B 141130: Self::Internet without stick breaks
         - B 141120: Courses::Modify - problem with room - more general?
         - B 141120: Views::Persons::Modify
             - <enter> in 'search' on big lists takes a long time

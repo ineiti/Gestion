@@ -51,7 +51,7 @@ class CourseModify < View
           gui_window :ask_double do
             show_str :double_name
             show_entity_person :double_proposition, :single, :full_name,
-                                    :width => 350, :maxheight => 250
+                               :width => 350, :maxheight => 250
             show_button :accept, :create_new, :cancel
           end
           gui_window :missing_data do
