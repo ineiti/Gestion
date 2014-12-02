@@ -16,10 +16,12 @@ class NetworkSMS < View
         gui_vbox :nogroup do
           show_str_ro :state_now
           show_str_ro :state_goal
+          show_str_ro :operator
           show_int_ro :credit
           show_int_ro :promotion
           show_str_ro :emails
           show_str_ro :vpn
+          show_button :connect, :disconnect, :recharge, :reload
         end
         gui_vbox :nogroup do
           show_str :sms_number
@@ -30,14 +32,10 @@ class NetworkSMS < View
           show_str :ussd
           show_button :send_ussd, :add_credit, :credit_wo_recharge
         end
-        gui_vbox :nogroup do
-          show_button :connect, :disconnect, :recharge
-        end
       end
       gui_vboxg :nogroup do
         show_text :sms_received, :flexheight => 1
         show_text :ussd_received, :flexheight => 1
-        show_str_ro :operator
       end
     end
   end
@@ -53,7 +51,8 @@ class NetworkSMS < View
     operator = $SMScontrol.operator ? $SMScontrol.operator.name : ''
     reply(:update,
           :state_now => $SMScontrol.state_now, :state_goal => $SMScontrol.state_goal,
-          :credit => $SMScontrol.operator.credit_left, :promotion => $SMScontrol.state_traffic,
+          :credit => $SMScontrol.operator.credit_left,
+          :promotion => $SMScontrol.operator.internet_left,
           :emails => emails, :vpn => vpns,
           :sms_received => SMSs.last(5).reverse.collect { |sms|
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
@@ -105,5 +104,10 @@ class NetworkSMS < View
   def rpc_button_recharge( session, data )
     $SMScontrol.recharge_hold = false
     $SMScontrol.recharge_all
+    rpc_update(session)
+  end
+
+  def rpc_button_reload( session, data )
+    rpc_update(session)
   end
 end

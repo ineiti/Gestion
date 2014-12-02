@@ -88,7 +88,10 @@ class SelfInternet < View
   def update_button(session, nobutton = false)
     if nobutton
       return reply(:hide, :connect) +
-          reply(:hide, :disconnect)
+          reply(:hide, :disconnect) +
+          reply(:update, :connection =>
+              "<img src='/Images/connection_wait.png' height='50'>")
+
     end
     if not session.owner
       dputs(0) { "Error: no owner for session #{session.inspect}" }
@@ -123,7 +126,7 @@ class SelfInternet < View
 
   def update_isp(session)
     promo = (Internet.operator && Internet.operator.has_promo) ? :unhide : :hide
-    ddputs(3) { "promo is #{promo}" }
+    dputs(3) { "promo is #{promo}: #{Internet.operator} - #{Internet.operator.has_promo.inspect}" }
     reply(promo, :bytes_left) +
         reply(:unhide, :connection_status)
   end

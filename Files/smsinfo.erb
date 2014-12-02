@@ -75,7 +75,7 @@
              'MISSING'
            end %></li>
     <li>Promotion left: <%= begin
-                              $SMScontrol.state_traffic / 1000
+                              $SMScontrol.operator.internet_left / 1000
                             rescue NoMethodError => e
                               'MISSING'
                             end %>k
