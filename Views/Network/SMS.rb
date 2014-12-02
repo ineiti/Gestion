@@ -28,10 +28,10 @@ class NetworkSMS < View
         end
         gui_vbox :nogroup do
           show_str :ussd
-          show_button :send_ussd, :add_credit
+          show_button :send_ussd, :add_credit, :credit_wo_recharge
         end
         gui_vbox :nogroup do
-          show_button :connect, :disconnect
+          show_button :connect, :disconnect, :recharge
         end
       end
       gui_vboxg :nogroup do
@@ -94,5 +94,16 @@ class NetworkSMS < View
   def rpc_button_add_credit(session, data)
     $SMScontrol.operator.credit_add(data._ussd)
     rpc_update(session)
+  end
+
+  def rpc_button_credit_wo_recharge(session, data)
+    $SMScontrol.recharge_hold = true
+    $SMScontrol.operator.credit_add(data._ussd)
+    rpc_update(session)
+  end
+
+  def rpc_button_recharge( session, data )
+    $SMScontrol.recharge_hold = false
+    $SMScontrol.recharge_all
   end
 end
