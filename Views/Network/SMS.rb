@@ -53,7 +53,7 @@ class NetworkSMS < View
     operator = $SMScontrol.operator ? $SMScontrol.operator.name : ''
     reply(:update,
           :state_now => $SMScontrol.state_now, :state_goal => $SMScontrol.state_goal,
-          :credit => $SMScontrol.state_credit, :promotion => $SMScontrol.state_traffic,
+          :credit => $SMScontrol.operator.credit_left, :promotion => $SMScontrol.state_traffic,
           :emails => emails, :vpn => vpns,
           :sms_received => SMSs.last(5).reverse.collect { |sms|
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
