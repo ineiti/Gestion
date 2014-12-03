@@ -1,9 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - SMScontrol: redo check_sms with regard to auto-charging and such. Write a
-            clean state-diagram with connected/disconnected/internet_left/credit_left
-            and write who should do what when...
 
 BUGS:
         - Welcome::connect - don't disconnect if already connected
@@ -35,6 +32,10 @@ UI:
 
 FEATURES:
         - limit speed upon reaching threshold
+            - calculate threshold
+        - SMScontrol: redo check_sms with regard to auto-charging and such. Write a
+            clean state-diagram with connected/disconnected/internet_left/credit_left
+            and write who should do what when...
         - Cours::Modify::change_name - if exams present, copy them over!
         - AdminBackup
             - faire un lien pour télécharger et un lien pour mettre
