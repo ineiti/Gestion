@@ -76,6 +76,7 @@ class ConfigBase < Entity
   def send_config
     save_block_to_object :captive, Network::Captive
     Network::Captive.clean_config
+    ConfigBase.has_function?(:internet_captive) and Network::Captive.setup
     save_block_to_object :operator, Network::Operator
     Network::Operator.clean_config
   end

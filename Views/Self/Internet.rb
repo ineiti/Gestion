@@ -5,7 +5,7 @@ class SelfInternet < View
     set_data_class :Persons
     @order = 10
     @update = true
-    @auto_update_async = 10
+    @auto_update_async = 5
     @auto_update_send_values = false
     @functions_need = [:internet, :internet_captive]
     @functions_reject = [:internet_simple]

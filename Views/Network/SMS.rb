@@ -41,6 +41,11 @@ class NetworkSMS < View
   end
 
   def rpc_update(session)
+    cl, il = if $SMScontrol.operator_missing?
+               [-1, -1]
+             else
+               [$SMScontrol.operator.credit_left, $SMScontrol.operator.internet_left]
+             end
     emails = System.exists?('postqueue') ?
         System.run_str('postqueue -p | tail -n 1') : 'n/a'
     vpns = System.exists?('systemctl') ?
@@ -51,8 +56,8 @@ class NetworkSMS < View
     operator = $SMScontrol.operator ? $SMScontrol.operator.name : ''
     reply(:update,
           :state_now => $SMScontrol.state_now, :state_goal => $SMScontrol.state_goal,
-          :credit => $SMScontrol.operator.credit_left,
-          :promotion => $SMScontrol.operator.internet_left,
+          :credit => cl,
+          :promotion => il,
           :emails => emails, :vpn => vpns,
           :sms_received => SMSs.last(5).reverse.collect { |sms|
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
