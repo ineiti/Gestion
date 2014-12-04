@@ -58,8 +58,8 @@ class NetworkSMS < View
     reply(:update,
           :state_now => $SMScontrol.state_now, :state_goal => $SMScontrol.state_goal,
           :credit => cl,
-          :promotion => il,
-          :promotion_left => Recharge.left_today(il),
+          :promotion => il.separator,
+          :promotion_left => Recharge.left_today(il).separator,
           :emails => emails, :vpn => vpns,
           :sms_received => SMSs.last(5).reverse.collect { |sms|
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"

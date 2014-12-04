@@ -165,11 +165,9 @@ class SelfInternet < View
         reply(:update, :users_connected =>
             "#{users.count}: #{users_str}")
     if Internet.operator && Internet.operator.has_promo
-      left = Internet.operator.internet_left.to_s.tap do |s|
-        :go while s.gsub!(/^([^.]*)(\d)(?=(\d{3})+)/, "\\1\\2 ")
-      end
-      ret += reply(:update, :bytes_left => left) +
-          reply(:update, bytes_left: Recharge.left_today(left))
+      left = Internet.operator.internet_left
+      ret += reply(:update, :bytes_left => left.to_MB('Mo')) +
+          reply(:update, bytes_left_today: Recharge.left_today(left).to_MB('Mo'))
     end
     o = session.owner
     ret += reply(:update, auto_connection:
