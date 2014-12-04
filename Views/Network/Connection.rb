@@ -4,7 +4,7 @@ class NetworkConnection < View
     #@visible = false
     @order = 100
     @update = true
-    @functions_need = [:internet]
+    @functions_need = [:network]
 
     gui_vbox do
       gui_hbox :nogroup do

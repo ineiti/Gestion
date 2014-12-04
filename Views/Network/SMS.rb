@@ -19,6 +19,7 @@ class NetworkSMS < View
           show_str_ro :operator
           show_int_ro :credit
           show_int_ro :promotion
+          show_int_ro :promotion_left
           show_str_ro :emails
           show_str_ro :vpn
           show_button :connect, :disconnect, :recharge, :reload
@@ -58,6 +59,7 @@ class NetworkSMS < View
           :state_now => $SMScontrol.state_now, :state_goal => $SMScontrol.state_goal,
           :credit => cl,
           :promotion => il,
+          :promotion_left => Recharge.left_today(il),
           :emails => emails, :vpn => vpns,
           :sms_received => SMSs.last(5).reverse.collect { |sms|
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
@@ -106,13 +108,13 @@ class NetworkSMS < View
     rpc_update(session)
   end
 
-  def rpc_button_recharge( session, data )
+  def rpc_button_recharge(session, data)
     $SMScontrol.recharge_hold = false
     $SMScontrol.recharge_all
     rpc_update(session)
   end
 
-  def rpc_button_reload( session, data )
+  def rpc_button_reload(session, data)
     rpc_update(session)
   end
 end

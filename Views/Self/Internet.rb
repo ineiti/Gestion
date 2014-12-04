@@ -15,6 +15,7 @@ class SelfInternet < View
       show_int_ro :internet_credit
       show_int_ro :users_connected
       show_int_ro :bytes_left
+      show_int_ro :bytes_left_today
       show_html :connection, :width => 100
       show_html :auto_connection
       show_button :connect, :disconnect
@@ -128,6 +129,7 @@ class SelfInternet < View
     promo = (Internet.operator && Internet.operator.has_promo) ? :unhide : :hide
     dputs(3) { "promo is #{promo}: #{Internet.operator} - #{Internet.operator.has_promo.inspect}" }
     reply(promo, :bytes_left) +
+        reply(promo, :bytes_left_today) +
         reply(:unhide, :connection_status)
   end
 
@@ -166,7 +168,8 @@ class SelfInternet < View
       left = Internet.operator.internet_left.to_s.tap do |s|
         :go while s.gsub!(/^([^.]*)(\d)(?=(\d{3})+)/, "\\1\\2 ")
       end
-      ret += reply(:update, :bytes_left => left)
+      ret += reply(:update, :bytes_left => left) +
+          reply(:update, bytes_left: Recharge.left_today(left))
     end
     o = session.owner
     ret += reply(:update, auto_connection:
