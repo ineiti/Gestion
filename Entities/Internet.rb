@@ -25,7 +25,6 @@ module Internet
   end
 
   def update(operation, dev)
-    dp "#{operation} - #{dev}"
     return unless dev
     case operation
       when /del/

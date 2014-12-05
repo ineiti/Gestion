@@ -3,15 +3,13 @@
 WORKING:
 
 BUGS:
-        - Welcome::connect - don't disconnect if already connected
-        - Self::Internet - update graphic to show wish of user
         - CSV-load: if no .csv-file is there, check if there is one in backup/*
         - problem with sms not received when *342*2#
         - When changing account-name in Compta::Edit, it isn't changed in
             Person::accounts -> change Person::accounts to real account
         - Courses::Grades can have more than the necessary files
 
-        - Transferring data to server: it seems like ALL random-ids are transferred
+        - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
@@ -249,6 +247,8 @@ To check:
 
 
 ** FIXED **:
+        - B 141203: Self::Internet - update graphic to show wish of user
+        - B 141203: Welcome::connect - don't disconnect if already connected
         - B 141202: 2h - sometimes Self::Internet doesn't show bytes left
         - B 141201: Person::Modify - gender doesn't work
         - B 141201: /dev/ttyUSB3 not recognized anymore as error

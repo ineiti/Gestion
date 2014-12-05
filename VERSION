@@ -1,7 +1,11 @@
 Important notices for versions:
 
+- 141204: 1.8.4
+  - better handling of lots of the Airtel-implementation
+
 - 141126: 1.8.3
   - first more or less usable Airtel-implementation
+  - fixed QooxView::Storages::CSV - again
 
 - 141113: 1.8.2
   - much better integration of serialmodems
