@@ -19,6 +19,7 @@ class TC_Course < Test::Unit::TestCase
     ConfigBase.server_url = 'http://localhost:3302/icc'
     ConfigBase.block_size = 8192
     ConfigBase.label_url = 'http://localhost:3302/label'
+    ConfigBases.init
 
     @admin = Entities.Persons.create(:login_name => 'admin', :password => 'super123',
                                      :permissions => %w(default teacher), :first_name => 'Admin', :family_name => 'The')
@@ -120,6 +121,7 @@ class TC_Course < Test::Unit::TestCase
     Entities.save_all
     Entities.delete_all_data( true )
     Entities.load_all
+    ConfigBases.init
     dp Courses.search_all_.inspect
     courses_admin2 = Courses.search_by_students('^admin2$')
     assert_equal 1, courses_admin2.length
@@ -143,13 +145,13 @@ class TC_Course < Test::Unit::TestCase
     assert_equal %w( start end sign duration teacher responsible description contents ),
                  @net.export_check
 
-    @net.start = "01.02.03"
-    @net.end = "04.05.03"
-    @net.sign = "04.06.03"
+    @net.start = '01.02.03'
+    @net.end = '04.05.03'
+    @net.sign = '04.06.03'
     @net.duration = 72
     @net.teacher = @admin
     @net.responsible = @secretaire
-    @net.description = "Cours de base"
+    @net.description = 'Cours de base'
     @net.contents = "Word\nExcel\nLinux"
 
     assert_nil @net.export_check
@@ -162,7 +164,7 @@ class TC_Course < Test::Unit::TestCase
     Entities.Grades.save_data({:student => @admin,
                                :course => @net, :means => [11]})
     Entities.Grades.save_data({:student => @surf,
-                               :course => @net, :means => [9], :remark => "http://ndjair.net"})
+                               :course => @net, :means => [9], :remark => 'http://ndjair.net'})
 
     assert_equal COURSE_STR, @net.export_diploma
   end
@@ -171,7 +173,7 @@ class TC_Course < Test::Unit::TestCase
     # TODO:
     # As soon as value_entity are known to work OK, one has to replace
     # Course.teacher and Course.responsible with value_entity_person
-    course = Courses.from_diploma("net_1001", COURSE_STR)
+    course = Courses.from_diploma('net_1001', COURSE_STR)
     @grade_admin = Entities.Grades.match_by_course_person(@net, @admin)
     assert_not_nil @grade_admin
     assert_equal 10, @grade_admin.mean
@@ -181,53 +183,53 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_print_presence
-    assert_equal "/tmp/0-presence_sheet_small.pdf", @maint.print_presence
+    assert_equal '/tmp/0-presence_sheet_small.pdf', @maint.print_presence
   end
 
   def test_person_courses
     courses = Entities.Courses.list_courses_for_person(@admin)
-    assert_equal [[@maint.id, "maint_1204"]], courses
+    assert_equal [[@maint.id, 'maint_1204']], courses
 
     courses = Entities.Courses.list_courses_for_person(@admin.login_name)
-    assert_equal [[@maint.id, "maint_1204"]], courses
+    assert_equal [[@maint.id, 'maint_1204']], courses
   end
 
   def test_new_course
-    nmaint = Courses.create_ctype(@maint_t, "1201")
-    assert_equal({:duration => 72, :course_id => 6, :contents => "lots of work",
-                  :students => [], :name => "maint_1201", :ctype => [1],
+    nmaint = Courses.create_ctype(@maint_t, '1201')
+    assert_equal({:duration => 72, :course_id => 6, :contents => 'lots of work',
+                  :students => [], :name => 'maint_1201', :ctype => [1],
                   :salary_teacher => nil, :cost_student => nil},
                  nmaint.to_hash)
 
-    nmaint2 = Courses.create_ctype(@maint_t, "1201")
-    assert_equal "maint_1201-2", nmaint2.name
+    nmaint2 = Courses.create_ctype(@maint_t, '1201')
+    assert_equal 'maint_1201-2', nmaint2.name
 
     ConfigBase.add_function(:course_server)
-    it_101 = Courses.create_ctype(@it_101_t, "1202", @surf)
+    it_101 = Courses.create_ctype(@it_101_t, '1202', @surf)
     assert_equal({:ctype => [2],
                   :course_id => 8,
                   :students => [],
-                  :name => "it-101_1202",
-                  :contents => "it-101",
-                  :description => "windows, word, excel",
+                  :name => 'it-101_1202',
+                  :contents => 'it-101',
+                  :description => 'windows, word, excel',
                   :salary_teacher => nil, :cost_student => nil}, it_101.to_hash)
 
-    it_101 = Courses.create_ctype(@it_101_t, "1202", @center)
+    it_101 = Courses.create_ctype(@it_101_t, '1202', @center)
     assert_equal({:ctype => [2],
                   :course_id => 9,
                   :students => [],
                   :center => [@center.id],
-                  :name => "foo_it-101_1202",
-                  :contents => "it-101",
-                  :description => "windows, word, excel",
+                  :name => 'foo_it-101_1202',
+                  :contents => 'it-101',
+                  :description => 'windows, word, excel',
                   :salary_teacher => nil, :cost_student => nil}, it_101.to_hash)
   end
 
   def test_create_account
     ConfigBase.add_function :accounting_courses
-    nmaint = Courses.create_ctype(@maint_t, "1201")
+    nmaint = Courses.create_ctype(@maint_t, '1201')
 
-    assert_equal "Root::Income::Courses::maint_1201", nmaint.entries.get_path
+    assert_equal 'Root::Income::Courses::maint_1201', nmaint.entries.get_path
   end
 
   def test_prepare_diplomas
@@ -252,7 +254,7 @@ class TC_Course < Test::Unit::TestCase
 
     @grade0 = Grades.save_data({:student => @secretaire,
                                 :course => @maint_2, :means => [11]})
-    @secretaire.role_diploma = "Director"
+    @secretaire.role_diploma = 'Director'
     assert @secretaire, @maint_2.teacher.inspect
     @maint_2.prepare_diplomas(false)
     @maint_2.thread.join
@@ -275,7 +277,7 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.prepare_diplomas
 
     while Dir.glob("#{@maint_2.dir_diplomas}/*").count < 3 do
-      dputs(1) { "Waiting for diplomas" }
+      dputs(1) { 'Waiting for diplomas' }
       sleep 1
     end
   end
@@ -283,43 +285,44 @@ class TC_Course < Test::Unit::TestCase
   def test_migration_2
     Entities.delete_all_data()
 
-    dputs(1) { "Resetting SQLite" }
+    dputs(1) { 'Resetting SQLite' }
     SQLite.dbs_close_all
-    FileUtils.cp("db.testGestion", "data/compta.db")
+    FileUtils.cp('db.testGestion', 'data/compta.db')
     SQLite.dbs_open_load_migrate
+    ConfigBases.init
 
-    @admin = Entities.Persons.create(:login_name => "admin", :password => "super123",
-                                     :permissions => ["default", "teacher"], :first_name => "Admin", :family_name => "The")
-    @linus = Entities.Persons.create(:login_name => "linus", :password => "super123",
-                                     :permissions => ["default", "teacher"], :first_name => "Linus", :family_name => "Torvalds")
-    @maint = Entities.Courses.create(:name => "maint_1204", :start => "19.01.2012", :end => "18.02.2012",
+    @admin = Entities.Persons.create(:login_name => 'admin', :password => 'super123',
+                                     :permissions => %w(default teacher), :first_name => 'Admin', :family_name => 'The')
+    @linus = Entities.Persons.create(:login_name => 'linus', :password => 'super123',
+                                     :permissions => %w(default teacher), :first_name => 'Linus', :family_name => 'Torvalds')
+    @maint = Entities.Courses.create(:name => 'maint_1204', :start => '19.01.2012', :end => '18.02.2012',
                                      :teacher => @admin, :assistant => 0,
                                      :responsible => @linus)
-    @maint2 = Entities.Courses.create(:name => "maint_1208", :start => "19.01.2012", :end => "18.02.2012",
+    @maint2 = Entities.Courses.create(:name => 'maint_1208', :start => '19.01.2012', :end => '18.02.2012',
                                       :teacher => @admin, :assistant => @linus,
                                       :responsible => @linus)
 
     dputs(1) { "Courses are #{Courses.search_all.inspect}" }
-    RPCQooxdooService.migrate("Entities.Courses")
+    RPCQooxdooService.migrate('Entities.Courses')
     dputs(1) { "Courses are #{Courses.search_all.inspect}" }
 
-    @maint = Courses.match_by_name("maint_1204")
+    @maint = Courses.match_by_name('maint_1204')
     assert_equal @admin, @maint.teacher
     assert_equal nil, @maint.assistant
     assert_equal @linus, @maint.responsible
 
-    @maint2 = Courses.match_by_name("maint_1208")
+    @maint2 = Courses.match_by_name('maint_1208')
     assert_equal @admin, @maint2.teacher
     assert_equal @linus, @maint2.assistant
     assert_equal @linus, @maint2.responsible
   end
 
   def test_spaces
-    @ct = CourseTypes.create(:name => "base arabe 1")
-    assert_equal "base_arabe_1", @ct.name
+    @ct = CourseTypes.create(:name => 'base arabe 1')
+    assert_equal 'base_arabe_1', @ct.name
 
-    @c1 = Courses.create(:name => "base_arabe 1201", :ctype => @ct)
-    assert_equal "base_arabe_1201", @c1.name
+    @c1 = Courses.create(:name => 'base_arabe 1201', :ctype => @ct)
+    assert_equal 'base_arabe_1201', @c1.name
   end
 
   def test_duration_adds
@@ -362,7 +365,7 @@ class TC_Course < Test::Unit::TestCase
     Zip::File.open(file_exa_tmp) { |z|
       %w( admin surf ).each { |s|
         p = "exa-#{@maint_2.name}/#{s}"
-        z.file.open("#{p}/first.doc", "w") { |f| f.puts 'Hello world' }
+        z.file.open("#{p}/first.doc", 'w') { |f| f.puts 'Hello world' }
       }
     }
 
@@ -851,30 +854,30 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_list_students
-    assert_equal [["admin2", "Admin The - admin2:super123"],
-                  ["surf", "Internet Surfer - surf:super"]], @base.list_students
-    assert_equal [[2, "Admin The - admin2:super123"],
-                  [4, "Internet Surfer - surf:super"]], @base.list_students(true)
+    assert_equal [['admin2', 'Admin The - admin2:super123'],
+                  ['surf', 'Internet Surfer - surf:super']], @base.list_students
+    assert_equal [[2, 'Admin The - admin2:super123'],
+                  [4, 'Internet Surfer - surf:super']], @base.list_students(true)
   end
 
   def test_report_pdf
     ConfigBase.add_function(:accounting_courses)
     assert @secretaire.account_due
 
-    ctype = CourseTypes.create(:name => "base",
-                               :account_base => Accounts.create_path("Root::Income::Courses"))
-    course = Courses.create_ctype(ctype, "1404")
+    ctype = CourseTypes.create(:name => 'base',
+                               :account_base => Accounts.create_path('Root::Income::Courses'))
+    course = Courses.create_ctype(ctype, '1404')
     course.teacher = @admin
     course.cost_student = 50000
-    stu1 = Persons.create(:login_name => "stu1", :first_name => "Student 1")
-    stu2 = Persons.create(:login_name => "stu2", :first_name => "Student 2")
-    course.students = ["stu1", "stu2"]
+    stu1 = Persons.create(:login_name => 'stu1', :first_name => 'Student 1')
+    stu2 = Persons.create(:login_name => 'stu2', :first_name => 'Student 2')
+    course.students = %w(stu1 stu2)
     assert course.entries
 
     date = Date.new(2014, 4, 10)
-    Movements.create("For student stu1:", date - 1, 10, course.entries, @secretaire.account_due)
-    Movements.create("For student stu2:", date, 20.1, course.entries, @secretaire.account_due)
-    Movements.create("For student stu1:", date - 2, 30, course.entries, @secretaire.account_due)
+    Movements.create('For student stu1:', date - 1, 10, course.entries, @secretaire.account_due)
+    Movements.create('For student stu2:', date, 20.1, course.entries, @secretaire.account_due)
+    Movements.create('For student stu1:', date - 2, 30, course.entries, @secretaire.account_due)
 
     file = course.report_pdf
 
@@ -883,7 +886,7 @@ class TC_Course < Test::Unit::TestCase
 
   def test_payment
     ConfigBase.add_function(:accounting_courses)
-    course = Courses.create_ctype(@maint_t, "1312")
+    course = Courses.create_ctype(@maint_t, '1312')
     assert_equal 0, @secretaire.account_due.total
 
     course.payment(@secretaire, @surf, 10000, Date.today)
@@ -895,8 +898,8 @@ class TC_Course < Test::Unit::TestCase
 
   def test_report_list_archive
     ConfigBase.add_function(:accounting_courses)
-    @course_acc = Courses.create_ctype(@maint_t, "1312")
-    @course_acc.students = ["surf"]
+    @course_acc = Courses.create_ctype(@maint_t, '1312')
+    @course_acc.students = ['surf']
 
     @course_acc.payment(@secretaire, @surf, 10000, Date.new(2013))
     @course_acc.payment(@secretaire, @surf, 10000, Date.new(2014))
@@ -914,39 +917,39 @@ class TC_Course < Test::Unit::TestCase
 
   def test_transfer_student
     ConfigBase.add_function(:accounting_courses)
-    @course_acc = Courses.create_ctype(@maint_t, "1312")
-    @course_acc2 = Courses.create_ctype(@maint_t, "1401")
-    @course_acc.students = ["surf"]
+    @course_acc = Courses.create_ctype(@maint_t, '1312')
+    @course_acc2 = Courses.create_ctype(@maint_t, '1401')
+    @course_acc.students = ['surf']
 
     @course_acc.payment(@secretaire, @surf, 10000, Date.new(2014, 1))
 
     assert_equal 10, @secretaire.account_due.total
     assert_equal 10, @course_acc.entries.total
-    @course_acc.transfer_student("surfs", @course_acc2)
+    @course_acc.transfer_student('surfs', @course_acc2)
     assert_equal 10, @course_acc.entries.total
-    @course_acc.transfer_student("surf", @course_acc2)
-    assert(!@course_acc.students.index("surf"))
-    assert(@course_acc2.students.index("surf"))
+    @course_acc.transfer_student('surf', @course_acc2)
+    assert(!@course_acc.students.index('surf'))
+    assert(@course_acc2.students.index('surf'))
     assert_equal 0, @course_acc.entries.total
     assert_equal 10, @course_acc2.entries.total
     assert_equal 0, @course_acc.entries.movements.size
     assert_equal 1, @course_acc2.entries.movements.size
 
-    Accounts.find_by_path("Root::Income::Courses").dump_rec(true)
+    Accounts.find_by_path('Root::Income::Courses').dump_rec(true)
 
     @accountant.get_all_due(@secretaire)
     @course_acc2.payment(@secretaire, @surf, 10000, Date.new(2014, 1, 2))
-    @course_acc2.transfer_student("surf", @course_acc)
+    @course_acc2.transfer_student('surf', @course_acc)
     assert_equal 20, @course_acc.entries.total
     assert_equal 0, @course_acc2.entries.total
     assert_equal 2, @course_acc.entries.movements.size
     assert_equal 2, @course_acc2.entries.movements.size
 
-    Accounts.find_by_path("Root::Income::Courses").dump_rec(true)
+    Accounts.find_by_path('Root::Income::Courses').dump_rec(true)
 
-    @course_acc2.students = ["surf"]
+    @course_acc2.students = ['surf']
     @course_acc2.payment(@secretaire, @surf, 10000, Date.new(2014, 1, 2))
-    @course_acc2.transfer_student("surf", @course_acc)
+    @course_acc2.transfer_student('surf', @course_acc)
     assert_equal 1, @course_acc2.students.size
     assert_equal 10, @course_acc2.entries.total
     assert_equal 1, @course_acc.students.size

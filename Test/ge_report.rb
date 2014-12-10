@@ -9,6 +9,8 @@ class TC_Report < Test::Unit::TestCase
     FileUtils.cp("db.testGestion", "data/compta.db")
     SQLite.dbs_open_load_migrate
 
+    ConfigBases.init
+
     ConfigBase.add_function(:accounting_courses)
 
     @secretary = Entities.Persons.create(:login_name => "secretary", :password => "super",

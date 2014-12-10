@@ -34,8 +34,8 @@ permissions_init
 QooxView.init( '../Entities', '../Views' )
 
 tests = Dir.glob( 'ge_*.rb' )
-#tests = %w( sms )
-#tests = %w( internet )
+#tests = %w( activity )
+#tests = %w( course )
 #tests = %w( configbase )
 tests.each{|t|
   begin

@@ -28,4 +28,3 @@ Accounting:
   lending: Root::Lending
   cash: Root::Cash
   service: Root::Income::Internet
-  course: Root::Income::IT-Courses

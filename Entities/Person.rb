@@ -45,10 +45,15 @@ class Persons < Entities
     value_str :school_grade
 
     value_block :admin
-    value_str :account_name_due
-    value_str :account_name_cash
+    #value_str :account_name_due
+    #value_str :account_name_cash
     value_str :role_diploma
     value_list :permissions, 'Permission.list.sort'
+
+    value_block :accounts
+    value_entity_account :account_due
+    value_entity_account :account_due_paid
+    value_entity_account :account_cash
 
     value_block :internet
     value_list :groups, '%w( freesurf sudo print localonly share ).sort'
@@ -87,9 +92,52 @@ class Persons < Entities
     @resps = []
   end
 
+  def migration_1(p)
+    if p.person_id == 0
+      dputs(0) { 'Error: Oups, found person with id 0 - trying to change this' }
+      p.person_id = Persons.new_id[:person_id]
+      dputs(2) { "Putting person-id to #{p.person_id}" }
+    end
+  end
+
+  def migration_2_raw(p)
+    dputs(2) { "p is #{p.class}" }
+    p._internet_credit = p._credit
+    p._account_total_due = p._credit_due
+    p._account_name_due = p._account_due
+  end
+
+  def migration_3(p)
+    if p.permissions.class != Array
+      p.permissions = []
+    end
+  end
+
+  def migration_4(p)
+    p.gender = %w( n/a )
+  end
+
+  def fetch_account(r, a)
+    Accounts.get_by_path("#{r}::#{a}")
+  end
+
+  def migration_5_raw(d)
+    #dp d.inspect
+    if d._account_name_due
+      r = get_config('Root::Lending', :Accounting, :lending)
+      d._account_due = fetch_account(r, d._account_name_due).id
+      d._account_due_paid = fetch_account(r, "#{d._account_name_due}::Paid").id
+    end
+    if d._account_name_cash
+      r = get_config('Root::Cash', :Accounting, :cash)
+      d._account_cash = fetch_account(r, d._account_name_cash).id
+    end
+    #dp d.inspect
+  end
+
   # Searches for an empty name starting with "login", adding 2, 3, 4, ...
   def find_empty_login_name(login)
-    suffix = ""
+    suffix = ''
     login = accents_replace(login)
     while match_by_login_name(login + suffix.to_s)
       dputs(2) { "Found #{login + suffix.to_s} to already exist" }
@@ -101,20 +149,20 @@ class Persons < Entities
 
   def create_first_family(fullname)
     # Trying to be intelligent about splitting up of names
-    if fullname.split(" ").length > 1
+    if fullname.split(' ').length > 1
       names = fullname.split(' ')
       s = names.length < 4 ? 0 : 1
-      first = names[0..s].join(" ")
-      family = names[(s+1)..-1].join(" ")
+      first = names[0..s].join(' ')
+      family = names[(s+1)..-1].join(' ')
       dputs(2) { "Creating user #{names.inspect} as #{first} - #{family}" }
       [first, family]
     else
-      [fullname, ""]
+      [fullname, '']
     end
   end
 
   def accents_replace(login)
-    login = login.downcase.gsub(/ /, "_")
+    login = login.downcase.gsub(/ /, '_')
     accents = Hash[*%w( a àáâä e éèêë i ìíîï o òóôöœ u ùúûü c ç ss ß )]
     dputs(2) { "Login was #{login}" }
     accents.each { |k, v|
@@ -130,12 +178,12 @@ class Persons < Entities
   # "ltorvalds")
   # if "family" is empty, it tries to generate some sensible values for "first" and
   # "family" by itself
-  def create_login_name(first, family = "")
+  def create_login_name(first, family = '')
     if family.length == 0
       first, family = create_first_family(first)
     end
     if family.length > 0
-      dputs(2) { "Family name + First name" }
+      dputs(2) { 'Family name + First name' }
       login = family.chars.first + first.split.first
     else
       login = first.split.first
@@ -174,7 +222,7 @@ class Persons < Entities
 
     person = super(d, true)
 
-    person.password_plain = d.has_key?(:password) ? d[:password] : rand(10000).to_s.rjust(4, "0")
+    person.password_plain = d.has_key?(:password) ? d[:password] : rand(10000).to_s.rjust(4, '0')
     person.password = person.password_plain
 
     if defined? @cmd_after_new
@@ -192,10 +240,10 @@ class Persons < Entities
   def create_person(full_name, creator = nil, login_prop = nil)
     new_data = {:login_name => login_prop,
                 :complete_name => full_name}
-    perms = ["internet"]
-    if creator and creator.permissions.index("center")
+    perms = ['internet']
+    if creator and creator.permissions.index('center')
       new_data.merge!({:login_name_prefix => "#{creator.login_name}_"})
-      perms.push("teacher")
+      perms.push('teacher')
     end
     Persons.create(new_data.merge(:permissions => perms))
   end
@@ -235,20 +283,20 @@ class Persons < Entities
   end
 
   def list_teachers
-    get_login_with_permission("teacher").sort
+    get_login_with_permission('teacher').sort
   end
 
   def list_assistants
-    get_login_with_permission("assistant").sort
+    get_login_with_permission('assistant').sort
   end
 
   def list_students
-    get_login_with_permission("student").sort
+    get_login_with_permission('student').sort
   end
 
   def listp_account_due
-    search_by_account_name_due(".+").select { |p|
-      p.account_due and p.login_name != "admin"
+    search_by_account_due('.+').select { |p|
+      p.account_due and p.login_name != 'admin'
     }.collect { |p|
       dputs(4) { "p is #{p.full_name}" }
       dputs(4) { "account is #{p.account_due.get_path}" }
@@ -268,7 +316,7 @@ class Persons < Entities
     dputs(3) { "d is #{d.inspect}" }
 
     if !d[:first_name] and !d[:person_id]
-      return {:first_name => "user"}
+      return {:first_name => 'user'}
     end
 
     [:first_name, :family_name].each { |n|
@@ -300,7 +348,7 @@ class Persons < Entities
         fn = "#{data[k][:first_name]} #{data[k][:family_name]}"
         dputs(2) { "Searching in #{fn}" }
         if fn =~ /#{name}/i
-          dputs(2) { "Found it" }
+          dputs(2) { 'Found it' }
           return get_data_instance(k)
         end
       end
@@ -309,7 +357,7 @@ class Persons < Entities
   end
 
   def find_name_or_create(name)
-    first, last = name.split(" ", 2)
+    first, last = name.split(' ', 2)
     find_full_name(name) or
         create(:first_name => first, :family_name => last)
   end
@@ -329,31 +377,6 @@ class Persons < Entities
     list.collect { |p|
       [p.person_id, p.full_name]
     }
-  end
-
-  def migration_1(p)
-    if p.person_id == 0
-      dputs(0) { "Error: Oups, found person with id 0 - trying to change this" }
-      p.person_id = Persons.new_id[:person_id]
-      dputs(2) { "Putting person-id to #{p.person_id}" }
-    end
-  end
-
-  def migration_2_raw(p)
-    dputs(2) { "p is #{p.class}" }
-    p._internet_credit = p._credit
-    p._account_total_due = p._credit_due
-    p._account_name_due = p._account_due
-  end
-
-  def migration_3(p)
-    if p.permissions.class != Array
-      p.permissions = []
-    end
-  end
-
-  def migration_4(p)
-    p.gender = %w( n/a )
   end
 
   def self.responsibles_raw
@@ -403,7 +426,7 @@ class Persons < Entities
 
   def create_add_course(student, owner, course, check_double = false)
     prefix = ConfigBase.has_function?(:course_server) ?
-        "#{owner.login_name}_" : ""
+        "#{owner.login_name}_" : ''
     login_name = Persons.create_login_name(student)
     if not (person = Persons.match_by_login_name(prefix + student))
       if check_double and
@@ -517,15 +540,10 @@ end
 #
 
 class Person < Entity
-  attr_accessor :account_due, :account_due_paid,
-                :account_cash, :account_service
-
   def setup_instance
     dputs(3) { "Data is #{@proxy.data[@id].inspect}" }
 
     self.internet_credit = internet_credit.to_i
-    @account_service = @account_due = @account_cash = nil
-
     update_accounts
   end
 
@@ -534,54 +552,46 @@ class Person < Entity
     internet_credit = internet_credit
     internet_credit = 0 if not internet_credit
     self.account_total_due = internet_credit
-    @account_due = nil
+    account_due = nil
+  end
+
+  def update_accounts
+    update_account_cash
+    update_account_due
   end
 
   def update_account_due
     if can_view :FlagAddInternet and login_name != 'admin'
       dputs(3) { "Adding account_due to -#{login_name.inspect}-" }
-      #acc = data_get( :account_name_due )
-      acc = account_name_due
-      if acc.to_s.length == 0
-        if login_name.to_s == ""
-          dputs(0) { "Error: account_name_due empty and no login_name #{self.inspect}" }
-          return
-        end
-        acc = (full_name || login_name).capitalize
-        self.account_name_due = acc
+      if login_name.to_s == ''
+        dputs(0) { "Error: account_name_due empty and no login_name #{self.inspect}" }
+        return
       end
-      lending = "#{get_config('Root::Lending', :Accounting, :lending)}::#{acc}"
-      service = get_config('Root::Income::Services', :Accounting, :service)
+      acc = (full_name || login_name).capitalize
+      lending = "#{ConfigBase.account_lending.get_path}::#{acc}"
+      service = ConfigBase.account_services.get_path
       dputs(2) { "Searching accounts for #{full_name} with "+
           "lending: #{lending} - service: #{service}" }
-      @account_due = Accounts.get_by_path_or_create(lending,
-                                                    acc, false, -1, true)
-      @account_due_paid = Accounts.get_by_path_or_create("#{lending}::Paid",
-                                                         acc, false, -1, true)
-      @account_service = Accounts.get_by_path_or_create(service,
-                                                        acc, false, 1, false)
+      self.account_due = Accounts.get_by_path_or_create(lending,
+                                                        acc, false, -1, true)
+      self.account_due_paid = Accounts.get_by_path_or_create("#{lending}::Paid",
+                                                             acc, false, -1, true)
     end
   end
 
   def update_account_cash
-    if can_view :FlagAccounting and login_name != "admin"
-      #acc = data_get( :account_name_cash )
-      acc = account_name_cash
-      if acc.to_s.length == 0
-        acc = (first_name || login_name).capitalize
-        #data_set( :account_name_cash, acc )
-        self.account_name_cash = acc
-      end
+    if can_view :FlagAccounting and login_name != 'admin'
+      acc = (first_name || login_name).capitalize
       dputs(3) { "Getting cash account #{acc}" }
-      cc = "#{get_config('Root::Cash', :Accounting, :cash)}::#{acc}"
-      @account_cash = Accounts.get_by_path_or_create(cc, cc, false, -1, true)
-      dputs(3) { "Account is #{@account_cash.inspect}" }
+      cc = "#{ConfigBase.account_cash.get_path}::#{acc}"
+      self.account_cash = Accounts.get_by_path_or_create(cc, cc, false, -1, true)
+      dputs(3) { "Account is #{account_cash.inspect}" }
     end
   end
 
   def total_cash
-    if @account_cash
-      (@account_cash.total.to_f * 1000).to_i
+    if account_cash
+      (account_cash.total.to_f * 1000).to_i
     else
       0
     end
@@ -601,10 +611,6 @@ class Person < Entity
     end
     ret = super(field, value)
     case field.to_s
-      when /account_name_due/
-        update_account_due
-      when /account_name_cash/
-        update_account_cash
       when /permissions/
         # They will check for themself
         update_account_cash
@@ -620,11 +626,6 @@ class Person < Entity
     update_smb_passwd
   end
 
-  def update_accounts
-    update_account_cash
-    update_account_due
-  end
-
   def permissions=(p)
     has_teacher = self._permissions and self._permissions.concat(p).index('teacher')
     dputs(3) { "#{self.login_name}: has_teacher is #{has_teacher} - permissions are #{p.inspect}" }
@@ -632,7 +633,7 @@ class Person < Entity
     self._permissions = p.uniq
     if has_teacher
       if Permission.can_view(p.reject { |perm|
-        perm.to_s == 'admin' }, 'FlagResponsible')
+                                                                                perm.to_s == 'admin' }, 'FlagResponsible')
         Persons.responsibles_add(self)
       else
         Persons.responsibles_del(self)
@@ -674,16 +675,6 @@ class Person < Entity
     update_local_passwd(password)
   end
 
-  def account_name_due=(a)
-    self._account_name_due = a
-    update_account_due
-  end
-
-  def account_name_cash=(a)
-    self._account_name_cash = a
-    update_account_cash
-  end
-
   def add_user_account
     if not @proxy.has_storage? :LDAP
       if Persons.admin_users
@@ -697,7 +688,7 @@ class Person < Entity
   end
 
   def update_smb_passwd(pass = password)
-    if ConfigBase.has_function?(:share) and (groups and groups.index("share"))
+    if ConfigBase.has_function?(:share) and (groups and groups.index('share'))
       add_user_account
       log_msg :person, "Changing password in Samba to #{pass}"
       dputs(3) { "( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name}" }
@@ -710,11 +701,10 @@ class Person < Entity
   #end
 
   def account_total_due
-    if @account_due
-      dputs(2) { "internet_credit is #{@account_due.total.inspect}" }
-      (@account_due.total.to_f * 1000.0 + 0.5).to_i
+    if account_due
+      dputs(2) { "internet_credit is #{account_due.total.inspect}" }
+      (account_due.total.to_f * 1000.0 + 0.5).to_i
     else
-      #data_get( :account_total_due, false, true )
       _account_total_due
     end
   end
@@ -728,19 +718,19 @@ class Person < Entity
     client.data_set_log(:_internet_credit, (client.internet_credit.to_i + internet_credit.to_i).to_s,
                         "#{self.person_id}:#{internet_credit}")
     pay_service(internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
-    log_msg("AddCash", "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
-        "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}")
-    log_msg("AddCash", "Total due: #{account_total_due}")
+    log_msg('AddCash', "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
+                         "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}")
+    log_msg('AddCash', "Total due: #{account_total_due}")
   end
 
   def pay_service(credit, msg, date = nil)
     self.account_total_due = 0
-    if @account_due
+    if account_due
       date = date ? Date.parse(date) : Date.today
 
-      Movements.create("#{msg}", date.strftime("%Y-%m-%d"),
-                       credit.to_i / 1000.0, @account_due, @account_service)
-      self.account_total_due = (@account_due.total.to_f * 1000.0 + 0.5).to_i
+      Movements.create("#{msg}", date.strftime('%Y-%m-%d'),
+                       credit.to_i / 1000.0, account_due, ConfigBase.account_services)
+      self.account_total_due = (account_due.total.to_f * 1000.0 + 0.5).to_i
     else
       #account_total_due = data_get( :account_total_due ).to_i + credit.to_i
       total = self.account_total_due.to_i + credit.to_i
@@ -751,7 +741,7 @@ class Person < Entity
   def check_pass(pass)
     if @proxy.has_storage? :LDAP
       # We have to try to bind to the LDAP
-      dputs(2) { "Trying LDAP" }
+      dputs(2) { 'Trying LDAP' }
       #return @proxy.storage[:LDAP].check_login( data_get(:login_name), pass )
       return @proxy.storage[:LDAP].check_login(login_name, pass)
     else
@@ -779,7 +769,7 @@ class Person < Entity
     end
     if (permissions and permissions.index('center')) or
         (groups and groups.index('share')) or
-        (not self.password_plain or self.password_plain == "" or
+        (not self.password_plain or self.password_plain == '' or
             self.password_plain == pass)
       self.password_plain = pass
     else
@@ -793,7 +783,7 @@ class Person < Entity
     first_name and ret.push first_name
     family_name and ret.push family_name
     ret.length == 0 and ret.push login_name
-    ret.join(" ")
+    ret.join(' ')
   end
 
   def full_login
@@ -881,20 +871,20 @@ class Person < Entity
       dputs(0) { "Error: #{person.login_name}::#{person.full_name} has no account_due" }
       return false
     end
-    if not @account_cash
+    if not account_cash
       dputs(0) { "Error: #{self.inspect} has no account_cash" }
       return false
     end
-    dputs(3) { "Transferring #{amount} from #{@account_cash.get_path} to " +
+    dputs(3) { "Transferring #{amount} from #{account_cash.get_path} to " +
         "#{person.account_due.get_path}"
     }
-    Movements.create("Transfert au comptable", Date.today,
-                     amount / 1000.0, @account_cash, person.account_due)
+    Movements.create('Transfert au comptable', Date.today,
+                     amount / 1000.0, account_cash, person.account_due)
     return true
   end
 
   def get_all_due(person, date = Date.today)
-    if person.account_due && @account_cash
+    if person.account_due && account_cash
       value = 0
       person.account_due.movements.each { |m|
         if m.date <= date
@@ -904,8 +894,8 @@ class Person < Entity
         end
       }
       dputs(3) { "Value is #{value}" }
-      Movements.create("Transfert au comptable", date,
-                       value, @account_cash, person.account_due_paid)
+      Movements.create('Transfert au comptable', date,
+                       value, account_cash, person.account_due_paid)
     end
   end
 
@@ -1052,7 +1042,7 @@ class Person < Entity
   def report_pdf(report, date = nil)
     file = "/tmp/cash_#{login_name}.pdf"
     Prawn::Document.generate(file,
-                             :page_size => "A4",
+                             :page_size => 'A4',
                              :page_layout => :portrait,
                              :bottom_margin => 2.cm) do |pdf|
 
@@ -1067,17 +1057,17 @@ class Person < Entity
       pdf.move_down 1.cm
 
       if movs.length > 0
-        header = [["Date", "Description", "Value", "Sum"].collect { |ch|
-          {:content => ch, :align => :center} }]
+        header = [['Date', 'Description', 'Value', 'Sum'].collect { |ch|
+                    {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-          [{:content => "#{m[0]}", :align => :center},
-           m[1],
-           {:content => "#{m[2]}", :align => :right},
-           {:content => "#{Account.total_form(
-               sum += m[2].gsub(',', '').to_f / 1000)}",
-            :align => :right}]
-        }, :header => true, :column_widths => [70, 300, 75, 75])
+             [{:content => "#{m[0]}", :align => :center},
+              m[1],
+              {:content => "#{m[2]}", :align => :right},
+              {:content => "#{Account.total_form(
+                  sum += m[2].gsub(',', '').to_f / 1000)}",
+               :align => :right}]
+           }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

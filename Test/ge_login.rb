@@ -19,6 +19,8 @@ class TC_Login < Test::Unit::TestCase
     FileUtils.cp( "db.testGestion", "data/compta.db" )
     SQLite.dbs_open_load_migrate
 
+    ConfigBases.init
+
     Entities.Persons.create( :first_name => "admin", :password => "super123", :permissions => [ "admin" ] )
     Entities.Persons.create( :first_name => "josue", :password => "super", :permissions => [ "secretary" ] )
     Entities.Persons.create( :first_name => "surf", :password => "super", :permissions => [ "internet" ] )

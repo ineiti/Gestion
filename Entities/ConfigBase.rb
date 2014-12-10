@@ -5,7 +5,6 @@ class ConfigBases < Entities
     value_int :max_upload_size
     value_str :server_url
     value_str :label_url
-    value_entity_account_all :account_activities, :drop, :path
     value_str :captive_dev
     value_str :network_actions
 
@@ -25,6 +24,12 @@ class ConfigBases < Entities
     value_str :allow_free
     value_str :phone_main
 
+    value_block :accounts
+    value_entity_account_all :account_activities, :drop, :path
+    value_entity_account_all :account_services, :drop, :path
+    value_entity_account_all :account_lending, :drop, :path
+    value_entity_account_all :account_cash, :drop, :path
+
     @@functions = %w( network share
     courses course_server course_client
     internet internet_simple internet_captive
@@ -40,6 +45,16 @@ class ConfigBases < Entities
                         :sms_control => [:sms_control_autocharge]
     }
     @@functions_conflict = [[:course_server, :course_client]]
+  end
+
+  def migration_5(c)
+    c.account_services = Accounts.get_by_path_or_create(
+        get_config('Root::Income::Services', :Accounting, :service))
+    c.account_lending = Accounts.get_by_path_or_create(
+        get_config('Root::Lending', :Accounting, :lending))
+    c.account_cash = Accounts.get_by_path_or_create(
+        get_config('Root::Cash', :Accounting, :cash))
+    #dp c
   end
 
   def migration_4(c)
@@ -64,6 +79,17 @@ class ConfigBases < Entities
 
   def migration_3(c)
     exit if c._functions.index('internet_libnet')
+  end
+
+  def delete_all(local_only = false)
+    super(local_only)
+    init
+  end
+
+  def init
+    ACQooxView.check_db
+    cb = ConfigBases.search_all_.first || ConfigBases.create(functions:[])
+    migration_5( cb )
   end
 end
 

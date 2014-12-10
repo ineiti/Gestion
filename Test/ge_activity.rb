@@ -8,6 +8,7 @@ class TC_Activity < Test::Unit::TestCase
     SQLite.dbs_close_all
     FileUtils.cp('db.testGestion', 'data/compta.db')
     SQLite.dbs_open_load_migrate
+    ConfigBases.init
 
     @library = Activities.create(name: 'library', cost: 3_000,
                                  payment_period: %w(yearly), start_type: %w(period_overlap),

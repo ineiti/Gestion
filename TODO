@@ -3,14 +3,7 @@
 WORKING:
 
 BUGS:
-        - CSV-load: if no .csv-file is there, check if there is one in backup/*
         - problem with sms not received when *342*2#
-        - When changing account-name in Compta::Edit, it isn't changed in
-            Person::accounts -> change Person::accounts to real account
-            - Entities::Person.account_service should be replaced by
-              ConfigBase.account_service
-        - Courses::Grades can have more than the necessary files
-
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
         - Get QooxView/Test/qv_gettext to run
@@ -31,32 +24,37 @@ UI:
          tabs can be added
 
 FEATURES:
-        - limit speed upon reaching threshold
-            - calculate threshold
+        - Person::Modify - Make a print-option:
+            - student-card, library-card, personnel-card
+        - Add Language-evaluations for MaN
+        - confirmation-window upon deletion of course and student
+            - write to log WHO deleted a course or a student
+        - CoursesTabs - Drop-down to select courses
+
         - SMScontrol: redo check_sms with regard to auto-charging and such. Write a
             clean state-diagram with connected/disconnected/internet_left/credit_left
             and write who should do what when...
-        - Cours::Modify::change_name - if exams present, copy them over!
+
+        - Courses::Grades can have more than the necessary files ->
+            - show downloadable list of files
+            - Cours::Modify::change_name - if exams present, copy them over!
+        - limit speed upon reaching threshold
+            - calculate threshold
         - AdminBackup
             - faire un lien pour télécharger et un lien pour mettre
         - add EditAccounts::move
         - CourseType - add drop: "internet_always, internet_course, none"
-        - move Admin::Functions::activities to Admin::Activities
         - better display in Course::Grades with regard to files, perhaps direct
             download of student-files
-        - confirmation-window upon deletion of course and student
-        - write to log WHO deleted a course or a student
         - Make a NupPrint for OpenPrint
         - Block traffic in dp-man if server has "restriction"
         - Pruning out left-overs in LibNet -> Network transition
             - Entity and taking care of values (int, str, bool, array)
         - Adding ScheduleType to schools
         	- Courses::Days - add other days to the list
-        - Add Language-evaluations for MaN
         - "Files/"
             - easy editing
             - updating in both ways
-        - Add date to Session, so old sessions can be deleted
         - Rethink CourseTypes:
           - versioning of coursetypes
           - CourseServer: changing of label/attestation by course_directors
@@ -247,6 +245,14 @@ To check:
 
 
 ** FIXED **:
+        - F 141210: Add date to Session, so old sessions can be deleted
+        - F 141210: move Admin::Functions::activities to Admin::Activities ->
+            all four account-settings got their own tab.
+        - B 141210: CSV-load: if no .csv-file is there, check if there is one in backup/*
+        - B 141210: When changing account-name in Compta::Edit, it isn't changed in
+            Person::accounts -> change Person::accounts to real account
+            - 141210: Entities::Person.account_service should be replaced by
+              ConfigBase.account_service
         - B 141210: all tests run again
         - B 141203: Self::Internet - update graphic to show wish of user
         - B 141203: Welcome::connect - don't disconnect if already connected

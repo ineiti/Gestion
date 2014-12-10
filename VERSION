@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 141210: 1.9.0
+  - changed accounts for Persons ! Might break!
+
 - 141204: 1.8.4
   - better handling of lots of the Airtel-implementation
 
