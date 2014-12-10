@@ -247,6 +247,7 @@ To check:
 
 
 ** FIXED **:
+        - B 141210: all tests run again
         - B 141203: Self::Internet - update graphic to show wish of user
         - B 141203: Welcome::connect - don't disconnect if already connected
         - B 141202: 2h - sometimes Self::Internet doesn't show bytes left

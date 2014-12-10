@@ -83,6 +83,7 @@ module Internet
 
     Captive.cleanup
     Captive.users_connected.each { |u|
+      HelperClasses::System.rescue_all do
       dputs(3) { "User is #{u}" }
       cost = @operator.user_cost_now.to_i
 
@@ -109,6 +110,7 @@ module Internet
       else
         dputs(0) { "Error: Captive said #{u} is connected, but couldn't find that user!" +
             " Users connected: #{Captive.users_connected.inspect}" }
+      end
       end
     }
   end
@@ -168,10 +170,10 @@ module Internet
     return false
   end
 
-  def connect_user(ip, name)
+  def user_connect(name, ip)
     return until @operator
 
-    Captive.user_connect ip, name, (self.free(name) ? 'yes' : 'no')
+    Captive.user_connect name, ip, (self.free(name) ? 'yes' : 'no')
   end
 
   def update_connection(ip, name)

@@ -185,7 +185,7 @@ class SelfInternet < View
   def rpc_button_connect(session, data)
     if session.web_req
       log_msg :internet, "#{session.owner.login_name} connects with #{session.inspect}"
-      Captive.user_connect session.client_ip, session.owner.login_name
+      Captive.user_connect session.owner.login_name, session.client_ip
       rpc_update(session, true)
     end
   end

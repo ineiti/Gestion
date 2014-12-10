@@ -2,68 +2,6 @@ require 'test/unit'
 require 'network'
 include Network
 
-class LibNet
-  def initialize
-    $connection_status = 0
-    $users_connected = []
-  end
-
-  def call(f, *r)
-    dputs(3){"Calling #{f.inspect} with #{r.inspect}"}
-    case f
-    when :isp_connection_status
-      return $connection_status
-    when :users_connected
-      return $users_connected.join("\n")
-    when :user_cost_now
-      if $users_connected.count > 0
-        return 5 + 10 / $users_connected.count
-      else
-        return 15
-      end
-    when :isp_params
-      return isp_params
-    when :user_connect
-      $users_connected.push(r[0].split()[1])
-    when :user_disconnect
-      $users_connected.delete(r[0].split()[1])
-    when :user_disconnect_name
-      $users_connected.delete(r[0])
-    when :users_disconnected
-      ""
-    end
-  end
-
-  def isp_params
-    dputs(3) { "Returning #{$libnet_isp.to_json}" }
-    $libnet_isp
-  end
-
-  def print(v)
-    case v
-    when :USAGE_DAILY
-      return 10.0
-    else
-      dputs(1) { "Undefined value #{v.inspect}" }
-    end
-  end
-
-  def call_to_be_replaced_args(f, *a)
-    ip, name = a[0].split()
-    dputs(2) { "users is #{$users_connected.inspect} and function " +
-        "is #{f} with args #{a.inspect}" }
-    case f
-    when :user_connect
-      $users_connected.push(name)
-    when :user_disconnect
-      $users_connected.delete(name)
-    when :user_disconnect_name
-      $users_connected.delete(ip)
-    end
-    dputs(2) { "users_connected is #{$users_connected.inspect}" }
-  end
-end
-
 class Web_req
   attr_reader :peeraddr, :header
 
@@ -75,16 +13,17 @@ end
 class TC_Internet < Test::Unit::TestCase
   def setup
     Entities.delete_all_data()
-    @test = Persons.create(:login_name => "test", :internet_credit => 50)
+    @test = Persons.create(:login_name => 'test', :internet_credit => 50)
     Sessions.create(@test).web_req = Web_req.new(10)
-    @test2 = Persons.create(:login_name => "test2", :internet_credit => 50)
-    @free = Persons.create(:login_name => "free", :internet_credit => 50,
+    @test2 = Persons.create(:login_name => 'test2', :internet_credit => 50)
+    @free = Persons.create(:login_name => 'free', :internet_credit => 50,
       :groups => ['freesurf'])
     dputs(1) { "#{@test.inspect}" }
     ConfigBase.captive_dev = 'simul0'
-    ConfigBase.cost_base = 10
+    ConfigBase.cost_base = 5
     ConfigBase.cost_shared = 10
     ConfigBase.send_config
+    Captive.cleanup_skip = true
     Internet.setup
     @device = Device::Simulation.load
     @operator = @device.operator
@@ -106,34 +45,36 @@ class TC_Internet < Test::Unit::TestCase
   def test_take_money
     libnet_isp_gprs
 
+    @device.connection_status = Device::DISCONNECTED
+
     assert_equal 50, @test.internet_credit
 
     Internet.take_money
     assert_equal 50, @test.internet_credit
 
-    $connection_status = 5
+    @device.connection_status = Device::CONNECTED
 
-    Captive.user_connect( 10, :test )
+    Captive.user_connect :test, 10
     Internet.take_money
     assert_equal 35, @test.internet_credit
 
-    Captive.user_connect( 11, :test2 )
+    Captive.user_connect :test2, 11
     Internet.take_money
     assert_equal 25, @test.internet_credit
     assert_equal 40, @test2.internet_credit
 
-    Captive.user_connect( 12, :free )
+    Captive.user_connect :free, 12
     Internet.take_money
     assert_equal 17, @test.internet_credit
     assert_equal 32, @test2.internet_credit
-    assert_equal 42, @free.internet_credit
+    assert_equal 50, @free.internet_credit
 
-    Captive.user_disconnect( 12, :free )
-    Captive.user_disconnect( 11, :test2 )
+    Captive.user_disconnect( :free, 12 )
+    Captive.user_disconnect( :test2, 11 )
     Internet.take_money
     assert_equal 2, @test.internet_credit
     Internet.take_money
-    assert_equal [], $users_connected
+    assert_equal [], Captive.users_connected
   end
 
 
@@ -145,30 +86,30 @@ class TC_Internet < Test::Unit::TestCase
     Internet.take_money
     assert_equal 50, @test.internet_credit
 
-    $connection_status = 5
+    @device.connection_status = Device::CONNECTED
 
-    Captive.user_connect 10, :test
+    Captive.user_connect :test, 10
     Internet.take_money
     assert_equal 35, @test.internet_credit
 
-    Captive.user_connect 11, :test2
+    Captive.user_connect :test2, 11
     Internet.take_money
     assert_equal 25, @test.internet_credit
     assert_equal 40, @test2.internet_credit
 
     assert_equal 50, @free.internet_credit
-    Captive.user_connect 12, :free
+    Captive.user_connect :free, 12
     Internet.take_money
     assert_equal 17, @test.internet_credit
     assert_equal 32, @test2.internet_credit
     assert_equal 50, @free.internet_credit
 
-    Captive.user_disconnect 12, :free
-    Captive.user_disconnect 11, :test2
+    Captive.user_disconnect :free, 12
+    Captive.user_disconnect :test2, 11
     Internet.take_money
     assert_equal 2, @test.internet_credit
     Internet.take_money
-    assert_equal [], $users_connected
+    assert_equal [], Captive.users_connected
   end
 
   def test_users_str

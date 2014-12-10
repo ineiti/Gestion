@@ -50,7 +50,7 @@ class Info < RPCQooxdooPath
     user = Persons.match_by_login_name( args[:user] )
     if self.autoConnect( args, ip ) == 'yes'
       dputs(2){"Auto-connecting user #{user.login_name} with ip #{ip}"}
-      Internet.connect_user( ip, user.login_name )
+      Internet.user_connect( user.login_name, ip )
       return 'connected'
     end
     return 'nothing'

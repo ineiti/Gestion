@@ -1,0 +1,30 @@
+#!/bin/bash
+
+ORDER="chat course_payment Activity_payments cashbox_course grade course person Welcome"
+
+if [ ! "$1" -o ! "$2" ]; then
+  echo Syntax: $0 in.log out.log
+  exit 1
+fi
+
+EVENTS_IN=$1
+EVENTS_OUT=$2
+
+if [ ! -f $EVENTS_IN ]; then
+  echo "$EVENTS_IN doesn't exist"
+  exit 1
+fi
+
+SRC=/tmp/events_src.log
+OTHER=/tmp/events_dst.log
+cp $EVENTS_IN $SRC
+rm -f $EVENTS_OUT
+
+for field in $ORDER; do
+  echo Sorting for field $field
+  grep " $field: " $SRC >> $EVENTS_OUT
+  grep -v " $field: " $SRC > $OTHER
+  mv $OTHER $SRC
+done
+echo "-----------------------" >> $EVENTS_OUT
+sort -k 3 $SRC >> $EVENTS_OUT
