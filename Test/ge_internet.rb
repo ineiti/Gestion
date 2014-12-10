@@ -1,4 +1,6 @@
 require 'test/unit'
+require 'network'
+include Network
 
 class LibNet
   def initialize
@@ -73,25 +75,32 @@ end
 class TC_Internet < Test::Unit::TestCase
   def setup
     Entities.delete_all_data()
-    $lib_net = LibNet.new
     @test = Persons.create(:login_name => "test", :internet_credit => 50)
     Sessions.create(@test).web_req = Web_req.new(10)
     @test2 = Persons.create(:login_name => "test2", :internet_credit => 50)
     @free = Persons.create(:login_name => "free", :internet_credit => 50,
       :groups => ['freesurf'])
     dputs(1) { "#{@test.inspect}" }
-    
+    ConfigBase.captive_dev = 'simul0'
+    ConfigBase.cost_base = 10
+    ConfigBase.cost_shared = 10
+    ConfigBase.send_config
+    Internet.setup
+    @device = Device::Simulation.load
+    @operator = @device.operator
   end
 
   def teardown
   end
 
   def libnet_isp_gprs
-    $libnet_isp = {:conn_type => "ondemand", :allow_free => "false"}
+    @operator.connection_type = Operator::CONNECTION_ONDEMAND
+    Operator.allow_free = false
   end
 
   def libnet_isp_vsat
-    $libnet_isp = {:conn_type => "permanent", :allow_free => "true"}
+    @operator.connection_type = Operator::CONNECTION_ALWAYS
+    Operator.allow_free = true
   end
 
   def test_take_money
@@ -104,23 +113,23 @@ class TC_Internet < Test::Unit::TestCase
 
     $connection_status = 5
 
-    $lib_net.call(:user_connect, "10 test")
+    Captive.user_connect( 10, :test )
     Internet.take_money
     assert_equal 35, @test.internet_credit
 
-    $lib_net.call(:user_connect, "11 test2")
+    Captive.user_connect( 11, :test2 )
     Internet.take_money
     assert_equal 25, @test.internet_credit
     assert_equal 40, @test2.internet_credit
 
-    $lib_net.call(:user_connect, "12 free")
+    Captive.user_connect( 12, :free )
     Internet.take_money
     assert_equal 17, @test.internet_credit
     assert_equal 32, @test2.internet_credit
     assert_equal 42, @free.internet_credit
 
-    $lib_net.call(:user_disconnect, "12 free")
-    $lib_net.call(:user_disconnect, "11 test2")
+    Captive.user_disconnect( 12, :free )
+    Captive.user_disconnect( 11, :test2 )
     Internet.take_money
     assert_equal 2, @test.internet_credit
     Internet.take_money
@@ -138,24 +147,24 @@ class TC_Internet < Test::Unit::TestCase
 
     $connection_status = 5
 
-    $lib_net.call(:user_connect, "10 test")
+    Captive.user_connect 10, :test
     Internet.take_money
     assert_equal 35, @test.internet_credit
 
-    $lib_net.call(:user_connect, "11 test2")
+    Captive.user_connect 11, :test2
     Internet.take_money
     assert_equal 25, @test.internet_credit
     assert_equal 40, @test2.internet_credit
 
     assert_equal 50, @free.internet_credit
-    $lib_net.call(:user_connect, "12 free")
+    Captive.user_connect 12, :free
     Internet.take_money
     assert_equal 17, @test.internet_credit
     assert_equal 32, @test2.internet_credit
     assert_equal 50, @free.internet_credit
 
-    $lib_net.call(:user_disconnect, "12 free")
-    $lib_net.call(:user_disconnect, "11 test2")
+    Captive.user_disconnect 12, :free
+    Captive.user_disconnect 11, :test2
     Internet.take_money
     assert_equal 2, @test.internet_credit
     Internet.take_money

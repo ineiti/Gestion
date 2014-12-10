@@ -354,4 +354,8 @@ class TC_Person < Test::Unit::TestCase
     assert_equal ["josue", "teacher"], 
       resps.collect{|p| p.login_name }
   end
+
+  def test_migrate_5
+
+  end
 end

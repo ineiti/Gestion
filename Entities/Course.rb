@@ -266,8 +266,6 @@ class Courses < Entities
   end
 
   def icc_users(tr)
-    dputs_func
-
     users = tr._data
     dputs(3) { "users are #{users.inspect}" }
     users.each { |s|

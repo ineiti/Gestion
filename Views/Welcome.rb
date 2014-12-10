@@ -26,7 +26,7 @@ class Welcome < View
         version_local = "-#{version_local}"
       end
       Sessions.search_by_owner('[0-9]').each { |s|
-        if s.last_seen && Time.now.to_i - s.last_seen.to_i <= 5
+        if s.last_seen && Time.now.to_i - s.last_seen.to_i <= 15
           log_msg :Welcome, "Found session #{s.inspect} from ip #{s.client_ip}"
           if s.client_ip == client_ip
             log_msg :Welcome, "Found session #{s.inspect} with correct ip"

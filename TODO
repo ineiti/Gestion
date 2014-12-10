@@ -7,6 +7,8 @@ BUGS:
         - problem with sms not received when *342*2#
         - When changing account-name in Compta::Edit, it isn't changed in
             Person::accounts -> change Person::accounts to real account
+            - Entities::Person.account_service should be replaced by
+              ConfigBase.account_service
         - Courses::Grades can have more than the necessary files
 
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
@@ -82,8 +84,6 @@ FEATURES:
         - Add 'usage meter' for internet: current_usage * 100 / fastest_possible
           where current_usage and fastest_possible are measured every 5 minutes if
           people are online, else every hour
-        - Entities::Person.account_service should be replaced by
-          ConfigBase.account_service
 
         - Put adding of students and printing as background-tasks
 

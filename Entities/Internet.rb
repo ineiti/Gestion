@@ -12,7 +12,7 @@ module Internet
   def setup
     if ConfigBase.captive_dev != 'false'
       @device = nil
-      Network::Device.add_observer(self)
+      Device.add_observer(self)
 
       dev = Device.search_dev({uevent: {interface: ConfigBase.captive_dev}})
       if dev.length == 0
@@ -34,11 +34,14 @@ module Internet
           Captive.accept_all
         end
       when /add/
-        if !@device
+        d = dev.dev
+        if !@device && d._uevent && d._uevent._interface == ConfigBase.captive_dev
           @device = dev
           @operator = @device.operator
           Captive.setup( @device )
           log_msg :Internet, "Got new device #{@device}"
+        else
+          log_msg :Internet, "New device #{dev} that doesn't match #{ConfigBase.captive_dev}"
         end
     end
   end
