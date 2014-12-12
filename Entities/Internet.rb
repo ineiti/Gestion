@@ -20,7 +20,7 @@ module Internet
         Device.list
         return
       end
-      update('add', dev.first )
+      update('add', dev.first)
     end
   end
 
@@ -38,7 +38,7 @@ module Internet
         if !@device && d._uevent && d._uevent._interface == ConfigBase.captive_dev
           @device = dev
           @operator = @device.operator
-          Captive.setup( @device )
+          Captive.setup(@device)
           log_msg :Internet, "Got new device #{@device}"
         else
           log_msg :Internet, "New device #{dev} that doesn't match #{ConfigBase.captive_dev}"
@@ -84,33 +84,36 @@ module Internet
     Captive.cleanup
     Captive.users_connected.each { |u|
       HelperClasses::System.rescue_all do
-      dputs(3) { "User is #{u}" }
-      cost = @operator.user_cost_now.to_i
-
-      dputs(3) { "ISP is #{@operator.name} and conn_type is "+
-          "#{@operator.connection_type}" }
-      user = Persons.match_by_login_name(u)
-      if user
-        dputs(3) { "Found user #{u}: #{user.full_name}" }
-        if not (ag = AccessGroups.allow_user_now(u))[0]
-          log_msg 'take_money', "Kicking user #{u} because of accessgroups: #{ag[1]}"
-          Captive.user_disconnect_name user.login_name
-        elsif self.free(user)
-          dputs(2) { "User #{u} goes free" }
-        elsif @device.connection_status == Device::CONNECTED
-          dputs(3) { "User #{u} will pay #{cost}" }
-          if user.internet_credit.to_i >= cost
-            dputs(3) { "Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}" }
-            user.internet_credit = user.internet_credit.to_i - cost
-          else
-            log_msg 'take_money', "User #{u} has not enough money left - kicking"
-            Captive.user_disconnect_name user.login_name
-          end
+        if free(u)
+          Captive.user_keep(u)
         end
-      else
-        dputs(0) { "Error: Captive said #{u} is connected, but couldn't find that user!" +
-            " Users connected: #{Captive.users_connected.inspect}" }
-      end
+        dputs(3) { "User is #{u}" }
+        cost = @operator.user_cost_now.to_i
+
+        dputs(3) { "ISP is #{@operator.name} and conn_type is "+
+            "#{@operator.connection_type}" }
+        user = Persons.match_by_login_name(u)
+        if user
+          dputs(3) { "Found user #{u}: #{user.full_name}" }
+          if not (ag = AccessGroups.allow_user_now(u))[0]
+            log_msg 'take_money', "Kicking user #{u} because of accessgroups: #{ag[1]}"
+            Captive.user_disconnect_name user.login_name
+          elsif self.free(user)
+            dputs(2) { "User #{u} goes free" }
+          elsif @device.connection_status == Device::CONNECTED
+            dputs(3) { "User #{u} will pay #{cost}" }
+            if user.internet_credit.to_i >= cost
+              dputs(3) { "Taking #{cost} internet_credits from #{u} who has #{user.internet_credit}" }
+              user.internet_credit = user.internet_credit.to_i - cost
+            else
+              log_msg 'take_money', "User #{u} has not enough money left - kicking"
+              Captive.user_disconnect_name user.login_name
+            end
+          end
+        else
+          dputs(0) { "Error: Captive said #{u} is connected, but couldn't find that user!" +
+              " Users connected: #{Captive.users_connected.inspect}" }
+        end
       end
     }
   end
