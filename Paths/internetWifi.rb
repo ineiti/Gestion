@@ -20,29 +20,37 @@ class InternetWifi < RPCQooxdooPath
             dputs(3) { "Found login #{person.data_get(:person_id)} for #{login_name}" }
             dputs(3) { "Session is #{session.inspect}" }
             log_msg :InternetWifi, "Authenticated person #{person.login_name} from " +
-                "#{session.client_ip} and redirecting"
+                                     "#{session.client_ip} and redirecting"
           end
           addr = 'admin.profeda.org'
           #addr = 'localhost:3302'
-          return "
+          return self.redirect(addr)
+        when /favicon.ico/
+          return ''
+        when /internetwifi/
+          return self.redirect('http://admin.profeda.org')
+        else
+          dputs(0) { "Error: #{path} in #{req.inspect} is not supported" }
+      end
+    end
+  end
+
+  def self.redirect(address, timeout=0)
+    "
 <!DOCTYPE HTML>
 <html lang='fr-FR'>
     <head>
         <meta charset='UTF-8'>
-        <meta http-equiv='refresh' content='1;url=http://#{addr}'>
+        <meta http-equiv='refresh' content='#{timeout};url=#{address}'>
         <script type='text/javascript'>
-            window.location.href = 'http://#{addr}'
+            window.location.href = '#{address}'
         </script>
         <title>Page Redirection</title>
     </head>
     <body>
-        If you are not redirected automatically, follow the <a href='http://#{addr}'>link to example</a>
+        If you are not redirected automatically, follow the <a href='#{address}'>link to example</a>
     </body>
 </html>"
-        else
-          dputs(0) { "Error: #{req.inspect} is not supported" }
-      end
-    end
   end
 end
 
