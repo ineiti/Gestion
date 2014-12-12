@@ -82,7 +82,7 @@ class Persons < Entities
     ddir = Courses.dir_diplomas
     cdir = "#{ddir}/cartes"
     if !File.exist? cdir
-      FileUtils::mkdir(cdir)
+      FileUtils::mkdir_p(cdir)
     end
 
     @admin_users = true unless defined? @admin_users
@@ -118,7 +118,8 @@ class Persons < Entities
   end
 
   def fetch_account(r, a)
-    Accounts.get_by_path("#{r}::#{a}")
+    dp "#{r}::#{a}"
+    Accounts.get_by_path_or_create("#{r}::#{a}")
   end
 
   def migration_5_raw(d)
@@ -567,15 +568,20 @@ class Person < Entity
         dputs(0) { "Error: account_name_due empty and no login_name #{self.inspect}" }
         return
       end
-      acc = (full_name || login_name).capitalize
+      acc = (full_name || login_name).capitalize_all
       lending = "#{ConfigBase.account_lending.get_path}::#{acc}"
       service = ConfigBase.account_services.get_path
-      dputs(2) { "Searching accounts for #{full_name} with "+
-          "lending: #{lending} - service: #{service}" }
-      self.account_due = Accounts.get_by_path_or_create(lending,
-                                                        acc, false, -1, true)
-      self.account_due_paid = Accounts.get_by_path_or_create("#{lending}::Paid",
-                                                             acc, false, -1, true)
+      dputs(2) { "Preparing accounts for #{full_name} - #{acc}" }
+      if !self.account_due
+        dputs(2) { "Creating account #{lending}" }
+        self.account_due = Accounts.get_by_path_or_create(lending,
+                                                          acc, false, -1, true)
+      end
+      if !self.account_due_paid
+        dputs(2) { "Creating account #{lending}::Paid" }
+        self.account_due_paid = Accounts.get_by_path_or_create("#{lending}::Paid",
+                                                               acc, false, -1, true)
+      end
     end
   end
 
@@ -633,7 +639,7 @@ class Person < Entity
     self._permissions = p.uniq
     if has_teacher
       if Permission.can_view(p.reject { |perm|
-                                                                                perm.to_s == 'admin' }, 'FlagResponsible')
+                                                                                                                                perm.to_s == 'admin' }, 'FlagResponsible')
         Persons.responsibles_add(self)
       else
         Persons.responsibles_del(self)
@@ -1061,13 +1067,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-             [{:content => "#{m[0]}", :align => :center},
-              m[1],
-              {:content => "#{m[2]}", :align => :right},
-              {:content => "#{Account.total_form(
-                  sum += m[2].gsub(',', '').to_f / 1000)}",
-               :align => :right}]
-           }, :header => true, :column_widths => [70, 300, 75, 75])
+               [{:content => "#{m[0]}", :align => :center},
+                m[1],
+                {:content => "#{m[2]}", :align => :right},
+                {:content => "#{Account.total_form(
+                    sum += m[2].gsub(',', '').to_f / 1000)}",
+                 :align => :right}]
+             }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

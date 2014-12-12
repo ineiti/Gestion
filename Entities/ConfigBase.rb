@@ -1,4 +1,6 @@
 class ConfigBases < Entities
+  self.needs :Accounts
+
   def add_config
     value_block :vars
     value_str :internet_cash
@@ -96,6 +98,7 @@ end
 class ConfigBase < Entity
 
   def setup_instance
+    super
     send_config
   end
 

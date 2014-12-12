@@ -207,7 +207,7 @@ else
   $sms_control and $sms_control.kill
   $show_time and $show_time.kill
 
-  Entities.save_all(notmp: true)
+  Entities.save_all
 end
 
 

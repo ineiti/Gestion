@@ -3,6 +3,8 @@
 WORKING:
 
 BUGS:
+        - Compta::Movement - sum is wrong if negative numbers
+
         - problem with sms not received when *342*2#
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
