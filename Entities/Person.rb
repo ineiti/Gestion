@@ -301,7 +301,7 @@ class Persons < Entities
     }.collect { |p|
       dputs(4) { "p is #{p.full_name}" }
       dputs(4) { "account is #{p.account_due.get_path}" }
-      amount = (p.account_due.total.to_f * 1000).to_i
+      amount = (p.account_due.total.to_f * 1000).to_i.separator
       name = p.full_name
       if name.length == 0
         name = p.login_name
@@ -639,7 +639,7 @@ class Person < Entity
     self._permissions = p.uniq
     if has_teacher
       if Permission.can_view(p.reject { |perm|
-                                                                                                                                perm.to_s == 'admin' }, 'FlagResponsible')
+                                                                                                                                                        perm.to_s == 'admin' }, 'FlagResponsible')
         Persons.responsibles_add(self)
       else
         Persons.responsibles_del(self)
@@ -1067,13 +1067,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-               [{:content => "#{m[0]}", :align => :center},
-                m[1],
-                {:content => "#{m[2]}", :align => :right},
-                {:content => "#{Account.total_form(
-                    sum += m[2].gsub(',', '').to_f / 1000)}",
-                 :align => :right}]
-             }, :header => true, :column_widths => [70, 300, 75, 75])
+                [{:content => "#{m[0]}", :align => :center},
+                 m[1],
+                 {:content => "#{m[2]}", :align => :right},
+                 {:content => "#{Account.total_form(
+                     sum += m[2].gsub(',', '').to_f / 1000)}",
+                  :align => :right}]
+              }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

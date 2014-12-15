@@ -80,27 +80,30 @@ class ComptaEditMovements < View
       return reply(:empty_fields, :movement_list)
     end
 
-    total = (account.movements.inject(0.0) { |sum, m| sum + m.value } * 1000).to_i
+    total = account.movements.inject(0.0) { |sum, m|
+      sum + (m.get_value(account) * 1000).round
+    }.to_i
     reply(:empty_fields, :movement_list) +
         reply(:update, :movement_list => account.movements.collect { |m|
-          value = (m.value * 1000).to_i
-          total_old = total
-          total -= value
-          other = m.get_other_account(account).get_path
-          m.date ||= Date.today
-          [m.id, [m.date.to_web, m.desc, other, value.to_s, total_old.to_s]]
-        })
+                       value = (m.get_value(account) * 1000).to_i
+                       total_old = total
+                       total -= value
+                       other = m.get_other_account(account).get_path
+                       m.date ||= Date.today
+                       [m.id, [m.date.to_web, m.desc, other, value.separator,
+                               total_old.separator]]
+                     })
   end
 
   def update_accounts()
     reply(:empty_fields, [:account_archive, :account_src, :account_dst]) +
         reply(:update_silent, :account_archive => [[0, 'Actual']].concat(
-            if archive = AccountRoot.archive
-              archive.accounts.collect { |a|
-                [a.id, a.path] }.sort_by { |a| a[1] }
-            else
-              []
-            end)) +
+                                if archive = AccountRoot.archive
+                                  archive.accounts.collect { |a|
+                                    [a.id, a.path] }.sort_by { |a| a[1] }
+                                else
+                                  []
+                                end)) +
         reply(:update, :account_src => AccountRoot.actual.listp_path,
               :account_dst => AccountRoot.actual.listp_path)
   end
