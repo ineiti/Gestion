@@ -4,6 +4,7 @@ class ConfigBases < Entities
   def add_config
     value_block :vars
     value_str :internet_cash
+    value_str :keep_idle_free
     value_int :max_upload_size
     value_str :server_url
     value_str :label_url

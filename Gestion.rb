@@ -142,9 +142,9 @@ else
     $internet = Thread.new {
       loop {
         rescue_all "Couldn't take internet-money" do
-          if true
-            dputs(0) { 'Internet-sleep is on 10!' }
-            sleep 10
+          if false
+            dputs(0) { 'Internet-sleep is on 5!' }
+            sleep 5
           else
             sleep 60
           end
