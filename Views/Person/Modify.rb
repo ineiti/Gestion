@@ -16,7 +16,7 @@ class PersonModify < View
           show_block :address
         end
         gui_hbox :nogroup do
-          show_print :save, :print_student
+          show_button :save, :print
         end
       end
 
@@ -32,6 +32,12 @@ class PersonModify < View
         show_button :next_page, :close
       end
 
+      gui_window :print_choice do
+        show_print :print_student
+        show_print :print_library
+        show_print :print_teacher
+        show_button :close
+      end
     end
   end
 
