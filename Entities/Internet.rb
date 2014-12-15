@@ -97,7 +97,6 @@ module Internet
             Captive.user_disconnect_name user.login_name
           elsif self.free(user)
             dputs(2) { "User #{u} goes free" }
-            Captive.user_keep(u)
           elsif @device.connection_status == Device::CONNECTED
             dputs(3) { "User #{u} will pay #{cost}" }
             if user.internet_credit.to_i >= cost

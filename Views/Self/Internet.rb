@@ -170,6 +170,7 @@ class SelfInternet < View
           reply(:update, bytes_left_today: Recharge.left_today(left).to_MB('Mo'))
     end
     o = session.owner
+    Captive.user_keep o.login_name
     ret += reply(:update, auto_connection:
         'Bookmark for '+
             "<a href='http://internet.wifi/connect.cgi?user=#{o.login_name}&pass=#{o.password}'>" +
