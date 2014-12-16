@@ -8,11 +8,6 @@ class CourseGrade < View
 
     @update = true
     @order = 20
-    # Not used - but don't dare deleting it - yet
-    @files = Entities.Statics.get( :CourseGradeFiles )
-    if @files.data_str.class != Array
-      @files.data_str = []
-    end
 
     #    gui_vboxgl do
     gui_hboxg do
@@ -203,7 +198,6 @@ class CourseGrade < View
       reply( :hide, :upload )
     if course = Courses.match_by_course_id( data['courses'][0])
       if file = course.zip_create
-        @files.data_str.push file
         ret = reply( :update, :txt => 'Download skeleton: ' +
             "<a target='other' href='/tmp/#{file}'>#{file}</a>" ) +
           reply( :unhide, :upload )

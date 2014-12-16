@@ -70,6 +70,7 @@ class CashboxActivity < View
     reply(:empty, :students) +
         reply(:update, :students =>
             ActivityPayments.search_by_activity(data._activities).collect { |ap|
+              dp ap.inspect
               ap.person_paid.to_list_id
             }.sort_by { |i| i[1]})
   end

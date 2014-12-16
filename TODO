@@ -1,9 +1,11 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
+        - Person::Modify - Make a print-option:
+            - student-card, library-card, personnel-card
 
 BUGS:
-        - Compta::Movement - sum is wrong if negative numbers
+        - Windows are not grayed out when inactive!
 
         - problem with sms not received when *342*2#
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
@@ -26,8 +28,6 @@ UI:
          tabs can be added
 
 FEATURES:
-        - Person::Modify - Make a print-option:
-            - student-card, library-card, personnel-card
         - Add Language-evaluations for MaN
         - confirmation-window upon deletion of course and student
             - write to log WHO deleted a course or a student
@@ -247,6 +247,7 @@ To check:
 
 
 ** FIXED **:
+        - B 141216: Compta::Movement - sum is wrong if negative numbers
         - F 141210: Add date to Session, so old sessions can be deleted
         - F 141210: move Admin::Functions::activities to Admin::Activities ->
             all four account-settings got their own tab.

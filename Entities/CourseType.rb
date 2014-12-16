@@ -30,12 +30,10 @@ class CourseTypes < Entities
   end
 
   def self.files
-    begin
-      ddir = Courses.dir_diplomas
-      (Dir.glob(ddir + '/*odt') +
-          Dir.glob(ddir + '/*odg')).
-          collect { |f| f.sub(/^.*\//, '') }
-    end
+    ddir = Courses.dir_diplomas
+    (Dir.glob(ddir + '/*odt') +
+        Dir.glob(ddir + '/*odg')).
+        collect { |f| f.sub(/^.*\//, '') }
   end
 
   def set_entry(id, field, value)

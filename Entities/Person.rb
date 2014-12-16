@@ -24,7 +24,7 @@ end
 
 
 class Persons < Entities
-  attr :print_card, :admin_users
+  attr :print_card_student, :print_card_responsible, :admin_users
   attr_reader :resps
   self.needs :Courses
 
@@ -79,17 +79,22 @@ class Persons < Entities
     value_str :password_plain
     value_int_LDAP :person_id, :ldap_name => 'uidnumber'
 
+    @admin_users = true unless defined? @admin_users
+    @resps = []
+    ConfigBase.add_observer(self, :update_open_print)
+    update_open_print(nil, nil, nil)
+  end
+
+  def update_open_print(field, value, old)
     ddir = Courses.dir_diplomas
     cdir = "#{ddir}/cartes"
     if !File.exist? cdir
       FileUtils::mkdir_p(cdir)
     end
-
-    @admin_users = true unless defined? @admin_users
-    @student_card ||= 'student_card.odg'
-    @print_card = OpenPrint.new(
-        "#{ddir}/#{@student_card}", cdir)
-    @resps = []
+    @print_card_student = OpenPrint.new(
+        ConfigBase.template_path(:card_student), cdir)
+    @print_card_responsible = OpenPrint.new(
+        ConfigBase.template_path(:card_responsible), cdir)
   end
 
   def migration_1(p)
@@ -639,7 +644,7 @@ class Person < Entity
     self._permissions = p.uniq
     if has_teacher
       if Permission.can_view(p.reject { |perm|
-                                                                                                                                                        perm.to_s == 'admin' }, 'FlagResponsible')
+                                                                                                                                                                                                                                perm.to_s == 'admin' }, 'FlagResponsible')
         Persons.responsibles_add(self)
       else
         Persons.responsibles_del(self)
@@ -804,10 +809,11 @@ class Person < Entity
   end
 
   def lp_cmd=(v)
-    @proxy.print_card.lp_cmd = v
+    @proxy.print_card_student.lp_cmd = v
+    @proxy.print_card_responsible.lp_cmd = v
   end
 
-  def print(counter = nil)
+  def print(card = :student)
     ctype = 'Visiteur'
     courses = Courses.list_courses_for_person(self)
     if courses and courses.length > 0
@@ -843,7 +849,12 @@ class Person < Entity
                       [/--CENTER_EMAIL--/, email]])
     end
     dputs(3) { "Replace is #{replace.inspect}" }
-    @proxy.print_card.print(replace, nil, fname)
+    case card
+      when /student/
+        @proxy.print_card_student.print(replace, nil, fname)
+      when /responsible/
+        @proxy.print_card_responsible.print(replace, nil, fname)
+    end
   end
 
   def to_list
@@ -1067,13 +1078,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-                [{:content => "#{m[0]}", :align => :center},
-                 m[1],
-                 {:content => "#{m[2]}", :align => :right},
-                 {:content => "#{Account.total_form(
-                     sum += m[2].gsub(',', '').to_f / 1000)}",
-                  :align => :right}]
-              }, :header => true, :column_widths => [70, 300, 75, 75])
+                   [{:content => "#{m[0]}", :align => :center},
+                    m[1],
+                    {:content => "#{m[2]}", :align => :right},
+                    {:content => "#{Account.total_form(
+                        sum += m[2].gsub(',', '').to_f / 1000)}",
+                     :align => :right}]
+                 }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 
@@ -1088,5 +1099,12 @@ class Person < Entity
 
   def to_frontend
     to_list_id
+  end
+
+  def is_responsible?
+    %w( director teacher assistant center_director ).each { |p|
+      return true if has_permission? p
+    }
+    return false
   end
 end

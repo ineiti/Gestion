@@ -21,7 +21,7 @@ class NetworkBlock < View
   def list_dhcp
     `cut -d " " -f 3,4 /var/lib/misc/dnsmasq.leases`.split("\n")
   end
-  
+
   def rpc_update_view( session )
     super( session ) +
     reply( :update, :blocked => @blocking.data_str )

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-ORDER="chat course_payment Activity_payments cashbox_course grade course person Welcome"
+ORDER="chat course_payment ActivityPayments AddCash cashbox_course grade grades diploma \
+course person Welcome"
 
 if [ ! "$1" -o ! "$2" ]; then
   echo Syntax: $0 in.log out.log

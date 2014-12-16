@@ -35,14 +35,14 @@ class PersonModify < View
       gui_window :print_choice do
         show_print :print_student
         show_print :print_library
-        show_print :print_teacher
+        show_print :print_responsible
         show_button :close
       end
     end
   end
 
   def rpc_button(session, name, data)
-    dputs(2) { "Pressed button #{name} with #{data.inspect}" }
+    dputs(3) { "Pressed button #{name} with #{data.inspect}" }
     person = Persons.match_by_person_id(data['person_id'])
 
     rep = []
@@ -60,10 +60,20 @@ class PersonModify < View
         when 'save'
           log_msg :persons, "#{session.owner.login_name} saves #{data.inspect}"
           rep = reply(:update, Persons.save_data(data))
-        when 'print_student'
-          rep = rpc_print(session, name, data)
-          person.lp_cmd = nil
-          files = person.print
+        when 'print_student', 'print_library', 'print_responsible'
+          rep = reply(:window_hide) +
+              rpc_print(session, name, data)
+          files = ''
+          case name
+            when 'print_student'
+              person.lp_cmd = nil
+              files = person.print
+            when 'print_library'
+              files = ActivityPayments.active_for(person).first.print
+            when 'print_responsible'
+              person.lp_cmd = nil
+              files = person.print(:responsible)
+          end
           if lpr = cmd_printer(session, name)
             rep += reply(:window_show, :printing) +
                 reply(:unhide, :next_page) +
@@ -73,9 +83,9 @@ class PersonModify < View
           else
             rep += reply(:window_show, :printing) +
                 reply(:update, :msg_print => 'Click to download:<ul>' +
-                    files.collect { |file|
-                      "<li><a target='other' href=\"#{file}\">#{file}</a></li>" }.join +
-                    '</ul>') +
+                                 files.to_a.collect { |file|
+                                   "<li><a target='other' href=\"#{file}\">#{file}</a></li>" }.join +
+                                 '</ul>') +
                 reply(:hide, :next_page)
           end
         when 'next_page'
@@ -84,6 +94,10 @@ class PersonModify < View
               reply(:hide, :next_page)
         when 'close'
           rep += reply(:window_hide)
+        when 'print'
+          rep += reply(:window_show, :print_choice) +
+              reply_visible(ActivityPayments.active_for(person).size > 0, :print_library) +
+              reply_visible(person.is_responsible?, :print_responsible)
       end
     end
 
@@ -109,7 +123,7 @@ class PersonModify < View
           reply(can_change ? :unhide : :hide, f)
         }.flatten + reply(can_change ? :hide : :unhide, :not_allowed) +
             reply(:update, :not_allowed => "<b>Vous n'avez pas le droit<br>" +
-                'de changer ce mot de passe</b>')
+                             'de changer ce mot de passe</b>')
         dputs(4) { "change_pwd is #{change_pwd.inspect}" }
         reply(:empty_fields) + reply(:update, p) +
             reply(:update, update(session)) +

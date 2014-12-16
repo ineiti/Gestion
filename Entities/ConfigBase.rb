@@ -2,14 +2,21 @@ class ConfigBases < Entities
   self.needs :Accounts
 
   def add_config
-    value_block :vars
-    value_str :internet_cash
+    value_block :vars_narrow
     value_str :keep_idle_free
     value_int :max_upload_size
+    value_str :captive_dev
+
+    value_block :vars_wide
+    value_str :internet_cash
     value_str :server_url
     value_str :label_url
-    value_str :captive_dev
     value_str :network_actions
+
+    value_block :templates
+    value_str :template_dir
+    value_str :card_student
+    value_str :card_responsible
 
     value_block :captive
     value_str :prerouting
@@ -92,13 +99,12 @@ class ConfigBases < Entities
 
   def init
     ACQooxView.check_db
-    cb = ConfigBases.search_all_.first || ConfigBases.create(functions:[])
-    migration_5( cb )
+    cb = ConfigBases.search_all_.first || ConfigBases.create(functions: [])
+    migration_5(cb)
   end
 end
 
 class ConfigBase < Entity
-
   def setup_instance
     super
     send_config
@@ -121,5 +127,23 @@ class ConfigBase < Entity
       url = ConfigBase.data_get(url)
     end
     url =~ /^https{0,1}:\/\// ? url : "http://#{url}"
+  end
+
+  def templates
+    (Dir.glob("#{template_dir}/*odt") +
+        Dir.glob("#{template_dir}/*odg")).
+        collect { |f| f.sub(/^.*\//, '') }.
+        sort
+  end
+
+  def template_path(t)
+    return '' unless template_dir && card_student && card_responsible
+    "#{template_dir}/" +
+        case t
+          when :card_student
+            card_student.first.to_s
+          when :card_responsible
+            card_responsible.first.to_s
+        end
   end
 end
