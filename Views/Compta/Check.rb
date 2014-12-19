@@ -193,13 +193,14 @@ class ComptaCheck < View
             when :copy
               case source
                 when 0
-                  dp Movements.from_s(rows_orig[0][ind])
-                  msgs.push 'Created movement'
+                  mov = Movements.from_s(rows_orig[0][ind])
+                  msgs.push "Created movement #{mov.desc}"
                 when 1
-                  dp Movements.from_s(rows_orig[1][ind][0])
-                  msgs.push 'Created movement'
+                  mov = Movements.from_s(rows_orig[1][ind][0])
+                  msgs.push "Created movement #{mov.desc}"
                 when 2
-                  msgs.push "Didn't create movement from file"
+                  e.new_index
+                  msgs.push "Updated index of #{e.desc}"
               end
             when delete
               if source > 0
@@ -214,8 +215,8 @@ class ComptaCheck < View
           case what
             when :copy
               if source == 0
-                dp Accounts.from_s(rows_orig[0][ind])
-                msgs.push 'Copied account from file'
+                acc = Accounts.from_s(rows_orig[0][ind])
+                msgs.push "Copied account #{acc.name} from file"
               else
                 msgs.push "Didn't copy account from server to file or clean-up mixed"
               end
@@ -223,6 +224,7 @@ class ComptaCheck < View
               if source > 0
                 if e.is_empty
                   e.delete
+                  msgs.push "Deleted account #{e.get_path}"
                 else
                   msgs.push "Account #{e.get_path} is not empty"
                 end

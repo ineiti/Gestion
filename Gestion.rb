@@ -59,7 +59,8 @@ begin
       'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
       'FlagAddInternet,CourseStats,CoursePrint,PersonActivity', 'assistant')
   Permission.add('accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
-      'ComptaReport,ComptaShow,ComptaEdit.*,Cashbox.*,Report.*', 'secretary')
+      'ComptaReport,ComptaShow,ComptaEdit.*,Cashbox.*,Report.*' +
+      'ComptaCheck', 'secretary')
   Permission.add('maintenance', 'Inventory.*', 'default')
   Permission.add('cybermanager', 'PersonCredit,NetworkTigo,FlagAddInternet,' +
       'FlagPersonAdd,CashboxService,NetworkSMS', '')
