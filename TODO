@@ -3,6 +3,7 @@
 WORKING:
         - Person::Modify - Make a print-option:
             - student-card, library-card, personnel-card
+        - Accounting: check uploaded .sql-file
 
 BUGS:
         - Windows are not grayed out when inactive!
