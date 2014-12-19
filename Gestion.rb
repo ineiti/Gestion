@@ -12,7 +12,7 @@ Encoding.default_external = Encoding::UTF_8
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad.
 
-VERSION_GESTION='1.9.0'
+VERSION_GESTION='1.9.1'
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
@@ -210,5 +210,3 @@ else
 
   Entities.save_all
 end
-
-

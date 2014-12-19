@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 141219: 1.9.1
+  - Added ComptaCheck and different fixes for account-setup for new installations
+
 - 141210: 1.9.0
   - changed accounts for Persons ! Might break!
 

@@ -202,7 +202,7 @@ class ComptaCheck < View
                   e.new_index
                   msgs.push "Updated index of #{e.desc}"
               end
-            when delete
+            when :delete
               if source > 0
                 e.delete
                 msgs.push 'Deleted movement'
