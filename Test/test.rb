@@ -36,7 +36,7 @@ QooxView.init( '../Entities', '../Views' )
 tests = Dir.glob( 'ge_*.rb' )
 #tests = %w( activity )
 #tests = %w( course )
-tests = %w( configbase )
+#tests = %w( configbase )
 tests.each{|t|
   begin
     require "ge_#{t}"

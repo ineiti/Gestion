@@ -3,7 +3,6 @@
 WORKING:
         - Person::Modify - Make a print-option:
             - student-card, library-card, personnel-card
-        - Accounting: check uploaded .sql-file
 
 BUGS:
         - Windows are not grayed out when inactive!
@@ -248,6 +247,8 @@ To check:
 
 
 ** FIXED **:
+        - B 141220: When transferring money, movements don't get updated new_id
+        - F 141219: Accounting: check uploaded .sql-file
         - B 141216: Compta::Movement - sum is wrong if negative numbers
         - F 141210: Add date to Session, so old sessions can be deleted
         - F 141210: move Admin::Functions::activities to Admin::Activities ->

@@ -122,7 +122,7 @@ class TC_Course < Test::Unit::TestCase
     Entities.delete_all_data( true )
     Entities.load_all
     ConfigBases.init
-    dp Courses.search_all_.inspect
+    #dp Courses.search_all_.inspect
     courses_admin2 = Courses.search_by_students('^admin2$')
     assert_equal 1, courses_admin2.length
 
@@ -303,7 +303,7 @@ class TC_Course < Test::Unit::TestCase
                                       :responsible => @linus)
 
     dputs(1) { "Courses are #{Courses.search_all.inspect}" }
-    RPCQooxdooService.migrate('Entities.Courses')
+    Courses.migrate
     dputs(1) { "Courses are #{Courses.search_all.inspect}" }
 
     @maint = Courses.match_by_name('maint_1204')
