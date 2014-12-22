@@ -95,7 +95,7 @@ class TC_Person < Test::Unit::TestCase
     View.PersonCredit.rpc_button(session, 'add_credit',
                                  {'person_id' => 2, 'login_name' => 'surf', 'credit_add' => 500})
     assert_equal 500, @surf.internet_credit.to_i - surf_credit, 'Credit'
-    assert_equal 500, @josue.account_total_due.to_i - josue_due, 'account_total_due'
+    assert_equal -500, @josue.account_total_due.to_i - josue_due, 'account_total_due'
     dputs(1) { "surf.log_list is #{@surf.log_list.inspect}" }
     dputs(1) { "josue.log_list #{@josue.log_list.inspect}" }
 
@@ -194,7 +194,7 @@ class TC_Person < Test::Unit::TestCase
 
     internet_credit = @josue.account_total_due
     @josue.add_internet_credit(@surf, 1000)
-    assert_equal 1000, @josue.account_total_due - internet_credit
+    assert_equal -1000, @josue.account_total_due - internet_credit
 
     assert @accountant.get_cash(@josue, 1000)
     assert_equal 0, @josue.account_total_due - internet_credit

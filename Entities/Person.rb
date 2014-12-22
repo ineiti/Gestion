@@ -123,7 +123,6 @@ class Persons < Entities
   end
 
   def fetch_account(r, a)
-    dp "#{r}::#{a}"
     Accounts.get_by_path_or_create("#{r}::#{a}")
   end
 
@@ -714,7 +713,7 @@ class Person < Entity
   def account_total_due
     if account_due
       dputs(2) { "internet_credit is #{account_due.total.inspect}" }
-      (account_due.total.to_f * 1000.0 + 0.5).to_i
+      (account_due.total.to_f * 1000.0).round.to_i
     else
       _account_total_due
     end
@@ -741,7 +740,7 @@ class Person < Entity
 
       Movements.create("#{msg}", date.strftime('%Y-%m-%d'),
                        credit.to_i / 1000.0, account_due, ConfigBase.account_services)
-      self.account_total_due = (account_due.total.to_f * 1000.0 + 0.5).to_i
+      self.account_total_due = (account_due.total.to_f * 1000.0).round.to_i
     else
       #account_total_due = data_get( :account_total_due ).to_i + credit.to_i
       total = self.account_total_due.to_i + credit.to_i

@@ -22,8 +22,8 @@ class TC_Configbase < Test::Unit::TestCase
                  "\n"
     Entities.load_all
     check = [
-    [ConfigBase.account_cash, 'Root::Cash', 1],
-    [ConfigBase.account_lending, 'Root::Lending', 1],
+    [ConfigBase.account_cash, 'Root::Cash', -1],
+    [ConfigBase.account_lending, 'Root::Lending', -1],
     [ConfigBase.account_services, 'Root::Income::Internet', 1] ]
     check.each{|acc, path, mult|
       assert_equal path, acc.get_path
