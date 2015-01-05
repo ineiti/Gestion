@@ -22,7 +22,7 @@ cp $EVENTS_IN $SRC
 rm -f $EVENTS_OUT
 
 for field in $ORDER; do
-  echo Sorting for field $field
+  # echo Sorting for field $field
   grep " $field: " $SRC >> $EVENTS_OUT
   grep -v " $field: " $SRC > $OTHER
   mv $OTHER $SRC
