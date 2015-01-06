@@ -4,7 +4,7 @@ class CashboxCourse < View
   def layout
     @order = 10
     @update = true
-    @functions_need = [:cashbox]
+    @functions_need = [:cashbox, :accounting_courses]
 
     gui_hboxg do
       gui_vbox :nogroup do

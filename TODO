@@ -28,6 +28,7 @@ UI:
          tabs can be added
 
 FEATURES:
+        - add avast-2015
         - Add Language-evaluations for MaN
         - confirmation-window upon deletion of course and student
             - write to log WHO deleted a course or a student
