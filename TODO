@@ -28,7 +28,6 @@ UI:
          tabs can be added
 
 FEATURES:
-        - add avast-2015
         - Add Language-evaluations for MaN
         - confirmation-window upon deletion of course and student
             - write to log WHO deleted a course or a student
@@ -248,6 +247,7 @@ To check:
 
 
 ** FIXED **:
+        - B 140107: LibreOffice-templates are not updated
         - B 141220: When transferring money, movements don't get updated new_id
         - F 141219: Accounting: check uploaded .sql-file
         - B 141216: Compta::Movement - sum is wrong if negative numbers
