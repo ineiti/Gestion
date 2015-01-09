@@ -232,7 +232,7 @@ class CourseGrade < View
 
   def rpc_update_with_values( session, data )
     ret = []
-    if course = Courses.match_by_course_id( data['courses'][0])
+    if course = Courses.match_by_course_id( data._courses[0])
       ret = reply( :update, :synching => 'Sync-state:<ul>' + course.sync_state )
       if course.sync_state =~ /(finished|Error:)/
         ret += reply( :auto_update, 0 )

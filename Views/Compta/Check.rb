@@ -54,7 +54,6 @@ class ComptaCheck < View
   def start_thread(session, mod)
     session.s_data._check_module = mod
     Thread.start {
-      dputs_func
       System.rescue_all do
         case mod
           when /Accounts/
@@ -120,8 +119,6 @@ class ComptaCheck < View
   end
 
   def rpc_update_with_values(session, data)
-    dputs_func
-    ret = []
     state, progress = case mod = session.s_data._check_module
                         when /Accounts/
                           [Accounts.check_state, Accounts.check_progress]

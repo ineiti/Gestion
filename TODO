@@ -5,6 +5,8 @@ WORKING:
             - student-card, library-card, personnel-card
 
 BUGS:
+        - Report::Executive never completes
+        - Admin::Accounts - should only show Root:: and sub-accounts
         - Windows are not grayed out when inactive!
 
         - problem with sms not received when *342*2#

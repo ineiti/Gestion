@@ -42,6 +42,11 @@ class ReportComptaExecutive < View
         show_button :report_add_win, :close
       end
 
+      gui_window :progress do
+        show_html :progress_txt
+        show_button :report_cancel
+      end
+
       window_print_status
     end
   end
@@ -61,7 +66,7 @@ class ReportComptaExecutive < View
     archive = AccountRoot.archive and roots.concat(archive.listp_path(1)[1..-1])
     reply(:empty, :root) +
         reply(:update_silent, :root =>
-            roots.concat([(root.class == Account) ? root.id : 0]))
+                                roots.concat([(root.class == Account) ? root.id : 0]))
   end
 
   def update_reports
@@ -74,7 +79,7 @@ class ReportComptaExecutive < View
         reply(:update, :name => report.name) +
         reply(:update, :accounts => report.listp_accounts) +
         reply(:update, :accounts => (account.class == Entities::ReportAccount) ?
-            [account.id] : nil)
+                         [account.id] : nil)
   end
 
   def rpc_update(session)
@@ -161,12 +166,45 @@ class ReportComptaExecutive < View
         button_report(session, $~[1], data)
       when /print/
         if data._reports.class == Report
-          send_printer_reply(session, :print, data,
-                             data._reports.print_pdf_monthly(
-                                 Date.from_web(data._start), data._months.to_i))
+          start_thread(session, data)
+          reply(:auto_update, -1) +
+              reply(:update, progress_txt: 'Starting checking') +
+              reply(:window_show, :progress)
         end
       when /close/
         reply(:window_hide)
+      when /report_cancel/
+        dp "Killing thread #{session.s_data._report_ce_thread}"
+        if thr = session.s_data._report_ce_thread
+          thr.kill
+        end
+        reply(:window_hide) +
+            reply(:auto_update, 0)
+    end
+  end
+
+  def start_thread(session, data)
+    dp 'Starting thread'
+    session.s_data._report_ce = nil
+    session.s_data._report_ce_thread = Thread.start {
+      System.rescue_all do
+        session.s_data._report_ce = data._reports.print_pdf_monthly(
+            Date.from_web(data._start), data._months.to_i)
+      end
+      dp 'Thread finished'
+    }
+  end
+
+  def rpc_update_with_values(session, data)
+    report = data._reports
+    if report_ce = session.s_data._report_ce
+      return reply(:window_hide) +
+          reply(:auto_update, 0) +
+          send_printer_reply(session, :print, data, report_ce)
+    else
+      return reply(:update, :progress_txt =>
+                              "Accounts done: #{(report.print_accounts * 100).floor}%<br>" +
+                                  "Calculating: #{report.print_account}")
     end
   end
 

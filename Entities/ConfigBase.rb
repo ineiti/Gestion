@@ -36,10 +36,10 @@ class ConfigBases < Entities
     value_str :phone_main
 
     value_block :accounts
-    value_entity_account_all :account_activities, :drop, :path
-    value_entity_account_all :account_services, :drop, :path
-    value_entity_account_all :account_lending, :drop, :path
-    value_entity_account_all :account_cash, :drop, :path
+    value_entity_account :account_activities, :drop, :path
+    value_entity_account :account_services, :drop, :path
+    value_entity_account :account_lending, :drop, :path
+    value_entity_account :account_cash, :drop, :path
 
     @@functions = %w( network share
     courses course_server course_client

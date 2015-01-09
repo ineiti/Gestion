@@ -52,7 +52,7 @@ class CourseDiploma < View
     dputs(3) { "rpc_list_choice with #{name.inspect} - #{args.inspect}" }
     ret = []
     case name.to_s
-      when "courses"
+      when 'courses'
         ret = reply(:empty_fields, :diplomas_t1)
         if args._courses.length > 0
           if course = Entities.Courses.match_by_course_id(args._courses.to_a[0])
@@ -70,8 +70,8 @@ class CourseDiploma < View
     if not course or course.export_check
       if course
         return reply(:window_show, :missing_data) +
-            reply(:update, :missing => "The following fields are not filled in:<br>" +
-                course.export_check.join("<br>"))
+            reply(:update, :missing => 'The following fields are not filled in:<br>' +
+                             course.export_check.join('<br>'))
       end
     else
       course.prepare_diplomas
@@ -86,13 +86,19 @@ class CourseDiploma < View
 
   def rpc_update_with_values(session, args)
     args.to_sym!
-    (course_id = args._courses[0]) or return []
-    #ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
-    ret = []
-    (course = Entities.Courses.match_by_course_id(course_id)) or return []
+    if true
+      (course_id = args._courses[0]) or return []
+      #ret = rpc_list_choice( session, "courses", "courses" => course_id.to_s )
+      (course = Entities.Courses.match_by_course_id(course_id)) or return []
+    else
+      return unless course = args._courses
+      dp "Course is #{cours.inspect}"
+    end
 
-    overall_state = course.make_pdfs_state["0"]
-    if overall_state == "done"
+    ret = []
+
+    overall_state = course.make_pdfs_state['0']
+    if overall_state == 'done'
       ret += reply(:auto_update, 0) +
           reply(:hide, [:abort, :status]) +
           reply(:unhide, :do_diplomas)
@@ -105,22 +111,22 @@ class CourseDiploma < View
 
     states = case course.get_files.select { |f| f =~ /(000-4pp.pdf|zip)$/ }.first
                when /zip$/
-                 [["all.zip", ["All files", "", "", pdf_link("#{course.name}/all.zip")]]]
+                 [['all.zip', ['All files', '', '', pdf_link("#{course.name}/all.zip")]]]
                when /pdf$/
-                 [["000-4pp.pdf", ["4 on 1 page", "", "",
+                 [['000-4pp.pdf', ['4 on 1 page', '', '',
                                    pdf_link("#{course.name}/000-4pp.pdf")]],
-                  ["000-all.pdf", ["All diplomas", "", "",
+                  ['000-all.pdf', ['All diplomas', '', '',
                                    pdf_link("#{course.name}/000-all.pdf")]]]
                else
                  dputs(3) { course.get_files.inspect }
                  []
              end
 
-    states += course.make_pdfs_state.keys.reject { |k| k == "0" }.
+    states += course.make_pdfs_state.keys.reject { |k| k == '0' }.
         collect { |s|
       st = course.make_pdfs_state[s]
       p = Persons.match_by_login_name(s)
-      link = st[1] == "done" ? pdf_link(st[2]) : "---"
+      link = st[1] == 'done' ? pdf_link(st[2]) : '---'
       [s, [p.full_name, st[0], st[1], link]]
     }.sort { |a, b|
       a[1][0] <=> b[1][0]
@@ -171,18 +177,18 @@ class CourseDiploma < View
         }
         ret += reply(:window_show, :printing) +
             reply(:update, :msg_print => 'Impression de<ul><li>' +
-                "#{names.join('</li><li>')}</li></ul>en cours")
+                             "#{names.join('</li><li>')}</li></ul>en cours")
       else
         ret += reply(:window_show, :printing) +
             reply(:update, :msg_print => 'Choisir le pdf:<ul>' +
-                files.collect { |name, file|
-                  if File.exists? file
-                    %x[ cp #{file} /tmp ]
-                    "<li><a target='other' href=\"/tmp/#{File.basename(file)}\">#{name}</a></li>"
-                  else
-                    "<li>#{name} - not found</li>"
-                  end
-                }.join('') + '</ul>')
+                             files.collect { |name, file|
+                               if File.exists? file
+                                 %x[ cp #{file} /tmp ]
+                                 "<li><a target='other' href=\"/tmp/#{File.basename(file)}\">#{name}</a></li>"
+                               else
+                                 "<li>#{name} - not found</li>"
+                               end
+                             }.join('') + '</ul>')
       end
     end
     ret
