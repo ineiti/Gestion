@@ -5,8 +5,6 @@ WORKING:
             - student-card, library-card, personnel-card
 
 BUGS:
-        - Report::Executive never completes
-        - Admin::Accounts - should only show Root:: and sub-accounts
         - Windows are not grayed out when inactive!
 
         - problem with sms not received when *342*2#
@@ -249,6 +247,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150109: Admin::Accounts - should only show Root:: and sub-accounts
+        - B 150109: Report::Executive never completes
         - B 140107: LibreOffice-templates are not updated
         - B 141220: When transferring money, movements don't get updated new_id
         - F 141219: Accounting: check uploaded .sql-file

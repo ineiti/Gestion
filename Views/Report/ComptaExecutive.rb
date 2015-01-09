@@ -174,7 +174,7 @@ class ReportComptaExecutive < View
       when /close/
         reply(:window_hide)
       when /report_cancel/
-        dp "Killing thread #{session.s_data._report_ce_thread}"
+        dputs(2){ "Killing thread #{session.s_data._report_ce_thread}"}
         if thr = session.s_data._report_ce_thread
           thr.kill
         end
@@ -184,14 +184,13 @@ class ReportComptaExecutive < View
   end
 
   def start_thread(session, data)
-    dp 'Starting thread'
     session.s_data._report_ce = nil
     session.s_data._report_ce_thread = Thread.start {
       System.rescue_all do
         session.s_data._report_ce = data._reports.print_pdf_monthly(
             Date.from_web(data._start), data._months.to_i)
       end
-      dp 'Thread finished'
+      dputs(2){ 'Thread finished'}
     }
   end
 

@@ -7,15 +7,23 @@ class AdminAccounts < View
     gui_vbox do
       gui_hboxg :nogroup do
         show_block :accounts
-        show_arg :server_url, :width => 300
+        show_arg :account_cash, :width => 400
       end
       show_button :save
     end
   end
 
   def rpc_update(session)
+    accounts_current = []
+    AccountRoot.current.get_tree_depth { |a|
+      accounts_current.push [a.id, a.get_path]
+    }
     reply(:empty_fields) +
+        reply(:update, ConfigBases.get_block_fields(:accounts).collect { |acc|
+                       [acc, accounts_current]
+                     }.to_h) +
         update_form_data(ConfigBases.singleton)
+
   end
 
   def rpc_button_save(session, data)

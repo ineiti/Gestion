@@ -7,22 +7,10 @@ class AdminFunction < View
     gui_vbox do
       gui_hboxg :nogroup do
         gui_vboxg :nogroup do
-          show_block :wide
-          show_arg :functions, :flexheight => 1
-          show_arg :welcome_text, :width => 400, :flexheight => 1
+          show_field :functions, :flexheight => 1
         end
         gui_vbox :nogroup do
-          gui_vbox :nogroup do
-            show_block :vars_wide
-            show_field :template_dir
-            show_list_drop :card_student, 'ConfigBase.templates'
-            show_list_drop :card_responsible, 'ConfigBase.templates'
-            show_arg :server_url, :width => 300
-          end
-          gui_vbox :nogroup do
-            show_block :narrow
-            show_block :vars_narrow
-          end
+          show_field :welcome_text, :width => 400, :flexheight => 1
         end
       end
       show_button :save
