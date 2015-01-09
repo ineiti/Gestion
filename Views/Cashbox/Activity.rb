@@ -77,6 +77,7 @@ class CashboxActivity < View
   def rpc_button_new_student(session, data)
     return unless (data._full_name || data._full_name.to_s.length > 0)
     student = Persons.create({first_name: data._full_name})
+    student.permissions = %w(student)
     data._full_name = student.login_name
     rpc_button_search_student(session, data) +
         reply(:update, students: [student.person_id])

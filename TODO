@@ -5,6 +5,7 @@ WORKING:
             - student-card, library-card, personnel-card
 
 BUGS:
+        - Library-adding-student doesn't fill in any permission
         - Windows are not grayed out when inactive!
 
         - problem with sms not received when *342*2#
