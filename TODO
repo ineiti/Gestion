@@ -5,7 +5,6 @@ WORKING:
             - student-card, library-card, personnel-card
 
 BUGS:
-        - Library-adding-student doesn't fill in any permission
         - Windows are not grayed out when inactive!
 
         - problem with sms not received when *342*2#
@@ -248,6 +247,10 @@ To check:
 
 
 ** FIXED **:
+        - B 150113: re-plugging USB-stick gives error in SerialModem
+            - lot of cleanups in SerialModem-module, still needs to be ported
+             as a class
+        - B 150110: Library-adding-student doesn't fill in any permission
         - B 150109: Admin::Accounts - should only show Root:: and sub-accounts
         - B 150109: Report::Executive never completes
         - B 140107: LibreOffice-templates are not updated

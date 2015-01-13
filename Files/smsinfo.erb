@@ -62,24 +62,27 @@
   <h1>Information about SMS-control</h1>
 
   <ul>
+    <li>USB-modem is
+      <%= $SMScontrol.device ? 'PRESENT' : 'missing' %>
+    </li>
     <li>Operator is
       <%= begin
             $SMScontrol.operator.name
           rescue NoMethodError => e
             'MISSING'
           end %></li>
-    <li>Internet is
-      <%=  begin
-             $SMScontrol.is_connected ? 'CONNECTED' : 'disconnected'
-           rescue NoMethodError => e
-             'MISSING'
-           end %></li>
     <li>Promotion left: <%= begin
-                              $SMScontrol.operator.internet_left / 1000
+                              "#{$SMScontrol.operator.internet_left / 1000}k"
                             rescue NoMethodError => e
                               'MISSING'
-                            end %>k
+                            end %>
     </li>
+    <li>Internet is
+      <%= begin
+            $SMScontrol.is_connected ? 'CONNECTED' : 'disconnected'
+          rescue NoMethodError => e
+            'MISSING'
+          end %></li>
     <li>Last SMS received:
       <ul>
         <%=

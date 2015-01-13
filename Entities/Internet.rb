@@ -10,7 +10,7 @@ module Internet
   @operator = nil
 
   def setup
-    if ConfigBase.captive_dev != 'false'
+    if ConfigBase.captive_dev != 'false' && ConfigBase.has_function?(:internet_captive)
       @device = nil
       Device.add_observer(self)
 
@@ -39,7 +39,7 @@ module Internet
           @device = dev
           @operator = @device.operator
           Captive.setup(@device)
-          log_msg :Internet, "Got new device #{@device}"
+          log_msg :Internet, "Got new device #{@device} - #{ConfigBase.captive_dev}"
         else
           log_msg :Internet, "New device #{dev} that doesn't match #{ConfigBase.captive_dev}"
         end
