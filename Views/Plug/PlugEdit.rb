@@ -12,6 +12,7 @@ class PlugEdit < View
       end
       gui_vbox :nogroup do
         show_block :default
+        show_arg :internal_id, :width => 200
         show_button :save
       end
     end
