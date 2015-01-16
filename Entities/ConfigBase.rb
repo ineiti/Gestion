@@ -34,6 +34,7 @@ class ConfigBases < Entities
     value_int :cost_shared
     value_str :allow_free
     value_str :phone_main
+    value_str :start_loaded
 
     value_block :accounts
     value_entity_account :account_activities, :drop, :path

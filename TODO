@@ -8,7 +8,6 @@ BUGS:
         - Windows are not grayed out when inactive!
         - Don't allow more than one center-user
 
-        - problem with sms not received when *342*2#
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
         - Get QooxView/Test/qv_gettext to run
@@ -248,6 +247,9 @@ To check:
 
 
 ** FIXED **:
+        - F 150116: "auto-load" internet_credit for slow replying operators
+        - B 150116: clean-up of mobile-scripts in Profeda-dir
+        - B 150113: problem with sms not received when *342*2#
         - B 150113: re-plugging USB-stick gives error in SerialModem
             - lot of cleanups in SerialModem-module, still needs to be ported
              as a class

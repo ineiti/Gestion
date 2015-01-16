@@ -53,24 +53,24 @@ begin
   Permission.add('librarian', 'LibraryPerson,FlagInternetFree', 'student')
   Permission.add('assistant', 'TaskEdit,FlagInternetFree', 'student')
   Permission.add('teacher', 'CourseGrade,PersonModify,NetworkRestriction,CoursePrint,' +
-      'FlagResponsible', 'assistant')
+                              'FlagResponsible', 'assistant')
   Permission.add('center_director', '', 'center')
   Permission.add('secretary', 'CourseModify,FlagPersonAdd,FlagPersonDelete,' +
-      'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
-      'FlagAddInternet,CourseStats,CoursePrint,PersonActivity', 'assistant')
+                                'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
+                                'FlagAddInternet,CourseStats,CoursePrint,PersonActivity', 'assistant')
   Permission.add('accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
-      'ComptaReport,ComptaShow,ComptaEdit.*,Cashbox.*,Report.*,' +
-      'ComptaCheck', 'secretary')
+                                 'ComptaReport,ComptaShow,ComptaEdit.*,Cashbox.*,Report.*,' +
+                                 'ComptaCheck', 'secretary')
   Permission.add('maintenance', 'Inventory.*', 'default')
   Permission.add('cybermanager', 'PersonCredit,NetworkTigo,FlagAddInternet,' +
-      'FlagPersonAdd,CashboxService,NetworkSMS', '')
+                                   'FlagPersonAdd,CashboxService,NetworkSMS', '')
   Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
-      'PersonAdmin,PersonCourse,NetworkConnection,CourseStats,Report.*,AdminBackup',
+                               'PersonAdmin,PersonCourse,NetworkConnection,CourseStats,Report.*,AdminBackup',
                  'secretary,cybermanager,teacher')
   Permission.add('center', 'CourseModify,FlagAdminCourse,CourseGrade,' +
-      'FlagPersonAdd,FlagPersonDelete,PersonModify,CourseDiploma,' +
-      'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson,' +
-      'PersonCenter,FlagDeletePerson', '')
+                             'FlagPersonAdd,FlagPersonDelete,PersonModify,CourseDiploma,' +
+                             'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson,' +
+                             'PersonCenter,FlagDeletePerson', '')
   Permission.add('admin', '.*', '.*')
   Permission.add('email', 'SelfEmail', '')
 
@@ -135,6 +135,10 @@ else
         end
       }
     }
+  end
+
+  if ConfigBase.has_function? :network
+    Network::Device.start
   end
 
   if ConfigBase.has_function? :internet
