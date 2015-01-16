@@ -6,6 +6,7 @@ WORKING:
 
 BUGS:
         - Windows are not grayed out when inactive!
+        - Don't allow more than one center-user
 
         - problem with sms not received when *342*2#
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred

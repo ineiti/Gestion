@@ -151,6 +151,10 @@ class SelfInternet < View
   end
 
   def rpc_update(session, nobutton = false)
+    if nobutton
+      nobutton = Internet.operator &&
+          Internet.operator.connection_type == Operator::CONNECTION_ALWAYS
+    end
     users = Captive.users_connected
     users_str = SelfInternet.make_users_str(users)
     dputs(4) { "session is #{session.inspect}" }
