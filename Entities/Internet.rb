@@ -30,6 +30,7 @@ module Internet
       when /del/
         if @device == dev
           log_msg :Internet, "Lost device #{@device}"
+          @device.delete_observer(self)
           @device = nil
           Captive.accept_all
         end
@@ -37,12 +38,16 @@ module Internet
         d = dev.dev
         if !@device && d._uevent && d._uevent._interface == ConfigBase.captive_dev
           @device = dev
+          @device.add_observer(self)
           @operator = @device.operator
           Captive.setup(@device)
-          log_msg :Internet, "Got new device #{@device} - #{ConfigBase.captive_dev}"
+          log_msg :Internet, "Got new device #{@device.inspect} - #{ConfigBase.captive_dev}"
         else
           log_msg :Internet, "New device #{dev} that doesn't match #{ConfigBase.captive_dev}"
         end
+      when /operator/
+        @operator = @device.operator
+        log_msg :Internet, "Got new operator #{@operator}"
     end
   end
 
