@@ -6,7 +6,6 @@ WORKING:
 
 BUGS:
         - Windows are not grayed out when inactive!
-        - Don't allow more than one center-user
 
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
@@ -247,6 +246,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150119: Don't allow more than one center-user
         - F 150116: "auto-load" internet_credit for slow replying operators
         - B 150116: clean-up of mobile-scripts in Profeda-dir
         - B 150113: problem with sms not received when *342*2#

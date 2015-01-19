@@ -26,20 +26,46 @@ class PersonAdmin < View
         show_button :save
       end
 
+      gui_window :win_error do
+        show_html :err_html
+        show_entity_person :centers, :drop, :full_name, :width => 200
+        show_button :chose
+      end
     end
   end
 
   def rpc_button_save(session, data)
     dputs(3) { "#{data.inspect}" }
-    person = Persons.match_by_person_id(data['person_id'])
+    person = Persons.match_by_person_id(data._person_id)
     rep = reply(:empty_fields)
     if person
       log_msg :persons, "#{session.owner.login_name} saves #{data.inspect}"
       Persons.save_data(data)
       person.update_accounts
+      if (centers = Persons.search_by_permissions(:center)).count > 1
+        dp centers_name = centers.collect { |p| p.listp_full_name }
+        rep += reply(:window_show, :win_error) +
+            reply(:update, :err_html => "<p>There can't be more than one center<br>" +
+                             'in the database. Please chose one') +
+            reply(:empty, :centers) +
+            reply(:update, :centers => centers_name)
+      end
       rep += update_form_data(person)
     end
     rep + rpc_update(session)
+  end
+
+  def rpc_button_chose(session, data)
+    Persons.search_by_permissions(:center).each { |p|
+      ddputs(2) { "Comparing #{p} with #{data._centers}" }
+      if p != data._centers
+        dp p.permissions -= ['center']
+      end
+    }
+    dp person = Persons.match_by_person_id(data._person_id)
+    reply(:window_hide) +
+        reply(:empty_fields) +
+        update_form_data(person)
   end
 
   def rpc_find(session, field, data)
