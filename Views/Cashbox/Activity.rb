@@ -70,8 +70,8 @@ class CashboxActivity < View
     reply(:empty, :students) +
         reply(:update, :students =>
             ActivityPayments.search_by_activity(data._activities).collect { |ap|
-              ap.person_paid.to_list_id
-            }.sort_by { |i| i[1]})
+              ap.person_paid && ap.person_paid.to_list_id
+            }.compact.sort_by { |i| i[1]})
   end
 
   def rpc_button_new_student(session, data)

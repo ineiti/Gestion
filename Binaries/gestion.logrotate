@@ -16,7 +16,11 @@
   mail root@localhost
   prerotate
     /opt/profeda/Gestion/Binaries/sort_events /var/log/gestion/events.log /tmp/gestion_events.log
-    echo "Events from logrotate" | mail -s "Events from $( hostname )" -a /tmp/gestion_events.log root@localhost
+    MAIL=/usr/bin/bsd-mailx
+    if [ ! -x $MAIL ]; then
+      MAIL=/usr/bin/mail
+    fi
+    echo "Events from logrotate" | $MAIL -s "Events from $( hostname )" -a /tmp/gestion_events.log root@localhost
     rm /tmp/gestion_events.log
   endscript
   nocompress
