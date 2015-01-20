@@ -47,6 +47,7 @@ class ConfigBases < Entities
     internet internet_simple internet_captive
     sms_control sms_control_autocharge
     inventory accounting quiz accounting_courses accounting_old
+    plug_admin
     cashbox email usage_report activities library ).sort.to_sym
     @@functions_base = {:network => [:internet, :share, :internet_only, :email, :sms_control],
                         :internet => [:internet_simple, :internet_captive],
