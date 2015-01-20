@@ -246,6 +246,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150120: Allow more than one center user if center_server
         - B 150119: Don't allow more than one center-user
         - F 150116: "auto-load" internet_credit for slow replying operators
         - B 150116: clean-up of mobile-scripts in Profeda-dir

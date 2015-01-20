@@ -42,7 +42,8 @@ class PersonAdmin < View
       log_msg :persons, "#{session.owner.login_name} saves #{data.inspect}"
       Persons.save_data(data)
       person.update_accounts
-      if (centers = Persons.search_by_permissions(:center)).count > 1
+      if (centers = Persons.search_by_permissions(:center)).count > 1 &&
+          !ConfigBase.has_function?(:course_server)
         dp centers_name = centers.collect { |p| p.listp_full_name }
         rep += reply(:window_show, :win_error) +
             reply(:update, :err_html => "<p>There can't be more than one center<br>" +
