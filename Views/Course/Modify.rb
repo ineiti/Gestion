@@ -431,10 +431,7 @@ class CourseModify < View
     data._wen_name.sub!(/#{course.ctype.name}_/, "#{data._wen_ctype.name}_")
     dputs(3) { "data._wen_name is now #{data._wen_name}" }
     course.ctype = data._wen_ctype
-    course.name = data._wen_name
-    if course.entries
-      course.entries.name = course.name
-    end
+    course.rename( data._wen_name )
     if data._wen_overwrite.first == 'yes'
       course.data_set_hash(data._wen_ctype.to_hash.except(:name), true)
     end

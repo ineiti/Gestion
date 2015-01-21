@@ -5,6 +5,7 @@ WORKING:
             - student-card, library-card, personnel-card
 
 BUGS:
+
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
         - Get QooxView/Test/qv_gettext to run
@@ -26,8 +27,6 @@ UI:
 
 FEATURES:
         - Add Language-evaluations for MaN
-        - confirmation-window upon deletion of course and student
-            - write to log WHO deleted a course or a student
         - CoursesTabs - Drop-down to select courses
 
         - SMScontrol: redo check_sms with regard to auto-charging and such. Write a
@@ -36,7 +35,6 @@ FEATURES:
 
         - Courses::Grades can have more than the necessary files ->
             - show downloadable list of files
-            - Cours::Modify::change_name - if exams present, copy them over!
         - limit speed upon reaching threshold
             - calculate threshold
         - AdminBackup
@@ -244,6 +242,9 @@ To check:
 
 
 ** FIXED **:
+        - B 150121: Cours::Modify::change_name - if exams present, copy them over!
+        - UI150121: confirmation-window upon deletion of course and student
+            - write to log WHO deleted a course or a student
         - B 150121: Windows are not grayed out when inactive!
         - B 150120: Allow more than one center user if center_server
         - B 150119: Don't allow more than one center-user

@@ -584,15 +584,15 @@ base_gestion
          end
     lp_cmd and pp.lp_cmd = lp_cmd
     pp.print(studs.flatten(1) + dow_adds + [
-        [/Teacher/, teacher.full_name],
-        [/Course_name/, name],
-        [/2010-08-20/, dstart.to_s],
-        [/20.08.10/, dstart.strftime('%d/%m/%y')],
-        [/2010-10-20/, dend.to_s],
-        [/20.10.10/, dend.strftime('%d/%m/%y')],
-        [/123/, students.count],
-        [/321/, duration],
-    ])
+                 [/Teacher/, teacher.full_name],
+                 [/Course_name/, name],
+                 [/2010-08-20/, dstart.to_s],
+                 [/20.08.10/, dstart.strftime('%d/%m/%y')],
+                 [/2010-10-20/, dend.to_s],
+                 [/20.10.10/, dend.strftime('%d/%m/%y')],
+                 [/123/, students.count],
+                 [/321/, duration],
+             ])
   end
 
   def print_exa(lp_cmd, number)
@@ -622,16 +622,16 @@ base_gestion
 
     pp.lp_cmd = lp_cmd
     pp.print(studs.flatten(1) + [
-        [/Teacher/, teacher.full_name],
-        [/Course_name/, name],
-        [/Center_name/, center.full_name],
-        [/2010-08-20/, dstart.to_s],
-        [/20.08.10/, dstart.strftime('%d/%m/%y')],
-        [/2010-10-20/, dend.to_s],
-        [/20.10.10/, dend.strftime('%d/%m/%y')],
-        [/123/, students.count],
-        [/321/, duration],
-    ])
+                 [/Teacher/, teacher.full_name],
+                 [/Course_name/, name],
+                 [/Center_name/, center.full_name],
+                 [/2010-08-20/, dstart.to_s],
+                 [/20.08.10/, dstart.strftime('%d/%m/%y')],
+                 [/2010-10-20/, dend.to_s],
+                 [/20.10.10/, dend.strftime('%d/%m/%y')],
+                 [/123/, students.count],
+                 [/321/, duration],
+             ])
   end
 
   def get_grade_args(student, update = false)
@@ -928,11 +928,11 @@ base_gestion
                 files_added and files_added.push [s, File.basename(exa_f), exa_md5]
                 z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
                   f.write File.open(exa_f) { |ef|
-                    content = ef.read
-                    dputs(3) { "Size of file is #{content.size}" }
-                    size_exams -= [content.size, size_exams.abs].min
-                    content
-                  }
+                            content = ef.read
+                            dputs(3) { "Size of file is #{content.size}" }
+                            size_exams -= [content.size, size_exams.abs].min
+                            content
+                          }
                 }
               end
             }
@@ -1064,8 +1064,8 @@ base_gestion
     @sync_state = sync_s += '<li>Transferring responsibles: '
     users = [teacher, responsible, center, assistant].compact.collect { |n| n.login_name }
     ret = sync_transfer(:users, users.collect { |s|
-      Persons.match_by_login_name(s)
-    }.compact)
+                                Persons.match_by_login_name(s)
+                              }.compact)
     if ret._code == 'Error'
       @sync_state += "Error: #{ret._msg}"
       dputs(2) { "Error is #{ret._msg}" }
@@ -1079,8 +1079,8 @@ base_gestion
       @sync_state = sync_s += '<li>Transferring users: '
       users = students + [teacher.login_name, responsible.login_name]
       ret = sync_transfer(:users, users.collect { |s|
-        Persons.match_by_login_name(s)
-      })
+                                  Persons.match_by_login_name(s)
+                                })
       if ret._code == 'Error'
         @sync_state += "Error: #{ret._msg}"
         return false
@@ -1104,12 +1104,12 @@ base_gestion
       dputs(4) { 'Grades - go' }
       @sync_state = sync_s += '<li>Transferring grades: '
       ret = sync_transfer(:grades, grades.select { |g|
-        g.course and g.student
-      }.collect { |g|
-        dputs(4) { "Found grade with #{g.course.inspect} and #{g.student.inspect}" }
-        g.to_hash(true).merge(:course => g.course.name,
-                              :person => g.student.login_name)
-      })
+                                   g.course and g.student
+                                 }.collect { |g|
+                                   dputs(4) { "Found grade with #{g.course.inspect} and #{g.student.inspect}" }
+                                   g.to_hash(true).merge(:course => g.course.name,
+                                                         :person => g.student.login_name)
+                                 })
       if ret._code == 'Error'
         @sync_state += "Error: #{ret._msg}"
         return false
@@ -1292,7 +1292,7 @@ base_gestion
 
       if students.length > 0
         pdf.table([["Description", "Value", "Sum"].collect { |ch|
-          {:content => ch, :align => :center} }] +
+                     {:content => ch, :align => :center} }] +
                       report_list.collect { |id, t|
                         [t[0] == "Reste" ? t[1] : t[0],
                          t[2],
@@ -1376,7 +1376,7 @@ base_gestion
 
   def payment(secretary, student, amount, date = Date.today, oldcash = false)
     log_msg :course_payment, "#{secretary.full_login} got #{amount} " +
-        "of #{student.full_name} in #{name}"
+                               "of #{student.full_name} in #{name}"
     Movements.create("For student #{student.login_name}:" +
                          "#{student.full_name}",
                      date.strftime("%Y-%m-%d"), amount.to_f / 1000,
@@ -1452,14 +1452,26 @@ base_gestion
         "#{center.login_name}_" : ''
     dputs(3) { "Fetching existing files with center -#{center_pre}-" }
     Hash[students.map { |s|
-      [s.sub(/^#{center_pre}/, ''),
-       Dir.glob("#{dir_exas}/#{s}/*").map { |exa_f|
-         md5 = Digest::MD5.file(exa_f).hexdigest
-         exa_rel = exa_f.sub(/^.*\//, '')
-         dputs(3) { "Adding file #{exa_rel} with md5 #{md5}" }
-         [exa_rel, md5]
-       }]
-    }]
+           [s.sub(/^#{center_pre}/, ''),
+            Dir.glob("#{dir_exas}/#{s}/*").map { |exa_f|
+              md5 = Digest::MD5.file(exa_f).hexdigest
+              exa_rel = exa_f.sub(/^.*\//, '')
+              dputs(3) { "Adding file #{exa_rel} with md5 #{md5}" }
+              [exa_rel, md5]
+            }]
+         }]
   end
 
+  def rename(new_name)
+    log_msg :Courses, "Renaming #{name} to #{new_name}"
+    dir = "#{@proxy.dir_exas}/#{name}"
+    if File.exists?(dir)
+      log_msg :Courses, "Moving files of #{name} to #{new_name}"
+      FileUtils.mv dir, "#{@proxy.dir_exas}/#{new_name}"
+    end
+    self.name = new_name
+    if entries
+      entries.name = new_name
+    end
+  end
 end
