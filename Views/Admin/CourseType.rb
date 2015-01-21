@@ -54,6 +54,7 @@ class AdminCourseType < View
   end
 
   def rpc_update(session)
+    dp 'update'
     reply(:update, :account_base => [0])
   end
 
