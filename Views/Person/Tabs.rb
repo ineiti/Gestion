@@ -20,6 +20,11 @@ class PersonTabs < View
         show_html :info
         show_button :close
       end
+
+      gui_window :win_confirm_delete do
+        show_html :delete_txt
+        show_button :confirm_delete, :close
+      end
     end
   end
 
@@ -36,16 +41,31 @@ class PersonTabs < View
       if (p_login = args["persons"]) and
           (p = Persons.match_by_login_name(p_login[0]))
         dputs(3) { "Found person #{p.inspect} - #{p.class.name}" }
-        begin
-          p.delete
-        rescue IsNecessary => who
-          return reply(:window_show, :error) +
-              reply(:update, :info => "Course #{who.for_course.name} " +
-                  "still needs #{p.login_name}")
-        end
-        rpc_callback_search(session, args)
+        return reply(:window_show, :win_confirm_delete) +
+            reply(:update, :delete_txt => 'Are you sure you want to delete user<br>' +
+                             "#{p.login_name}:#{p.full_name} ?")
       end
     end
+  end
+
+  def rpc_button_confirm_delete(session, args)
+    if session.can_view(:FlagDeletePerson)
+      if (p_login = args["persons"]) and
+          (p = Persons.match_by_login_name(p_login[0]))
+        dputs(3) { "Found person #{p.inspect} - #{p.class.name}" }
+        begin
+          log_msg :Persons, "User #{session.owner.login_name} deletes #{p.login_name}"
+          p.delete
+        rescue IsNecessary => who
+          return reply(:window_hide) +
+              reply(:window_show, :error) +
+              reply(:update, :info => "Course #{who.for_course.name} " +
+                               "still needs #{p.login_name}")
+        end
+      end
+    end
+    reply(:window_hide) +
+        rpc_callback_search(session, args)
   end
 
   def rpc_update_view(session, args = nil)
@@ -112,8 +132,8 @@ class PersonTabs < View
 
     ret = reply(:empty_fields, [:persons]) +
         reply(:update, {:persons => result.collect { |p|
-          p.to_list
-        }, :search => s})
+                       p.to_list
+                     }, :search => s})
 
     if result.length > 0
       if do_list_choice

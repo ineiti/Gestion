@@ -5,8 +5,6 @@ WORKING:
             - student-card, library-card, personnel-card
 
 BUGS:
-        - Windows are not grayed out when inactive!
-
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
         - Get QooxView/Test/qv_gettext to run
@@ -246,6 +244,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150121: Windows are not grayed out when inactive!
         - B 150120: Allow more than one center user if center_server
         - B 150119: Don't allow more than one center-user
         - F 150116: "auto-load" internet_credit for slow replying operators
