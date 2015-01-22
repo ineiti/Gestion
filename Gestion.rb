@@ -139,8 +139,8 @@ else
 
   if ConfigBase.has_function? :network
     Network::Device.start
-    #dputs(1){'Waiting for Devices to initialize'}
-    #sleep 5
+    dputs(1){'Waiting for Devices to initialize'}
+    sleep 5
   end
 
   if ConfigBase.has_function? :internet
@@ -159,7 +159,12 @@ else
         end
       }
     }
+    dp "Notifying everybody"
+    Internet.device.not_all
   end
+
+  sleep 5
+  exit
 
   if ConfigBase.has_function?(:sms_control)
     if na = ConfigBase.network_actions
