@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 150122: 1.9.3
+  - lots of work on Network-part with regard to USB-keys
+
 - 150109: 1.9.2
   - small improvements with regard to accounts and reports
 
@@ -7,7 +10,7 @@ Important notices for versions:
   - Added ComptaCheck and different fixes for account-setup for new installations
 
 - 141210: 1.9.0
-  - changed accounts for Persons ! Might break!
+  - changed accounts for Persons ! Might break !
 
 - 141204: 1.8.4
   - better handling of lots of the Airtel-implementation

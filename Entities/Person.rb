@@ -267,8 +267,10 @@ class Persons < Entities
     if data['credit_add'] and client
       actor = session.owner
       dputs(3) { "Adding cash to #{client.full_name} from #{actor.full_name}" }
-      if client
+      if client.login_name.to_s.length > 0
         actor.add_internet_credit(client, data['credit_add'])
+      else
+        dputs(0){"Bizarre client: #{client.inspect} - #{session.inspect} - #{data.inspect}"}
       end
       return client
     end
@@ -729,9 +731,9 @@ class Person < Entity
     client.data_set_log(:_internet_credit, (client.internet_credit.to_i + internet_credit.to_i).to_s,
                         "#{self.person_id}:#{internet_credit}")
     pay_service(internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
-    log_msg('AddCash', "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
+    log_msg(:AddCash, "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
                          "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}")
-    log_msg('AddCash', "Total due: #{account_total_due}")
+    log_msg(:AddCash, "Total due: #{account_total_due}")
   end
 
   def pay_service(credit, msg, date = nil)
