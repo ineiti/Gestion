@@ -78,7 +78,7 @@ class PersonModify < View
             rep += reply(:window_show, :printing) +
                 reply(:unhide, :next_page) +
                 reply(:update, :msg_print => 'Printing front page')
-            System.run_bool("#{lpr} -P 1 -o media=a6 #{files}")
+            System.run_bool(dp "#{lpr} -P 1 -o media=a6 #{files}")
             session.s_data._person_page = files
           else
             rep += reply(:window_show, :printing) +
@@ -89,7 +89,7 @@ class PersonModify < View
                 reply(:hide, :next_page)
           end
         when 'next_page'
-          System.run_bool("#{cmd_printer(session, :print_student)} -P 2 -o media=a6 #{session.s_data._person_page}")
+          System.run_bool(dp "#{cmd_printer(session, :print_student)} -P 2 -o media=a6 #{session.s_data._person_page}")
           rep += reply(:update, :msg_print => 'Printing back page') +
               reply(:hide, :next_page)
         when 'close'

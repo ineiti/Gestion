@@ -2,10 +2,11 @@
 
 WORKING:
         - Person::Modify - Make a print-option:
-            - student-card, library-card, personnel-card
+            d doesn't print second page
+            x student-card, library-card, personnel-card
+            x French translation needs to be better for print_student
 
 BUGS:
-
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
         - Get QooxView/Test/qv_gettext to run
@@ -18,7 +19,10 @@ BUGS:
           find getActiveForm, as it is not drawn yet...
 	- 10 crashes when not operating "properly"
 
-[5', 15', 30', 1h, 4h]
+For 2.0:
+        - Put data-directory elsewhere
+        - Make a gem-compatible installation
+
 Security:
 
 UI:
@@ -28,6 +32,7 @@ UI:
 FEATURES:
         - Add Language-evaluations for MaN
         - CoursesTabs - Drop-down to select courses
+        - Bibliotheque
 
         - SMScontrol: redo check_sms with regard to auto-charging and such. Write a
             clean state-diagram with connected/disconnected/internet_left/credit_left
@@ -142,13 +147,7 @@ Features:
 	-4 make an asynchronous printing-module
 	- Using data from solar on local account without failing
 	- Make a dropbox when using _find
-	-2 Make internet.wifi with Self::Internet only, and a link which allows
-	  to do the infamous internet.wifi/?pass=&user=
         -3 take Admin::ControlAccess from Rooms-definition
-	-Tigo
-          - 3 auto-reconnect on error
-          - vérifier si la sim est expirée
-          - Montrer le log des derniers communications avec le Modem
 	-3 Inventory of screens, mice, routers
 	- CourseHistory - what should go in there?
 
@@ -166,11 +165,6 @@ Programming:
 		- take out arrays when only one reply anyway
 	- Really slow search or something when starting up
 		- also in CourseModify
-	- having lists and dropbox with additional hidden "index" that is returned for chosen entries
-		- Tasks reference a "person" which can change instead of a "person_id"
-		- Can't change name of courses
-		- Add a method "select" instead of sending a list-item twice
-	- make class to easy allow for a "add/delete"-list
 	- ENTITY_BASE:
 		- Have one tab with all Entities to chose from
 		- Other tabs with actions on each entity
@@ -181,9 +175,6 @@ Programming:
 			- arrays with strings coming from Frontend ?!?
 			- Cash* views have to be moved, as there is no "Cash"-Entity
 		- convert views to value_entities
-	- DOMINIQUE:
-		- Statistiques de "Cours::accounting"
-		- Bibliotheque
 
 VERIFY:
 
