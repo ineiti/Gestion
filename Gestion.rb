@@ -139,8 +139,8 @@ else
 
   if ConfigBase.has_function? :network
     Network::Device.start
-    dputs(1){'Waiting for Devices to initialize'}
-    sleep 5
+    #dputs(1){'Waiting for Devices to initialize'}
+    #sleep 5
   end
 
   if ConfigBase.has_function? :internet
