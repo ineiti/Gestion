@@ -26,7 +26,6 @@ module Internet
   end
 
   def update(operation, dev = nil)
-    dp "#{operation} - #{dev.inspect}"
     case operation
       when /del/
         if @device == dev
@@ -42,7 +41,7 @@ module Internet
           Captive.setup(@device)
           @device.add_observer(self)
           @operator = @device.operator
-          log_msg :Internet, "Got new device #{@device.inspect} - #{ConfigBase.captive_dev}"
+          log_msg :Internet, "Got new device #{@device} - #{ConfigBase.captive_dev}"
         else
           log_msg :Internet, "New device #{dev} that doesn't match #{ConfigBase.captive_dev}"
         end
