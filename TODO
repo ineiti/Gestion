@@ -7,6 +7,8 @@ WORKING:
             x French translation needs to be better for print_student
 
 BUGS:
+        - Admin::reboot doesn't save!
+
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
         - Get QooxView/Test/qv_gettext to run
