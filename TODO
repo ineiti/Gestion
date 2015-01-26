@@ -7,7 +7,6 @@ WORKING:
             x French translation needs to be better for print_student
 
 BUGS:
-        - Admin::reboot doesn't save!
 
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
@@ -235,6 +234,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150126: Admin::reboot doesn't save!
         - B 150121: Cours::Modify::change_name - if exams present, copy them over!
         - UI150121: confirmation-window upon deletion of course and student
             - write to log WHO deleted a course or a student
