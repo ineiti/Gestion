@@ -5,6 +5,10 @@ class Recharges < Entities
     value_int :days_valid
     value_int :days_goal
   end
+
+  def enabled?
+    search_all_.length > 0
+  end
 end
 
 class Recharge < Entity

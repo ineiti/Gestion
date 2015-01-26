@@ -41,12 +41,34 @@ class NetworkSMS < View
     end
   end
 
+  def s_unknown(i)
+    i == -1 ? 'Unknown' : i
+  end
+
+  def s_status(i)
+    case i
+      when Device::CONNECTED
+        'Connected'
+      when Device::CONNECTING
+        'Connecting'
+      when Device::DISCONNECTING
+        'Disconnecting'
+      when Device::DISCONNECTED
+        'Disconnected'
+      when Device::ERROR_CONNECTION
+        'Error'
+      when -1
+        'Unknown'
+    end
+  end
+
   def rpc_update(session)
     cl, il = if $SMScontrol.operator_missing?
                [-1, -1]
              else
                [$SMScontrol.operator.credit_left, $SMScontrol.operator.internet_left]
              end
+    #cl, il = s_unknown(cl), s_unknown(il)
     emails = System.exists?('postqueue') ?
         System.run_str('postqueue -p | tail -n 1') : 'n/a'
     vpns = System.exists?('systemctl') ?
@@ -54,9 +76,10 @@ class NetworkSMS < View
                            'sed -e "s/OpenVPN.*//"') :
         System.run_str('pgrep openvpn')
     ussds = $SMScontrol.device ? $SMScontrol.device.ussd_list.inspect : 'Down'
-    operator = $SMScontrol.operator ? $SMScontrol.operator.name : ''
+    operator = $SMScontrol.operator ? $SMScontrol.operator.name : 'Unknown'
     reply(:update,
-          :state_now => $SMScontrol.state_now, :state_goal => $SMScontrol.state_goal,
+          :state_now => s_status($SMScontrol.state_now),
+          :state_goal => s_status($SMScontrol.state_goal),
           :credit => cl,
           :promotion => il.separator,
           :promotion_left => Recharge.left_today(il).separator,
@@ -65,7 +88,8 @@ class NetworkSMS < View
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
           }.join("\n"),
           :ussd_received => ussds,
-          :operator => operator)
+          :operator => operator) +
+        reply_visible(Recharges.enabled?, :promotion_left)
   end
 
   def rpc_update_async(session)
