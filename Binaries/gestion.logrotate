@@ -20,7 +20,7 @@
     if [ ! -x $MAIL ]; then
       MAIL=/usr/bin/mail
     fi
-    echo "Events from logrotate" | $MAIL -s "Events from $( hostname )" -a /tmp/gestion_events.log root@localhost
+    cat -a /tmp/gestion_events.log | $MAIL -s "Events from $( hostname )" root@localhost
     rm /tmp/gestion_events.log
   endscript
   nocompress

@@ -1,13 +1,8 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - Person::Modify - Make a print-option:
-            d doesn't print second page
-            x student-card, library-card, personnel-card
-            x French translation needs to be better for print_student
 
 BUGS:
-
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
         - Get QooxView/Test/qv_gettext to run
@@ -234,6 +229,10 @@ To check:
 
 
 ** FIXED **:
+        - F 150127: Person::Modify - Make a print-option:
+            x doesn't print second page
+            x student-card, library-card, personnel-card
+            x French translation needs to be better for print_student
         - B 150126: Admin::reboot doesn't save!
         - B 150121: Cours::Modify::change_name - if exams present, copy them over!
         - UI150121: confirmation-window upon deletion of course and student
