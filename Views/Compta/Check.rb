@@ -43,7 +43,7 @@ class ComptaCheck < View
   end
 
   def check_split(arr)
-    dp [arr[0].collect { |a| a.split(/[\r\t]/) },
+   [arr[0].collect { |a| a.split(/[\r\t]/) },
         arr[1].collect { |a, b|
           [a.split(/[\r\t]/),
            b.split(/[\r\t]/)]
@@ -82,19 +82,15 @@ class ComptaCheck < View
   def collect_table(id, check, rows, cols, accounts = [])
     level = check.class == String ? 0 : 1
     counter = 0
-    dp rows.collect { |r|
+    rows.collect { |r|
          counter += 1
          if check.class == String
-           dp 'string'
            c = get_accounts(accounts, r)
-           dp "#{cols.inspect} - #{c.inspect}"
            ["#{id},#{counter}", cols.collect { |col_nbr| c[col_nbr] }.unshift(check)]
          else
-           dp 'array'
            c1 = get_accounts(accounts, r[0])
            c2 = get_accounts(accounts, r[1])
-           dp "#{cols.inspect} - #{c1.inspect} - #{c2.inspect}"
-           dp [["#{id},#{counter}", cols.collect { |col_nbr| c1[col_nbr] }.unshift(check[0])],
+           [["#{id},#{counter}", cols.collect { |col_nbr| c1[col_nbr] }.unshift(check[0])],
                ["#{id},#{counter}", cols.collect { |col_nbr| c2[col_nbr] }.unshift(check[1])]]
          end
        }.flatten(level)
@@ -149,7 +145,6 @@ class ComptaCheck < View
   end
 
   def rpc_button_continue(session, data)
-    dp 'Checking stuff'
     start_thread(session, :Accounts)
     reply(:auto_update, -1) +
         reply(:update, progress_txt: 'Starting checking') +
@@ -157,13 +152,12 @@ class ComptaCheck < View
   end
 
   def get_entities(ent, rows, table, gid)
-    dp table.collect { |t|
+    table.collect { |t|
          r, ind = t.split(',').collect { |i| i.to_i }
-         dp "#{r} - #{ind} - #{rows.inspect}"
          [r, ind-1, if r == 1
-                      ent.match_by_global_id(dp rows[r][ind-1][1][gid])
+                      ent.match_by_global_id(rows[r][ind-1][1][gid])
                     else
-                      ent.match_by_global_id(dp rows[r][ind-1][gid])
+                      ent.match_by_global_id(rows[r][ind-1][gid])
                     end]
        }
   end
@@ -179,13 +173,10 @@ class ComptaCheck < View
     end
     gid = ent == Movements ? 1 : 1
     msgs = []
-    dp ent.inspect
     get_entities(ent, rows, table, gid).
         each { |source, ind, e|
-      dp "in get_entities: #{ent} - #{ent.to_s}"
       case ent.to_s
         when /Movements/
-          dp 'Doing movements'
           case what
             when :copy
               case source

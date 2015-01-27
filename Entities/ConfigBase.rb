@@ -86,7 +86,7 @@ class ConfigBases < Entities
 
   def migration_2(c)
     dputs(3) { "Migrating in: #{c.inspect} - #{get_config(true, :LibNet, :simulation).inspect}" }
-    dp 'Old libnet-migration'
+    dputs(1) { 'Old libnet-migration' }
     dputs(3) { "Migrating out: #{c.inspect}" }
   end
 

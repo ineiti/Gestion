@@ -44,7 +44,7 @@ class PersonAdmin < View
       person.update_accounts
       if (centers = Persons.search_by_permissions(:center)).count > 1 &&
           !ConfigBase.has_function?(:course_server)
-        dp centers_name = centers.collect { |p| p.listp_full_name }
+        centers_name = centers.collect { |p| p.listp_full_name }
         rep += reply(:window_show, :win_error) +
             reply(:update, :err_html => "<p>There can't be more than one center<br>" +
                              'in the database. Please chose one') +
@@ -60,10 +60,10 @@ class PersonAdmin < View
     Persons.search_by_permissions(:center).each { |p|
       ddputs(2) { "Comparing #{p} with #{data._centers}" }
       if p != data._centers
-        dp p.permissions -= ['center']
+        p.permissions -= ['center']
       end
     }
-    dp person = Persons.match_by_person_id(data._person_id)
+    person = Persons.match_by_person_id(data._person_id)
     reply(:window_hide) +
         reply(:empty_fields) +
         update_form_data(person)

@@ -92,7 +92,6 @@ class CourseDiploma < View
       (course = Entities.Courses.match_by_course_id(course_id)) or return []
     else
       return unless course = args._courses
-      dp "Course is #{cours.inspect}"
     end
 
     ret = []

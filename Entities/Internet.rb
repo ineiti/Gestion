@@ -21,7 +21,6 @@ module Internet
         return
       end
       update('add', dev.first)
-      dp "#{@operator} - #{@device} - #{@device.operator}"
     end
   end
 

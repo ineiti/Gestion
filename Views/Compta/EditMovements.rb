@@ -128,7 +128,7 @@ class ComptaEditMovements < View
 
   def rpc_list_choice_movement_list(session, data)
     if (mov = data._movement_list).class == Movement
-      dp reply(:update, :desc => mov.desc, :value => (mov.value * 1000).to_i,
+      reply(:update, :desc => mov.desc, :value => (mov.value * 1000).to_i,
                :date => mov.date.to_web)
     end
   end

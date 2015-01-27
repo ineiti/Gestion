@@ -84,7 +84,7 @@ class Label < RPCQooxdooPath
   end
 
   def self.field_save(tr)
-    dp :Deprecated
+    dputs(0){ 'Deprecated'}
     exit
 
     if not (course_name = tr._course) =~ /^#{tr._user}_/
