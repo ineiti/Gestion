@@ -58,7 +58,7 @@ class PersonAdmin < View
 
   def rpc_button_chose(session, data)
     Persons.search_by_permissions(:center).each { |p|
-      ddputs(2) { "Comparing #{p} with #{data._centers}" }
+      dputs(2) { "Comparing #{p} with #{data._centers}" }
       if p != data._centers
         p.permissions -= ['center']
       end
