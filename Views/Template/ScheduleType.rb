@@ -1,9 +1,10 @@
-class AdminScheduleType < View
+class TemplateScheduleType < View
   #include VTListPane
 
   def layout
-    @order=350
+    @order=400
     @update = true
+    @visible = false
 
     gui_hboxg do
       #gui_vboxg :nogroup do

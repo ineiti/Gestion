@@ -61,11 +61,12 @@ begin
   Permission.add('accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
                                  'ComptaReport,ComptaShow,ComptaEdit.*,Cashbox.*,Report.*,' +
                                  'ComptaCheck', 'secretary')
-  Permission.add('maintenance', 'Inventory.*', 'default')
+  Permission.add('maintenance', 'Inventory.*,AdminBackup,AdminPower', 'default')
   Permission.add('cybermanager', 'PersonCredit,NetworkTigo,FlagAddInternet,' +
                                    'FlagPersonAdd,CashboxService,NetworkSMS', '')
-  Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,AdminCourseType,AdminPower,' +
-                               'PersonAdmin,PersonCourse,NetworkConnection,CourseStats,Report.*,AdminBackup',
+  Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,' +
+                               'PersonAdmin,PersonCourse,NetworkConnection,CourseStats,Report.*,' +
+                               'Template.*',
                  'secretary,cybermanager,teacher')
   Permission.add('center', 'CourseModify,FlagAdminCourse,CourseGrade,' +
                              'FlagPersonAdd,FlagPersonDelete,PersonModify,CourseDiploma,' +

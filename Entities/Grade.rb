@@ -33,6 +33,7 @@ class Grades < Entities
   end
 
   def save_data(d)
+    dputs_func
     if not d.has_key? :grade_id
       id = matches_by_course(d[:course].course_id).select { |g|
         g.student == d[:student]
@@ -43,8 +44,13 @@ class Grades < Entities
       end
     end
     dputs(4) { "data is #{d.inspect}" }
-    d[:mean] = d[:means].reduce(:+) / d[:means].count
-    dputs(4) { "data is #{d.inspect}" }
+    if d._means.count > 0
+      d[:mean] = d[:means].reduce(:+) / d[:means].count
+      dputs(4) { "data is #{d.inspect}" }
+    else
+      d._mean = 0
+    end
+    dputs(4) { "data before storing is #{d.inspect}" }
     super(d)
   end
 
@@ -68,8 +74,8 @@ class Grades < Entities
   def migration_1_raw(g)
     course = Courses.match_by_course_id(g._course_id)
     if course and course.ctype
-      g._means = [g._mean || 0] * course.ctype.tests.to_i
-      dputs(4) { "means is #{g._means.inspect} - tests are #{course.ctype.tests.inspect}" }
+      g._means = [g._mean || 0] * course.ctype.tests_nbr.to_i
+      dputs(4) { "means is #{g._means.inspect} - tests are #{course.ctype.tests_nbr.inspect}" }
     else
       dputs(0) { "Error: Migrating without ctype for #{g.inspect}..." }
       exit
@@ -96,7 +102,12 @@ class Grade < Entity
   end
 
   def to_s
-    value = (data_get(:mean).to_f * 2).round / 2
+    begin
+      value = (dp(data_get(:mean)).to_f * 2).round / 2
+    rescue FloatDomainError => _e
+      return 'NP'
+    end
+
     case value
       when 10..11.5 then
         'P'
@@ -157,7 +168,7 @@ class Grade < Entity
       end
     end
     if m
-      self._means = m.collect{|v| [ 20.0, [ 0.0, v.to_f ].max ].min }
+      self._means = m.collect { |v| [20.0, [0.0, v.to_f].max].min }
       self._mean = means.reduce(:+).to_f / m.count.to_f
     end
   end

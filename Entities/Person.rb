@@ -998,6 +998,7 @@ class Person < Entity
   def has_permission?(perm)
     dputs(4) { "Checking #{perm.inspect} in #{permissions.inspect}" }
     dputs(4) { "Which is #{Permission.views(permissions).inspect }" }
+    return false unless permissions
     return true if permissions.index(perm.to_s)
     Permission.views(permissions).select { |p|
       dputs(4) { "Checking permission #{p.inspect} of #{perm.inspect}" }

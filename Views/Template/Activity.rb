@@ -1,11 +1,12 @@
 # To change this template, choose Tools | Templates
 # and open the template in the editor.
 
-class AdminActivity < View
+class TemplateActivity < View
   include VTListPane
 
   def layout
     #set_data_class :Activities
+    @order = 200
 
     @functions_need = [:activities]
 

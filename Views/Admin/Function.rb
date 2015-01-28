@@ -1,6 +1,6 @@
 class AdminFunction < View
   def layout
-    @order = 400
+    @order = 700
     @update = true
     set_data_class(:ConfigBases)
 

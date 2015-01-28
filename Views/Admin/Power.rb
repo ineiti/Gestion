@@ -2,7 +2,7 @@
 
 class AdminPower < View
   def layout
-    @order = 300
+    @order = 400
 
     gui_vbox do
       gui_vbox do

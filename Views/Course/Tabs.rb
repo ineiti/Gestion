@@ -86,7 +86,8 @@ class CourseTabs < View
     if args._ct_name and args._ct_name.size > 0
       dputs(3) { 'Creating CourseType' }
       ct = CourseTypes.create(:name => args._ct_name, :duration => args._ct_duration,
-                              :tests => 1, :description => args._ct_desc, :contents => args._ct_contents,
+                              :tests_str => 'Mean', :description => args._ct_desc,
+                              :contents => args._ct_contents,
                               :diploma_type => ['simple'], :output => ['certificate'],
                               :page_format => [1], :filename => args._ct_filename)
       dputs(1) { "New CourseType is #{ct.inspect}" }

@@ -643,7 +643,7 @@ base_gestion
         (not grade.random)
               'not synched'
             elsif ((ctype.diploma_type[0] != 'simple') and
-                (exam_files(student).count < ctype.files_needed.to_i))
+                (exam_files(student).count < ctype.files_nbr.to_i))
               'incomplete'
             elsif (not grade) or (grade.to_s == 'NP')
               'not passed'
@@ -673,7 +673,7 @@ base_gestion
 
     #if grade and grade.to_s != "NP" and
     #    ( ( ctype.diploma_type[0] == "simple" ) or
-    #      ( exam_files( student ).count >= ctype.files_needed.to_i ) ) and
+    #      ( exam_files( student ).count >= ctype.files_nbr.to_i ) ) and
     #    ( ( ctype.diploma_type[0] == "accredited" ) and grade.random )
     #  @make_pdfs_state[student.login_name] = [ grade.mean, "queued" ]
     if state != 'queued'

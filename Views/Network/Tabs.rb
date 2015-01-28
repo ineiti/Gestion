@@ -1,6 +1,6 @@
 class NetworkTabs < View
   def layout
-    @order = 50
+    @order = 55
     @functions_need = [:network]
   end
 end

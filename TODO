@@ -1,8 +1,23 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
+        - Add Language-evaluations for MaN
+            x re-organized admin-tabs: added template-tabs
+            x re-organized template-coursetype to make room for lists
+            x adding migration for CourseTypes
+            x nice display-update when switching courses
+            x update fields_nbr and tests_nbr
+            x update all usages of fields and tests
+            - adapt Course::Grade
+                x add table
+                - save in Grade
+                    - doesn't continue correctly when using 'enter'-key
+            - add Course::Report for printing out the results
+            - think about what to do for course::clients
+            - tests
 
 BUGS:
+        - Captive: filter-table: add a nocaptive-ruleset to come before captive
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
           back!
         - Get QooxView/Test/qv_gettext to run
@@ -13,7 +28,7 @@ BUGS:
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
         - When CourseAdd is first tab and course is added, LTab.js:174 can't
           find getActiveForm, as it is not drawn yet...
-	- 10 crashes when not operating "properly"
+    	- 10 crashes when not operating "properly"
 
 For 2.0:
         - Put data-directory elsewhere
@@ -26,7 +41,6 @@ UI:
          tabs can be added
 
 FEATURES:
-        - Add Language-evaluations for MaN
         - CoursesTabs - Drop-down to select courses
         - Bibliotheque
 
@@ -102,6 +116,9 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - migration: don't migrate on new installation, but use something like
+          'default_values'-method
+        - ConfigBase: include default-values
         - change gui_* :nogroup to gui_* only and add gui_* :group
         - use list with entities also in reply( :update, :students => student )
             - for the moment add .to_frontend:
