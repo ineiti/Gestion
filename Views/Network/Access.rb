@@ -3,7 +3,7 @@ class NetworkAccess < View
   
   def layout
     @order = 90
-    @functions_need = [:internet]
+    @functions_need = [:internet, :network_pro]
 
     set_data_class :AccessGroups
 

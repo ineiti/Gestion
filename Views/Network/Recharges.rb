@@ -2,7 +2,7 @@ class NetworkRecharges < View
   def layout
     @order = 150
     @update = true
-    @functions_need = [:sms_control]
+    @functions_need = [:sms_control, :network_pro]
     set_data_class :Recharges
 
     gui_hbox do

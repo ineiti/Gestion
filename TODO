@@ -246,6 +246,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150128: ussd-detection wrong with cd0682-Tigo-stick
         - F 150127: Person::Modify - Make a print-option:
             x doesn't print second page
             x student-card, library-card, personnel-card

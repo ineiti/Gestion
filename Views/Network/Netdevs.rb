@@ -3,6 +3,8 @@ class NetworkNetdevs < View
 
   def layout
     @order = 200
+    @functions_need = [:network_pro]
+
     set_data_class :Netdevs
 
     gui_hbox do

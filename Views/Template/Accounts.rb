@@ -3,6 +3,7 @@ class TemplateAccounts < View
     @order = 300
     @update = true
     set_data_class(:ConfigBases)
+    @functions_need = [:accounting]
 
     gui_vbox do
       gui_hboxg :nogroup do

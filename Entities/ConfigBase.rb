@@ -42,14 +42,15 @@ class ConfigBases < Entities
     value_entity_account :account_lending, :drop, :path
     value_entity_account :account_cash, :drop, :path
 
-    @@functions = %w( network share
+    @@functions = %w( network share network_pro
     courses course_server course_client
     internet internet_simple internet_captive
     sms_control sms_control_autocharge
     inventory accounting quiz accounting_courses accounting_old
     plug_admin
     cashbox email usage_report activities library ).sort.to_sym
-    @@functions_base = {:network => [:internet, :share, :internet_only, :email, :sms_control],
+    @@functions_base = {:network => [:internet, :share, :internet_only, :email,
+                                     :sms_control, :network_pro],
                         :internet => [:internet_simple, :internet_captive],
                         :courses => [:course_server, :course_client, :accounting_courses],
                         :accounting => [:accounting_courses],

@@ -1,5 +1,6 @@
 class AdminServer < View
   def layout
+    @functions_need = %x(course_client)
     @order = 300
 
     gui_vbox do
