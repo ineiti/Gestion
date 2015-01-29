@@ -570,6 +570,7 @@ class Person < Entity
   end
 
   def update_account_due
+    return unless ConfigBase.has_function? :accounting
     if can_view :FlagAddInternet and login_name != 'admin'
       dputs(3) { "Adding account_due to -#{login_name.inspect}-" }
       if login_name.to_s == ''
@@ -594,6 +595,7 @@ class Person < Entity
   end
 
   def update_account_cash
+    return unless ConfigBase.has_function? :accounting
     if can_view :FlagAccounting and login_name != 'admin'
       acc = (first_name || login_name).capitalize
       dputs(3) { "Getting cash account #{acc}" }
