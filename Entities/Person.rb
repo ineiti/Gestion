@@ -564,6 +564,7 @@ class Person < Entity
   end
 
   def update_accounts
+    return unless ConfigBase.has_function? :accounting
     update_account_cash
     update_account_due
   end

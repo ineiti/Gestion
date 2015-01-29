@@ -68,13 +68,11 @@ class CourseGrade < View
   end
 
   def get_grades(ct, grades)
-    dp ct
-    dp grades
     means = grades ? grades.means : [''] * ct.tests_nbr
     i = 0
-    dp ct.tests_arr.zip(means).collect { |t, m|
-         dp [i += 1, [t, m.to_s]]
-       }
+    ct.tests_arr.zip(means).collect { |t, m|
+      [i += 1, [t, m.to_s]]
+    }
   end
 
   def update_grade(d)
@@ -103,13 +101,10 @@ class CourseGrade < View
           ret = rpc_update(session) +
               #reply(:empty_fields, [:students]) +
               update_form_data(course) +
-              reply(:update, {:courses => [course_id]}) +
-              reply(:focus, :mean1)
+              reply(:update, {:courses => [course_id]})
           if course.students.size > 0
             first = course.list_students[0][0]
-            ret += reply(:update, {:students => [first]}) +
-                update_grade({'courses' => [course.course_id],
-                              'students' => [first]})
+            ret += reply(:update, {:students => [first]})
           end
 
           dputs(3) { "CType is #{course.ctype.inspect} - #{course.ctype.files_nbr.inspect}" }
@@ -135,19 +130,20 @@ class CourseGrade < View
           dputs(4) { "Course is #{course} - ret is #{ret.inspect}" }
         end
       when 'students'
-        ret += update_grade(args)
+        ret += update_grade(args) +
+            reply(:focus, {table: 'grades', row: 1, column: 1})
     end
-    ret + reply(:focus, :mean1)
+    ret
   end
 
   def rpc_button_save(session, data)
     dputs(3) { "Data is #{data.inspect}" }
-    c_id, p_name = d['courses'][0], d['students'][0]
+    c_id, p_name = data._courses.first, data._students.first
     course = Courses.match_by_course_id(c_id)
     student = Entities.Persons.match_by_login_name(p_name)
     grade = Entities.Grades.match_by_course_person(c_id, p_name)
     if course and student
-      means = new_grades(course.ctype, grade, data._grades)
+      means = new_grades(course.ctype, grade, data._grades.first)
       Entities.Grades.save_data({:course => course,
                                  :student => student,
                                  :means => means,
@@ -172,7 +168,7 @@ class CourseGrade < View
           update_grade(data) +
           reply(:update, :students => course[:students]) +
           reply(:update, :students => [data['students'][0]]) +
-          reply(:focus, :mean1)
+          reply(:focus, {table: 'grades', row: 0, column: 1})
     end
   end
 
@@ -299,30 +295,38 @@ class CourseGrade < View
   end
 
   def new_grades(ct, grade, new_grades)
+    return [] unless new_grades
     means = grade ? grade.means : []
     i = 0
-    dp ct.tests_arr.zip(means).collect { |t, m|
-         i+= 1
-         if i == new_grades._element_id.to_i then
-              new_grades._grade.to_f
-            else
-              m ? m : 0
-            end
-       }
+    ct.tests_arr.zip(means).collect { |t, m|
+      i+= 1
+      if i == new_grades._element_id.to_i then
+        new_grades._grade.to_f
+      else
+        m ? m : 0
+      end
+    }
   end
 
-  def rpc_table_grades(sessions, data)
-    dp data.inspect
+  def rpc_table_grades(session, data)
+    dp data
     c_id, p_name = data._courses.first, data._students.first
     course = Courses.match_by_course_id(c_id)
     student = Entities.Persons.match_by_login_name(p_name)
     grade = Entities.Grades.match_by_course_person(c_id, p_name)
+    grades = data._grades.first
+    element = grades._element_id.to_i
     if course and student
-      means = new_grades(course.ctype, grade, data._grades.first)
+      means = new_grades(course.ctype, grade, grades)
       Entities.Grades.save_data({:course => course,
                                  :student => student,
                                  :means => means,
                                  :remark => data['remark']})
+    end
+    if element == course.ctype.tests_nbr
+      rpc_button_save(session, data)
+    else
+      reply(:focus, {table: 'grades', row: element - 1, column: 1})
     end
   end
 end
