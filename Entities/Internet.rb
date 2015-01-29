@@ -37,15 +37,16 @@ module Internet
         d = dev.dev
         if !@device && d._uevent && d._uevent._interface == ConfigBase.captive_dev
           @device = dev
-          Captive.setup(@device)
           @device.add_observer(self)
           @operator = @device.operator
+          @operator and Captive.setup(@device)
           log_msg :Internet, "Got new device #{@device} - #{ConfigBase.captive_dev}"
         else
           log_msg :Internet, "New device #{dev} that doesn't match #{ConfigBase.captive_dev}"
         end
       when /operator/
         @operator = @device.operator
+        Captive.setup(@device)
         log_msg :Internet, "Got new operator #{@operator}"
     end
   end
