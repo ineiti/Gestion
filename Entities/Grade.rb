@@ -33,7 +33,7 @@ class Grades < Entities
   end
 
   def save_data(d)
-    dputs_func
+    #dputs_func
     if not d.has_key? :grade_id
       id = matches_by_course(d[:course].course_id).select { |g|
         g.student == d[:student]

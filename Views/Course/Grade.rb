@@ -18,8 +18,8 @@ class CourseGrade < View
       end
       gui_vbox :nogroup do
         show_table :grades, :headings => %w(Label grade), :widths => [150, 50],
-                   :columns => %w(0 align_right),
-                   :callback => :edit, :edit => [1]
+                   :columns => %w(0 align_right), #:callback => :edit,
+                   :edit => [1]
         show_int_ro :files_saved
         show_str :remark
         show_str :first_name, :width => 150
@@ -130,8 +130,8 @@ class CourseGrade < View
           dputs(4) { "Course is #{course} - ret is #{ret.inspect}" }
         end
       when 'students'
-        ret += update_grade(args) +
-            reply(:focus, {table: 'grades', row: 1, column: 1})
+        ret += update_grade(args)
+        ret += reply(:focus, {table: 'grades', col: 1, row: 0})
     end
     ret
   end
@@ -155,20 +155,26 @@ class CourseGrade < View
                                     :first_name => data['first_name'], :family_name => data['family_name']})
       end
 
-      # Find next student
-      course = course.to_hash
-      saved = course[:students].index { |i|
-        i[0] == data['students'][0]
-      }
-      dputs(2) { "Found student at #{saved}" }
-      data['students'] = course[:students][(saved + 1) % course[:students].size]
-      dputs(2) { "Next student is #{data['students'].inspect}" }
+      grades = data._grades.first
+      element = grades ? grades._element_id.to_i : 0
 
-      reply(:empty_fields, :students) +
-          update_grade(data) +
-          reply(:update, :students => course[:students]) +
-          reply(:update, :students => [data['students'][0]]) +
-          reply(:focus, {table: 'grades', row: 0, column: 1})
+      if element >= course.ctype.tests_nbr
+        element = 0
+        # Find next student
+        course = course.to_hash
+        saved = course[:students].index { |i|
+          i[0] == data['students'][0]
+        }
+        dputs(2) { "Found student at #{saved}" }
+        data['students'] = course[:students][(saved + 1) % course[:students].size]
+        dputs(2) { "Next student is #{data['students'].inspect}" }
+        reply(:empty_fields, :students) +
+            reply(:update, :students => course[:students]) +
+            reply(:update, :students => [data['students'][0]])
+      else
+        update_grade(data) +
+            reply(:focus, {table: 'grades', row: element, col: 1})
+      end
     end
   end
 
@@ -309,13 +315,13 @@ class CourseGrade < View
   end
 
   def rpc_table_grades(session, data)
-    dp data
     c_id, p_name = data._courses.first, data._students.first
     course = Courses.match_by_course_id(c_id)
     student = Entities.Persons.match_by_login_name(p_name)
     grade = Entities.Grades.match_by_course_person(c_id, p_name)
-    grades = data._grades.first
-    element = grades._element_id.to_i
+    return unless grades = data._grades.first
+    return unless element = grades._element_id.to_i
+
     if course and student
       means = new_grades(course.ctype, grade, grades)
       Entities.Grades.save_data({:course => course,
@@ -326,7 +332,7 @@ class CourseGrade < View
     if element == course.ctype.tests_nbr
       rpc_button_save(session, data)
     else
-      reply(:focus, {table: 'grades', row: element - 1, column: 1})
+      reply(:focus, {table: 'grades', row: element, col: 1})
     end
   end
 end

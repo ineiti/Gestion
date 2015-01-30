@@ -17,10 +17,16 @@ WORKING:
             - tests
 
 BUGS:
+        - Error in ConfigBase which doesn't update correctly the accounts when starting
+         without accounting
         - Permission:admin can add credit, but will fall into black hole - only allow
             for Permission:cybermanager to add credit
         - Person::add should focus on name-field
         - Course::PrintExa1 - prints two pages for 12 students - should be only 1 page
+        - Network::Captive - when using proxy, FCAPTIVE can stay empty for a long time,
+          as only filter::INPUT is used! So add a ICAPTIVE-line with the same entries
+          as FCAPTIVE, but only in one direction.
+            - add ICAPTIVE-counter to Network::Captive::cleanup
         - error:
 /Users/ineiti/.rbenv/versions/2.1.2/lib/ruby/2.1.0/rubygems/core_ext/kernel_require.rb:55:in `require': cannot load such file -- /usr/local/bin/actions.rb (LoadError)
         - error:
