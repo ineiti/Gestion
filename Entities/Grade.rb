@@ -103,7 +103,7 @@ class Grade < Entity
 
   def to_s
     begin
-      value = (dp(data_get(:mean)).to_f * 2).round / 2
+      value = (data_get(:mean).to_f * 2).round / 2
     rescue FloatDomainError => _e
       return 'NP'
     end

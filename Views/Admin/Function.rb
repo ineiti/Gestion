@@ -18,7 +18,7 @@ class AdminFunction < View
   end
 
   def rpc_update(session)
-    reply(:empty_fields) +
+    reply(:empty_nonlists) +
         update_form_data(ConfigBases.singleton)
   end
 

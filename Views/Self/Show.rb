@@ -36,7 +36,7 @@ class SelfShow < View
   end
   
   def rpc_update( session )
-    reply( :empty_fields ) +
+    reply( :empty_nonlists ) +
       reply( :update, session.owner.to_hash )
   end
 end

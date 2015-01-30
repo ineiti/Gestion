@@ -38,7 +38,7 @@ class CashboxReport < View
   
   def rpc_update( session )
     super( session ) +
-      reply( :empty_fields, [ :course, :report_type ] ) +
+      reply( :empty_nonlists, [ :course, :report_type ] ) +
       reply( :update, :report_type => 
         %w( Course Due_Daily Due_All Paid_All ).
         map.with_index{|d,i|

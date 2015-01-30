@@ -17,7 +17,7 @@ class SelfCash < View
 
   def rpc_update( session, client = nil )
     person = session.owner
-    reply( :empty_fields, %w( payments ) ) +
+    reply( :empty_nonlists, %w( payments ) ) +
       reply( :update, { :account_total_due => person.account_total_due } ) +
       reply( :update, { :payments => list_payments( session, true ) } )
   end

@@ -53,7 +53,7 @@ class CourseDiploma < View
     ret = []
     case name.to_s
       when 'courses'
-        ret = reply(:empty_fields, :diplomas_t1)
+        ret = reply(:empty_nonlists, :diplomas_t1)
         if args._courses.length > 0
           if course = Entities.Courses.match_by_course_id(args._courses.to_a[0])
             course.update_state

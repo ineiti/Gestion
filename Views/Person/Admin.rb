@@ -37,7 +37,7 @@ class PersonAdmin < View
   def rpc_button_save(session, data)
     dputs(3) { "#{data.inspect}" }
     person = Persons.match_by_person_id(data._person_id)
-    rep = reply(:empty_fields)
+    rep = reply(:empty_nonlists)
     if person
       log_msg :persons, "#{session.owner.login_name} saves #{data.inspect}"
       Persons.save_data(data)
@@ -65,7 +65,7 @@ class PersonAdmin < View
     }
     person = Persons.match_by_person_id(data._person_id)
     reply(:window_hide) +
-        reply(:empty_fields) +
+        reply(:empty_nonlists) +
         update_form_data(person)
   end
 
@@ -82,8 +82,8 @@ class PersonAdmin < View
     if name == 'persons'
       dputs(2) { "Got data: #{data.inspect}" }
       if p = Persons.match_by_login_name(data['persons'].flatten[0])
-        #reply( :empty_fields, [:internet_none] ) +
-        reply(:empty_fields, [:permissions, :groups]) +
+        #reply( :empty_nonlists, [:internet_none] ) +
+        reply(:empty_nonlists, [:permissions, :groups]) +
             reply(:update, :permissions => Permission.list.sort) +
             reply(:update, :groups => eval(Persons.get_value(:groups).list)) +
             reply(:update, p)

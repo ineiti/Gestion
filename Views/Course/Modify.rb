@@ -353,7 +353,7 @@ class CourseModify < View
       course_id = args['courses'][0]
       dputs(3) { "replying for course_id #{course_id}" }
       course = Courses.match_by_course_id(course_id)
-      reply(:empty_fields, [:students]) +
+      reply(:empty_nonlists, [:students]) +
           update_form_data(course) +
           reply(:update, {:courses => [course_id]})
     end
@@ -371,7 +371,7 @@ class CourseModify < View
   end
 
   def rpc_update(session)
-    reply(:empty_fields, :students) +
+    reply(:empty_nonlists, :students) +
         super(session) +
         reply_print(session) +
         hide_if_center(session) +
@@ -390,7 +390,7 @@ class CourseModify < View
     fields = %w( teacher assistant responsible )
 
     super(session) +
-        reply(:empty_fields, fields) +
+        reply(:empty_nonlists, fields) +
         reply(:update, :assistant => [[0, '---']]) +
         fields.collect { |p|
           reply(:update, p => resps)
@@ -436,7 +436,7 @@ class CourseModify < View
       course.data_set_hash(data._wen_ctype.to_hash.except(:name), true)
     end
     reply(:window_hide) +
-        reply(:parent, reply(:empty_fields, [:courses]) +
+        reply(:parent, reply(:empty_nonlists, [:courses]) +
             reply(:update, :courses => Entities.Courses.list_courses(session) +
                 data._courses))
   end

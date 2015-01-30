@@ -119,7 +119,7 @@ class TC_Course < Test::Unit::TestCase
     courses_admin2 = Courses.search_by_students('^admin2$')
     assert_equal 1, courses_admin2.length
     Entities.save_all
-    Entities.delete_all_data( true )
+    Entities.delete_all_data(true)
     Entities.load_all
     ConfigBases.init
     #dp Courses.search_all_.inspect
@@ -270,6 +270,33 @@ class TC_Course < Test::Unit::TestCase
     }
     @grade0 = Grades.save_data({:student => @secretaire,
                                 :course => @maint_2, :means => [11]})
+    Grades.search_all.each { |g|
+      dputs(1) { g.inspect }
+      dputs(1) { "Grade #{g.grade_id}: #{g.course.name} - #{g.student.login_name}" }
+    }
+    @maint_2.prepare_diplomas
+
+    while Dir.glob("#{@maint_2.dir_diplomas}/*").count < 3 do
+      dputs(1) { 'Waiting for diplomas' }
+      sleep 1
+    end
+  end
+
+  def test_print_reports
+    ConfigBase.add_function :course_server
+
+    @maint_t.diploma_type = [:report]
+    @maint_t.tests_str = %w( one two three ).join("\n")
+    @maint_t.filename = %w(base_report.odt)
+    assert_equal 3, @maint_t.tests_nbr
+    assert_equal %w(one two three), @maint_t.tests_arr
+
+    @maint_2.students_add 'secretaire'
+    Grades.search_all.each { |g|
+      dputs(1) { g.inspect }
+    }
+    @grade0 = Grades.save_data({:student => @secretaire,
+                                :course => @maint_2, :means => [11,12,13]})
     Grades.search_all.each { |g|
       dputs(1) { g.inspect }
       dputs(1) { "Grade #{g.grade_id}: #{g.course.name} - #{g.student.login_name}" }
@@ -1041,19 +1068,19 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_json_byte
-    a = {cmd: 'hi', data: "bad\x92 value" }
-    b = JSON.parse({cmd: a._cmd, data: Base64.encode64( a._data )}.to_json).to_sym
-    b._data = Base64.decode64( b._data )
+    a = {cmd: 'hi', data: "bad\x92 value"}
+    b = JSON.parse({cmd: a._cmd, data: Base64.encode64(a._data)}.to_json).to_sym
+    b._data = Base64.decode64(b._data)
     assert_equal a.to_s, b.to_s
 
-    f = File.open('test_bytes.png') { |f| f.read }.force_encoding( Encoding::ASCII_8BIT)
+    f = File.open('test_bytes.png') { |f| f.read }.force_encoding(Encoding::ASCII_8BIT)
     assert_equal f, f
-    assert_equal f, Base64.decode64( Base64.encode64( f ) )
+    assert_equal f, Base64.decode64(Base64.encode64(f))
 
     a = {cmd: 'hi', data: File.open('test_bytes.png') { |f| f.read }.
-        force_encoding( Encoding::ASCII_8BIT) }
-    b = JSON.parse({cmd: a._cmd, data: Base64.encode64( a._data )}.to_json).to_sym
-    b._data = Base64.decode64( b._data )
+        force_encoding(Encoding::ASCII_8BIT)}
+    b = JSON.parse({cmd: a._cmd, data: Base64.encode64(a._data)}.to_json).to_sym
+    b._data = Base64.decode64(b._data)
     assert_equal a._data, b._data, 'Not the same with Base64'
 
   end

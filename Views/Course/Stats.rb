@@ -39,7 +39,7 @@ class CourseStats < View
       course_id = args['courses'][0]
       dputs( 3 ){ "replying for course_id #{course_id}" }
       course = Courses.match_by_course_id(course_id)
-      reply( :empty_fields ) +
+      reply( :empty_nonlists ) +
         reply( :update, :entries => [0] ) +
         update_form_data( course ) +
         reply_visible( course.entries.class != Account, :create_account )
@@ -48,7 +48,7 @@ class CourseStats < View
   
   def rpc_update_view( session )
     super( session ) +
-      reply( :empty_fields, :entries ) +
+      reply( :empty_nonlists, :entries ) +
       reply( :update, :entries => 
         [[0, 'None']].concat( AccountRoot.actual.listp_path ) )
   end

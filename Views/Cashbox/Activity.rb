@@ -89,7 +89,7 @@ class CashboxActivity < View
   end
 
   def rpc_list_choice_activities(session, data)
-    reply(:empty_fields_update, data._activities.to_hash) +
+    reply(:empty_nonlists_update, data._activities.to_hash) +
         rpc_button_signed_up_students(session, data)
   end
 

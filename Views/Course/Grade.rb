@@ -55,7 +55,7 @@ class CourseGrade < View
 
   def rpc_update(session)
     super(session) +
-        reply(:empty_fields, [:students]) +
+        reply(:empty_nonlists, [:students]) +
         [:prepare_files, :fetch_files, :transfer_files,
          :last_synched, :sync_server, :upload, :files_saved].collect { |b|
           reply(:hide, b)
@@ -76,22 +76,22 @@ class CourseGrade < View
   end
 
   def update_grade(d)
-    ret = reply(:empty_fields)
     c_id, p_name = d['courses'][0], d['students'][0]
     if p_name and c_id
       person = Persons.match_by_login_name(p_name)
       course = Courses.match_by_course_id(c_id)
       grade = Entities.Grades.match_by_course_person(c_id, p_name)
-      ret += reply(:update, :grades => get_grades(course.ctype, grade)) +
+      reply(:update, :grades => get_grades(course.ctype, grade)) +
           update_form_data(person) +
           update_files_saved(course, p_name)
+    else
+      []
     end
-    ret
   end
 
   def rpc_list_choice(session, name, args)
     dputs(3) { "rpc_list_choice with #{name} - #{args.inspect}" }
-    ret = reply(:empty_fields)
+    ret = []
     case name
       when 'courses'
         course_id = args['courses'][0]
@@ -99,7 +99,7 @@ class CourseGrade < View
         if course
           dputs(3) { 'replying' }
           ret = rpc_update(session) +
-              #reply(:empty_fields, [:students]) +
+              reply(:empty_nonlists, :students) +
               update_form_data(course) +
               reply(:update, {:courses => [course_id]})
           if course.students.size > 0
@@ -109,11 +109,8 @@ class CourseGrade < View
 
           dputs(3) { "CType is #{course.ctype.inspect} - #{course.ctype.files_nbr.inspect}" }
           buttons = []
-          if (course.ctype.diploma_type[0] != 'simple') and
-              (course.ctype.files_nbr.to_i > 0)
-            dputs(3) { 'Putting buttons'
-            }
-
+          if course.ctype.files_nbr.to_i > 0
+            dputs(3) { 'Putting buttons' }
             buttons.push :transfer_files, :upload, :files_saved
             if Shares.match_by_name('CourseFiles')
               buttons.push :prepare_files, :fetch_files
@@ -168,9 +165,13 @@ class CourseGrade < View
         dputs(2) { "Found student at #{saved}" }
         data['students'] = course[:students][(saved + 1) % course[:students].size]
         dputs(2) { "Next student is #{data['students'].inspect}" }
-        reply(:empty_fields, :students) +
-            reply(:update, :students => course[:students]) +
-            reply(:update, :students => [data['students'][0]])
+        if false
+          reply(:empty_nonlists, :students) +
+              reply(:update, :students => course[:students]) +
+              reply(:update, :students => [data['students'][0]])
+        else
+          reply(:select, students: [data._students[0]])
+        end
       else
         update_grade(data) +
             reply(:focus, {table: 'grades', row: element, col: 1})

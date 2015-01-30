@@ -19,7 +19,7 @@ class TemplateAccounts < View
     AccountRoot.current.get_tree_depth { |a|
       accounts_current.push [a.id, a.get_path]
     }
-    reply(:empty_fields) +
+    reply(:empty_nonlists) +
         reply(:update, ConfigBases.get_block_fields(:accounts).collect { |acc|
                        [acc, accounts_current]
                      }.to_h) +

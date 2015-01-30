@@ -240,7 +240,7 @@ class Courses < Entities
     end
     dputs(4) { "Converting for name #{name} with #{Rooms.data.inspect}" }
     r = Rooms.match_by_name(name)
-    if (not r) and (not (r = Rooms.match_by_name("")))
+    if (not r) and (not (r = Rooms.match_by_name('')))
       r = nil
     end
     c.classroom = r
@@ -316,7 +316,7 @@ class Courses < Entities
     course._ctype = CourseTypes.match_by_name(course._ctype)
     return "Error: couldn't make course of type #{course.ctype}" unless course._ctype
     course._center = Persons.match_by_login_name(tr._user)
-    course._room = Rooms.find_by_name("")
+    course._room = Rooms.find_by_name('')
     dputs(3) { "Course is now #{course.inspect}" }
     if c = Courses.match_by_name(course._name)
       dputs(3) { "Updating course #{course._name}" }
@@ -468,14 +468,14 @@ class Course < Entity
   def date_fr(d, show_year = true)
     day, month, year = d.split('.')
     day = day.gsub(/^0/, '')
-    if day == "1"
-      day = "1er"
+    if day == '1'
+      day = '1er'
     end
     month = %w( janvier février mars avril mai juin juillet août septembre octobre novembre décembre )[month.to_i-1]
     if show_year
-      [day, month, year].join(" ")
+      [day, month, year].join(' ')
     else
-      [day, month].join(" ")
+      [day, month].join(' ')
     end
   end
 
@@ -517,7 +517,7 @@ base_gestion
 
   def get_files
     if File::directory?(dir_diplomas)
-      files = if ctype.output[0] == "certificate"
+      files = if ctype.output[0] == 'certificate'
                 Dir::glob("#{dir_diplomas}/*pdf")
               else
                 Dir::glob("#{dir_diplomas}/*png") +
@@ -639,11 +639,10 @@ base_gestion
     dputs(3) { "Course is #{name} - student is #{student} - ctype is #{ctype.inspect} and grade is " +
         "#{grade.inspect} - #{grade.to_s}" }
 
-    state = if (ctype.diploma_type[0] == 'accredited') and grade and
-        (not grade.random)
+    state = if (ctype.diploma_type[0] == 'accredited') && grade &&
+        (!grade.random)
               'not synched'
-            elsif ((ctype.diploma_type[0] != 'simple') and
-                (exam_files(student).count < ctype.files_nbr.to_i))
+            elsif exam_files(student).count < ctype.files_nbr.to_i
               'incomplete'
             elsif (not grade) or (grade.to_s == 'NP')
               'not passed'
@@ -669,6 +668,7 @@ base_gestion
   end
 
   def update_student_diploma(file, student)
+    dputs_func
     grade, state = get_grade_args(student)
 
     #if grade and grade.to_s != "NP" and
@@ -684,7 +684,7 @@ base_gestion
         dputs(5) { "Cours is #{self.inspect}" }
         doc = z.read('content.xml')
         doc.force_encoding(Encoding::UTF_8)
-        dputs(5) { doc.inspect }
+        #dputs(5) { doc.inspect }
         dputs(5) { "Contents is: #{contents.inspect}" }
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match(doc)
           dputs(2) { "QRcode-image is #{qrcode[1]}" }
@@ -696,7 +696,7 @@ base_gestion
         end
 
         cont = contents +
-            (grade.remark.to_s.length > 0 ? "\n#{grade.remark}" : "")
+            (grade.remark.to_s.length > 0 ? "\n#{grade.remark}" : '')
         if desc_p_match = /-DESC1-(.*)-DESC2-/.match(doc)
           desc_p = desc_p_match[1]
           dputs(3) { "desc_p is #{desc_p}" }
@@ -721,7 +721,7 @@ base_gestion
         show_year = start.gsub(/.*\./, '') != self.end.gsub(/.*\./, '')
         doc.gsub!(/-FROM-/, date_fr(start, show_year))
         doc.gsub!(/-TO-/, date_fr(self.end))
-        doc.gsub!(/-SPECIAL-/, "")
+        doc.gsub!(/-SPECIAL-/, '')
         doc.gsub!(/-GRADE-/, grade.mention)
         doc.gsub!(/-DATE-/, date_fr(sign))
         doc.gsub!(/-COURSE_TYPE-/, ctype.name)
@@ -732,6 +732,23 @@ base_gestion
         doc.gsub!(/-CENTER_PLACE-/, c.town || '')
         doc.gsub!(/-CENTER_PHONE-/, c.phone || '')
         doc.gsub!(/-CENTER_EMAIL-/, c.email || '')
+
+        dputs(3){"ctype is #{ctype.inspect}"}
+        if ctype.diploma_type.first =~ /report/
+          dputs(3) { 'Adding report-lines' }
+          if test_p_match = /-TEST1-(.*)-MEAN1-(.*)-TEST2-/.match(doc)
+            test_p = test_p_match[1..2]
+            dputs(3) { "test_p is #{test_p.inspect}" }
+            if grade.means.count == ctype.tests_arr.count
+              tests = ctype.tests_arr.zip(grade.means).collect{|t, m|
+                t + test_p[0] + m.to_s
+              }.join( test_p[1])
+              doc.gsub!(/-TEST1-.*-MEAN2-/, tests)
+            else
+              dputs(1) { "Incomplete tests for #{student.login_name}" }
+            end
+          end
+        end
         z.get_output_stream('content.xml') { |f|
           f.write(doc)
         }
@@ -782,7 +799,7 @@ base_gestion
 
         dputs(3) { "Convert is #{convert.inspect}" }
         if convert
-          @make_pdfs_state["0"] = 'converting'
+          @make_pdfs_state['0'] = 'converting'
           old = Dir.glob(dir_diplomas + '/content.xml*')
           list = Dir.glob(dir_diplomas + '/*odt')
           format = ctype.output[0].to_sym
@@ -848,7 +865,7 @@ base_gestion
             dputs(3) { 'Making a zip-file' }
             Zip::File.open("#{dir}/all.zip", Zip::File::CREATE) { |z|
               Dir.glob("#{dir}/*").each { |image|
-                z.get_output_stream(image.sub(".*/", "")) { |f|
+                z.get_output_stream(image.sub('.*/', '')) { |f|
                   File.open(image) { |fi|
                     f.write fi.read
                   }
@@ -873,10 +890,10 @@ base_gestion
       FileUtils.mkdir(dir_diplomas)
     else
       if !@only_psnup
-        FileUtils.rm_rf(Dir.glob(dir_diplomas + "/*"))
+        FileUtils.rm_rf(Dir.glob(dir_diplomas + '/*'))
       end
     end
-    @make_pdfs_state = {"0" => 'collecting'}
+    @make_pdfs_state = {'0' => 'collecting'}
     #@make_pdfs_state = {}
     make_pdfs(convert)
   end
@@ -926,7 +943,7 @@ base_gestion
               if file_add and size_exams != 0
                 dputs(3) { "Adding file #{exa_f} with size #{size_exams}" }
                 files_added and files_added.push [s, File.basename(exa_f), exa_md5]
-                z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", "w") { |f|
+                z.file.open("#{p}/#{exa_f.sub(/.*\//, '')}", 'w') { |f|
                   f.write File.open(exa_f) { |ef|
                             content = ef.read
                             dputs(3) { "Size of file is #{content.size}" }
@@ -1238,7 +1255,7 @@ base_gestion
       dputs(3) { "Killing thread #{@thread}" }
       @thread.kill
       @thread.join
-      dputs(3) { "Joined thread" }
+      dputs(3) { 'Joined thread' }
     end
   end
 
@@ -1275,7 +1292,7 @@ base_gestion
   def report_pdf
     file = "/tmp/course_#{name}.pdf"
     Prawn::Document.generate(file,
-                             :page_size => "A4",
+                             :page_size => 'A4',
                              :page_layout => :portrait,
                              :bottom_margin => 2.cm) do |pdf|
 
@@ -1291,10 +1308,10 @@ base_gestion
       pdf.move_down 1.cm
 
       if students.length > 0
-        pdf.table([["Description", "Value", "Sum"].collect { |ch|
+        pdf.table([['Description', 'Value', 'Sum'].collect { |ch|
                      {:content => ch, :align => :center} }] +
                       report_list.collect { |id, t|
-                        [t[0] == "Reste" ? t[1] : t[0],
+                        [t[0] == 'Reste' ? t[1] : t[0],
                          t[2],
                          t[3]]
                       },
@@ -1330,9 +1347,9 @@ base_gestion
     movs.reverse.select { |e| e.desc =~ / #{student}:/ }.collect { |e|
       total += e.value
       [e.global_id,
-       [e.date, e.value_form, ""]]
+       [e.date, e.value_form, '']]
     } + [[nil,
-          ["Reste", Account.total_form(total),
+          ['Reste', Account.total_form(total),
            Account.total_form(cost_student.to_f / 1000 - total)]]]
   end
 
@@ -1351,12 +1368,12 @@ base_gestion
         total += e.value
         [e.global_id,
          [e.date,
-          "",
+          '',
           e.value_form,
-          ""
+          ''
          ]] } +
           [[nil,
-            ["Reste",
+            ['Reste',
              "#{Persons.match_by_login_name(s).full_name} (#{s})",
              Account.total_form(total),
              Account.total_form(cost_student.to_f / 1000 - total)
@@ -1379,12 +1396,12 @@ base_gestion
                                "of #{student.full_name} in #{name}"
     Movements.create("For student #{student.login_name}:" +
                          "#{student.full_name}",
-                     date.strftime("%Y-%m-%d"), amount.to_f / 1000,
+                     date.strftime('%Y-%m-%d'), amount.to_f / 1000,
                      secretary.account_due, entries)
     if secretary.has_permission?(:admin) && oldcash
-      log_msg "course-payment", "Oldcash - doing reverse, too"
+      log_msg 'course-payment', 'Oldcash - doing reverse, too'
       Movements.create("old_cash for #{student.login_name}",
-                       date.strftime("%Y-%m-%d"), amount.to_f / 1000,
+                       date.strftime('%Y-%m-%d'), amount.to_f / 1000,
                        entries, secretary.account_due)
     end
   end
@@ -1394,7 +1411,7 @@ base_gestion
     return if !new_course.entries
     return if new_course.students.index(student)
 
-    log_msg "course", "Transferring #{student} from #{name} to #{new_course.name}"
+    log_msg 'course', "Transferring #{student} from #{name} to #{new_course.name}"
     self.students = students - [student]
     new_course.students_add student
 
@@ -1474,4 +1491,5 @@ base_gestion
       entries.name = new_name
     end
   end
+
 end

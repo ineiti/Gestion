@@ -125,7 +125,7 @@ class PersonModify < View
             reply(:update, :not_allowed => "<b>Vous n'avez pas le droit<br>" +
                              'de changer ce mot de passe</b>')
         dputs(4) { "change_pwd is #{change_pwd.inspect}" }
-        reply(:empty_fields) + reply(:update, p) +
+        reply(:empty_nonlists) + reply(:update, p) +
             reply(:update, update(session)) +
             reply(:focus, :credit_add) + reply_print(session) + change_pwd
       end

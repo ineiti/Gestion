@@ -25,7 +25,7 @@ class LibraryPerson < View
   end
 
   def rpc_list_choice_users(session, data)
-    reply(:empty_fields) +
+    reply(:empty_nonlists) +
         reply(:update, data._users.to_hash)
   end
 

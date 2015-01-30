@@ -26,7 +26,7 @@ class ReportCourse < View
   
   def rpc_update( session )
     super( session ) +
-      reply( :empty_fields, :course ) +
+      reply( :empty_nonlists, :course ) +
       reply( :update, :course => Courses.list_courses_entries(session) ) +
       reply_print( session )
   end

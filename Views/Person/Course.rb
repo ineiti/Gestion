@@ -22,12 +22,12 @@ class PersonCourse < View
   end
   
   def rpc_update( session )
-    reply( :empty_fields, [:courses] )
+    reply( :empty_nonlists, [:courses] )
   end
   
   def rpc_list_choice( session, name, args )
     dputs( 3 ){ "args is #{args.inspect}" }
-    ret = reply( :empty_fields, [:courses] )
+    ret = reply( :empty_nonlists, [:courses] )
     if name == "persons" and args['persons']
       p = Entities.Persons.match_by_login_name( args['persons'].flatten[0] )
       if p

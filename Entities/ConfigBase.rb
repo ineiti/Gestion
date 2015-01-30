@@ -28,6 +28,7 @@ class ConfigBases < Entities
     value_str :allow_src_direct
     value_str :allow_src_proxy
     value_str :keep_idle_minutes
+    value_str :allow_double
 
     value_block :operator
     value_int :cost_base

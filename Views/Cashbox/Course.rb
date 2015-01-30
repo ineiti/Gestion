@@ -44,7 +44,7 @@ class CashboxCourse < View
   end
 
   def rpc_list_choice_courses(session, data)
-    reply(:empty_fields, :students) +
+    reply(:empty_nonlists, :students) +
         reply(:update, :students => data._courses.list_students(true))
   end
 
@@ -112,8 +112,8 @@ class CashboxCourse < View
     else
       []
     end +
-        reply(:empty_fields, :students) +
-        reply(:empty_fields, :courses) +
+        reply(:empty_nonlists, :students) +
+        reply(:empty_nonlists, :courses) +
         reply(:update, :courses => Courses.list_courses_entries)
   end
 

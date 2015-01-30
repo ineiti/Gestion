@@ -59,7 +59,7 @@ class NetworkAccess < View
   end
   
   def rpc_button_new( session, data )
-    reply( :empty_fields, [:access_times_view] ) +
+    reply( :empty_nonlists, [:access_times_view] ) +
       update_members(nil) +
       vtlp_update_list( session )
   end

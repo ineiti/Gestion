@@ -27,6 +27,6 @@ class AdminCredit < View
       end
     }
     Entities.save_all
-    reply( :empty_fields )
+    reply( :empty_nonlists )
   end
 end

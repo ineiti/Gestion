@@ -71,7 +71,7 @@ class CourseTabs < View
       (reply(:window_show, :not_all_elements) +
           hide.collect { |h| reply(:hide, h) }).flatten
     else
-      rep = reply(:empty_fields, [:courses]) +
+      rep = reply(:empty_nonlists, [:courses]) +
           reply(:update, :courses => Courses.list_courses(session))
       if not session.can_view('FlagAdminCourse')
         rep += reply(:hide, :delete) + reply(:hide, :add)
@@ -142,9 +142,9 @@ class CourseTabs < View
       course.delete
     end
 
-    reply(:empty_fields, [:courses]) +
+    reply(:empty_nonlists, [:courses]) +
         reply(:update, {:courses => Courses.list_courses(session)}) +
-        reply(:child, reply(:empty_fields, [:students])) +
+        reply(:child, reply(:empty_nonlists, [:students])) +
         reply(:window_hide)
   end
 

@@ -70,10 +70,10 @@ class SelfInternet < View
         end
 
         ret += reply(:update, :connection_status =>
-            'Etat de la connexion:<br>' +
-                "<table width='150px'><tr>" +
-                connection_status +
-                '</tr></table>')
+                                'Etat de la connexion:<br>' +
+                                    "<table width='150px'><tr>" +
+                                    connection_status +
+                                    '</tr></table>')
       when 1
         ret += reply(:update, :connection_status => 'Not enough money in account')
       when 2
@@ -91,7 +91,7 @@ class SelfInternet < View
       return reply(:hide, :connect) +
           reply(:hide, :disconnect) +
           reply(:update, :connection =>
-              "<img src='/Images/connection_wait.png' height='50'>")
+                           "<img src='/Images/connection_wait.png' height='50'>")
 
     end
     if not session.owner
@@ -122,14 +122,13 @@ class SelfInternet < View
       reply_one_two(show_button == :connect, :connect, :disconnect)
     end +
         reply(:update, :connection =>
-            "<img src='/Images/connection_#{connected ? 'yes' : 'no'}.png' height='50'>")
+                         "<img src='/Images/connection_#{connected ? 'yes' : 'no'}.png' height='50'>")
   end
 
   def update_isp(session)
     promo = (Internet.operator && Internet.operator.has_promo) ? :unhide : :hide
     dputs(3) { "promo is #{promo}: #{Internet.operator} - #{Internet.operator.has_promo.inspect}" }
     reply(promo, :bytes_left) +
-        reply(promo, :bytes_left_today) +
         reply(:unhide, :connection_status)
   end
 
@@ -167,18 +166,19 @@ class SelfInternet < View
         update_isp(session) +
         reply(:update, :internet_credit => session.owner.internet_credit.to_i) +
         reply(:update, :users_connected =>
-            "#{users.count}: #{users_str}")
+                         "#{users.count}: #{users_str}")
     if Internet.operator && Internet.operator.has_promo
       left = Internet.operator.internet_left
       ret += reply(:update, :bytes_left => left.to_MB('Mo')) +
+          reply_visible(Recharges._search_all_.count > 0, :bytes_left_today) +
           reply(:update, bytes_left_today: Recharge.left_today(left).to_MB('Mo'))
     end
     o = session.owner
     Captive.user_keep o.login_name, ConfigBase.keep_idle_free.to_i
     ret += reply(:update, auto_connection:
-        'Bookmark for '+
-            "<a href='http://internet.wifi/connect.cgi?user=#{o.login_name}&pass=#{o.password}'>" +
-            'Internet-connection</a>')
+                            'Bookmark for '+
+                                "<a href='http://internet.wifi/connect.cgi?user=#{o.login_name}&pass=#{o.password}'>" +
+                                'Internet-connection</a>')
     return ret
   end
 

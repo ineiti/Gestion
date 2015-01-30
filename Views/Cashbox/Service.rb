@@ -78,7 +78,7 @@ class CashboxService < View
     data.delete('account_total_due')
     actor.pay_service(services_total, cash_msg(data),
                       data._date)
-    reply(:empty_fields) + rpc_update(session)
+    reply(:empty_nonlists) + rpc_update(session)
   end
 
   def rpc_update(session)

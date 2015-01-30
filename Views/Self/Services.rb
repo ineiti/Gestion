@@ -66,7 +66,7 @@ class SelfServices < View
     data.delete( "services_total" )
     data.delete( "account_total_due" )
     actor.pay_service( services_total, SelfServices.cash_msg( data ) )
-    reply( :empty_fields, nil ) + rpc_update( session )
+    reply( :empty_nonlists, nil ) + rpc_update( session )
   end
   
   def rpc_update( session )

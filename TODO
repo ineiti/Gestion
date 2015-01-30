@@ -17,6 +17,7 @@ WORKING:
             - tests
 
 BUGS:
+        - Replace empty_nonlists with empty and empty_update
         - Error in ConfigBase which doesn't update correctly the accounts when starting
          without accounting
         - Permission:admin can add credit, but will fall into black hole - only allow

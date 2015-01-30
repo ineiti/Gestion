@@ -130,7 +130,7 @@ class PersonTabs < View
       result = result[0..19]
     end
 
-    ret = reply(:empty_fields, [:persons]) +
+    ret = reply(:empty_nonlists, [:persons]) +
         reply(:update, {:persons => result.collect { |p|
                        p.to_list
                      }, :search => s})
@@ -141,7 +141,7 @@ class PersonTabs < View
       end
     else
       ret += reply(:fade_in, :parent) +
-          reply(:child, reply(:empty_fields))
+          reply(:child, reply(:empty_nonlists))
     end
 
     ret + reply(:focus, :search)

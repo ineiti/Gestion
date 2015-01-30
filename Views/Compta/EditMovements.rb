@@ -77,13 +77,13 @@ class ComptaEditMovements < View
 
   def update_list(account_root = nil, account = nil)
     if !(account_root && account)
-      return reply(:empty_fields, :movement_list)
+      return reply(:empty_nonlists, :movement_list)
     end
 
     total = account.movements.inject(0.0) { |sum, m|
       sum + (m.get_value(account) * 1000).round
     }.to_i
-    reply(:empty_fields, :movement_list) +
+    reply(:empty_nonlists, :movement_list) +
         reply(:update, :movement_list => account.movements.collect { |m|
                        value = (m.get_value(account) * 1000).to_i
                        total_old = total
@@ -96,7 +96,7 @@ class ComptaEditMovements < View
   end
 
   def update_accounts()
-    reply(:empty_fields, [:account_archive, :account_src, :account_dst]) +
+    reply(:empty_nonlists, [:account_archive, :account_src, :account_dst]) +
         reply(:update_silent, :account_archive => [[0, 'Actual']].concat(
                                 if archive = AccountRoot.archive
                                   archive.accounts.collect { |a|

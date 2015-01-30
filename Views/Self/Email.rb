@@ -16,7 +16,7 @@ class SelfEmail < View
 
   def rpc_update(session, client = nil)
     person = session.owner
-    reply(:empty_fields) +
+    reply(:empty_nonlists) +
         reply(:update, :login_name => person.login_name) +
         reply(:update, Hash[*@elements.collect { |e|
           [e.to_sym, person.data_get(e)] }.flatten(1)])

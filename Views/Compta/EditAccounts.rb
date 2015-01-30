@@ -75,12 +75,12 @@ class ComptaEditAccounts < View
   def update_list(account = [])
     account.class == Account or account = AccountRoot.current
 
-    reply(:empty_fields, :account_list) +
+    reply(:empty_nonlists, :account_list) +
         reply(:update, :account_list => account.listp_path)
   end
 
   def update_archive
-    reply(:empty_fields, :account_archive) +
+    reply(:empty_nonlists, :account_archive) +
         reply(:update_silent, :account_archive => [[0, "Actual"]].concat(
             if archive = AccountRoot.archive
               archive.accounts.collect { |a|
@@ -97,7 +97,7 @@ class ComptaEditAccounts < View
   end
 
   def rpc_list_choice_account_list(session, data)
-    reply(:empty_fields) +
+    reply(:empty_nonlists) +
         if (acc = data._account_list) != []
           reply(:update, {total: acc.total_form,
                           desc: acc.desc,
