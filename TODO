@@ -8,11 +8,12 @@ WORKING:
             x nice display-update when switching courses
             x update fields_nbr and tests_nbr
             x update all usages of fields and tests
-            - adapt Course::Grade
+            x adapt Course::Grade
                 x add table
-                - save in Grade
-                    - doesn't continue correctly when using 'enter'-key
+                x save in Grade
+                    x doesn't continue correctly when using 'enter'-key
             - add Course::Report for printing out the results
+                - base_report is not filled in with all fields
             - think about what to do for course::clients
             - tests
 

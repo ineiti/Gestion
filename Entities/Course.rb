@@ -684,7 +684,7 @@ base_gestion
         dputs(5) { "Cours is #{self.inspect}" }
         doc = z.read('content.xml')
         doc.force_encoding(Encoding::UTF_8)
-        #dputs(5) { doc.inspect }
+        dputs(5) { doc.inspect }
         dputs(5) { "Contents is: #{contents.inspect}" }
         if qrcode = /draw:image.*xlink:href="([^"]*).*QRcode.*\/draw:frame/.match(doc)
           dputs(2) { "QRcode-image is #{qrcode[1]}" }
@@ -718,6 +718,7 @@ base_gestion
         doc.gsub!(/-NAME-/, student.full_name)
         doc.gsub!(/-DURATION-/, duration.to_s)
         doc.gsub!(/-COURSE-/, description)
+        doc.gsub!(/-COURSE_ID-/, name)
         show_year = start.gsub(/.*\./, '') != self.end.gsub(/.*\./, '')
         doc.gsub!(/-FROM-/, date_fr(start, show_year))
         doc.gsub!(/-TO-/, date_fr(self.end))
@@ -749,6 +750,8 @@ base_gestion
             end
           end
         end
+        doc.gsub!(/-MEAN-/, grade.mean.to_s)
+        doc.gsub!(/(number-rows-spanned=)\"3\"/, "\\1\"#{ctype.tests_nbr+1}\"")
         z.get_output_stream('content.xml') { |f|
           f.write(doc)
         }
