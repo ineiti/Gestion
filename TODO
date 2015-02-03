@@ -22,7 +22,6 @@ WORKING:
 BUGS:
         - EditMovements::55 - can't edit movements anymore
         - EditMovements::rpcButtonDelete - can't delete anymore
-        - can't upload files anymore in Course::Grades
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
         - Replace :empty_nonlists with :empty and :empty_update
         - Error in ConfigBase which doesn't update correctly the accounts when starting
@@ -269,6 +268,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150203: can't upload files anymore in Course::Grades -> doesn't work in qooxdoo 4!
         - B 150203: Course::PrintExa1 - prints two pages for 12 students - should be only 1 page
         - B 150203: missing translations
         - B 150203: error when requiring non-existing actions-file
