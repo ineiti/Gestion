@@ -644,7 +644,7 @@ base_gestion
     (stud_nr..30).each { |s|
       studs.push [[/Nom#{s.to_s.rjust(2, '0')}/, '']]
     }
-    ddputs(3) { "#{stud_nr}: Students are: #{studs.inspect}" }
+    dputs(3) { "#{stud_nr}: Students are: #{studs.inspect}" }
 
     pp = if stud_nr - 1 <= 12
            @proxy.print_exa[number - 1]
