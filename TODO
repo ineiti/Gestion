@@ -20,12 +20,8 @@ WORKING:
             - tests
 
 BUGS:
+        - can't upload files anymore in Course::Grades
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
-        - Course::PrintExa1 - prints two pages for 12 students - should be only 1 page
-        - Sometimes a new entry gets added in Template::CourseType
-            - when changing back to template::CourseType, fields restent remplies
-              and pressing 'save' will add a new entry
-            -> delete fields when pressing 'new'
         - Replace :empty_nonlists with :empty and :empty_update
         - Error in ConfigBase which doesn't update correctly the accounts when starting
          without accounting
@@ -59,8 +55,9 @@ Security:
 UI:
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
-        - empty forms should be disabled (like Person::Modify), in
-          TemplateCourse, NetworkShare, ...
+            -> delete fields when pressing 'new'
+            - empty forms should be disabled (like Person::Modify), in
+              TemplateCourse, NetworkShare, ...
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
 
@@ -270,6 +267,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150203: Course::PrintExa1 - prints two pages for 12 students - should be only 1 page
         - B 150203: missing translations
         - B 150203: error when requiring non-existing actions-file
         - B 150203: Accounting: stop updating indexes on every occasion!

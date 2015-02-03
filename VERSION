@@ -1,5 +1,9 @@
 Important notices for versions:
 
+- 150203: 1.9.4
+  - better account-updates with much fewer traffic to AfriCompta
+  - use tables and naming in Course::Grades
+
 - 150122: 1.9.3
   - lots of work on Network-part with regard to USB-keys
 
