@@ -51,7 +51,7 @@ class TemplateCourseType < View
 
   def rpc_update_view(session)
     super(session) +
-        #reply(:empty_nonlists, :account_base) +
+        reply(:empty_nonlists) +
         reply(:select, account_base: AccountRoot.actual.listp_path) +
         reply_visible(ConfigBase.has_function?(:accounting_courses),
                       :account_base)

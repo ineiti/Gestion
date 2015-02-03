@@ -479,6 +479,38 @@ class Course < Entity
     end
   end
 
+  def date_en(d, show_year = true)
+    day, month, year = d.split('.')
+    day = day.gsub(/^0/, '')
+    day_str = case day.to_i
+                when 1,21,31
+                  "#{day}st"
+                when 2,22
+                  "#{day}nd"
+                when 3,23
+                  "#{day}rd"
+                when 4..20,24..30
+                  "#{day}th"
+              end
+    month = %w( January February March April May June July August September October November December )[month.to_i-1]
+    if show_year
+      "#{day_str} of #{month}, #{year}"
+    else
+      "#{day_str} of #{month}"
+    end
+  end
+
+  def date_i18n(d, show_year = true)
+    case ctype.diploma_lang.first
+      when /en/
+        date_en( d, show_year)
+      when /fr/
+        date_fr(d, show_year)
+      else
+        dputs(0){"Unknown date type #{ctype.diploma_lang.inspect}"}
+    end
+  end
+
   def export_diploma
     return if export_check
 
@@ -720,11 +752,11 @@ base_gestion
         doc.gsub!(/-COURSE-/, description)
         doc.gsub!(/-COURSE_ID-/, name)
         show_year = start.gsub(/.*\./, '') != self.end.gsub(/.*\./, '')
-        doc.gsub!(/-FROM-/, date_fr(start, show_year))
-        doc.gsub!(/-TO-/, date_fr(self.end))
         doc.gsub!(/-SPECIAL-/, '')
         doc.gsub!(/-GRADE-/, grade.mention)
-        doc.gsub!(/-DATE-/, date_fr(sign))
+        doc.gsub!(/-DATE-/, date_i18n(sign))
+        doc.gsub!(/-FROM-/, date_i18n(start, show_year))
+        doc.gsub!(/-TO-/, date_i18n(self.end))
         doc.gsub!(/-COURSE_TYPE-/, ctype.name)
         doc.gsub!(/-URL_LABEL-/, grade.get_url_label)
         c = center
@@ -734,16 +766,16 @@ base_gestion
         doc.gsub!(/-CENTER_PHONE-/, c.phone || '')
         doc.gsub!(/-CENTER_EMAIL-/, c.email || '')
 
-        dputs(3){"ctype is #{ctype.inspect}"}
+        dputs(3) { "ctype is #{ctype.inspect}" }
         if ctype.diploma_type.first =~ /report/
           dputs(3) { 'Adding report-lines' }
           if test_p_match = /-TEST1-(.*)-MEAN1-(.*)-TEST2-/.match(doc)
             test_p = test_p_match[1..2]
             dputs(3) { "test_p is #{test_p.inspect}" }
             if grade.means.count == ctype.tests_arr.count
-              tests = ctype.tests_arr.zip(grade.means).collect{|t, m|
+              tests = ctype.tests_arr.zip(grade.means).collect { |t, m|
                 t + test_p[0] + m.to_s
-              }.join( test_p[1])
+              }.join(test_p[1])
               doc.gsub!(/-TEST1-.*-MEAN2-/, tests)
             else
               dputs(1) { "Incomplete tests for #{student.login_name}" }

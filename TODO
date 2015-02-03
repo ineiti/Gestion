@@ -14,12 +14,14 @@ WORKING:
                     x doesn't continue correctly when using 'enter'-key
             x add Course::Report for printing out the results
                 x base_report is not filled in with all fields
-                - make date English
+                x make date English or French
             - add Course::Class once filled out and once empty for filling out
             - think about what to do for course::clients
             - tests
 
 BUGS:
+        - EditMovements::55 - can't edit movements anymore
+        - EditMovements::rpcButtonDelete - can't delete anymore
         - can't upload files anymore in Course::Grades
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
         - Replace :empty_nonlists with :empty and :empty_update

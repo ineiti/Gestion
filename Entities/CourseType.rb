@@ -18,6 +18,7 @@ class CourseTypes < Entities
     value_block :central
     value_list_drop :diploma_type, '%w( simple files accredited report )'
     value_list_drop :output, '%w( certificate label )'
+    value_list_drop :diploma_lang, '%w( en fr )'
 
     value_block :lists
     value_str :tests_str
@@ -87,6 +88,10 @@ class CourseTypes < Entities
     end
   end
 
+  def migration_6(ct)
+    ct.diploma_lang = ['fr']
+  end
+
   def icc_list(arg)
     list_name
   end
@@ -119,7 +124,7 @@ class CourseType < Entity
   end
 
   def tests_arr
-    tests_str.split("\n")
+    tests_str.to_s.split("\n")
   end
 
   def files_str=(str)
@@ -127,6 +132,6 @@ class CourseType < Entity
   end
 
   def files_arr
-    files_str.split("\n")
+    files_str.to_s.split("\n")
   end
 end
