@@ -214,6 +214,7 @@ class ReportComptaExecutive < View
   end
 
   def rpc_list_choice_root(session, data)
+    return if data._root == []
     update_account(data._root)
   end
 end

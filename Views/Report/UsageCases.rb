@@ -37,7 +37,7 @@ class ReportUsageCases < View
     return if file_data == 'none'
     usage_list = Usages.match_by_id( data._usage_list.first ) or return
     file_f = [{}]
-    file_s = if File.exists? file_data
+    file_s = if File.exists? file_data.to_s
                file_f = usage_list.filter_file( file_data )
                File.open( file_data, 'r').readlines[0..100]
              else

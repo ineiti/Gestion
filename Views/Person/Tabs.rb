@@ -171,7 +171,8 @@ class PersonTabs < View
   def rpc_button_add(session, data)
     reply(:window_show, :add_person) +
         reply(:empty, [:complete_name, :login_prop]) +
-        reply(:hide, [:family_name, :first_name])
+        reply(:hide, [:family_name, :first_name]) +
+        reply(:focus, :complete_name)
   end
 
   def rpc_button_add_person(session, data)

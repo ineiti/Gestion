@@ -119,10 +119,12 @@ class ComptaEditMovements < View
   end
 
   def rpc_list_choice_account_src(session, data)
+    return if data._account_src == []
     update_list(data._account_archive, data._account_src)
   end
 
   def rpc_list_choice_account_archive(session, data)
+    return if data._account_archive == []
     update_list(data._account_archive)
   end
 

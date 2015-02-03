@@ -12,48 +12,30 @@ WORKING:
                 x add table
                 x save in Grade
                     x doesn't continue correctly when using 'enter'-key
-            - add Course::Report for printing out the results
-                - base_report is not filled in with all fields
+            x add Course::Report for printing out the results
+                x base_report is not filled in with all fields
+                - make date English
+            - add Course::Class once filled out and once empty for filling out
             - think about what to do for course::clients
             - tests
 
 BUGS:
-        - Replace empty_nonlists with empty and empty_update
+        - Person::add should focus on name-field -> trouble in QooxView::Frontend
+        - Course::PrintExa1 - prints two pages for 12 students - should be only 1 page
+        - Sometimes a new entry gets added in Template::CourseType
+            - when changing back to template::CourseType, fields restent remplies
+              and pressing 'save' will add a new entry
+            -> delete fields when pressing 'new'
+        - Replace :empty_nonlists with :empty and :empty_update
         - Error in ConfigBase which doesn't update correctly the accounts when starting
          without accounting
         - Permission:admin can add credit, but will fall into black hole - only allow
             for Permission:cybermanager to add credit
-        - Person::add should focus on name-field
-        - Course::PrintExa1 - prints two pages for 12 students - should be only 1 page
         - Network::Captive - when using proxy, FCAPTIVE can stay empty for a long time,
           as only filter::INPUT is used! So add a ICAPTIVE-line with the same entries
           as FCAPTIVE, but only in one direction.
             - add ICAPTIVE-counter to Network::Captive::cleanup
-        - error:
-/Users/ineiti/.rbenv/versions/2.1.2/lib/ruby/2.1.0/rubygems/core_ext/kernel_require.rb:55:in `require': cannot load such file -- /usr/local/bin/actions.rb (LoadError)
-        - error:
-:2:Person`accents_replace'**** Login is amarkas
-:1:DPuts`log_msg'xxxxxxxxxxxxx Info from person: Creating Person {:complete_name=>"Markas Al Salam", :first_name=>"Markas", :family_name=>"Al Salam", :login_name=
-                                >"amarkas", :person_id=>nil}
-:1:DPuts`log_msg'xxxxxxxxxxxxx Info from person: Setting password (6072) for amarkas to 6072
-:1:Tabs`rpc_button_add_missing' New center {:person_id=>4, :first_name=>"Markas", :family_name=>"Al Salam", :login_name=>"amarkas", :internet_credit=>0,
-                                :password_plain=>"6072", :password=>"6072", :permissions=>["center"]}
-:0:RPCQooxdoo`rescueXXXXXXXXXX Error while handling rpc_update_hook with [[nil, nil]]: undefined method `has_key?' for nil:NilClass
-:0:RPCQooxdoo`rescueXXXXXXXXXX #<NoMethodError: undefined method `has_key?' for nil:NilClass>
-:0:RPCQooxdoo`rescueXXXXXXXXXX undefined method `has_key?' for nil:NilClass
-/opt/profeda/QooxView/View.rb:825:in `block in parse_request'
-/opt/profeda/QooxView/View.rb:824:in `each'
-/opt/profeda/QooxView/View.rb:824:in `parse_request'
-/opt/profeda/QooxView/RPCQooxdoo.rb:180:in `request'
-/opt/profeda/QooxView/RPCQooxdoo.rb:223:in `parse'
-/opt/profeda/QooxView/RPCQooxdoo.rb:235:in `parse_query'
-/opt/profeda/QooxView/RPCQooxdoo.rb:276:in `block in webrick'
-/usr/lib/ruby/2.2.0/webrick/httpservlet/prochandler.rb:38:in `call'
-/usr/lib/ruby/2.2.0/webrick/httpservlet/prochandler.rb:38:in `do_GET'
-/usr/lib/ruby/2.2.0/webrick/httpservlet/abstract.rb:106:in `service'
-/usr/lib/ruby/2.2.0/webrick/httpserver.rb:138:in `service'
-/usr/lib/ruby/2.2.0/webrick/httpserver.rb:94:in `run'
-/usr/lib/ruby/2.2.0/webrick/server.rb:294:in `block in start_thread'
+            - use together with Monitor::Traffic
 
         - Captive: filter-table: add a nocaptive-ruleset to come before captive
         - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
@@ -75,6 +57,10 @@ For 2.0:
 Security:
 
 UI:
+        - add-button in different views should always pop up a window with
+          the information to add, never just an empty form
+        - empty forms should be disabled (like Person::Modify), in
+          TemplateCourse, NetworkShare, ...
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
 
@@ -284,6 +270,10 @@ To check:
 
 
 ** FIXED **:
+        - B 150203: missing translations
+        - B 150203: error when requiring non-existing actions-file
+        - B 150203: Accounting: stop updating indexes on every occasion!
+        - B 150203: error in QooxView/View.rb
         - B 150128: ussd-detection wrong with cd0682-Tigo-stick
         - F 150127: Person::Modify - Make a print-option:
             x doesn't print second page

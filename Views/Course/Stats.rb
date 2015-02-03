@@ -3,6 +3,8 @@ class CourseStats < View
     set_data_class :Courses
     @update = true
     @order = 100
+    @functions_need = [:accounting]
+
     #@visible = false
 
     gui_vbox do

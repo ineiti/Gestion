@@ -668,7 +668,7 @@ base_gestion
   end
 
   def update_student_diploma(file, student)
-    dputs_func
+    #dputs_func
     grade, state = get_grade_args(student)
 
     #if grade and grade.to_s != "NP" and
