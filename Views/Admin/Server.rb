@@ -33,7 +33,7 @@ class AdminServer < View
   end
 
   def rpc_button_download_list(session, data)
-    (res = ICC.get(:AdminServer, :list)).inspect
+    (res = ICC.get(:CourseTypes, :list)).inspect
     if res._code == 'Error'
       status_list(true, status: "Error: #{res._msg}")
     else
@@ -53,7 +53,7 @@ class AdminServer < View
 
   def rpc_button_fetch_list(session, data)
     cts_names = data._ctypes_server
-    (cts = ICC.get(:AdminServer, :fetch,
+    (cts = ICC.get(:CourseTypes, :fetch,
                    args: {course_type_names: cts_names})).inspect
     if cts._code == 'Error'
       return status_list(true, status: "Error: #{cts._msg}")
@@ -64,8 +64,7 @@ class AdminServer < View
       log_msg :CourseType, "Creating CourseType #{ct._name}"
       CourseTypes.create(ct)
     }
-    vtlp_update_list(session).concat(
-        status_list(true, status: "Downloaded #{cts_names.length} CourseTypes"))
+    status_list(true, status: "Downloaded #{cts_names.length} CourseTypes")
   end
 
   def status_list(show_status, status: '', list: [])

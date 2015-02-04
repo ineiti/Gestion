@@ -6,6 +6,7 @@ class CourseTypes < Entities
     value_list_drop :page_format,
                     "[[1,'normal'],[2,'interchanged'],[3,'landscape'],[4,'seascape']]"
     value_str :filename
+    value_str :file_exam
 
     value_block :strings
     value_str :name
@@ -36,8 +37,7 @@ class CourseTypes < Entities
 
   def self.files
     ddir = Courses.dir_diplomas
-    (Dir.glob(ddir + '/*odt') +
-        Dir.glob(ddir + '/*odg')).
+    Dir.glob(ddir + '/*{odt,odg,ods}').
         collect { |f| f.sub(/^.*\//, '') }
   end
 

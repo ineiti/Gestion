@@ -119,7 +119,7 @@ class CashboxActivity < View
       when 2
         dputs(3) { 'Printing pdfs' }
         files = var._activities.collect { |act| act.print }
-        var._pages = OpenPrint.print_nup_duplex(files, 'activity_cards')
+        var._pages = OpenPrint.pdf_nup_duplex(files, 'activity_cards')
         cmd = cmd_printer(session, :print_activity)
         dputs(3) { "Command is #{cmd} with pages #{var._pages.inspect}" }
         if not cmd

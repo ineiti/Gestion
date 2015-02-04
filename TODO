@@ -15,8 +15,8 @@ WORKING:
             x add Course::Report for printing out the results
                 x base_report is not filled in with all fields
                 x make date English or French
-            - add Course::Class once filled out and once empty for filling out
-            - think about what to do for course::clients
+            x add Course::Class once filled out and once empty for filling out
+            - downloading of exams
             - tests
 
 BUGS:
@@ -54,9 +54,10 @@ For 2.0:
 Security:
 
 UI:
+        - change names when file-uploading according to TemplateCourseType::files
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
-            -> delete fields when pressing 'new'
+            -> delete fields when pressing 'new' and empty forms when switching tab
             - empty forms should be disabled (like Person::Modify), in
               TemplateCourse, NetworkShare, ...
         - if only Course-tabs are visible, the basic tab is not shown, so no
@@ -268,6 +269,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150203: Events are not correctly sent if wrong mail-command is used
         - B 150203: can't upload files anymore in Course::Grades -> doesn't work in qooxdoo 4!
         - B 150203: Course::PrintExa1 - prints two pages for 12 students - should be only 1 page
         - B 150203: missing translations

@@ -11,9 +11,7 @@ class CoursePrint < View
     gui_vbox do
       gui_vbox do
         show_print :print_presence
-        show_print :print_exa_1
-        show_print :print_exa_2
-        show_print :print_exa_3
+        show_print :print_exam_file
       end
       gui_window :missing_data do
         show_html :missing
@@ -29,6 +27,16 @@ class CoursePrint < View
   def rpc_update(session)
     super(session) +
         reply_print(session)
+  end
+
+  def rpc_list_choice_courses(session, args)
+    dputs(3) { "rpc_list_choice with #{name} - #{args.inspect}" }
+    if args._courses.length > 0
+      course_id = args._courses[0]
+      dputs(3) { "replying for course_id #{course_id}" }
+      course = Courses.match_by_course_id(course_id)
+      reply_visible(course.ctype.file_exam.to_s.length > 0, :print_exam_file)
+    end
   end
 
   def rpc_button_print_presence(session, data)
@@ -54,42 +62,30 @@ class CoursePrint < View
     end
   end
 
-  def print_exa(session, data, number)
+  def rpc_button_print_exam_file(session, data)
     dputs(3) { "printing with #{data._courses.inspect}" }
-    exa = "print_exa_#{number}".to_sym
+    exa = 'print_exam_file'
     ret = rpc_print(session, exa, data)
     lp_cmd = cmd_printer(session, exa)
     course = Courses.match_by_course_id(data._courses[0])
     dputs(3){"lp_cmd is #{lp_cmd}"}
     if data._courses && data._courses.length > 0
-      case rep = course.print_exa(lp_cmd, number)
+      case rep = course.print_exam_file(lp_cmd)
         when true
           ret += reply(:window_show, :printing) +
               reply(:update, :msg_print => "Impression de la fiche d'évaluation pour<br>"+
-                  "#{course.name} en cours")
+                               "#{course.name} en cours")
         when false
           ret += reply(:window_show, :missing_data) +
               reply(:update, :missing => 'One of the following is missing:<ul><li>date</li>'+
-                  '<li>students</li><li>teacher</li></ul>')
+                               '<li>students</li><li>teacher</li></ul>')
         else
           ret += reply(:window_show, :missing_data) +
               reply(:update, :missing => "Click on the link: <a target='other' href=\"#{rep}\">"+
-                  'PDF</a>')
+                               'PDF</a>')
       end
     end
     return ret
-  end
-
-  def rpc_button_print_exa_1(session, data)
-    print_exa(session, data, 1)
-  end
-
-  def rpc_button_print_exa_2(session, data)
-    print_exa(session, data, 2)
-  end
-
-  def rpc_button_print_exa_3(session, data)
-    print_exa(session, data, 3)
   end
 
   def rpc_button_close(session, data)

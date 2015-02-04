@@ -392,6 +392,13 @@ class Course < Entity
     @only_psnup = false
   end
 
+  def ctype=(ct)
+    self._ctype = ct
+    if ctype.file_exam and ctype.file_exam.length > 0
+      @print_exam_file = OpenPrint.new("#{ConfigBase.template_dir}/#{ctype.file_exam.first}")
+    end
+  end
+
   def update_state
     if @make_pdfs_state['0'] == 'undefined'
       @make_pdfs_state = {}
@@ -483,13 +490,13 @@ class Course < Entity
     day, month, year = d.split('.')
     day = day.gsub(/^0/, '')
     day_str = case day.to_i
-                when 1,21,31
+                when 1, 21, 31
                   "#{day}st"
-                when 2,22
+                when 2, 22
                   "#{day}nd"
-                when 3,23
+                when 3, 23
                   "#{day}rd"
-                when 4..20,24..30
+                when 4..20, 24..30
                   "#{day}th"
               end
     month = %w( January February March April May June July August September October November December )[month.to_i-1]
@@ -501,13 +508,14 @@ class Course < Entity
   end
 
   def date_i18n(d, show_year = true)
+    return unless ctype.diploma_lang
     case ctype.diploma_lang.first
       when /en/
-        date_en( d, show_year)
+        date_en(d, show_year)
       when /fr/
         date_fr(d, show_year)
       else
-        dputs(0){"Unknown date type #{ctype.diploma_lang.inspect}"}
+        dputs(0) { "Unknown date type #{ctype.diploma_lang.inspect}" }
     end
   end
 
@@ -628,9 +636,15 @@ base_gestion
   end
 
   def print_exa(lp_cmd, number)
-    if !self.start || !self.end
+    if !self.start || !self.end || !teacher || !center || !students ||
+        students.length == 0
       return false
     end
+
+    if number == 0
+      return print_exam_file(lp_cmd)
+    end
+
     stud_nr = 1
     studs = students.collect { |s|
       Entities.Persons.match_by_login_name(s)
@@ -664,6 +678,46 @@ base_gestion
                  [/123/, students.count],
                  [/321/, duration],
              ])
+  end
+
+  def print_exam_file(lp_cmd = nil)
+    dputs_func
+    if !self.start || !self.end || !teacher || !center || !students ||
+        students.length == 0
+      return false
+    end
+
+    stud_nr = 0
+    studs = students.collect { |s|
+      Entities.Persons.match_by_login_name(s)
+    }.sort_by { |s| s.full_name }.collect { |stud|
+      stud_str = (stud_nr%12+1).to_s.rjust(2, '0')
+      stud_nr += 1
+      [/-NAME#{stud_str}-/, stud.full_name]
+    }
+    (0..11).each { |i|
+      studs.push [/-NAME#{(12-i).to_s.rjust(2, '0')}-/, '']
+    }
+    dputs(3) { "#{stud_nr}: Students are: #{studs.inspect}" }
+
+    tests = (1..9).zip(ctype.tests_arr).collect { |i, t|
+      [/-TEST#{i}-/, t.to_s]
+    }
+
+    @print_exam_file.lp_cmd = lp_cmd
+
+    pdfs = (0..(stud_nr/12)).collect { |i|
+      @print_exam_file.make_pdf(studs.shift(12) + tests + [
+                                    [/-TEACHER-/, teacher.full_name],
+                                    [/-COURSE_ID-/, name],
+                                    [/-FROM-/, date_i18n(self.start)],
+                                    [/-TO-/, date_i18n(self.end)],
+                                    [/-RESP-/, responsible.full_name],
+                                    [/-CENTER-/, center.full_name]
+                                ])
+    }
+    dputs(3) { "Pdf-files are #{pdfs.inspect}" }
+    dp @print_exam_file.print_join(pdfs)
   end
 
   def get_grade_args(student, update = false)

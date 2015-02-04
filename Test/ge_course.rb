@@ -32,9 +32,9 @@ class TC_Course < Test::Unit::TestCase
     @surf2 = Entities.Persons.create(:login_name => 'surf2', :password => 'super',
                                      :permissions => ['default'], :first_name => 'Internet', :family_name => 'Surfer')
     @stud1 = Entities.Persons.create(:login_name => 'stud1', :password => 'super',
-                                     :permissions => ['default'], :first_name => 'Internet', :family_name => 'Student')
+                                     :permissions => ['default'], :first_name => 'Internet', :family_name => 'Student 1')
     @stud2 = Entities.Persons.create(:login_name => 'stud2', :password => 'super',
-                                     :permissions => ['default'], :first_name => 'Internet', :family_name => 'Student')
+                                     :permissions => ['default'], :first_name => 'Internet', :family_name => 'Student 2')
     @maint_t = Entities.CourseTypes.create(:name => 'maint', :duration => 72,
                                            :desciption => 'maintenance', :contents => 'lots of work',
                                            :filename => ['base_gestion.odt'], :output => 'certificate',
@@ -296,7 +296,7 @@ class TC_Course < Test::Unit::TestCase
       dputs(1) { g.inspect }
     }
     @grade0 = Grades.save_data({:student => @secretaire,
-                                :course => @maint_2, :means => [11,12,13]})
+                                :course => @maint_2, :means => [11, 12, 13]})
     Grades.search_all.each { |g|
       dputs(1) { g.inspect }
       dputs(1) { "Grade #{g.grade_id}: #{g.course.name} - #{g.student.login_name}" }
@@ -307,6 +307,19 @@ class TC_Course < Test::Unit::TestCase
       dputs(1) { 'Waiting for diplomas' }
       sleep 1
     end
+  end
+
+  def test_print_exam_file
+    ConfigBase.template_dir = 'Diplomas'
+    english_t = CourseTypes.create(name: 'english', diploma_lang: ['en'],
+                                   tests_str: "Oral\nWritten\nExpression",
+                                   tests_nbr: 3, file_exam: ['exam_language.odt'])
+    english = Courses.create_ctype(english_t, '1502')
+    students = (1..7).collect{%w(stud1 stud2)}.flatten
+    english.data_set_hash(students: students, start: '1.1.2015', end: '28.2.2015',
+                          teacher: @surf, responsible: @secretaire)
+
+    assert dp(english.print_exam_file)
   end
 
   def test_migration_2
