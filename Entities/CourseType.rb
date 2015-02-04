@@ -105,6 +105,15 @@ class CourseTypes < Entities
       return 'Error: no course_type_name given'
     end
   end
+
+  def icc_file(arg)
+    file = "#{ConfigBase.template_dir}/#{File.basename(arg.name)}"
+    if File.exists? file
+      IO.read(file)
+    else
+      return "Error: can't find file"
+    end
+  end
 end
 
 class CourseType < Entity

@@ -20,6 +20,7 @@ WORKING:
             - tests
 
 BUGS:
+        - Self::Internet - Bytes per day left is shown
         - EditMovements::55 - can't edit movements anymore
         - EditMovements::rpcButtonDelete - can't delete anymore
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
@@ -54,6 +55,10 @@ For 2.0:
 Security:
 
 UI:
+        - SMScontrol: have USSD-history like SMS-history
+        - SMScontrol: have 3Gpref, 3Gonly, GPRSpref, GPRSonly
+        - make a drop-down SMScontrol::recharge button with the possibilities of
+          recharging
         - change names when file-uploading according to TemplateCourseType::files
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
