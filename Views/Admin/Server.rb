@@ -61,9 +61,14 @@ class AdminServer < View
 
     log_msg :CourseType, "Downloaded #{cts_names}"
     cts._msg.each { |ct|
-      log_msg :CourseType, "Creating CourseType #{ct._name}"
-      ct_new = CourseTypes.create(ct)
-      [ct_new.filename, ct_new.file_exam].each{|f|
+      if ct_exist = CourseTypes.match_by_name(ct._name)
+        log_msg :CourseType, "Updating CourseType #{ct._name}"
+        ct_exist.data_set_hash(ct)
+      else
+        log_msg :CourseType, "Creating CourseType #{ct._name}"
+        ct_new = CourseTypes.create(ct)
+      end
+      [ct._filename, ct._file_exam].each { |f|
         if f.to_s.length > 0
           file = ICC.get(:CourseTypes, :file, args: {name: f})
           log_msg :CourseType, "Got file #{f} with length #{file.length}"
