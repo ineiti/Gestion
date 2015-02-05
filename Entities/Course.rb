@@ -706,7 +706,7 @@ base_gestion
 
     @print_exam_file.lp_cmd = lp_cmd
 
-    pdfs = (0..(stud_nr/12)).collect { |i|
+    pdfs = (0..(stud_nr-1)/12).collect { |i|
       @print_exam_file.make_pdf(studs.shift(12) + tests + [
                                     [/-TEACHER-/, teacher.full_name],
                                     [/-COURSE_ID-/, name],
