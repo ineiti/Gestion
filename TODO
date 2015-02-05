@@ -21,13 +21,8 @@ WORKING:
 
 BUGS:
         - When saving corrected Network::Recharges, a new one is created
-        - Self::Internet - Bytes per day left is shown
-        - EditMovements::55 - can't edit movements anymore
-        - EditMovements::rpcButtonDelete - can't delete anymore
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
         - Replace :empty_nonlists with :empty and :empty_update
-        - Error in ConfigBase which doesn't update correctly the accounts when starting
-         without accounting
         - Permission:admin can add credit, but will fall into black hole - only allow
             for Permission:cybermanager to add credit
         - Network::Captive - when using proxy, FCAPTIVE can stay empty for a long time,
@@ -35,10 +30,15 @@ BUGS:
           as FCAPTIVE, but only in one direction.
             - add ICAPTIVE-counter to Network::Captive::cleanup
             - use together with Monitor::Traffic
+        - when editing a table and calling Fields::getValueTable, it might be that no
+          line is selected, but the editor is still active. In that case, an empty
+          value is returned, which is wrong.
+        - Error in ConfigBase which doesn't update correctly the accounts when starting
+         without accounting
+        - add a version-counter to the frontend-javascript, so that a new version doesn't
+          need a "reload" from the browser
 
         - Captive: filter-table: add a nocaptive-ruleset to come before captive
-        - Not reproducible: Transferring data to server: it seems like ALL random-ids are transferred
-          back!
         - Get QooxView/Test/qv_gettext to run
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
@@ -56,11 +56,11 @@ For 2.0:
 Security:
 
 UI:
-        - SMScontrol: have USSD-history like SMS-history
-        - SMScontrol: have 3Gpref, 3Gonly, GPRSpref, GPRSonly
+        - change names when file-uploading according to TemplateCourseType::files
         - make a drop-down SMScontrol::recharge button with the possibilities of
           recharging
-        - change names when file-uploading according to TemplateCourseType::files
+        - SMScontrol: have USSD-history like SMS-history
+        - SMScontrol: have 3Gpref, 3Gonly, GPRSpref, GPRSonly
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
             -> delete fields when pressing 'new' and empty forms when switching tab
@@ -276,6 +276,9 @@ To check:
 
 ** FIXED **:
         - B 150205: CourseDiploma::diplomas_t doesn't return id, but whole data
+            - EditMovements::55 - can't edit movements anymore
+            - EditMovements::rpcButtonDelete - can't delete anymore
+        - B 150204: Self::Internet - Bytes per day left is shown
         - B 150203: Events are not correctly sent if wrong mail-command is used
         - B 150203: can't upload files anymore in Course::Grades -> doesn't work in qooxdoo 4!
         - B 150203: Course::PrintExa1 - prints two pages for 12 students - should be only 1 page
