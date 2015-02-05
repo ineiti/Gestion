@@ -275,6 +275,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150205: CourseDiploma::diplomas_t doesn't return id, but whole data
         - B 150203: Events are not correctly sent if wrong mail-command is used
         - B 150203: can't upload files anymore in Course::Grades -> doesn't work in qooxdoo 4!
         - B 150203: Course::PrintExa1 - prints two pages for 12 students - should be only 1 page

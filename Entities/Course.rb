@@ -848,6 +848,7 @@ base_gestion
 
   def get_diploma_filename(student, ext = 'odt', diplomadir = true)
     digits = students.size.to_s.size
+    dp "#{students.inspect} - #{student}"
     counter = students.index(student) + 1
     str = diplomadir ? dir_diplomas : name
     "#{str}/#{counter.to_s.rjust(digits, '0')}-#{student}.#{ext}"
