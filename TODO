@@ -16,8 +16,8 @@ WORKING:
                 x base_report is not filled in with all fields
                 x make date English or French
             x add Course::Class once filled out and once empty for filling out
-            - downloading of exams
-            - tests
+            x downloading of exams
+            - files-display
 
 BUGS:
         - When saving corrected Network::Recharges, a new one is created

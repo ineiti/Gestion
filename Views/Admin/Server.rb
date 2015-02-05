@@ -71,10 +71,13 @@ class AdminServer < View
       [ct._filename.first, ct._file_exam.first].each { |f|
         if f.length > 0
           rep = ICC.get(:CourseTypes, :_file, args: {name: [f]})
-          dp rep.inspect.force_encoding('ASCII')
-          file = JSON.parse(reè)
-          log_msg :CourseType, "Got file #{f} with length #{file.inspect}"
-          IO.write("#{ConfigBase.template_dir}/#{file}", file)
+          if rep._code == 'OK'
+            file = rep._msg
+            log_msg :CourseType, "Got file #{f} with length #{file.length}"
+            IO.write("#{ConfigBase.template_dir}/#{f}", file)
+          else
+            log_msg :CourseType, "Got error #{rep._msg}"
+          end
         end
       }
     }
