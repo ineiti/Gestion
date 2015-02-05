@@ -163,7 +163,7 @@ else
   end
 
   if ConfigBase.has_function?(:sms_control)
-    if na = ConfigBase.network_actions && File.exists?(na)
+    if (na = ConfigBase.network_actions) && File.exists?(na)
       require na
     end
     dputs(1) { 'Starting sms-control' }
