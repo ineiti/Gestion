@@ -170,15 +170,15 @@ class SelfInternet < View
     if Internet.operator && Internet.operator.has_promo
       left = Internet.operator.internet_left
       ret += reply(:update, :bytes_left => left.to_MB('Mo')) +
-          reply_visible(Recharges._search_all_.count > 0, :bytes_left_today) +
           reply(:update, bytes_left_today: Recharge.left_today(left).to_MB('Mo'))
     end
     o = session.owner
     Captive.user_keep o.login_name, ConfigBase.keep_idle_free.to_i
-    ret += reply(:update, auto_connection:
-                            'Bookmark for '+
-                                "<a href='http://internet.wifi/connect.cgi?user=#{o.login_name}&pass=#{o.password}'>" +
-                                'Internet-connection</a>')
+    ret += reply_visible(Recharges.search_all_.count > 0, :bytes_left_today) +
+        reply(:update, auto_connection:
+                         'Bookmark for '+
+                             "<a href='http://internet.wifi/connect.cgi?user=#{o.login_name}&pass=#{o.password}'>" +
+                             'Internet-connection</a>')
     return ret
   end
 

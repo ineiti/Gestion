@@ -107,11 +107,12 @@ class CourseTypes < Entities
   end
 
   def icc_file(arg)
-    file = "#{ConfigBase.template_dir}/#{File.basename(arg.name)}"
+    dp file = "#{ConfigBase.template_dir}/#{File.basename(arg._name.first)}"
     if File.exists? file
+      dp "Sending file #{file}"
       IO.read(file)
     else
-      return "Error: can't find file"
+      return dp "Error: can't find file"
     end
   end
 end

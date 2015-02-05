@@ -68,11 +68,13 @@ class AdminServer < View
         log_msg :CourseType, "Creating CourseType #{ct._name}"
         ct_new = CourseTypes.create(ct)
       end
-      [ct._filename, ct._file_exam].each { |f|
-        if f.to_s.length > 0
-          file = ICC.get(:CourseTypes, :file, args: {name: f})
-          log_msg :CourseType, "Got file #{f} with length #{file.length}"
-          IO.write(f, "#{ConfigBase.template_dir}/#{file}")
+      [ct._filename.first, ct._file_exam.first].each { |f|
+        if f.length > 0
+          rep = ICC.get(:CourseTypes, :_file, args: {name: [f]})
+          dp rep.inspect.force_encoding('ASCII')
+          file = JSON.parse(reè)
+          log_msg :CourseType, "Got file #{f} with length #{file.inspect}"
+          IO.write("#{ConfigBase.template_dir}/#{file}", file)
         end
       }
     }

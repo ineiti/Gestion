@@ -20,6 +20,7 @@ WORKING:
             - tests
 
 BUGS:
+        - When saving corrected Network::Recharges, a new one is created
         - Self::Internet - Bytes per day left is shown
         - EditMovements::55 - can't edit movements anymore
         - EditMovements::rpcButtonDelete - can't delete anymore
