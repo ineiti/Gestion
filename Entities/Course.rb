@@ -681,7 +681,7 @@ base_gestion
   end
 
   def print_exam_file(lp_cmd = nil)
-    dputs_func
+    #dputs_func
     if !self.start || !self.end || !teacher || !center || !students ||
         students.length == 0
       return false
@@ -717,7 +717,7 @@ base_gestion
                                 ])
     }
     dputs(3) { "Pdf-files are #{pdfs.inspect}" }
-    dp @print_exam_file.print_join(pdfs)
+    @print_exam_file.print_join(pdfs)
   end
 
   def get_grade_args(student, update = false)
@@ -848,7 +848,6 @@ base_gestion
 
   def get_diploma_filename(student, ext = 'odt', diplomadir = true)
     digits = students.size.to_s.size
-    dp "#{students.inspect} - #{student}"
     counter = students.index(student) + 1
     str = diplomadir ? dir_diplomas : name
     "#{str}/#{counter.to_s.rjust(digits, '0')}-#{student}.#{ext}"

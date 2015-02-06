@@ -20,6 +20,7 @@ WORKING:
             - files-display
 
 BUGS:
+        - When changing CourseType.file*, dependant courses don't get updated
         - When saving corrected Network::Recharges, a new one is created
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
         - Replace :empty_nonlists with :empty and :empty_update
