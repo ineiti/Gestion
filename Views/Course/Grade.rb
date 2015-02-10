@@ -82,6 +82,7 @@ class CourseGrade < View
       course = Courses.match_by_course_id(c_id)
       grade = Entities.Grades.match_by_course_person(c_id, p_name)
       reply(:update, :grades => get_grades(course.ctype, grade)) +
+          reply(:empty_update, :remark => (grade ? grade.remark : ''))+
           update_form_data(person) +
           update_files_saved(course, p_name)
     else
@@ -328,7 +329,7 @@ class CourseGrade < View
       Entities.Grades.save_data({:course => course,
                                  :student => student,
                                  :means => means,
-                                 :remark => data['remark']})
+                                 :remark => data._remark})
     end
     if element == course.ctype.tests_nbr
       rpc_button_save(session, data)

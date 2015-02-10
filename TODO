@@ -20,6 +20,7 @@ WORKING:
             - files-display
 
 BUGS:
+        - Don't let CourseTypes be deleted while there are still courses with them!
         - When changing CourseType.file*, dependant courses don't get updated
         - When saving corrected Network::Recharges, a new one is created
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
@@ -276,6 +277,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150209: View::CourseGrade - remark is not saved
         - B 150205: CourseDiploma::diplomas_t doesn't return id, but whole data
             - EditMovements::55 - can't edit movements anymore
             - EditMovements::rpcButtonDelete - can't delete anymore
