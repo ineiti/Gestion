@@ -18,7 +18,7 @@ class NetworkAccess < View
         show_field :priority
         show_field :limit_day_mo
         show_list_single :access_times_view
-
+        show_fromto :time
         show_button :save, :add_time, :delete_time
       end
       gui_vbox :nogroup do
