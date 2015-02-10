@@ -20,6 +20,9 @@ WORKING:
             - files-display
 
 BUGS:
+        - NetworkAccess fails with an error in frontend::
+        - if ConfigBases.network_share is true, make sure smbd and nmbd are enabled
+        - Course::Diplomas - all.pdf and 4pp.pdf don't print on Cubox
         - Don't let CourseTypes be deleted while there are still courses with them!
         - When changing CourseType.file*, dependant courses don't get updated
         - When saving corrected Network::Recharges, a new one is created

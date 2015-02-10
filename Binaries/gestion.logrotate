@@ -17,15 +17,15 @@
   prerotate
     /opt/profeda/Gestion/Binaries/sort_events /var/log/gestion/events.log /tmp/gestion_events.log
     SUBJ="Events from $( hostname )"
-    if [ -x /usr/bin/mutt ]; then
-      echo "Gestion log-file" | mutt -s "$SUBJ" -a /tmp/gestion_events.log -- root@localhost
-    else
+    #if [ -x /usr/bin/mutt ]; then
+    #  echo "Gestion log-file" | mutt -s "$SUBJ" -a /tmp/gestion_events.log -- root@localhost
+    #else
       MAIL=/usr/bin/bsd-mailx
       if [ ! -x $MAIL ]; then
         MAIL=/usr/bin/mail
       fi
       cat /tmp/gestion_events.log | $MAIL -s "$SUBJ" root@localhost
-    fi
+    #fi
     rm /tmp/gestion_events.log
   endscript
   nocompress
