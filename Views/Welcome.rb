@@ -32,7 +32,7 @@ class Welcome < View
             log_msg :Welcome, "Found session #{s.inspect} with correct ip"
             #dp person = session.owner
             #session = Sessions.create( person )
-            return direct_connect( s )
+            return direct_connect(s)
           end
         end
       }
@@ -60,7 +60,7 @@ class Welcome < View
       dputs(3) { "Found login #{person.data_get(:person_id)} for #{login_name}" }
       dputs(3) { "Session is #{session.inspect}" }
       log_msg :Welcome, "Authenticated person #{person.login_name} from " +
-          "#{session.client_ip}"
+                          "#{session.client_ip}"
       return reply(:session_id, person.session_id) +
           reply(:list, View.list(session))
     else
@@ -87,7 +87,7 @@ class Welcome < View
     end
     dputs(3) { "Tabs is now #{tabs.inspect}" }
     return reply(:session_id, session.sid) +
-        reply(:list, :views => tabs) +
+        View.rpc_list(session) +
         reply(:switch_tab, :SelfInternet)
   end
 
