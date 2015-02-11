@@ -22,6 +22,7 @@ module Internet
       end
       update('add', dev.first)
     end
+    @traffic = Monitor::Traffic::User.new
   end
 
   def update(operation, dev = nil)

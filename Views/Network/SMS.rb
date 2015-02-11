@@ -74,7 +74,7 @@ class NetworkSMS < View
                           $SMScontrol.operator.internet_left,
                           $SMScontrol.operator.internet_cost_available.reverse.
                               collect { |c, v|
-                            "#{c} CFAs for #{v.to_s.separator}" }]
+                            "#{c} CFAs for #{(v.to_i/1_000_000).separator} MB" }]
                        end
     #cl, il = s_unknown(cl), s_unknown(il)
     emails = System.exists?('postqueue') ?

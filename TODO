@@ -4,17 +4,14 @@ WORKING:
         - make a drop-down SMScontrol::recharge button with the possibilities of
           recharging
           - needs testing with a real key
+        - use captive together with Monitor::Traffic which uses the mangle-table that are
+            valid for both INPUT and FORWARD
+          - added Network::Monitor::Traffic::User class to hold data for different
+            users (like traffic-report, online-stats)
 
 BUGS:
-        - Captive: filter-table: add a nocaptive-ruleset to come before captive
-
         - Permission:admin can add credit, but will fall into black hole - only allow
             for Permission:cybermanager to add credit
-        - Network::Captive - when using proxy, FCAPTIVE can stay empty for a long time,
-          as only filter::INPUT is used! So add a ICAPTIVE-line with the same entries
-          as FCAPTIVE, but only in one direction.
-            - add ICAPTIVE-counter to Network::Captive::cleanup
-            - use together with Monitor::Traffic
         - Get QooxView/Test/qv_gettext to run
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
     	- 10 crashes when not operating "properly"
@@ -252,6 +249,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150211: Captive: filter-table: add a nocaptive-ruleset to come before captive
         - UI150211: When no main-tabs, put tabs on top
         - B 150211: add a version-counter to the frontend-javascript, so that a new version doesn't
           need a "reload" from the browser
