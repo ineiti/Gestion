@@ -37,7 +37,7 @@ class TC_Course < Test::Unit::TestCase
                                      :permissions => ['default'], :first_name => 'Internet', :family_name => 'Student 2')
     @maint_t = Entities.CourseTypes.create(:name => 'maint', :duration => 72,
                                            :desciption => 'maintenance', :contents => 'lots of work',
-                                           :filename => ['base_gestion.odt'], :output => 'certificate',
+                                           :file_diploma => ['base_gestion.odt'], :output => 'certificate',
                                            :diploma_type => ['simple'],
                                            :account_base => Accounts.create_path('Root::Income::Courses'))
     @maint_2 = Courses.create(:name => 'maint_1210', :start => '1.10.2012',
@@ -47,7 +47,7 @@ class TC_Course < Test::Unit::TestCase
                               :ctype => @maint_t)
 
     @it_101_t = CourseTypes.create(:name => 'it-101', :diploma_type => ['accredited'],
-                                   :output => %w( label ), :filename => %w( label.odg ),
+                                   :output => %w( label ), :file_diploma => %w( label.odg ),
                                    :contents => 'it-101', :description => 'windows, word, excel')
     @it_101 = Courses.create_ctype(@it_101_t, '1203')
     @it_101.data_set_hash(:responsible => @secretaire, :teacher => @surf,
@@ -472,7 +472,7 @@ class TC_Course < Test::Unit::TestCase
     @grade0 = Grades.create({:student => @secretaire,
                              :course => @maint_2, :mean => 11, :means => [11]})
     @maint_t.data_set_hash({:output => ['label'], :central_name => 'foo',
-                            :filename => ['label.odg'],
+                            :file_diploma => ['label.odg'],
                             :diploma_type => ['simple']})
     @maint_2.students_add 'secretaire'
     Grades.search_all.each { |g|
@@ -488,7 +488,7 @@ class TC_Course < Test::Unit::TestCase
 
   def test_files_move
     @maint_t.data_set_hash({:output => ['label'], :central_name => 'foo',
-                            :filename => ['label.odg'],
+                            :file_diploma => ['label.odg'],
                             :diploma_type => ['simple']})
     students = %w( secretaire admin surf )
     @maint_2.students.concat students
@@ -525,7 +525,7 @@ class TC_Course < Test::Unit::TestCase
     cname = "#{@center.login_name}_"
 
     @maint_t.data_set_hash({:output => ['label'],
-                            :filename => ['label.odg'],
+                            :file_diploma => ['label.odg'],
                             :name => 'it-101',
                             :diploma_type => ['accredited']})
 
@@ -709,7 +709,7 @@ class TC_Course < Test::Unit::TestCase
     cname = "#{@center.login_name}_"
 
     @maint_t.data_set_hash({:output => ['label'],
-                            :filename => ['label.odg'],
+                            :file_diploma => ['label.odg'],
                             :name => 'it-101',
                             :diploma_type => ['accredited']})
 

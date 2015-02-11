@@ -125,6 +125,38 @@ class ConfigBase < Entity
     else
       Service.stop_disable(:samba)
     end
+    if ConfigBase.has_function?(:sms_control)
+      start_smscontrol
+      $SMScontrol.autocharge = ConfigBase.has_function?(:sms_control_autocharge)
+    else
+      stop_smscontrol
+    end
+  end
+
+  def start_smscontrol
+    return if $SMScontrol
+    if (na = ConfigBase.network_actions) && File.exists?(na)
+      require na
+    end
+    dputs(1) { 'Starting sms-control' }
+    $SMScontrol = Network::SMScontrol.new
+
+    $sms_control = Thread.new {
+      loop {
+        rescue_all 'Error with SMScontrol' do
+          $SMScontrol.check_connection
+          $SMScontrol.check_sms
+          dputs(2) { $SMScontrol.state_to_s }
+          sleep 10
+        end
+      }
+    }
+  end
+
+  def stop_smscontrol
+    $sms_control and $sms_control.kill
+    $sms_control = nil
+    $SMScontrol = nil
   end
 
   def server_uri
@@ -155,4 +187,5 @@ class ConfigBase < Entity
             card_responsible.first.to_s
         end
   end
+
 end

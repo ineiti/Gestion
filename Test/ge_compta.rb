@@ -29,7 +29,7 @@ class TC_Compta < Test::Unit::TestCase
     @base.students = %w( admin2 surf )
     @maint_t = Entities.CourseTypes.create( :name => 'maint', :duration => 72,
       :desciption => 'maintenance', :contents => 'lots of work',
-      :filename => ['base_gestion.odt'], :output => 'certificate',
+      :file_diploma => ['base_gestion.odt'], :output => 'certificate',
       :diploma_type => ['simple'])
     @maint_2 = Courses.create( :name => 'maint_1210', :start => '1.10.2012',
       :end => '1.1.2013', :sign => '2.1.2012', :teacher => @secretaire,
@@ -38,7 +38,7 @@ class TC_Compta < Test::Unit::TestCase
       :ctype => @maint_t )
 
     @it_101_t = CourseTypes.create( :name => 'it-101', :diploma_type => ['accredited'],
-      :output => %w( label ), :filename => %w( label.odg ),
+      :output => %w( label ), :file_diploma => %w( label.odg ),
       :contents => 'it-101', :description => 'windows, word, excel')
     @it_101 = Courses.create_ctype( @it_101_t, '1203')
     @it_101.data_set_hash( :responsible => @secretaire, :teacher => @surf,

@@ -1,13 +1,12 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
+        - make a drop-down SMScontrol::recharge button with the possibilities of
+          recharging
+          - needs testing with a real key
 
 BUGS:
-        - Don't let CourseTypes be deleted while there are still courses with them!
-        - When changing CourseType.file*, dependant courses don't get updated
-        - When saving corrected Network::Recharges, a new one is created
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
-        - Replace :empty_nonlists with :empty and :empty_update
         - Permission:admin can add credit, but will fall into black hole - only allow
             for Permission:cybermanager to add credit
         - Network::Captive - when using proxy, FCAPTIVE can stay empty for a long time,
@@ -15,24 +14,18 @@ BUGS:
           as FCAPTIVE, but only in one direction.
             - add ICAPTIVE-counter to Network::Captive::cleanup
             - use together with Monitor::Traffic
-        - when editing a table and calling Fields::getValueTable, it might be that no
-          line is selected, but the editor is still active. In that case, an empty
-          value is returned, which is wrong.
-        - Error in ConfigBase which doesn't update correctly the accounts when starting
-         without accounting
-        - add a version-counter to the frontend-javascript, so that a new version doesn't
-          need a "reload" from the browser
+        - Replace :empty_nonlists with :empty and :empty_update
 
         - Captive: filter-table: add a nocaptive-ruleset to come before captive
         - Get QooxView/Test/qv_gettext to run
-        - when migrating with old value-names, it gives an error - how to keep
-          old names during migration?
-            - there would have to be a storage of the old names, like the first line
-             of the CVS or the data given by the sql-database
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
         - When CourseAdd is first tab and course is added, LTab.js:174 can't
           find getActiveForm, as it is not drawn yet...
     	- 10 crashes when not operating "properly"
+
+Bugs to watch:
+        - Error in ConfigBase which doesn't update correctly the accounts when starting
+          without accounting
 
 For 2.0:
         - Put data-directory elsewhere
@@ -41,16 +34,13 @@ For 2.0:
 Security:
 
 UI:
-        - change names when file-uploading according to TemplateCourseType::files
-        - make a drop-down SMScontrol::recharge button with the possibilities of
-          recharging
-        - SMScontrol: have USSD-history like SMS-history
-        - SMScontrol: have 3Gpref, 3Gonly, GPRSpref, GPRSonly
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
             -> delete fields when pressing 'new' and empty forms when switching tab
             - empty forms should be disabled (like Person::Modify), in
               TemplateCourse, NetworkShare, ...
+        - SMScontrol: have USSD-history like SMS-history
+        - SMScontrol: have 3Gpref, 3Gonly, GPRSpref, GPRSonly
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
 
@@ -130,6 +120,10 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - when migrating with old value-names, it gives an error - how to keep
+          old names during migration?
+            - there would have to be a storage of the old names, like the first line
+             of the CVS or the data given by the sql-database
         - migration: don't migrate on new installation, but use something like
           'default_values'-method
         - ConfigBase: include default-values
@@ -260,6 +254,13 @@ To check:
 
 
 ** FIXED **:
+        - UI150211: When no main-tabs, put tabs on top
+        - B 150211: add a version-counter to the frontend-javascript, so that a new version doesn't
+          need a "reload" from the browser
+        - B 150211: Don't let CourseTypes be deleted while there are still courses with them!
+        - B 150211: SMScontrol is not created when ConfigBase::smscontrol is chosen
+        - B 150211: When saving corrected Network::Recharges, a new one is created
+        - B 150211: When changing CourseType.file*, dependant courses don't get updated
         - B 150211: Course::Diplomas - all.pdf and 4pp.pdf don't print on Cubox
         - B 150211: if ConfigBases.network_share is true, make sure smbd and nmbd are enabled
         - F 150211: Add Language-evaluations for MaN
@@ -279,7 +280,11 @@ To check:
             x add Course::Class once filled out and once empty for filling out
             x downloading of exams
             x files-display
+            - change names when file-uploading according to TemplateCourseType::files
         - B 150211: Frontend::table shouldn't be selectable when in edit-mode
+            - when editing a table and calling Fields::getValueTable, it might be that no
+              line is selected, but the editor is still active. In that case, an empty
+              value is returned, which is wrong.
         - B 150210: NetworkAccess fails when updating fromto-element
         - B 150209: View::CourseGrade - remark is not saved
         - B 150205: CourseDiploma::diplomas_t doesn't return id, but whole data

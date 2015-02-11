@@ -71,12 +71,6 @@ class Courses < Entities
     @presence_sheet_small ||= 'presence_sheet_small.ods'
     @print_presence = OpenPrint.new("#{@dir_diplomas}/#{@presence_sheet}")
     @print_presence_small = OpenPrint.new("#{@dir_diplomas}/#{@presence_sheet_small}")
-    @print_exa = (1..3).collect { |i|
-      OpenPrint.new("#{@dir_diplomas}/exa_#{i}.ods")
-    }
-    @print_exa_long = (1..3).collect { |i|
-      OpenPrint.new("#{@dir_diplomas}/exa_#{i}_long.ods")
-    }
   end
 
   def set_entry(id, field, value)
@@ -392,10 +386,14 @@ class Course < Entity
     @only_psnup = false
   end
 
+  def update_exam_file
+    @print_exam_file = OpenPrint.new("#{ConfigBase.template_dir}/#{ctype.file_exam.first}")
+  end
+
   def ctype=(ct)
     self._ctype = ct
     if ctype.file_exam and ctype.file_exam.length > 0
-      @print_exam_file = OpenPrint.new("#{ConfigBase.template_dir}/#{ctype.file_exam.first}")
+      update_exam_file
     end
   end
 
@@ -635,51 +633,6 @@ base_gestion
              ])
   end
 
-  def print_exa(lp_cmd, number)
-    if !self.start || !self.end || !teacher || !center || !students ||
-        students.length == 0
-      return false
-    end
-
-    if number == 0
-      return print_exam_file(lp_cmd)
-    end
-
-    stud_nr = 1
-    studs = students.collect { |s|
-      Entities.Persons.match_by_login_name(s)
-    }.sort_by { |s| s.full_name }.collect { |stud|
-      stud_str = stud_nr.to_s.rjust(2, '0')
-      stud_nr += 1
-      [[/Nom#{stud_str}/, stud.full_name],
-       [/Login#{stud_str}/, stud.login_name],
-       [/Passe#{stud_str}/, stud.password_plain]]
-    }
-    (stud_nr..30).each { |s|
-      studs.push [[/Nom#{s.to_s.rjust(2, '0')}/, '']]
-    }
-    dputs(3) { "#{stud_nr}: Students are: #{studs.inspect}" }
-
-    pp = if stud_nr - 1 <= 12
-           @proxy.print_exa[number - 1]
-         else
-           @proxy.print_exa_long[number - 1]
-         end
-
-    pp.lp_cmd = lp_cmd
-    pp.print(studs.flatten(1) + [
-                 [/Teacher/, teacher.full_name],
-                 [/Course_name/, name],
-                 [/Center_name/, center.full_name],
-                 [/2010-08-20/, dstart.to_s],
-                 [/20.08.10/, dstart.strftime('%d/%m/%y')],
-                 [/2010-10-20/, dend.to_s],
-                 [/20.10.10/, dend.strftime('%d/%m/%y')],
-                 [/123/, students.count],
-                 [/321/, duration],
-             ])
-  end
-
   def print_exam_file(lp_cmd = nil)
     #dputs_func
     if !self.start || !self.end || !teacher || !center || !students ||
@@ -878,7 +831,7 @@ base_gestion
               dputs(4) { "Is #{s} == #{student.login_name}?" }
               student_file = get_diploma_filename(s)
               dputs(2) { "Doing #{counter}: #{s} - file: #{student_file}" }
-              FileUtils.cp("#{Courses.dir_diplomas}/#{ctype.filename.join}",
+              FileUtils.cp("#{Courses.dir_diplomas}/#{ctype.file_diploma.join}",
                            student_file)
               update_student_diploma(student_file, student)
             end

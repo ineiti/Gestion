@@ -27,7 +27,7 @@ class TemplateCourseType < View
           gui_vbox :nogroup do
             show_block :central
             show_field :page_format
-            show_list_drop :filename, 'CourseTypes.files.sort', :width => 200
+            show_list_drop :file_diploma, 'CourseTypes.files.sort', :width => 200
             show_list_drop :file_exam, 'CourseTypes.files.sort', :width => 200
           end
         end

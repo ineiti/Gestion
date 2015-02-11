@@ -162,28 +162,6 @@ else
     }
   end
 
-  if ConfigBase.has_function?(:sms_control)
-    if (na = ConfigBase.network_actions) && File.exists?(na)
-      require na
-    end
-    dputs(1) { 'Starting sms-control' }
-    $SMScontrol = Network::SMScontrol.new
-    if ConfigBase.has_function? :sms_control_autocharge
-      $SMScontrol.autocharge = true
-    end
-
-    $sms_control = Thread.new {
-      loop {
-        rescue_all 'Error with SMScontrol' do
-          $SMScontrol.check_connection
-          $SMScontrol.check_sms
-          dputs(2) { $SMScontrol.state_to_s }
-          sleep 10
-        end
-      }
-    }
-  end
-
   if get_config(false, :showTime)
     dputs(1) { 'Showing time' }
     $show_time = Thread.new {
@@ -212,7 +190,6 @@ else
   end
 
   $internet and $internet.kill
-  $sms_control and $sms_control.kill
   $show_time and $show_time.kill
 
   Entities.save_all

@@ -22,7 +22,8 @@ class NetworkSMS < View
           show_int_ro :promotion_left
           show_str_ro :emails
           show_str_ro :vpn
-          show_button :connect, :disconnect, :recharge, :reload
+          show_button :connect, :disconnect, :reload
+          show_split_button :recharge, []
         end
         gui_vbox :nogroup do
           show_str :sms_number
@@ -31,7 +32,7 @@ class NetworkSMS < View
         end
         gui_vbox :nogroup do
           show_str :ussd
-          show_button :send_ussd, :add_credit, :credit_wo_recharge
+          show_button :send_ussd, :add_credit
         end
       end
       gui_vboxg :nogroup do
@@ -63,11 +64,18 @@ class NetworkSMS < View
   end
 
   def rpc_update(session)
-    cl, il = if $SMScontrol.operator_missing?
-               [-1, -1]
-             else
-               [$SMScontrol.operator.credit_left, $SMScontrol.operator.internet_left]
-             end
+    return unless $SMScontrol
+    cl, il, recharge = if $SMScontrol.operator_missing?
+                         [-1, -1, ['100 CFAs for 10 000 000 bytes',
+                                   '200 CFAs for 20 000 000 bytes']]
+                         [-1, -1, 'No recharge possible']
+                       else
+                         [$SMScontrol.operator.credit_left,
+                          $SMScontrol.operator.internet_left,
+                          $SMScontrol.operator.internet_cost_available.reverse.
+                              collect { |c, v|
+                            "#{c} CFAs for #{v.to_s.separator}" }]
+                       end
     #cl, il = s_unknown(cl), s_unknown(il)
     emails = System.exists?('postqueue') ?
         System.run_str('postqueue -p | tail -n 1') : 'n/a'
@@ -88,6 +96,7 @@ class NetworkSMS < View
             "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
           }.join("\n"),
           :ussd_received => ussds,
+          :recharge => recharge,
           :operator => operator) +
         reply_visible(Recharges.enabled?, :promotion_left)
   end
@@ -122,19 +131,27 @@ class NetworkSMS < View
   end
 
   def rpc_button_add_credit(session, data)
-    $SMScontrol.operator.credit_add(data._ussd)
-    rpc_update(session)
-  end
-
-  def rpc_button_credit_wo_recharge(session, data)
     $SMScontrol.recharge_hold = true
     $SMScontrol.operator.credit_add(data._ussd)
     rpc_update(session)
   end
 
   def rpc_button_recharge(session, data)
-    $SMScontrol.recharge_hold = false
-    $SMScontrol.recharge_all
+    dp data
+    if data._menu.to_s.length == 0
+      if $SMScontrol.operator_missing?
+        credit = 0
+      else
+        credit = $SMScontrol.operator.internet_cost_available.reverse.first[0]
+      end
+    else
+      credit = data._menu.match(/^[0-9]*/)[0]
+    end
+    if credit > 0
+      log_msg :NetworkSMS, "Asking for recharge of #{credit}"
+      $SMScontrol.recharge_hold = false
+      $SMScontrol.recharge_all(credit)
+    end
     rpc_update(session)
   end
 

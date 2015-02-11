@@ -5,7 +5,7 @@ class CourseTypes < Entities
   def setup_data
     value_list_drop :page_format,
                     "[[1,'normal'],[2,'interchanged'],[3,'landscape'],[4,'seascape']]"
-    value_str :filename
+    value_str :file_diploma
     value_str :file_exam
 
     value_block :strings
@@ -107,12 +107,12 @@ class CourseTypes < Entities
   end
 
   def icc_file(arg)
-    dp file = "#{ConfigBase.template_dir}/#{File.basename(arg._name.first)}"
+    file = "#{ConfigBase.template_dir}/#{File.basename(arg._name.first)}"
     if File.exists? file
-      dp "Sending file #{file}"
+      "Sending file #{file}"
       IO.read(file)
     else
-      return dp "Error: can't find file"
+      return "Error: can't find file"
     end
   end
 end
@@ -153,5 +153,10 @@ class CourseType < Entity
       super
       return true
     end
+  end
+
+  def file_diploma=(f)
+    return if @loading
+    Courses.search_by_ctype(self).each{|c| c.update_exam_file }
   end
 end

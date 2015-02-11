@@ -89,7 +89,7 @@ class CourseTabs < View
                               :tests_str => 'Mean', :description => args._ct_desc,
                               :contents => args._ct_contents,
                               :diploma_type => ['simple'], :output => ['certificate'],
-                              :page_format => [1], :filename => args._ct_filename)
+                              :page_format => [1], :file_diploma => args._ct_filename)
       dputs(1) { "New CourseType is #{ct.inspect}" }
     end
     if args._new_room and args._new_room.size > 0

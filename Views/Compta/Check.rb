@@ -199,7 +199,6 @@ class ComptaCheck < View
               end
           end
         when /Accounts/
-          dp 'Doing accounts'
           case what
             when :copy
               if source == 0

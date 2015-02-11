@@ -23,7 +23,7 @@ class TC_Report < Test::Unit::TestCase
 
     @maint_t = CourseTypes.create(:name => "maint", :duration => 72,
                                   :desciption => "maintenance", :contents => "lots of work",
-                                  :filename => ['base_gestion.odt'], :output => "certificate",
+                                  :file_diploma => ['base_gestion.odt'], :output => "certificate",
                                   :diploma_type => ["simple"],
                                   :account_base => Accounts.create_path("Root::Income::Courses"))
 
