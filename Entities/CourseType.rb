@@ -144,4 +144,14 @@ class CourseType < Entity
   def files_arr
     files_str.to_s.split("\n")
   end
+
+  def delete
+    if Courses.search_by_ctype(self).size > 0
+      log_msg :CourseType, "Tried to delete #{self.name} while courses still depend on it"
+      return false
+    else
+      super
+      return true
+    end
+  end
 end

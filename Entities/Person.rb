@@ -578,6 +578,7 @@ class Person < Entity
         return
       end
       acc = (full_name || login_name).capitalize_all
+      return unless ConfigBase.account_lending
       lending = "#{ConfigBase.account_lending.get_path}::#{acc}"
       service = ConfigBase.account_services.get_path
       dputs(2) { "Preparing accounts for #{full_name} - #{acc}" }
@@ -599,6 +600,7 @@ class Person < Entity
     if can_view :FlagAccounting and login_name != 'admin'
       acc = (first_name || login_name).capitalize
       dputs(3) { "Getting cash account #{acc}" }
+      return unless ConfigBase.account_cash
       cc = "#{ConfigBase.account_cash.get_path}::#{acc}"
       self.account_cash = Accounts.get_by_path_or_create(cc, cc, false, -1, true)
       dputs(3) { "Account is #{account_cash.inspect}" }

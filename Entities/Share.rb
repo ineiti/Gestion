@@ -24,7 +24,7 @@ class Shares < Entities
     a.gsub!(/WORKGROUP/, domain)
     a.gsub!(/SERVER/, "Profeda-server on #{domain}")
     a += "\n"
-    Shares.search_all.each { |sh|
+    Shares.search_all_.each { |sh|
       if !Dir.exists?(sh.path)
         FileUtils.mkdir_p(sh.path)
       end

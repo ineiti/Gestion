@@ -1097,4 +1097,11 @@ class TC_Course < Test::Unit::TestCase
     assert_equal a._data, b._data, 'Not the same with Base64'
 
   end
+
+  def test_delete_ctype
+    assert !@maint_t.delete
+    @maint_2.delete
+    @maint.delete
+    assert @maint_t.delete
+  end
 end

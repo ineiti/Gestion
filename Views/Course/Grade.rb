@@ -104,7 +104,7 @@ class CourseGrade < View
               reply(:empty_nonlists, :students) +
               update_form_data(course) +
               reply(:update, {:courses => [course_id]})
-          if course.students.size > 0
+          if course.students.size > 0 && course.list_students.size > 0
             first = course.list_students[0][0]
             ret += reply(:update, {:students => [first]})
           end

@@ -3,8 +3,6 @@
 WORKING:
 
 BUGS:
-        - if ConfigBases.network_share is true, make sure smbd and nmbd are enabled
-        - Course::Diplomas - all.pdf and 4pp.pdf don't print on Cubox
         - Don't let CourseTypes be deleted while there are still courses with them!
         - When changing CourseType.file*, dependant courses don't get updated
         - When saving corrected Network::Recharges, a new one is created
@@ -262,6 +260,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150211: Course::Diplomas - all.pdf and 4pp.pdf don't print on Cubox
+        - B 150211: if ConfigBases.network_share is true, make sure smbd and nmbd are enabled
         - F 150211: Add Language-evaluations for MaN
             x re-organized admin-tabs: added template-tabs
             x re-organized template-coursetype to make room for lists
