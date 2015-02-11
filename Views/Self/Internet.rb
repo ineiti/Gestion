@@ -10,7 +10,7 @@ class SelfInternet < View
     @functions_need = [:internet, :internet_captive]
     @functions_reject = [:internet_simple]
 
-    gui_vbox do
+    gui_vboxg do
       show_html :connection_status
       show_int_ro :internet_credit
       show_int_ro :users_connected
@@ -19,6 +19,8 @@ class SelfInternet < View
       show_html :connection, :width => 100
       show_html :auto_connection
       show_button :connect, :disconnect
+      show_arg :connect, flexheight: 1
+      show_arg :disconnect, flexheight: 1
     end
   end
 
@@ -176,7 +178,7 @@ class SelfInternet < View
     Captive.user_keep o.login_name, ConfigBase.keep_idle_free.to_i
     ret += reply_visible(Recharges.search_all_.count > 0, :bytes_left_today) +
         reply(:update, auto_connection:
-                         'Bookmark for '+
+                         'Bookmark for<br>'+
                              "<a href='http://internet.wifi/connect.cgi?user=#{o.login_name}&pass=#{o.password}'>" +
                              'Internet-connection</a>')
     return ret
