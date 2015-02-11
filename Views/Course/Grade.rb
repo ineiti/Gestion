@@ -59,7 +59,8 @@ class CourseGrade < View
         [:prepare_files, :fetch_files, :transfer_files,
          :last_synched, :sync_server, :upload, :files_saved].collect { |b|
           reply(:hide, b)
-        }.flatten
+        }.flatten +
+        reply(:update, :upload_files_1 => 'test-file')
   end
 
   def update_files_saved(course, student)
