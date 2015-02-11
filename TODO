@@ -6,7 +6,8 @@ WORKING:
           - needs testing with a real key
 
 BUGS:
-        - Person::add should focus on name-field -> trouble in QooxView::Frontend
+        - Captive: filter-table: add a nocaptive-ruleset to come before captive
+
         - Permission:admin can add credit, but will fall into black hole - only allow
             for Permission:cybermanager to add credit
         - Network::Captive - when using proxy, FCAPTIVE can stay empty for a long time,
@@ -14,13 +15,8 @@ BUGS:
           as FCAPTIVE, but only in one direction.
             - add ICAPTIVE-counter to Network::Captive::cleanup
             - use together with Monitor::Traffic
-        - Replace :empty_nonlists with :empty and :empty_update
-
-        - Captive: filter-table: add a nocaptive-ruleset to come before captive
         - Get QooxView/Test/qv_gettext to run
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
-        - When CourseAdd is first tab and course is added, LTab.js:174 can't
-          find getActiveForm, as it is not drawn yet...
     	- 10 crashes when not operating "properly"
 
 Bugs to watch:
@@ -34,6 +30,8 @@ For 2.0:
 Security:
 
 UI:
+        - Replace :empty_nonlists with :empty and :empty_update
+        - Person::add should focus on name-field -> trouble in QooxView::Frontend
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
             -> delete fields when pressing 'new' and empty forms when switching tab

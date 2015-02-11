@@ -10,7 +10,7 @@ class SelfInternet < View
     @functions_need = [:internet, :internet_captive]
     @functions_reject = [:internet_simple]
 
-    gui_vboxg do
+    gui_vbox do
       show_html :connection_status
       show_int_ro :internet_credit
       show_int_ro :users_connected
@@ -19,8 +19,6 @@ class SelfInternet < View
       show_html :connection, :width => 100
       show_html :auto_connection
       show_button :connect, :disconnect
-      show_arg :connect, flexheight: 1
-      show_arg :disconnect, flexheight: 1
     end
   end
 
