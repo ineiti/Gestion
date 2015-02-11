@@ -1,23 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - Add Language-evaluations for MaN
-            x re-organized admin-tabs: added template-tabs
-            x re-organized template-coursetype to make room for lists
-            x adding migration for CourseTypes
-            x nice display-update when switching courses
-            x update fields_nbr and tests_nbr
-            x update all usages of fields and tests
-            x adapt Course::Grade
-                x add table
-                x save in Grade
-                    x doesn't continue correctly when using 'enter'-key
-            x add Course::Report for printing out the results
-                x base_report is not filled in with all fields
-                x make date English or French
-            x add Course::Class once filled out and once empty for filling out
-            x downloading of exams
-            - files-display
 
 BUGS:
         - if ConfigBases.network_share is true, make sure smbd and nmbd are enabled
@@ -279,6 +262,24 @@ To check:
 
 
 ** FIXED **:
+        - F 150211: Add Language-evaluations for MaN
+            x re-organized admin-tabs: added template-tabs
+            x re-organized template-coursetype to make room for lists
+            x adding migration for CourseTypes
+            x nice display-update when switching courses
+            x update fields_nbr and tests_nbr
+            x update all usages of fields and tests
+            x adapt Course::Grade
+                x add table
+                x save in Grade
+                    x doesn't continue correctly when using 'enter'-key
+            x add Course::Report for printing out the results
+                x base_report is not filled in with all fields
+                x make date English or French
+            x add Course::Class once filled out and once empty for filling out
+            x downloading of exams
+            x files-display
+        - B 150211: Frontend::table shouldn't be selectable when in edit-mode
         - B 150210: NetworkAccess fails when updating fromto-element
         - B 150209: View::CourseGrade - remark is not saved
         - B 150205: CourseDiploma::diplomas_t doesn't return id, but whole data

@@ -60,7 +60,7 @@ class CourseGrade < View
          :last_synched, :sync_server, :upload, :files_saved].collect { |b|
           reply(:hide, b)
         }.flatten +
-        reply(:update, :upload_files_1 => 'test-file')
+        reply(:update, :upload_file_1 => 'test-file')
   end
 
   def update_files_saved(course, student)
@@ -247,7 +247,8 @@ class CourseGrade < View
     data.to_sym!
     course = Courses.match_by_course_id(data._courses[0])
     student = Persons.match_by_login_name(data._students[0])
-    files_nbr = course.ctype.files_nbr.to_i
+    ctype = course.ctype
+    files_nbr = ctype.files_nbr.to_i
     exam_files = course.exam_files(student)
     dputs(3) { "Exam-files = #{exam_files.inspect}" }
     ret = window_show ? reply(:window_show, :upload_files) : []
@@ -257,10 +258,10 @@ class CourseGrade < View
       if i <= files_nbr
         show = :unhide
         file_nb = exam_files.index { |f| f =~ /^#{i}-/ }
-        file = file_nb ? exam_files[file_nb] : ""
+        file = file_nb ? exam_files[file_nb] : ''
         ret += reply(:update, "name_file_#{i}" =>
                                 "file ##{i}: #{file}") +
-            reply(:update, "upload_file_#{i}" => "0")
+            reply(:update, "upload_file_#{i}" => ctype.files_arr[i-1])
       end
       dputs(3) { "Return is #{ret.inspect}" }
       ret +
