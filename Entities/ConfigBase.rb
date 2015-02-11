@@ -120,6 +120,11 @@ class ConfigBase < Entity
     ConfigBase.has_function?(:internet_captive) and Network::Captive.setup
     save_block_to_object :operator, Network::Operator
     Network::Operator.clean_config
+    if ConfigBase.has_function?(:share)
+      Service.enable_start(:samba)
+    else
+      Service.stop_disable(:samba)
+    end
   end
 
   def server_uri
