@@ -7,7 +7,6 @@ WORKING:
             users (like traffic-report, online-stats)
           x tested simple case with _diff_ and _total_
           - import in Entities/Internet
-        - SMScontrol: have 3Gpref, 3Gonly, GPRSpref, GPRSonly
         - SMScontrol: have USSD-history like SMS-history
         - SMScontrol: find better name!
 
@@ -250,6 +249,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150211: SMScontrol: have 3Gpref, 3Gonly, GPRSpref, GPRSonly
         - B 150211: ConfigBase.use_printing should be (true|false) instead of 0/1
         - B 150211: Network::operator doesn't have default values
         - F 150212: make a drop-down SMScontrol::recharge button with the possibilities of
