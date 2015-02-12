@@ -8,6 +8,7 @@ WORKING:
           x tested simple case with _diff_ and _total_
           - import in Entities/Internet
         - SMScontrol: have USSD-history like SMS-history
+            - only keep last 100 USSDs
         - SMScontrol: find better name!
 
 BUGS:
