@@ -101,7 +101,7 @@ class PersonActivity < View
 
     rep = rpc_print(session, :print_activity, data)
     lp_cmd = cmd_printer(session, :print_activity)
-    files = OpenPrint.print_nup_duplex([act.print])
+    files = OpenPrint.pdf_nup_duplex([act.print])
     if lp_cmd
       %x[ #{lp_cmd} #{files.pop} ]
       %x[ #{lp_cmd} #{files.pop} ]

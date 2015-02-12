@@ -387,7 +387,9 @@ class Course < Entity
   end
 
   def update_exam_file
-    @print_exam_file = OpenPrint.new("#{ConfigBase.template_dir}/#{ctype.file_exam.first}")
+    if ctype.file_exam.class == Array
+      @print_exam_file = OpenPrint.new("#{ConfigBase.template_dir}/#{ctype.file_exam.first}")
+    end
   end
 
   def ctype=(ct)

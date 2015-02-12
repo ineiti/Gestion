@@ -2,6 +2,8 @@ class ConfigBases < Entities
   self.needs :Accounts
 
   def add_config
+    @convert_values = true
+
     value_block :vars_narrow
     value_str :keep_idle_free
     value_int :max_upload_size
@@ -62,6 +64,10 @@ class ConfigBases < Entities
     @@functions_conflict = [[:course_server, :course_client]]
   end
 
+  def migration_6(c)
+    c._use_printing = c._use_printing.to_i > 0
+  end
+
   def migration_5(c)
     c.account_services = Accounts.get_by_path_or_create(
         get_config('Root::Income::Services', :Accounting, :service))
@@ -87,13 +93,15 @@ class ConfigBases < Entities
   end
 
   def migration_2(c)
-    dputs(3) { "Migrating in: #{c.inspect} - #{get_config(true, :LibNet, :simulation).inspect}" }
-    dputs(1) { 'Old libnet-migration' }
-    dputs(3) { "Migrating out: #{c.inspect}" }
+    c.block_size = 16_384
   end
 
-  def migration_3(c)
-    exit if c._functions.index('internet_libnet')
+  def migration_1(c)
+    c._debug_lvl = DEBUG_LVL
+    c._locale_force = get_config(nil, :locale_force)
+    c._version_local = get_config('orig', :version_local)
+    c._welcome_text = get_config(false, :welcome_text)
+    dputs(3) { "Migrating out: #{c.inspect}" }
   end
 
   def delete_all(local_only = false)

@@ -14,16 +14,15 @@ class NetworkSMS < View
     gui_hboxg do
       gui_vbox :nogroup do
         gui_vbox :nogroup do
-          show_str_ro :state_now
-          show_str_ro :state_goal
           show_str_ro :operator
           show_int_ro :credit
           show_int_ro :promotion
           show_int_ro :promotion_left
+          show_str_ro :state_now
+          show_str_ro :state_goal
           show_str_ro :emails
           show_str_ro :vpn
           show_button :connect, :disconnect, :reload
-          show_split_button :recharge, []
         end
         gui_vbox :nogroup do
           show_str :sms_number
@@ -33,6 +32,7 @@ class NetworkSMS < View
         gui_vbox :nogroup do
           show_str :ussd
           show_button :send_ussd, :add_credit
+          show_split_button :recharge, []
         end
       end
       gui_vboxg :nogroup do
@@ -115,7 +115,9 @@ class NetworkSMS < View
   end
 
   def rpc_button_connect(session, data)
-    $SMScontrol.operator.internet_left = 100_000_000
+    if $SMScontrol.operator.internet_left.to_i <= 1_000_000
+      $SMScontrol.operator.internet_left = 100_000_000
+    end
     $SMScontrol.state_goal = Device::CONNECTED
     rpc_update(session)
   end

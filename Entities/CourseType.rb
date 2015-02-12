@@ -49,14 +49,12 @@ class CourseTypes < Entities
     super(id, field, value)
   end
 
-  def listp_profeda_code
-    self.search_by_profeda_code('^.+$').collect { |ct|
-      [ct.coursetype_id, ct.profeda_code]
-    }
+  def listp_name
+    CourseTypes.listp_name
   end
 
-  def listp_name
-    self.search_by_profeda_code('^$').collect { |ct|
+  def self.listp_name
+    self.search_all_.collect { |ct|
       [ct.coursetype_id, ct.name]
     }.sort { |a, b| a[1].downcase <=> b[1].downcase }
   end
@@ -157,6 +155,10 @@ class CourseType < Entity
 
   def file_diploma=(f)
     return if @loading
-    Courses.search_by_ctype(self).each{|c| c.update_exam_file }
+    self._file_diploma = f
+    Courses.search_by_ctype(self).each{|c|
+      c.update_exam_file
+    }
+    f
   end
 end

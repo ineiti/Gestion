@@ -2,6 +2,7 @@ class AdminPrinter < View
   def layout
     @order = 550
     @cups_dir = '/etc/cups'
+    @visible = false
 
     gui_hbox do
       gui_vbox do

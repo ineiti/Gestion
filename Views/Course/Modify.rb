@@ -160,7 +160,7 @@ class CourseModify < View
         files = var._students.collect { |s|
           Persons.match_by_login_name(s).print(var._students.length)
         }
-        var._pages = OpenPrint.print_nup_duplex(files, 'student_cards')
+        var._pages = OpenPrint.pdf_nup_duplex(files, 'student_cards')
         cmd = cmd_printer(session, :print_student)
         dputs(3) { "Command is #{cmd} with pages #{var._pages.inspect}" }
         if not cmd

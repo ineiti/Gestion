@@ -1,16 +1,15 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - make a drop-down SMScontrol::recharge button with the possibilities of
-          recharging
-          - needs testing with a real key
         - use captive together with Monitor::Traffic which uses the mangle-table that are
             valid for both INPUT and FORWARD
           x added Network::Monitor::Traffic::User class to hold data for different
             users (like traffic-report, online-stats)
           x tested simple case with _diff_ and _total_
           - import in Entities/Internet
-        - make simple printer-conf
+        - SMScontrol: have 3Gpref, 3Gonly, GPRSpref, GPRSonly
+        - SMScontrol: have USSD-history like SMS-history
+        - SMScontrol: find better name!
 
 BUGS:
         - Permission:admin can add credit, but will fall into black hole - only allow
@@ -30,6 +29,7 @@ For 2.0:
 Security:
 
 UI:
+        - make simple printer-conf
         - Replace :empty_nonlists with :empty and :empty_update
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
         - add-button in different views should always pop up a window with
@@ -37,8 +37,6 @@ UI:
             -> delete fields when pressing 'new' and empty forms when switching tab
             - empty forms should be disabled (like Person::Modify), in
               TemplateCourse, NetworkShare, ...
-        - SMScontrol: have USSD-history like SMS-history
-        - SMScontrol: have 3Gpref, 3Gonly, GPRSpref, GPRSonly
         - if only Course-tabs are visible, the basic tab is not shown, so no
          tabs can be added
 
@@ -252,6 +250,11 @@ To check:
 
 
 ** FIXED **:
+        - B 150211: ConfigBase.use_printing should be (true|false) instead of 0/1
+        - B 150211: Network::operator doesn't have default values
+        - F 150212: make a drop-down SMScontrol::recharge button with the possibilities of
+          recharging
+        - B 150212: can't update CourseType::file_diploma in View::Template::CourseType
         - B 150211: Captive: filter-table: add a nocaptive-ruleset to come before captive
         - UI150211: When no main-tabs, put tabs on top
         - B 150211: add a version-counter to the frontend-javascript, so that a new version doesn't
