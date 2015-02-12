@@ -6,8 +6,11 @@ WORKING:
           - needs testing with a real key
         - use captive together with Monitor::Traffic which uses the mangle-table that are
             valid for both INPUT and FORWARD
-          - added Network::Monitor::Traffic::User class to hold data for different
+          x added Network::Monitor::Traffic::User class to hold data for different
             users (like traffic-report, online-stats)
+          x tested simple case with _diff_ and _total_
+          - import in Entities/Internet
+        - make simple printer-conf
 
 BUGS:
         - Permission:admin can add credit, but will fall into black hole - only allow
