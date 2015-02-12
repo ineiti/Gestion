@@ -12,6 +12,7 @@ WORKING:
         - SMScontrol: find better name!
 
 BUGS:
+        - SMScontrol gets ethernet-device, while it asks only for 'option'-modules
         - Permission:admin can add credit, but will fall into black hole - only allow
             for Permission:cybermanager to add credit
         - Get QooxView/Test/qv_gettext to run
