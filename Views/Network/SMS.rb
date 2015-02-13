@@ -184,10 +184,10 @@ class NetworkSMS < View
       if $SMScontrol.operator_missing?
         credit = 0
       else
-        credit = $SMScontrol.operator.internet_cost_available.reverse.first[0]
+        credit = $SMScontrol.operator.internet_cost_available.reverse.first[0].to_i
       end
     else
-      credit = data._menu.match(/^[0-9]*/)[0]
+      credit = data._menu.match(/^[0-9]*/)[0].to_i
     end
     if credit > 0
       log_msg :NetworkSMS, "Asking for recharge of #{credit}"

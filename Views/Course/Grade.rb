@@ -17,13 +17,14 @@ class CourseGrade < View
         show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
       end
       gui_vbox :nogroup do
+        show_str :first_name, :width => 150
+        show_str :family_name
+        show_list_drop :gender, '%w( male female n/a )'
+        show_int_ro :files_saved
+        show_str :remark
         show_table :grades, :headings => %w(Label grade), :widths => [150, 50],
                    :columns => %w(0 align_right), #:callback => :edit,
                    :edit => [1]
-        show_int_ro :files_saved
-        show_str :remark
-        show_str :first_name, :width => 150
-        show_str :family_name
         show_button :save, :upload
       end
       gui_window :transfer do
@@ -151,7 +152,8 @@ class CourseGrade < View
                          "to #{student.login_name} from #{course.name} with remark -#{data._remark}-"
       if data['first_name']
         Entities.Persons.save_data({:person_id => student.person_id,
-                                    :first_name => data['first_name'], :family_name => data['family_name']})
+                                    :first_name => data._first_name,
+                                    :family_name => data._family_name})
       end
 
       grades = data._grades.first
