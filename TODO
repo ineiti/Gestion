@@ -256,6 +256,8 @@ To check:
 
 
 ** FIXED **:
+        - F 150213: Tigo: get credit with ::"192":: ::Vous avez recu 1000.00 CFA de 99836457.
+            Transfert gratuit avec Tigo Cash :*800*2*2*numero*montant*PIN#
         - B 150212: SMScontrol gets ethernet-device, while it asks only for 'option'-modules
         - F 150212: SMScontrol: have USSD-history like SMS-history
             x only keep last 100 USSDs
