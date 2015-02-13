@@ -122,6 +122,7 @@ class NetworkSMS < View
         System.run_str('systemctl list-units --no-legend openvpn@* | '+
                            'sed -e "s/OpenVPN.*//"') :
         System.run_str('pgrep openvpn')
+    vpns
     ussds = $SMScontrol.device ? $SMScontrol.device.ussd_list : 'Down'
     operator = $SMScontrol.operator ? $SMScontrol.operator.name : 'Unknown'
     reply(:update,
