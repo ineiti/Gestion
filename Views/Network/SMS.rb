@@ -98,18 +98,22 @@ class NetworkSMS < View
     end
   end
 
+  def recharges_list
+    return 'No recharge possible' if $SMScontrol.operator_missing?
+    list = $SMScontrol.operator.internet_cost_available.reverse.
+        collect { |c, v|
+      "#{c} CFAs for #{(v.to_i/1_000_000).separator} MB" }
+    list.size == 0 ? 'No recharge possible' : list
+  end
+
   def rpc_update(session)
     return unless $SMScontrol
     cl, il, recharge = if $SMScontrol.operator_missing?
-                         [-1, -1, ['100 CFAs for 10 000 000 bytes',
-                                   '200 CFAs for 20 000 000 bytes']]
                          [-1, -1, 'No recharge possible']
                        else
                          [$SMScontrol.operator.credit_left,
                           $SMScontrol.operator.internet_left,
-                          $SMScontrol.operator.internet_cost_available.reverse.
-                              collect { |c, v|
-                            "#{c} CFAs for #{(v.to_i/1_000_000).separator} MB" }]
+                         recharges_list]
                        end
     #cl, il = s_unknown(cl), s_unknown(il)
     emails = System.exists?('postqueue') ?
@@ -118,7 +122,7 @@ class NetworkSMS < View
         System.run_str('systemctl list-units --no-legend openvpn@* | '+
                            'sed -e "s/OpenVPN.*//"') :
         System.run_str('pgrep openvpn')
-    ussds = $SMScontrol.device ? $SMScontrol.device.ussd_list.inspect : 'Down'
+    ussds = $SMScontrol.device ? $SMScontrol.device.ussd_list : 'Down'
     operator = $SMScontrol.operator ? $SMScontrol.operator.name : 'Unknown'
     reply(:update,
           :state_now => s_status($SMScontrol.state_now),

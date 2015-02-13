@@ -107,9 +107,10 @@ class CourseTypes < Entities
   def icc_file(arg)
     file = "#{ConfigBase.template_dir}/#{File.basename(arg._name.first)}"
     if File.exists? file
-      "Sending file #{file}"
+      log_msg :CourseTypes, "Sending file #{file}"
       IO.read(file)
     else
+      log_msg :CourseTypes, "Didn't find #{file.inspect}"
       return "Error: can't find file"
     end
   end

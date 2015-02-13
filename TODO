@@ -3,16 +3,16 @@
 WORKING:
         - use captive together with Monitor::Traffic which uses the mangle-table that are
             valid for both INPUT and FORWARD
-          x added Network::Monitor::Traffic::User class to hold data for different
-            users (like traffic-report, online-stats)
-          x tested simple case with _diff_ and _total_
-          - import in Entities/Internet
-        - SMScontrol: have USSD-history like SMS-history
-            - only keep last 100 USSDs
-        - SMScontrol: find better name!
+            x added Network::Monitor::Traffic::User class to hold data for different
+              users (like traffic-report, online-stats)
+            x tested simple case with _diff_ and _total_
+            - import in Entities/Internet
+        - import all data from a center
+            - export all data to server
 
 BUGS:
-        - SMScontrol gets ethernet-device, while it asks only for 'option'-modules
+        - icc-calls are not secured with username/password
+        - why is there a Course::center-method? This should come from Courses.setup_data!
         - Permission:admin can add credit, but will fall into black hole - only allow
             for Permission:cybermanager to add credit
         - Get QooxView/Test/qv_gettext to run
@@ -30,6 +30,10 @@ For 2.0:
 Security:
 
 UI:
+        - View::Course::Grade
+            - when only one file, "add-file"-button should directly pop up the file selector
+            - when all files are uploaded, automatically call "save"-button
+        - SMScontrol: find better name!
         - make simple printer-conf
         - Replace :empty_nonlists with :empty and :empty_update
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
@@ -251,9 +255,13 @@ To check:
 
 
 ** FIXED **:
-        - B 150211: SMScontrol: have 3Gpref, 3Gonly, GPRSpref, GPRSonly
-        - B 150211: ConfigBase.use_printing should be (true|false) instead of 0/1
-        - B 150211: Network::operator doesn't have default values
+        - B 150212: SMScontrol gets ethernet-device, while it asks only for 'option'-modules
+        - F 150212: SMScontrol: have USSD-history like SMS-history
+            x only keep last 100 USSDs
+        - B 150212: import of coursetypes doesn't work anymore
+        - B 150212: SMScontrol: have 3Gpref, 3Gonly, GPRSpref, GPRSonly
+        - B 150212: ConfigBase.use_printing should be (true|false) instead of 0/1
+        - B 150212: Network::operator doesn't have default values
         - F 150212: make a drop-down SMScontrol::recharge button with the possibilities of
           recharging
         - B 150212: can't update CourseType::file_diploma in View::Template::CourseType

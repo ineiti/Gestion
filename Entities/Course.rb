@@ -40,8 +40,7 @@ class Courses < Entities
     value_entity_person :responsible, :drop, :full_name
 
     value_block :center
-    value_entity_person_empty :center, :drop, :full_name,
-                              lambda { |p| p.permissions.index('center') }
+    value_entity_person_empty :center, :drop, :full_name
 
     value_block :content
     value_str :description
@@ -367,6 +366,17 @@ class Courses < Entities
       dputs(3) { "Didn't find #{course_name}" }
       {}
     end
+  end
+
+  def icc_courses(tr)
+    c = tr._data._center
+    return "Didn't find center #{c.inspect}}" unless
+        center = Persons.find_by_login_name(c._login_name)
+    return "Passwords do not match for #{c.inspect}" unless
+        center.password_plain == c._password_plain
+    courses = Courses.find_by_name("^#{center.login_name}_")
+    log_msg :ICC_courses, "Returning #{courses}"
+    return courses
   end
 
 end
