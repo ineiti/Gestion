@@ -30,6 +30,7 @@ For 2.0:
 Security:
 
 UI:
+        - Get time and date from SMS
         - View::Course::Grade
             - when only one file, "add-file"-button should directly pop up the file selector
             - when all files are uploaded, automatically call "save"-button
