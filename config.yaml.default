@@ -65,11 +65,11 @@ Entities:
   LogActions:
 #    logging: false
 
-#DPuts:
+DPuts:
 #  terminal_width: 160
 #  silent: false
 #  show_time: sec
-#  log: events.log
+  log: /var/log/gestion/events.log
 
 LDAPConfig:
 #  array: host, base, root, group_users, password
