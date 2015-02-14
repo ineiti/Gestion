@@ -28,7 +28,11 @@ class Shares < Entities
       if !Dir.exists?(sh.path)
         FileUtils.mkdir_p(sh.path)
       end
-      FileUtils.chmod 0777, sh.path
+      begin
+        FileUtils.chmod 0777, sh.path
+      rescue Errno::EROFS => e
+        log_msg :Share, "Oups, couldn't chmod #{e.inspect}"
+      end
       a += "\n\n[#{sh.name}]\n  path = #{sh.path}\n  comment = #{sh.comment}\n"
       valid_users = []
       if sh.force_user.to_s.length > 0
