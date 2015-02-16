@@ -414,7 +414,7 @@ class CourseModify < View
   end
 
   def rpc_button_wen_save(session, data)
-    dputs_func
+    #dputs_func
     course = Courses.match_by_course_id(data._courses.first)
     if (c = Courses.match_by_name(data._wen_name)) &&
         c != course

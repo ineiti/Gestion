@@ -11,6 +11,8 @@ WORKING:
             - export all data to server
 
 BUGS:
+        - SMScontrol: credit ends -> disconnect -> recharge -> no promotion asked
+        - SMScontrol: can't send SMS anymore
         - captive-tables are not updated when configuration changes
         - icc-calls are not secured with username/password
         - why is there a Course::center-method? This should come from Courses.setup_data!
