@@ -11,6 +11,7 @@ WORKING:
             - export all data to server
 
 BUGS:
+        - captive-tables 
         - icc-calls are not secured with username/password
         - why is there a Course::center-method? This should come from Courses.setup_data!
         - Permission:admin can add credit, but will fall into black hole - only allow
