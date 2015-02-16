@@ -11,7 +11,7 @@ WORKING:
             - export all data to server
 
 BUGS:
-        - captive-tables 
+        - captive-tables are not updated when configuration changes
         - icc-calls are not secured with username/password
         - why is there a Course::center-method? This should come from Courses.setup_data!
         - Permission:admin can add credit, but will fall into black hole - only allow
@@ -51,7 +51,10 @@ FEATURES:
         - SMScontrol: redo check_sms with regard to auto-charging and such. Write a
             clean state-diagram with connected/disconnected/internet_left/credit_left
             and write who should do what when...
-
+            - in Tigo and Airtel, check all SMS for
+                - adding credit (*Cash, cPourToi, credits)
+                - adding promotion
+            - send 'update' to an observable
         - Courses::Grades can have more than the necessary files ->
             - show downloadable list of files
         - limit speed upon reaching threshold
@@ -248,6 +251,10 @@ To check:
 
 
 ** FIXED **:
+        - B 150216: tigo: when charging 500, then reboot later and promotion is smaller, only
+          small steps are taken into account for @last_promotion
+          - save promotion and recover later
+        - F 150216: tigo-reset: 256kB with 100, 512kB with 200 and 1MB with 500
         - UI150216: View::Course::Grade
             - when only one file, "add-file"-button should directly pop up the file selector
             - when all files are uploaded, automatically call "save"-button
