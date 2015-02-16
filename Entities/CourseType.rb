@@ -3,8 +3,6 @@
 
 class CourseTypes < Entities
   def setup_data
-    value_list_drop :page_format,
-                    "[[1,'normal'],[2,'interchanged'],[3,'landscape'],[4,'seascape']]"
     value_str :file_diploma
     value_str :file_exam
 
@@ -20,6 +18,9 @@ class CourseTypes < Entities
     value_list_drop :diploma_type, '%w( simple files accredited report )'
     value_list_drop :output, '%w( certificate label )'
     value_list_drop :diploma_lang, '%w( en fr )'
+    value_list_drop :page_format,
+                    "[[1,'normal'],[2,'interchanged'],[3,'landscape'],[4,'seascape']]"
+    value_list_drop :remark, '%w(false true)'
 
     value_block :lists
     value_str :tests_str

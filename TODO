@@ -11,9 +11,6 @@ WORKING:
             - export all data to server
 
 BUGS:
-        - 
-        - when no main-tab, need to put tabs on top - doesn't work with login and
-          simple student without internet!
         - icc-calls are not secured with username/password
         - why is there a Course::center-method? This should come from Courses.setup_data!
         - Permission:admin can add credit, but will fall into black hole - only allow
@@ -33,23 +30,20 @@ For 2.0:
 Security:
 
 UI:
-        - Get time and date from SMS
-        - View::Course::Grade
-            - when only one file, "add-file"-button should directly pop up the file selector
-            - when all files are uploaded, automatically call "save"-button
-        - SMScontrol: find better name!
-        - make simple printer-conf
         - Replace :empty_nonlists with :empty and :empty_update
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
+        - if only Course-tabs are visible, the basic tab is not shown, so no
+         tabs can be added
+
+FEATURES:
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
             -> delete fields when pressing 'new' and empty forms when switching tab
             - empty forms should be disabled (like Person::Modify), in
               TemplateCourse, NetworkShare, ...
-        - if only Course-tabs are visible, the basic tab is not shown, so no
-         tabs can be added
-
-FEATURES:
+        - Get time and date from SMS
+        - SMScontrol: find better name!
+        - make simple printer-conf
         - CoursesTabs - Drop-down to select courses
         - Bibliotheque
 
@@ -67,8 +61,6 @@ FEATURES:
         - CourseType - add drop: "internet_always, internet_course, none"
         - better display in Course::Grades with regard to files, perhaps direct
             download of student-files
-        - Make a NupPrint for OpenPrint
-        - Block traffic in dp-man if server has "restriction"
         - Pruning out left-overs in LibNet -> Network transition
             - Entity and taking care of values (int, str, bool, array)
         - Adding ScheduleType to schools
@@ -106,15 +98,11 @@ FEATURES:
 
         - Put adding of students and printing as background-tasks
 
-        - Progression-meter for Report::Executive
         - clean up the interface, mostly the tabs and sub-tabs
         - write a good documentation...
-        - AC: correctly show differing accounts in "check"
 
         - add init-script for Gestion to "service gestion restart"
 
-        - configure better print, libnet, uploadwidget, so that it get's correctly
-          addressed with a configuration
         - when a student logins remotely to a course_sever, don't allow to change
           his name, only address, phone-#, password and e-mail
         - adding a course:
@@ -259,6 +247,11 @@ To check:
 
 
 ** FIXED **:
+        - UI150216: View::Course::Grade
+            - when only one file, "add-file"-button should directly pop up the file selector
+            - when all files are uploaded, automatically call "save"-button
+        - B 150216: when no main-tab, need to put tabs on top - doesn't work with login and
+          simple student without internet!
         - B 150215: Course::Grade: when changing grade and clicking "save", the grade is not
           saved. Only the "enter"-button works!
         - B 150214: Tigo: connection cuts when 1MB downloaded and promotion was <= 500CFAs

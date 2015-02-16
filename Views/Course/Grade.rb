@@ -17,15 +17,21 @@ class CourseGrade < View
         show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
       end
       gui_vbox :nogroup do
-        show_str :first_name, :width => 150
-        show_str :family_name
-        show_list_drop :gender, '%w( male female n/a )'
-        show_int_ro :files_saved
-        show_str :remark
-        show_table :grades, :headings => %w(Label grade), :widths => [150, 50],
-                   :columns => %w(0 align_right), #:callback => :edit,
-                   :edit => [1]
-        show_button :save, :upload
+        gui_vbox :nogroup do
+          show_str :first_name, :width => 150
+          show_str :family_name
+          show_list_drop :gender, '%w( male female n/a )'
+          show_int_ro :files_saved
+          show_str :remark
+          show_table :grades, :headings => %w(Label grade), :widths => [150, 50],
+                     :columns => %w(0 align_right), #:callback => :edit,
+                     :edit => [1], :height => 200
+        end
+        gui_vbox :nogroup do
+          show_html :name_file_direct
+          show_upload :upload_direct, :callback => true
+          show_button :save, :upload
+        end
       end
       gui_window :transfer do
         show_html :txt
@@ -58,10 +64,10 @@ class CourseGrade < View
     super(session) +
         reply(:empty_nonlists, [:students]) +
         [:prepare_files, :fetch_files, :transfer_files,
-         :last_synched, :sync_server, :upload, :files_saved].collect { |b|
+         :last_synched, :sync_server, :upload, :files_saved,
+         :upload_direct, :name_file_direct, :remark].collect { |b|
           reply(:hide, b)
-        }.flatten +
-        reply(:update, :upload_file_1 => 'test-file')
+        }.flatten
   end
 
   def update_files_saved(course, student)
@@ -77,8 +83,8 @@ class CourseGrade < View
     }
   end
 
-  def update_grade(d)
-    c_id, p_name = d['courses'][0], d['students'][0]
+  def update_grade(data)
+    c_id, p_name = data._courses[0], data._students[0]
     if p_name and c_id
       person = Persons.match_by_login_name(p_name)
       course = Courses.match_by_course_id(c_id)
@@ -92,13 +98,13 @@ class CourseGrade < View
     end
   end
 
-  def rpc_list_choice(session, name, args)
-    dputs(3) { "rpc_list_choice with #{name} - #{args.inspect}" }
+  def rpc_list_choice(session, name, data)
+    dputs(3) { "rpc_list_choice with #{name} - #{data.inspect}" }
     ret = []
+    course_id = data._courses[0]
+    course = Courses.match_by_course_id(course_id)
     case name
       when 'courses'
-        course_id = args['courses'][0]
-        course = Courses.match_by_course_id(course_id)
         if course
           dputs(3) { 'replying' }
           ret = rpc_update(session) +
@@ -112,9 +118,17 @@ class CourseGrade < View
 
           dputs(3) { "CType is #{course.ctype.inspect} - #{course.ctype.files_nbr.inspect}" }
           buttons = []
-          if course.ctype.files_nbr.to_i > 0
+          if (nbr = course.ctype.files_nbr.to_i) > 0
             dputs(3) { 'Putting buttons' }
-            buttons.push :transfer_files, :upload, :files_saved
+            buttons.push :transfer_files, :files_saved
+            buttons.push(if nbr > 1
+                           :upload
+                         else
+                           ret += reply(:update,
+                                        upload_direct: course.ctype.files_arr.first) +
+                               reply(:update, name_file_direct: 'chose student')
+                           [:upload_direct, :name_file_direct]
+                         end)
             if Shares.match_by_name('CourseFiles')
               buttons.push :prepare_files, :fetch_files
             end
@@ -126,13 +140,18 @@ class CourseGrade < View
           buttons.each { |b|
             ret += reply(:unhide, b)
           }
+          ret += reply_visible(dp(course.ctype.remark.to_s) == '[true]', :remark)
 
           dputs(4) { "Course is #{course} - ret is #{ret.inspect}" }
         end
       when 'students'
-        ret += update_grade(args)
-        ret += reply(:focus, {table: 'grades', col: 1, row: 0})
+        student = Entities.Persons.match_by_login_name(data._students.first)
+        ret += reply(:update,
+                     name_file_direct: course.exam_files(student).first) +
+            update_grade(data) +
+            reply(:focus, {table: 'grades', col: 1, row: 0})
     end
+
     ret
   end
 
@@ -147,13 +166,14 @@ class CourseGrade < View
       Entities.Grades.save_data({:course => course,
                                  :student => student,
                                  :means => means,
-                                 :remark => data['remark']})
+                                 :remark => data._remark})
       log_msg :grades, "#{session.owner.login_name} added grades #{means.inspect} " +
                          "to #{student.login_name} from #{course.name} with remark -#{data._remark}-"
-      if data['first_name']
+      if data._first_name
         Entities.Persons.save_data({:person_id => student.person_id,
                                     :first_name => data._first_name,
-                                    :family_name => data._family_name})
+                                    :family_name => data._family_name,
+                                    :gender => data._gender})
       end
 
       grades = data._grades.first
@@ -164,15 +184,15 @@ class CourseGrade < View
         # Find next student
         course = course.to_hash
         saved = course[:students].index { |i|
-          i[0] == data['students'][0]
+          i[0] == data._students[0]
         }
         dputs(2) { "Found student at #{saved}" }
-        data['students'] = course[:students][(saved + 1) % course[:students].size]
-        dputs(2) { "Next student is #{data['students'].inspect}" }
+        data._students = course[:students][(saved + 1) % course[:students].size]
+        dputs(2) { "Next student is #{data._students.inspect}" }
         if false
           reply(:empty_nonlists, :students) +
               reply(:update, :students => course[:students]) +
-              reply(:update, :students => [data['students'][0]])
+              reply(:update, :students => [data._students[0]])
         else
           reply(:select, students: [data._students[0]])
         end
@@ -186,7 +206,7 @@ class CourseGrade < View
   def rpc_button_transfer_files(session, data)
     ret = reply(:update, :txt => 'no students') +
         reply(:hide, :upload)
-    if course = Courses.match_by_course_id(data['courses'][0])
+    if course = Courses.match_by_course_id(data._courses[0])
       if file = course.zip_create
         ret = reply(:update, :txt => 'Download skeleton: ' +
                                "<a target='other' href='/tmp/#{file}'>#{file}</a>") +
@@ -198,21 +218,21 @@ class CourseGrade < View
   end
 
   def rpc_button_prepare_files(session, data)
-    if course = Courses.match_by_course_id(data['courses'][0])
+    if course = Courses.match_by_course_id(data._courses[0])
       course.exas_prepare_files
     end
     update_grade(data)
   end
 
   def rpc_button_fetch_files(session, data)
-    if course = Courses.match_by_course_id(data['courses'][0])
+    if course = Courses.match_by_course_id(data._courses[0])
       course.exas_fetch_files
     end
     update_grade(data)
   end
 
   def rpc_button_close(session, data)
-    if course = Courses.match_by_course_id(data['courses'][0])
+    if course = Courses.match_by_course_id(data._courses[0])
       course.zip_read
       reply(:window_hide) +
           update_grade(data) +
@@ -233,7 +253,7 @@ class CourseGrade < View
 
   def rpc_button_sync_server(session, data)
     log_msg :grade, 'Syncing with server'
-    if course = Courses.match_by_course_id(data['courses'][0])
+    if course = Courses.match_by_course_id(data._courses[0])
       course.sync_start
 
       reply(:window_show, :sync) +
@@ -296,7 +316,7 @@ class CourseGrade < View
             update_files_saved(course, student)
         if (number == files_nbr) and
             (files_nbr == course.exam_files(student).count)
-          ret += reply(:window_hide)
+          ret += reply(:window_hide) + rpc_button_save(session, data)
         end
         dputs(3) { "Return is #{ret.inspect}" }
         return ret
@@ -341,4 +361,9 @@ class CourseGrade < View
       reply(:focus, {table: 'grades', row: element, col: 1})
     end
   end
+
+  def rpc_button_upload_direct(session, data)
+    rpc_button(session, 'upload_file_1', data)
+  end
+
 end

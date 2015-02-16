@@ -62,7 +62,7 @@ class Welcome < View
       log_msg :Welcome, "Authenticated person #{person.login_name} from " +
                           "#{session.client_ip}"
       return reply(:session_id, person.session_id) +
-          reply(:list, View.list(session))
+          View.rpc_list(session)
     else
       reply(:window_show, :login_failed) +
           reply(:update, :reason => person ? 'Password wrong' : "User doesn't exist")
