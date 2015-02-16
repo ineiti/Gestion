@@ -70,7 +70,7 @@ class CourseGrade < View
   end
 
   def get_grades(ct, grades)
-    means = grades ? grades.means : [''] * ct.tests_nbr
+    means = grades ? grades.means : [''] * ct.tests_nbr.to_i
     i = 0
     ct.tests_arr.zip(means).collect { |t, m|
       [i += 1, [t, m.to_s]]
@@ -159,7 +159,7 @@ class CourseGrade < View
       grades = data._grades.first
       element = grades ? grades._element_id.to_i : 0
 
-      if element >= course.ctype.tests_nbr
+      if element >= course.ctype.tests_nbr.to_i
         element = 0
         # Find next student
         course = course.to_hash
@@ -335,7 +335,7 @@ class CourseGrade < View
                                  :means => means,
                                  :remark => data._remark})
     end
-    if element == course.ctype.tests_nbr
+    if element == course.ctype.tests_nbr.to_i
       rpc_button_save(session, data)
     else
       reply(:focus, {table: 'grades', row: element, col: 1})

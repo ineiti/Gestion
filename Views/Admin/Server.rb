@@ -44,7 +44,7 @@ class AdminServer < View
   end
 
   def rpc_button_download_list(session, data)
-    (res = ICC.get(:CourseTypes, :list)).inspect
+    dp (res = ICC.get(:CourseTypes, :list)).inspect
     if res._code == 'Error'
       status_list(true, status: "Error: #{res._msg}")
     else

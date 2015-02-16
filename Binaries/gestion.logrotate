@@ -3,6 +3,7 @@
   copytruncate
   rotate 30
   mail root@localhost
+  #nomail
   postrotate
     /opt/profeda/Gestion/Binaries/log_scan_errors
   endscript

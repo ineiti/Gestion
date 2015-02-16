@@ -802,7 +802,7 @@ base_gestion
           end
         end
         doc.gsub!(/-MEAN-/, grade.mean.to_s)
-        doc.gsub!(/(number-rows-spanned=)\"3\"/, "\\1\"#{ctype.tests_nbr+1}\"")
+        doc.gsub!(/(number-rows-spanned=)\"3\"/, "\\1\"#{ctype.tests_nbr.to_i+1}\"")
         z.get_output_stream('content.xml') { |f|
           f.write(doc)
         }
