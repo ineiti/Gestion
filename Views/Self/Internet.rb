@@ -47,7 +47,7 @@ class SelfInternet < View
   end
 
   def update_connection_status(session)
-    dputs_func
+    #dputs_func
     return reply(:hide, :connection_status) unless session.owner.has_role(:cybermanager)
     ret = reply(Internet.free(session.owner) ? :hide : :unhide, :internet_credit)
     cc = can_connect(session)

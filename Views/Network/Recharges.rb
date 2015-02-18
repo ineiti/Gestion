@@ -19,20 +19,21 @@ class NetworkRecharges < View
   end
 
   def rpc_update(_session, select = nil)
-    recharges = Recharges.search_all_.collect { |r| [r.recharge_id, r.time] }
+    recharges = Recharges.search_all_.collect { |r| [r.recharge_id, r.time] }.reverse
     select and recharges.push(select)
-    reply(:empty_nonlists) +
-        reply(:empty, :recharges) +
+    reply(:empty_all) +
         reply(:update, recharges: recharges)
   end
 
   def rpc_button_new(session, data)
-    reply(:empty_nonlists)
+    rpc_update(session)
   end
 
   def rpc_button_save(session, data)
-    data._recharges.data_set_hash(data)
-    rpc_update(session, data._recharges.recharge_id)
+    recharges = data._recharges
+    recharges.class == Array and recharges = Recharges.create(time: data._time)
+    recharges.data_set_hash(data)
+    rpc_update(session, recharges.recharge_id)
   end
 
   def rpc_button_delete(session, data)

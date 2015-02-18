@@ -11,6 +11,7 @@ WORKING:
             - export all data to server
 
 BUGS:
+        - redirection to connection-screen fails for non-normal student
         - SMScontrol: credit ends -> disconnect -> recharge -> no promotion asked
         - SMScontrol: can't send SMS anymore
         - captive-tables are not updated when configuration changes
