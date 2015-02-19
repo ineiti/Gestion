@@ -1020,6 +1020,7 @@ class TC_Course < Test::Unit::TestCase
 
   def test_move_student
     ConfigBase.add_function(:accounting_courses)
+    @secretaire.update_accounts
     @course_acc = Courses.create_ctype(@maint_t, '1312')
     @course_acc.students = %w(surf surf2)
 
@@ -1103,5 +1104,9 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.delete
     @maint.delete
     assert @maint_t.delete
+  end
+
+  def test_center
+    assert_equal nil, @maint.center
   end
 end

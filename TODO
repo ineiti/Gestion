@@ -8,19 +8,24 @@ WORKING:
             x tested simple case with _diff_ and _total_
             - import in Entities/Internet
         - import all data from a center
+            - write tests
             - export all data to server
 
 BUGS:
+        - ConfigBase-implementation is stupid, should be either a module, or be
+            inheritable by clients
         - when course_server, add the following:
             - edit of center
             - ask for center when creating course
+            - why is there a Course::center-method? This should come from Courses.setup_data!
         - profeda.org: can't edit student in course abc_PC-1_1500
         - redirection to connection-screen fails for non-normal student
+        - Network::Monitor::traffic doesn't show incoming and outgoing correctly
+            - check with new version
         - SMScontrol: credit ends -> disconnect -> recharge -> no promotion asked
-        - SMScontrol: can't send SMS anymore
         - captive-tables are not updated when configuration changes
         - icc-calls are not secured with username/password
-        - why is there a Course::center-method? This should come from Courses.setup_data!
+            - use encoding json-library
         - Permission:admin can add credit, but will fall into black hole - only allow
             for Permission:cybermanager to add credit
         - Get QooxView/Test/qv_gettext to run
@@ -262,6 +267,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150219: ConfigBase has to be able to react on changes of configuration, so
+            it needs to know the old state
         - B 150216: tigo: when charging 500, then reboot later and promotion is smaller, only
           small steps are taken into account for @last_promotion
           - save promotion and recover later

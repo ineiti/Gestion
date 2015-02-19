@@ -22,7 +22,7 @@ class NetworkConnection < View
 
   def rpc_button_save_costs(session, data)
     ConfigBase.data_set_hash(data)
-    ConfigBase.setup_instance
+    ConfigBase.send_config
   end
 
   def update(session)

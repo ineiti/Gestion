@@ -1297,11 +1297,7 @@ base_gestion
   end
 
   def center
-    dputs(4) { ".center is #{_center.inspect}" }
-    dputs(4) { "Persons.center is #{Persons.find_by_permissions(:center).inspect}" }
-    ret = _center || Persons.find_by_permissions(:center)
-    dputs(4) { "Center is #{ret.login_name}" }
-    ret
+    return _center || Persons.find_by_permissions(:center)
   end
 
   def abort_pdfs
@@ -1448,6 +1444,8 @@ base_gestion
   def payment(secretary, student, amount, date = Date.today, oldcash = false)
     log_msg :course_payment, "#{secretary.full_login} got #{amount} " +
                                "of #{student.full_name} in #{name}"
+    dp entries
+    dp secretary.account_due
     Movements.create("For student #{student.login_name}:" +
                          "#{student.full_name}",
                      date.strftime('%Y-%m-%d'), amount.to_f / 1000,

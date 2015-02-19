@@ -117,8 +117,7 @@ class ConfigBases < Entities
 end
 
 class ConfigBase < Entity
-  def setup_instance
-    super
+  def setup_defaults
     send_config
   end
 

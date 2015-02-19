@@ -118,6 +118,10 @@ class CourseTypes < Entities
 end
 
 class CourseType < Entity
+  def setup_instance
+    self.diploma_lang ||= ['fr']
+  end
+
   def get_unique
     name
   end
