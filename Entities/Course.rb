@@ -1444,8 +1444,6 @@ base_gestion
   def payment(secretary, student, amount, date = Date.today, oldcash = false)
     log_msg :course_payment, "#{secretary.full_login} got #{amount} " +
                                "of #{student.full_name} in #{name}"
-    dp entries
-    dp secretary.account_due
     Movements.create("For student #{student.login_name}:" +
                          "#{student.full_name}",
                      date.strftime('%Y-%m-%d'), amount.to_f / 1000,

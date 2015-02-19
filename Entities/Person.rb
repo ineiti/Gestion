@@ -81,20 +81,28 @@ class Persons < Entities
 
     @admin_users = true unless defined? @admin_users
     @resps = []
-    ConfigBase.add_observer(self, :update_open_print)
-    update_open_print(nil, nil, nil)
+    ConfigBases.add_observer(self, :update_config)
+    update_config(nil, nil, nil)
   end
 
-  def update_open_print(field, value, old)
-    ddir = Courses.dir_diplomas
-    cdir = "#{ddir}/cartes"
-    if !File.exist? cdir
-      FileUtils::mkdir_p(cdir)
+  def update_config(action, value, old)
+    case action
+      when :function_add
+        if value.index :accounting_courses
+          search_all_.each{|p| p.update_accounts}
+        end
+      when :function_del
+      else
+        ddir = Courses.dir_diplomas
+        cdir = "#{ddir}/cartes"
+        if !File.exist? cdir
+          FileUtils::mkdir_p(cdir)
+        end
+        @print_card_student = OpenPrint.new(
+            ConfigBase.template_path(:card_student), cdir)
+        @print_card_responsible = OpenPrint.new(
+            ConfigBase.template_path(:card_responsible), cdir)
     end
-    @print_card_student = OpenPrint.new(
-        ConfigBase.template_path(:card_student), cdir)
-    @print_card_responsible = OpenPrint.new(
-        ConfigBase.template_path(:card_responsible), cdir)
   end
 
   def migration_1(p)
@@ -270,7 +278,7 @@ class Persons < Entities
       if client.login_name.to_s.length > 0
         actor.add_internet_credit(client, data['credit_add'])
       else
-        dputs(0){"Bizarre client: #{client.inspect} - #{session.inspect} - #{data.inspect}"}
+        dputs(0) { "Bizarre client: #{client.inspect} - #{session.inspect} - #{data.inspect}" }
       end
       return client
     end
@@ -651,7 +659,7 @@ class Person < Entity
     self._permissions = p.uniq
     if has_teacher
       if Permission.can_view(p.reject { |perm|
-                                                                                                                                                                                                                                perm.to_s == 'admin' }, 'FlagResponsible')
+                                                                                                                                                                                                                                                        perm.to_s == 'admin' }, 'FlagResponsible')
         Persons.responsibles_add(self)
       else
         Persons.responsibles_del(self)
@@ -737,7 +745,7 @@ class Person < Entity
                         "#{self.person_id}:#{internet_credit}")
     pay_service(internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
     log_msg(:AddCash, "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
-                         "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}")
+                        "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}")
     log_msg(:AddCash, "Total due: #{account_total_due}")
   end
 
@@ -1086,13 +1094,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-                   [{:content => "#{m[0]}", :align => :center},
-                    m[1],
-                    {:content => "#{m[2]}", :align => :right},
-                    {:content => "#{Account.total_form(
-                        sum += m[2].gsub(',', '').to_f / 1000)}",
-                     :align => :right}]
-                 }, :header => true, :column_widths => [70, 300, 75, 75])
+                    [{:content => "#{m[0]}", :align => :center},
+                     m[1],
+                     {:content => "#{m[2]}", :align => :right},
+                     {:content => "#{Account.total_form(
+                         sum += m[2].gsub(',', '').to_f / 1000)}",
+                      :align => :right}]
+                  }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

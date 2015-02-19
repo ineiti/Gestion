@@ -12,8 +12,7 @@ WORKING:
             - export all data to server
 
 BUGS:
-        - ConfigBase-implementation is stupid, should be either a module, or be
-            inheritable by clients
+        - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server, add the following:
             - edit of center
             - ask for center when creating course
@@ -267,6 +266,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150219: ConfigBase-notifier list is lost when Entities.delete_all is called
         - B 150219: ConfigBase has to be able to react on changes of configuration, so
             it needs to know the old state
         - B 150216: tigo: when charging 500, then reboot later and promotion is smaller, only
