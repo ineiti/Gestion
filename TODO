@@ -11,6 +11,10 @@ WORKING:
             - export all data to server
 
 BUGS:
+        - when course_server, add the following:
+            - edit of center
+            - ask for center when creating course
+        - profeda.org: can't edit student in course abc_PC-1_1500
         - redirection to connection-screen fails for non-normal student
         - SMScontrol: credit ends -> disconnect -> recharge -> no promotion asked
         - SMScontrol: can't send SMS anymore
@@ -26,6 +30,10 @@ BUGS:
 Bugs to watch:
         - Error in ConfigBase which doesn't update correctly the accounts when starting
           without accounting
+
+For CCE:
+        - Prepare Diplomas with fields
+        - Check auto-update of Antivirus and other stuff
 
 For 2.0:
         - Put data-directory elsewhere
