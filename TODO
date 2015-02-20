@@ -10,9 +10,6 @@ WORKING:
         - import all data from a center
             - write tests
             - export all data to server
-        - F Distributed chat
-            - add get_auth-method to be used with authentication
-            - add dock to server
 
 BUGS:
         - change ConfigBase.send_config to rely on ConfigBase.update
