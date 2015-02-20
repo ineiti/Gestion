@@ -17,13 +17,12 @@ class AdminServer < View
 
   def check_availability
     if ConfigBase.server_url.to_s.length == 0
-      'No server defined, aborting'
+      [false, 'No server defined, aborting']
     else
       if Persons.center
-        downloading = true
-        'Fetching CourseTypes from server'
+        [true, 'Fetching CourseTypes from server']
       else
-        'There is no center defined, aborting'
+        [false, 'There is no center defined, aborting']
       end
     end
   end
@@ -31,9 +30,11 @@ class AdminServer < View
   def status_list(show_status, status: '', list: [])
     reply_one_two(show_status, :close, :download) +
         reply_one_two(show_status, :status, :import_list) +
-        reply(:update, import_list: list) +
-        (show_status ? reply(:update, status: status) :
-            reply(:empty, :import_list))
+        if show_status
+          reply(:update, status: status)
+        else
+          reply(:empty, :import_list) + reply(:update, import_list: list)
+        end
   end
 
   def rpc_button_import_ctypes(session, data)
@@ -44,7 +45,7 @@ class AdminServer < View
   end
 
   def rpc_button_download_list(session, data)
-    dp (res = ICC.get(:CourseTypes, :list)).inspect
+    res = ICC.get(:CourseTypes, :list)
     if res._code == 'Error'
       status_list(true, status: "Error: #{res._msg}")
     else
@@ -53,7 +54,7 @@ class AdminServer < View
   end
 
   def rpc_button_download(session, data)
-    if (cts_names = data._ctypes_server).length > 0
+    if (cts_names = data._import_list).length > 0
       status_list(true, status: "Downloading #{cts_names.length} CourseTypes").concat(
           reply(:callback_button, :fetch_list))
     else
@@ -63,7 +64,7 @@ class AdminServer < View
   end
 
   def rpc_button_fetch_list(session, data)
-    cts_names = data._ctypes_server
+    cts_names = data._import_list
     (cts = ICC.get(:CourseTypes, :fetch,
                    args: {course_type_names: cts_names})).inspect
     if cts._code == 'Error'
@@ -80,14 +81,14 @@ class AdminServer < View
         ct_new = CourseTypes.create(ct)
       end
       #/opt/profeda/Gestion/Views/Admin/Server.rb:71:in `block in rpc_button_fetch_list'
-      [ct._file_diplomas, ct._file_exam].compact.each { |f|
+      [ct._file_diploma, ct._file_exam].compact.each { |f|
         file = f.first
         if file.length > 0
           rep = ICC.get(:CourseTypes, :_file, args: {name: [file]})
           if rep._code == 'OK'
-            file = rep._msg
-            log_msg :CourseType, "Got file #{file} with length #{file.length}"
-            IO.write("#{ConfigBase.template_dir}/#{file}", file)
+            data = rep._msg
+            log_msg :CourseType, "Got file #{file} with length #{data.length}"
+            IO.write("#{ConfigBase.template_dir}/#{file}", data)
           else
             log_msg :CourseType, "Got error #{rep._msg}"
           end
