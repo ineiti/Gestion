@@ -87,8 +87,7 @@ class Welcome < View
     end
     dputs(3) { "Tabs is now #{tabs.inspect}" }
     return reply(:session_id, session.sid) +
-        View.rpc_list(session) +
-        reply(:switch_tab, :SelfInternet)
+        View.rpc_list(session)
   end
 
   def rpc_button_direct_connect(session, args)
