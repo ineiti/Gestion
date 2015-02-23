@@ -10,13 +10,13 @@ WORKING:
         - import all data from a center
             - write tests
             - export all data to server
-
-BUGS:
-        - change ConfigBase.send_config to rely on ConfigBase.update
-        - when course_server, add the following:
+        - when course_server, add the following, if admin:
             - edit of center
             - ask for center when creating course
             - why is there a Course::center-method? This should come from Courses.setup_data!
+
+BUGS:
+        - change ConfigBase.send_config to rely on ConfigBase.update
         - profeda.org: can't edit student in course abc_PC-1_1500
         - redirection to connection-screen fails for non-normal student
         - Network::Monitor::traffic doesn't show incoming and outgoing correctly

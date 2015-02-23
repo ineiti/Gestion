@@ -38,6 +38,7 @@ class CourseTabs < View
         gui_vbox :nogroup do
           show_entity_courseType_all :new_ctype, :drop, :name
           show_str :name_date
+          show_entity_person :new_center_course, :drop, :full_name
           show_button :new_course, :close
         end
       end
@@ -172,7 +173,14 @@ class CourseTabs < View
 
   def rpc_button_add(session, data)
     reply(:window_show, :add_course) +
-        reply(:update, :name_date => "#{Date.today.strftime('%y%m')}")
+        reply(:update, :name_date => "#{Date.today.strftime('%y%m')}") +
+        if ConfigBase.has_function?(:course_server) &&
+            session._owner.has_role(:admin)
+          reply(:show, :new_center_course) +
+              reply(:empty_update, :new_center_course => Persons.centers)
+        else
+          reply(:hide, :new_center_course)
+        end
   end
 
   def rpc_button_close(session, data)
