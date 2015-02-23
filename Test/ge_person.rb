@@ -96,22 +96,6 @@ class TC_Person < Test::Unit::TestCase
                                  {'person_id' => 2, 'login_name' => 'surf', 'credit_add' => 500})
     assert_equal 500, @surf.internet_credit.to_i - surf_credit, 'Credit'
     assert_equal -500, @josue.account_total_due.to_i - josue_due, 'account_total_due'
-    dputs(1) { "surf.log_list is #{@surf.log_list.inspect}" }
-    dputs(1) { "josue.log_list #{@josue.log_list.inspect}" }
-
-    return unless LogActions.logging
-    log_list = [@surf.log_list.last, @josue.log_list.last]
-    dputs(1) { "log_list #{log_list.inspect}" }
-    log_list.undate
-    log_list.unlogid
-    assert_equal({:data_class_id => 3, :data_field => :internet_credit, :data_value => '500',
-                  :undo_function => :undo_set_entry, :data_class => 'Person',
-                  :msg => '2:500', :data_old => 0},
-                 log_list[0].unlogid)
-    assert_equal({:data_value => josue_due + 500, :undo_function => :undo_set_entry,
-                  :data_old => josue_due, :data_class_id => 2,
-                  :data_class => 'Person', :msg => 'internet_credit pour -surf:500-', :data_field => :account_total_due},
-                 log_list[1].unlogid)
   end
 
   def test_accents
@@ -139,32 +123,6 @@ class TC_Person < Test::Unit::TestCase
   def tesst_print_accent
     @accents = Entities.Persons.create({:first_name => 'éaënne', :family_name => 'ässer'})
     @accents.print
-  end
-
-  def test_log_password
-    return unless LogActions.logging
-    @admin.password = 'admin'
-    assert_equal({:data_class_id => 1,
-                  :data_field => :password,
-                  :data_value => 'admin',
-                  :data_class => 'Person',
-                  :undo_function => :undo_set_entry,
-                  :data_old => 'super123',
-                  :msg => nil},
-                 @admin.log_list[-2].undate.unlogid)
-  end
-
-  def test_log_change
-    return unless LogActions.logging
-    @admin.first_name = 'super'
-    assert_equal({:data_class_id => 1,
-                  :data_field => :first_name,
-                  :data_value => 'Super',
-                  :data_class => 'Person',
-                  :undo_function => :undo_set_entry,
-                  :data_old => 'Admin',
-                  :msg => nil},
-                 @admin.log_list[-1].undate.unlogid)
   end
 
   # Problem with test_permissions

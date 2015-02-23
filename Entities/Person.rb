@@ -623,30 +623,6 @@ class Person < Entity
     end
   end
 
-  def data_set_old(field, value, msg = nil, undo = true, logging = true)
-    old_value = data_get(field)
-    if old_value != value
-      dputs(4) { "Saving #{field} = #{value}" }
-      if logging
-        if undo
-          @proxy.log_action(@id, {field => value}, msg, :undo_set_entry, old_value)
-        else
-          @proxy.log_action(@id, {field => value}, msg)
-        end
-      end
-    end
-    ret = super(field, value)
-    case field.to_s
-      when /permissions/
-        # They will check for themself
-        update_account_cash
-        update_account_due
-      when /groups/
-        update_smb_passwd
-    end
-    return ret
-  end
-
   def groups=(g)
     self._groups = g
     update_smb_passwd
@@ -722,10 +698,6 @@ class Person < Entity
     end
   end
 
-  #def data_set_log(field, value, msg = nil, undo = true, logging = true )
-  #  data_set( field, value, msg, undo, logging )
-  #end
-
   def account_total_due
     if account_due
       dputs(2) { "internet_credit is #{account_due.total.inspect}" }
@@ -741,8 +713,7 @@ class Person < Entity
     if internet_credit.to_i < 0 and internet_credit.to_i.abs > client.internet_credit.to_i
       internet_credit = -client.internet_credit.to_i
     end
-    client.data_set_log(:_internet_credit, (client.internet_credit.to_i + internet_credit.to_i).to_s,
-                        "#{self.person_id}:#{internet_credit}")
+    client.data_set(:_internet_credit, (client.internet_credit.to_i + internet_credit.to_i).to_s)
     pay_service(internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
     log_msg(:AddCash, "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
                         "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}")
@@ -760,7 +731,7 @@ class Person < Entity
     else
       #account_total_due = data_get( :account_total_due ).to_i + credit.to_i
       total = self.account_total_due.to_i + credit.to_i
-      data_set_log(:_account_total_due, total, msg)
+      data_set(:_account_total_due, total)
     end
   end
 
