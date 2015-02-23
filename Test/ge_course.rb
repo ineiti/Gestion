@@ -1106,6 +1106,6 @@ class TC_Course < Test::Unit::TestCase
   end
 
   def test_center
-    assert_equal nil, @maint.center
+    assert_equal Persons.center, @maint.center
   end
 end

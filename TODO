@@ -10,7 +10,8 @@ WORKING:
         - import all data from a center
             - write tests
             - export all data to server
-
+        - Remove LogAction
+            - check tests
 BUGS:
         - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - AdminServer: better log advancement of download
@@ -54,7 +55,6 @@ UI:
          tabs can be added
 
 FEATURES:
-        - Remove LogAction
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
             -> delete fields when pressing 'new' and empty forms when switching tab

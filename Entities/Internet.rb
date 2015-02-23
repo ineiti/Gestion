@@ -10,7 +10,8 @@ module Internet
   @operator = nil
 
   def setup
-    if ConfigBase.captive_dev != 'false' && ConfigBase.has_function?(:internet_captive)
+    if (cd = ConfigBase.captive_dev).to_s.length > 0 &&
+        cd != 'false' && ConfigBase.has_function?(:internet_captive)
       @device = nil
       Device.add_observer(self)
 
@@ -85,6 +86,7 @@ module Internet
   end
 
   def take_money
+    #dputs_func
     return until @operator
 
     Captive.cleanup

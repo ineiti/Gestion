@@ -13,7 +13,7 @@ class TC_Configbase < Test::Unit::TestCase
     Entities.delete_all_data
     ACQooxView.check_db
 
-    FileUtils.mkdir 'data2'
+    FileUtils.mkdir_p 'data2'
     IO.write 'data2/MigrationVersions.csv',
              '{"migrationversion_id":1,"class_name":"ConfigBases","version":4}' +
                  "\n"
