@@ -5,21 +5,11 @@ class Array
     self.each { |l| l.undate }
     self
   end
-
-  def unlogid
-    self.each { |l| l.unlogid }
-    self
-  end
 end
 
 class Hash
   def undate
     self.delete(:date_stamp)
-    self
-  end
-
-  def unlogid
-    self.delete(:logaction_id)
     self
   end
 end
@@ -67,7 +57,6 @@ class TC_Person < Test::Unit::TestCase
   def teardown
     #permissions_init
     Entities.Persons.save
-    Entities.LogActions.save
   end
 
   def test_responsibles
@@ -127,6 +116,7 @@ class TC_Person < Test::Unit::TestCase
 
   # Problem with test_permissions
   def test_account_due
+    ConfigBase.store(functions:%w(accounting accounting_courses))
     @secretary = Entities.Persons.create(:login_name => 'secretary',
                                          :permissions => ['secretary'])
 
@@ -140,6 +130,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_account_cash
+    ConfigBase.store(functions:%w(accounting accounting_courses))
     @accountant = Persons.create(:login_name => 'acc', :password => 'super',
                                  :permissions => ['accountant'])
     @accountant2 = Persons.create(:login_name => 'acc2', :password => 'super',
@@ -160,6 +151,8 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_account_cash_update
+    ConfigBase.store(functions:%w(accounting accounting_courses))
+
     assert_equal nil, @surf.account_cash
 
     @surf.permissions = %w( default accountant )
@@ -167,6 +160,8 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_listp_account_due
+    ConfigBase.store(functions:%w(accounting accounting_courses))
+
     list = Persons.listp_account_due
     assert_equal [[6, '     0 - Secr'], [2, '     0 - Josue']], list
   end
