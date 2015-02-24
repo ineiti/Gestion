@@ -10,17 +10,7 @@ WORKING:
         - import all data from a center
             - write tests
             - export all data to server
-        - F Distributed chat
-            - add get_auth-method to be used with authentication
-            - add dock to server
-
 BUGS:
-        - B 150224: Person::update_smb_password doesn't work as it should
-            - it is still updated when it is only loading...
-        - View::Course::Students should continue to next student when pressing 'save'
-        - can't kill gestion with -9 w/o loosing data
-        - Person.gender is not correctly displayed - should be 'n/a' when not defined
-        - Merge is too slow to go through
         - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - AdminServer: better log advancement of download
         - change ConfigBase.send_config to rely on ConfigBase.update
@@ -28,7 +18,6 @@ BUGS:
             - edit of center
             - ask for center when creating course
             - why is there a Course::center-method? This should come from Courses.setup_data!
-        - change ConfigBase.send_config to rely on ConfigBase.update
         - profeda.org: can't edit student in course abc_PC-1_1500
         - redirection to connection-screen fails for non-normal student
         - Network::Monitor::traffic doesn't show incoming and outgoing correctly
@@ -64,9 +53,6 @@ UI:
          tabs can be added
 
 FEATURES:
-        - Remove LogAction
-        - Make Accounting::Movements faster
-        - add new sqlite to AfriCompta-Windows and Linux
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
             -> delete fields when pressing 'new' and empty forms when switching tab
@@ -281,7 +267,8 @@ To check:
 
 
 ** FIXED **:
-        - F 150224: added student-list for secretary in courses
+        - F 150224: Remove LogAction
+            - check tests
         - B 150219: ConfigBase-notifier list is lost when Entities.delete_all is called
         - B 150219: ConfigBase has to be able to react on changes of configuration, so
             it needs to know the old state

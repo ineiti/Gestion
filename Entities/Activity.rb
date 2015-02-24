@@ -30,10 +30,13 @@ class Activities < Entities
     }
   end
 
-  def tagged_users(tags)
+  def tagged_users(tags, date = Date.today)
+    #dputs_func
     tagged(tags).collect { |a|
       aps = ActivityPayments.search_by_activity( a )
-      ActivityPayments.active_now( aps ).collect{|ap|
+      dputs(3){"Found #{aps.inspect} for tag #{a}"}
+      ActivityPayments.active_now( aps, date ).collect{|ap|
+        dputs(3){"Found #{ap.inspect} active for now"}
         ap.person_paid
       }
     }.flatten.uniq

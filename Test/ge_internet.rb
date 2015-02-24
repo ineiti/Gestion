@@ -13,20 +13,22 @@ end
 class TC_Internet < Test::Unit::TestCase
   def setup
     Entities.delete_all_data()
+    ConfigBase.store(functions:[:internet_captive])
     @test = Persons.create(:login_name => 'test', :internet_credit => 50)
     Sessions.create(@test).web_req = Web_req.new(10)
     @test2 = Persons.create(:login_name => 'test2', :internet_credit => 50)
     @free = Persons.create(:login_name => 'free', :internet_credit => 50,
       :groups => ['freesurf'])
     dputs(1) { "#{@test.inspect}" }
+    @device = Device::Simulation.load
+    @operator = @device.operator
+
     ConfigBase.captive_dev = 'simul0'
     ConfigBase.cost_base = 5
     ConfigBase.cost_shared = 10
     ConfigBase.send_config
     Captive.cleanup_skip = true
     Internet.setup
-    @device = Device::Simulation.load
-    @operator = @device.operator
   end
 
   def teardown

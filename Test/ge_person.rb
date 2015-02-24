@@ -5,21 +5,11 @@ class Array
     self.each { |l| l.undate }
     self
   end
-
-  def unlogid
-    self.each { |l| l.unlogid }
-    self
-  end
 end
 
 class Hash
   def undate
     self.delete(:date_stamp)
-    self
-  end
-
-  def unlogid
-    self.delete(:logaction_id)
     self
   end
 end
@@ -32,7 +22,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def setup
-    #Permission.add( 'default', '.*' )
+    permissions_init
 
     dputs(1) { 'Setting up' }
     Entities.delete_all_data
@@ -93,22 +83,6 @@ class TC_Person < Test::Unit::TestCase
                                  {'person_id' => 2, 'login_name' => 'surf', 'credit_add' => 500})
     assert_equal 500, @surf.internet_credit.to_i - surf_credit, 'Credit'
     assert_equal -500, @josue.account_total_due.to_i - josue_due, 'account_total_due'
-    dputs(1) { "surf.log_list is #{@surf.log_list.inspect}" }
-    dputs(1) { "josue.log_list #{@josue.log_list.inspect}" }
-
-    return unless LogActions.logging
-    log_list = [@surf.log_list.last, @josue.log_list.last]
-    dputs(1) { "log_list #{log_list.inspect}" }
-    log_list.undate
-    log_list.unlogid
-    assert_equal({:data_class_id => 3, :data_field => :internet_credit, :data_value => '500',
-                  :undo_function => :undo_set_entry, :data_class => 'Person',
-                  :msg => '2:500', :data_old => 0},
-                 log_list[0].unlogid)
-    assert_equal({:data_value => josue_due + 500, :undo_function => :undo_set_entry,
-                  :data_old => josue_due, :data_class_id => 2,
-                  :data_class => 'Person', :msg => 'internet_credit pour -surf:500-', :data_field => :account_total_due},
-                 log_list[1].unlogid)
   end
 
   def test_accents
@@ -138,34 +112,9 @@ class TC_Person < Test::Unit::TestCase
     @accents.print
   end
 
-  def test_log_password
-    return unless LogActions.logging
-    @admin.password = 'admin'
-    assert_equal({:data_class_id => 1,
-                  :data_field => :password,
-                  :data_value => 'admin',
-                  :data_class => 'Person',
-                  :undo_function => :undo_set_entry,
-                  :data_old => 'super123',
-                  :msg => nil},
-                 @admin.log_list[-2].undate.unlogid)
-  end
-
-  def test_log_change
-    return unless LogActions.logging
-    @admin.first_name = 'super'
-    assert_equal({:data_class_id => 1,
-                  :data_field => :first_name,
-                  :data_value => 'Super',
-                  :data_class => 'Person',
-                  :undo_function => :undo_set_entry,
-                  :data_old => 'Admin',
-                  :msg => nil},
-                 @admin.log_list[-1].undate.unlogid)
-  end
-
   # Problem with test_permissions
   def test_account_due
+    ConfigBase.store(functions:%w(accounting accounting_courses))
     @secretary = Entities.Persons.create(:login_name => 'secretary',
                                          :permissions => ['secretary'])
 
@@ -179,6 +128,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_account_cash
+    ConfigBase.store(functions:%w(accounting accounting_courses))
     @accountant = Persons.create(:login_name => 'acc', :password => 'super',
                                  :permissions => ['accountant'])
     @accountant2 = Persons.create(:login_name => 'acc2', :password => 'super',
@@ -199,6 +149,8 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_account_cash_update
+    ConfigBase.store(functions:%w(accounting accounting_courses))
+
     assert_equal nil, @surf.account_cash
 
     @surf.permissions = %w( default accountant )
@@ -206,7 +158,8 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_listp_account_due
-    ConfigBase.store(functions:%w(accounting))
+    ConfigBase.store(functions:%w(accounting accounting_courses))
+
     list = Persons.listp_account_due
     assert_equal [[6, '     0 - Secr'], [2, '     0 - Josue']], list
   end

@@ -21,7 +21,7 @@ def permissions_init
   Permission.add( 'internet', 'Internet,PersonShow', 'default' )
   Permission.add( 'student', '', 'internet' )
   Permission.add( 'teacher', 'FlagResponsible', 'student' )
-  Permission.add( 'secretary', 'PersonModify,FlagAddInternet', 
+  Permission.add( 'secretary', 'PersonModify,FlagAddInternet,PersonCredit',
     'teacher' )
   Permission.add( 'accountant', 'FlagAccounting' )
   Permission.add( 'center', 'FlagAddCenter', 'teacher')
@@ -35,7 +35,7 @@ QooxView.init( '../Entities', '../Views' )
 
 tests = Dir.glob( 'ge_*.rb' )
 #tests = %w( activity )
-tests = %w( person )
+tests = %w( course )
 #tests = %w( configbase )
 tests.each{|t|
   begin

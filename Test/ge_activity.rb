@@ -8,6 +8,7 @@ class TC_Activity < Test::Unit::TestCase
     SQLite.dbs_close_all
     FileUtils.cp('db.testGestion', 'data/compta.db')
     SQLite.dbs_open_load_migrate
+    ConfigBase.store({functions:%w(accounting library)})
     ConfigBases.init
 
     @library = Activities.create(name: 'library', cost: 3_000,
@@ -104,6 +105,6 @@ class TC_Activity < Test::Unit::TestCase
     pay1 = ActivityPayments.pay(@library, @student_1, @secretary, d)
     pay2 = ActivityPayments.pay(@internet, @student_1, @secretary, d)
     pay3 = ActivityPayments.pay(@internet, @student_2, @secretary, d)
-    assert_equal [@student_1], Activities.tagged_users( :library )
+    assert_equal [@student_1], Activities.tagged_users( :library, Date.new(2014) )
   end
 end
