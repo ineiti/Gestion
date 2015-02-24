@@ -12,6 +12,7 @@ WORKING:
             - export all data to server
 
 BUGS:
+        - Merge is too slow to go through
         - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - AdminServer: better log advancement of download
         - change ConfigBase.send_config to rely on ConfigBase.update
