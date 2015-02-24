@@ -271,6 +271,7 @@ To check:
 
 
 ** FIXED **:
+        - F 150224: added student-list for secretary in courses
         - B 150219: ConfigBase-notifier list is lost when Entities.delete_all is called
         - B 150219: ConfigBase has to be able to react on changes of configuration, so
             it needs to know the old state
