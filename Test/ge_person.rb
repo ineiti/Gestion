@@ -22,7 +22,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def setup
-    #Permission.add( 'default', '.*' )
+    permissions_init
 
     dputs(1) { 'Setting up' }
     Entities.delete_all_data
@@ -55,7 +55,6 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def teardown
-    #permissions_init
     Entities.Persons.save
   end
 

@@ -86,6 +86,7 @@ class Persons < Entities
   end
 
   def update_config(action, value, old)
+    dputs(3){"Updating #{action} with #{value}"}
     case action
       when :function_add
         if value.index :accounting_courses
@@ -582,6 +583,7 @@ class Person < Entity
   end
 
   def update_account_due
+    #dputs_func
     return unless ConfigBase.has_function? :accounting
     if can_view :FlagAddInternet and login_name != 'admin'
       dputs(3) { "Adding account_due to -#{login_name.inspect}-" }
