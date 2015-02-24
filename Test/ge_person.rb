@@ -165,9 +165,12 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_has_all_rights
-    assert_equal %w(FlagAddCenter FlagAddInternet FlagResponsible Internet PersonModify PersonShow View Welcome),
+    assert_equal %w(FlagAddCenter FlagAddInternet FlagResponsible Internet PersonCredit
+                  PersonModify PersonShow View Welcome),
                  Permission.views(@josue.permissions)
-    assert_equal %w(FlagAddInternet FlagResponsible Internet PersonModify PersonShow View Welcome), Permission.views(@secretary.permissions)
+    assert_equal %w(FlagAddInternet FlagResponsible Internet PersonCredit
+                  PersonModify PersonShow View Welcome),
+                 Permission.views(@secretary.permissions)
     assert_equal %w(View Welcome), Permission.views(@surf.permissions)
     assert_equal %w(FlagResponsible Internet PersonShow View Welcome),
                  Permission.views(@teacher.permissions)
