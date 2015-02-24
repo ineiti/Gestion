@@ -10,8 +10,6 @@ WORKING:
         - import all data from a center
             - write tests
             - export all data to server
-        - Remove LogAction
-            - check tests
 BUGS:
         - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - AdminServer: better log advancement of download
@@ -269,6 +267,8 @@ To check:
 
 
 ** FIXED **:
+        - F 150224: Remove LogAction
+            - check tests
         - B 150219: ConfigBase-notifier list is lost when Entities.delete_all is called
         - B 150219: ConfigBase has to be able to react on changes of configuration, so
             it needs to know the old state
