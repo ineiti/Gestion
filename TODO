@@ -55,6 +55,8 @@ UI:
 
 FEATURES:
         - Remove LogAction
+        - Make Accounting::Movements faster
+        - add new sqlite to AfriCompta-Windows and Linux
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
             -> delete fields when pressing 'new' and empty forms when switching tab
