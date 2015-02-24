@@ -12,6 +12,9 @@ WORKING:
             - export all data to server
 
 BUGS:
+        - B 150224: Person::update_smb_password doesn't work as it should
+            - it is still updated when it is only loading...
+        - View::Course::Students should continue to next student when pressing 'save'
         - can't kill gestion with -9 w/o loosing data
         - Person.gender is not correctly displayed - should be 'n/a' when not defined
         - Merge is too slow to go through
@@ -275,7 +278,6 @@ To check:
 
 
 ** FIXED **:
-        - B 150224: Person::update_smb_password doesn't work as it should
         - F 150224: added student-list for secretary in courses
         - B 150219: ConfigBase-notifier list is lost when Entities.delete_all is called
         - B 150219: ConfigBase has to be able to react on changes of configuration, so
