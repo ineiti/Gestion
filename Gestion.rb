@@ -57,7 +57,7 @@ begin
   Permission.add('center_director', '', 'center')
   Permission.add('secretary', 'CourseModify,FlagPersonAdd,FlagPersonDelete,' +
                                 'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
-                                'FlagAddInternet,CourseStats,CoursePrint,PersonActivity' +
+                                'FlagAddInternet,CourseStats,CoursePrint,PersonActivity,' +
                                 'CourseStudents', 'assistant')
   Permission.add('accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
                                  'ComptaReport,ComptaShow,ComptaEdit.*,Cashbox.*,Report.*,' +

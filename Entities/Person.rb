@@ -720,9 +720,11 @@ class Person < Entity
   def update_smb_passwd(pass = password)
     if ConfigBase.has_function?(:share) and (groups and groups.index('share'))
       add_user_account
-      log_msg :person, "Changing password in Samba to #{pass}"
-      dputs(3) { "( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name}" }
-      %x[ ( echo #{pass}; echo #{pass} ) | smbpasswd -s -a #{self.login_name} ]
+      p = pass.chomp
+      log_msg :person, "Changing password in Samba to #{p.inspect}"
+      pwd_change = "/bin/echo -e '#{p}\\n#{p}' | smbpasswd -s -a #{self.login_name} "
+      dputs(3) { pwd_change.inspect }
+      System.run_str pwd_change
     end
   end
 
@@ -783,12 +785,12 @@ class Person < Entity
   end
 
   def password=(pass)
-    @pre_init and return
+    (@pre_init || @loading ) and return
 
-    p = pass
+    p = pass.chomp
     if @proxy.has_storage? :LDAP
       dputs(2) { "Changing password for #{self.login_name}: #{pass}" }
-      p = %x[ slappasswd -s #{pass} ]
+      p = %x[ slappasswd -s #{pass} ].chomp
       dputs(2) { "Hashed password for #{self.login_name} is: #{pass}" }
     end
     update_smb_passwd(pass)
