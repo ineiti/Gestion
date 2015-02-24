@@ -65,9 +65,6 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def teardown
-    #permissions_init
-    Entities.Persons.save
-    Entities.LogActions.save
   end
 
   def test_responsibles
@@ -209,6 +206,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_listp_account_due
+    ConfigBase.store(functions:%w(accounting))
     list = Persons.listp_account_due
     assert_equal [[6, '     0 - Secr'], [2, '     0 - Josue']], list
   end
