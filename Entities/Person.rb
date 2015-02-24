@@ -505,6 +505,10 @@ class Persons < Entities
     Persons.find_by_permissions(:center)
   end
 
+  def Persons.centers
+    Persons.search_by_permissions(:center)
+  end
+
   def Persons.search_in(str, field = nil, center: nil)
     # Don't search if there are few caracters and lots of Persons
     if (not str or str.length < 3) and (Entities.Persons.new_id.values[0] > 100)
