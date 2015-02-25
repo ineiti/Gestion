@@ -10,9 +10,10 @@ WORKING:
         - import all data from a center
             - write tests
             - export all data to server
+        - AdminServer: better log advancement of download
+
 BUGS:
         - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
-        - AdminServer: better log advancement of download
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server, add the following:
             - edit of center

@@ -53,7 +53,7 @@ class AdminServer < View
     end
   end
 
-  def rpc_button_download(session, data)
+  def rpc_button_download_old(session, data)
     if (cts_names = data._import_list).length > 0
       status_list(true, status: "Downloading #{cts_names.length} CourseTypes").concat(
           reply(:callback_button, :fetch_list))
@@ -98,25 +98,41 @@ class AdminServer < View
     status_list(true, status: "Downloaded #{cts_names.length} CourseTypes")
   end
 
+  def rpc_update_with_values(session, data)
+    MakeSteps.make_step(session, 3)
+  end
+
+  def rpc_button_download(session, data)
+    MakeSteps.make_step(session)
+  end
+
   def rpc_button_import_courses(session, data)
-    case session.s_data._import_courses ||= 0
-      when 0
-        downloading, status = check_availability
-        session.s_data._import_courses = downloading ? 1 : 10
-        reply(:window_show, :win_import) +
-            status_list(true, status: status) +
-            (downloading ? reply(:callback_button, :download_list) : reply(:update))
-      when 1
-        (res = ICC.get(:Courses, :courses, args: {center: Persons.center})).inspect
-        if res._code == 'Error'
-          status_list(true, status: "Error: #{res._msg}")
-        else
-          status_list(false, list: res._msg)
-        end
-      when 2
-      when 10
-        reply(:window_hide)
-    end
+    ms = MakeSteps.new(session) { |session, step|
+      case step
+        when 0
+          downloading, status = check_availability
+          ms.step = (downloading ? 1 : 10)
+          reply(:window_show, :win_import) +
+              status_list(true, status: status) +
+              reply(:auto_update, downloading ? -2 : 0)
+        when 1
+          res = ICC.get(:Courses, :courses, args: {center: Persons.center})
+          dp res.inspect
+          reply(:auto_update, 0) +
+              if res._code == 'Error'
+                ms.step 10
+                status_list(true, status: "Error: #{res._msg}")
+              else
+                status_list(false, list: res._msg)
+              end
+        when 2
+          ms.step = 10
+        when 10
+          reply(:window_hide)
+      end
+    }
+
+    ms.make_step(session)
   end
 
 end
