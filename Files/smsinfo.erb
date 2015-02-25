@@ -61,44 +61,48 @@
 <div class="main">
   <h1>Information about SMS-control</h1>
 
-  <ul>
-    <li>USB-modem is
-      <%= $SMScontrol.device ? 'PRESENT' : 'missing' %>
-    </li>
-    <li>Operator is
-      <%= begin
-            $SMScontrol.operator.name
-          rescue NoMethodError => e
-            'MISSING'
-          end %></li>
-    <li>Promotion left: <%= begin
-                              "#{$SMScontrol.operator.internet_left / 1000}k"
-                            rescue NoMethodError => e
-                              'MISSING'
-                            end %>
-    </li>
-    <li>Internet is
-      <%= begin
-            $SMScontrol.is_connected ? 'CONNECTED' : 'disconnected'
-          rescue NoMethodError => e
-            'MISSING'
-          end %></li>
-    <li>Last SMS received:
+  <% if $SMScontrol %>
       <ul>
-        <%=
-            SMSs.last(5).reverse.collect { |sms|
-              "<li>#{sms.date}::#{sms.phone}:: ::#{sms.text}</li>"
-            }.join
-        %></ul>
-    </li>
-    <li>
-      <%= if mails = /.* ([0-9]+) Request.*/.match(%x[ postqueue -p | tail -n 1 ])
-            "#{mails[1]} mails in queue"
-          else
-            'No mails in queue'
-          end
-      %></li>
-  </ul>
+        <li>USB-modem is
+          <%= $SMScontrol.device ? 'Present' : 'MISSING' %>
+        </li>
+        <li>Operator is
+          <%= begin
+                $SMScontrol.operator.name
+              rescue NoMethodError => e
+                'MISSING'
+              end %></li>
+        <li>Promotion left: <%= begin
+                                  "#{$SMScontrol.operator.internet_left / 1000}k"
+                                rescue NoMethodError => e
+                                  'MISSING'
+                                end %>
+        </li>
+        <li>Internet is
+          <%= begin
+                $SMScontrol.is_connected ? 'Connected' : 'Disconnected'
+              rescue NoMethodError => e
+                'MISSING'
+              end %></li>
+        <li>Last SMS received:
+          <ul>
+            <%=
+                SMSs.last(5).reverse.collect { |sms|
+                  "<li>#{sms.date}::#{sms.phone}:: ::#{sms.text}</li>"
+                }.join
+            %></ul>
+        </li>
+        <li>
+          <%= if mails = /.* ([0-9]+) Request.*/.match(%x[ postqueue -p | tail -n 1 ])
+                "#{mails[1]} mails in queue"
+              else
+                'No mails in queue'
+              end
+          %></li>
+      </ul>
+  <% else %>
+      <h2>SMScontrol is disabled</h2>
+  <% end %>
 </div>
 </body>
 </html>

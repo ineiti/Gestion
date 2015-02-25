@@ -24,8 +24,7 @@ end
 
 
 class Persons < Entities
-  attr :print_card_student, :print_card_responsible, :admin_users
-  attr_reader :resps
+  attr_accessor :print_card_student, :print_card_responsible, :admin_users, :resps
   self.needs :Courses
 
   def setup_data
@@ -86,11 +85,14 @@ class Persons < Entities
   end
 
   def update_config(action, value, old)
-    dputs(3){"Updating #{action} with #{value}"}
+    dputs(3) { "Updating #{action} with #{value}" }
     case action
       when :function_add
         if value.index :accounting_courses
-          search_all_.each{|p| p.update_accounts}
+          search_all_.each { |p|
+            dputs(3) { "Searching if #{p.login_name} needs new accounts" }
+            p.update_accounts
+          }
         end
       when :function_del
       else
@@ -397,26 +399,20 @@ class Persons < Entities
   end
 
   def self.responsibles_raw
-    return Persons.search_by_permissions('director') +
-        Persons.search_by_permissions('teacher') +
-        Persons.search_by_permissions('assistant') +
-        Persons.search_by_permissions('center_director')
-=begin
-    Persons.search_all.select{|p| 
-      dputs(4){"Person #{p.login_name} has #{p.permissions.inspect}"}
-      p.permissions and Permission.can_view( p.permissions.reject{|perm| 
-          perm.to_s == "admin"}, "FlagResponsible" )
-    }
-=end
+    return Persons.data.select { |k, v|
+      Permission.can_view(v._permissions.reject { |perm| perm.to_s == 'admin' },
+                          'FlagResponsible')
+    }.collect { |k, v| Persons.find_by_person_id(k) }
   end
 
   def self.responsibles_sort(resps)
     resps.collect { |p|
       [p.person_id, p.full_name]
-    }.uniq.sort { |a, b| a.last <=> b.last }
+    }.sort { |a, b| a.last <=> b.last }
   end
 
   def responsibles(force_update = false)
+    #dputs_func
     if force_update or @resps.size == 0
       dputs(3) { "Making responsible-cache with #{@data.size} entities" }
       @resps = Persons.responsibles_raw
@@ -640,8 +636,8 @@ class Person < Entity
     old_permissions = self._permissions
     self._permissions = p.uniq
     if has_teacher
-      if Permission.can_view(p.reject { |perm|
-                                                                                                                                                                                                                                                        perm.to_s == 'admin' }, 'FlagResponsible')
+      if Permission.can_view(p.reject { |perm| perm.to_s == 'admin' },
+                             'FlagResponsible')
         Persons.responsibles_add(self)
       else
         Persons.responsibles_del(self)
@@ -758,7 +754,7 @@ class Person < Entity
   end
 
   def password=(pass)
-    (@pre_init || @loading ) and return
+    (@pre_init || @loading) and return
 
     p = pass.chomp
     if @proxy.has_storage? :LDAP
@@ -981,6 +977,8 @@ class Person < Entity
       %x[ smbpasswd -x #{self.login_name} ]
     end
     super
+
+    @proxy.resps = []
   end
 
   def get_unique
@@ -1073,13 +1071,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-                    [{:content => "#{m[0]}", :align => :center},
-                     m[1],
-                     {:content => "#{m[2]}", :align => :right},
-                     {:content => "#{Account.total_form(
-                         sum += m[2].gsub(',', '').to_f / 1000)}",
-                      :align => :right}]
-                  }, :header => true, :column_widths => [70, 300, 75, 75])
+                                [{:content => "#{m[0]}", :align => :center},
+                                 m[1],
+                                 {:content => "#{m[2]}", :align => :right},
+                                 {:content => "#{Account.total_form(
+                                     sum += m[2].gsub(',', '').to_f / 1000)}",
+                                  :align => :right}]
+                              }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

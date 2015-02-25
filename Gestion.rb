@@ -58,7 +58,7 @@ begin
   Permission.add('secretary', 'CourseModify,FlagPersonAdd,FlagPersonDelete,' +
                                 'PersonModify,CourseDiploma,FlagCourseGradeAll,Cashbox.*,' +
                                 'FlagAddInternet,CourseStats,CoursePrint,PersonActivity,' +
-                                'CourseStudents', 'assistant')
+                                'CourseStudents', 'assistant,cybermanager')
   Permission.add('accounting', 'ComptaTransfer,PersonCredit,FlagAccounting,' +
                                  'ComptaReport,ComptaShow,ComptaEdit.*,Cashbox.*,Report.*,' +
                                  'ComptaCheck', 'secretary')

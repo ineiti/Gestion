@@ -114,7 +114,7 @@ class TC_Person < Test::Unit::TestCase
 
   # Problem with test_permissions
   def test_account_due
-    ConfigBase.store(functions:%w(accounting accounting_courses))
+    ConfigBase.store(functions: %w(accounting accounting_courses))
     @secretary = Entities.Persons.create(:login_name => 'secretary',
                                          :permissions => ['secretary'])
 
@@ -128,7 +128,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_account_cash
-    ConfigBase.store(functions:%w(accounting accounting_courses))
+    ConfigBase.store(functions: %w(accounting accounting_courses))
     @accountant = Persons.create(:login_name => 'acc', :password => 'super',
                                  :permissions => ['accountant'])
     @accountant2 = Persons.create(:login_name => 'acc2', :password => 'super',
@@ -149,7 +149,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_account_cash_update
-    ConfigBase.store(functions:%w(accounting accounting_courses))
+    ConfigBase.store(functions: %w(accounting accounting_courses))
 
     assert_equal nil, @surf.account_cash
 
@@ -158,7 +158,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_listp_account_due
-    ConfigBase.store(functions:%w(accounting accounting_courses))
+    ConfigBase.store(functions: %w(accounting accounting_courses))
 
     list = Persons.listp_account_due
     assert_equal [[6, '     0 - Secr'], [2, '     0 - Josue']], list
@@ -306,7 +306,7 @@ class TC_Person < Test::Unit::TestCase
 
   def test_responsibles_raw
     resps = Persons.responsibles_raw
-    assert_equal %w(josue teacher),
+    assert_equal %w(josue secr teacher foo),
                  resps.collect { |p| p.login_name }
   end
 
@@ -316,7 +316,7 @@ class TC_Person < Test::Unit::TestCase
     ACQooxView.check_db
     #dp Accounts.search_by_name('Lending')
     lending = Accounts.create('Linus', 'Too lazy', Accounts.match_by_name('Lending'))
-    paid = Accounts.create( 'Paid', '', lending)
+    paid = Accounts.create('Paid', '', lending)
     cash = Accounts.create('Linus', 'Too lazy', Accounts.match_by_name('Cash'))
     ConfigBases.init
 
@@ -336,5 +336,18 @@ class TC_Person < Test::Unit::TestCase
     assert_equal lending, linus.account_due
     assert_equal paid, linus.account_due_paid
     assert_equal cash, linus.account_cash
+  end
+
+  def test_double_responsibles
+    assert_equal %w(josue secr teacher foo),
+                 Persons.responsibles_raw.collect { |p| p.login_name }
+  end
+
+  def test_delete_responsible
+    @teacher.delete
+    assert_equal %w(josue secr foo),
+                 Persons.responsibles_raw.collect { |p| p.login_name }
+    assert_equal %w(Foo Josue Secr),
+                 Persons.responsibles.collect{|i, n|n}
   end
 end
