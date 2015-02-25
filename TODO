@@ -7,12 +7,10 @@ WORKING:
               users (like traffic-report, online-stats)
             x tested simple case with _diff_ and _total_
             - import in Entities/Internet
-        - import all data from a center
-            - write tests
-            - export all data to server
+
 BUGS:
-        - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - AdminServer: better log advancement of download
+        - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server, add the following:
             - edit of center
@@ -36,9 +34,6 @@ Bugs to watch:
         - Error in ConfigBase which doesn't update correctly the accounts when starting
           without accounting
 
-For CCE:
-        - Prepare Diplomas with fields
-        - Check auto-update of Antivirus and other stuff
 
 For 2.0:
         - Put data-directory elsewhere
@@ -53,6 +48,10 @@ UI:
          tabs can be added
 
 FEATURES:
+        - Check auto-update of Antivirus and other stuff
+        - import all data from a center
+            - write tests
+            - export all data to server
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
             -> delete fields when pressing 'new' and empty forms when switching tab
@@ -267,8 +266,11 @@ To check:
 
 
 ** FIXED **:
+        - B 150225: when creating report, not all sub-accounts are taken into account
+        - B 150225: ReportExecutive.print doesn't work with another printer
         - B 150225: when deleting a teacher, remove from Persons.responsibles
         - B 150225: Persons.responsibles returns some entries multiple times
+        - F 150224: Prepare Diplomas with fields
         - F 150224: Remove LogAction
             - check tests
         - B 150219: ConfigBase-notifier list is lost when Entities.delete_all is called

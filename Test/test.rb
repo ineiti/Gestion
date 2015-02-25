@@ -35,7 +35,7 @@ QooxView.init( '../Entities', '../Views' )
 
 tests = Dir.glob( 'ge_*.rb' )
 #tests = %w( activity )
-tests = %w( person )
+tests = %w( report )
 #tests = %w( configbase )
 tests.each{|t|
   begin

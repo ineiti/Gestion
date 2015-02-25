@@ -169,7 +169,8 @@ class ReportComptaExecutive < View
           start_thread(session, data)
           reply(:auto_update, -1) +
               reply(:update, progress_txt: 'Starting checking') +
-              reply(:window_show, :progress)
+              reply(:window_show, :progress) +
+              rpc_print(session, :print, data)
         end
       when /close/
         reply(:window_hide)
