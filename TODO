@@ -7,8 +7,9 @@ WORKING:
               users (like traffic-report, online-stats)
             x tested simple case with _diff_ and _total_
             - import in Entities/Internet
-        - AdminServer: better log advancement of download
-            - Fetch courses from server
+        x AdminServer: better log advancement of download
+            x Fetch courses from server
+            - Use in
 
 BUGS:
         - Person::Admin.groups is not kept in some circomstances (at least "share")

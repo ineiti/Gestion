@@ -38,63 +38,47 @@ class AdminServer < View
   end
 
   def rpc_button_import_ctypes(session, data)
-    downloading, status = check_availability
-    reply(:window_show, :win_import) +
-        status_list(true, status: status) +
-        (downloading ? reply(:callback_button, :download_list) : reply(:update))
-  end
-
-  def rpc_button_download_list(session, data)
-    res = ICC.get(:CourseTypes, :list)
-    if res._code == 'Error'
-      status_list(true, status: "Error: #{res._msg}")
-    else
-      status_list(false, list: res._msg)
-    end
-  end
-
-  def rpc_button_download_old(session, data)
-    if (cts_names = data._import_list).length > 0
-      status_list(true, status: "Downloading #{cts_names.length} CourseTypes").concat(
-          reply(:callback_button, :fetch_list))
-    else
-      log_msg :CourseType, 'Nothing to download'
-      reply(:window_hide)
-    end
-  end
-
-  def rpc_button_fetch_list(session, data)
-    cts_names = data._import_list
-    cts = ICC.get(:CourseTypes, :fetch,
-                  args: {course_type_names: cts_names})
-    if cts._code == 'Error'
-      return status_list(true, status: "Error: #{cts._msg}")
-    end
-
-    log_msg :CourseType, "Downloaded #{cts_names}"
-    cts._msg.each { |ct|
-      if ct_exist = CourseTypes.match_by_name(ct._name)
-        log_msg :CourseType, "Updating CourseType #{ct._name}"
-        ct_exist.data_set_hash(ct)
-      else
-        log_msg :CourseType, "Creating CourseType #{ct._name}"
-        ct_new = CourseTypes.create(ct)
-      end
-      [ct._file_diploma, ct._file_exam].compact.each { |f|
-        file = f.first
-        if file.length > 0
-          rep = ICC.get(:CourseTypes, :_file, args: {name: [file]})
-          if rep._code == 'OK'
-            data = rep._msg
-            log_msg :CourseType, "Got file #{file} with length #{data.length}"
-            IO.write("#{ConfigBase.template_dir}/#{file}", data)
+    ms = MakeSteps.new(session, -1) { |session, data, step|
+      case step
+        when 0
+          ms.auto_update = -1
+          downloading, status = check_availability
+          reply(:window_show, :win_import) +
+              if downloading
+                status_list(true, status: status)
+              else
+                ms.step = 3
+                status_list(true, status: "Error: #{status}")
+              end
+        when 1
+          res = ICC.get(:CourseTypes, :list)
+          if res._code == 'Error'
+            ms.step = 3
+            status_list(true, status: "Error: #{res._msg}")
           else
-            log_msg :CourseType, "Got error #{rep._msg}"
+            ms.auto_update = 0
+            status_list(false, list: res._msg)
           end
-        end
-      }
+        when 2
+          ms.auto_update = -1
+          if (cts_names = data._import_list).length == 0
+            log_msg :CourseType, 'Nothing to download'
+            status_list(true, status: 'Nothing to download')
+          else
+            ms.status = status_list(true, status: "Downloading #{cts_names.length} CourseTypes")
+            data._import_list.each { |ct|
+              get_ctype(ct, ms)
+            }
+            ms.auto_update = 0
+            status_list(true, status: "Downloaded #{cts_names.length} CourseTypes")
+          end
+        when 3
+          ms.auto_update = 0
+          reply(:window_hide)
+      end
     }
-    status_list(true, status: "Downloaded #{cts_names.length} CourseTypes")
+
+    ms.make_step(session, data)
   end
 
   def get_ctype(name, ms)
