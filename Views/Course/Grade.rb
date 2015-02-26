@@ -140,7 +140,7 @@ class CourseGrade < View
           buttons.each { |b|
             ret += reply(:unhide, b)
           }
-          ret += reply_visible(dp(course.ctype.remark.to_s) == '[true]', :remark)
+          ret += reply_visible(course.ctype.remark.to_s == '[true]', :remark)
 
           dputs(4) { "Course is #{course} - ret is #{ret.inspect}" }
         end

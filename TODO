@@ -7,17 +7,19 @@ WORKING:
               users (like traffic-report, online-stats)
             x tested simple case with _diff_ and _total_
             - import in Entities/Internet
-        - import all data from a center
-            - write tests
-            - export all data to server
         - AdminServer: better log advancement of download
+            - Fetch courses from server
 
 BUGS:
+        - Person::Admin.groups is not kept in some circomstances (at least "share")
         - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server, add the following:
-            - edit of center
             - ask for center when creating course
+                - only if there is more than one center
+                - display is not correct
+            - edit of center
+            - add students with prefix of center, not of user
             - why is there a Course::center-method? This should come from Courses.setup_data!
         - profeda.org: can't edit student in course abc_PC-1_1500
         - redirection to connection-screen fails for non-normal student
@@ -54,6 +56,9 @@ UI:
          tabs can be added
 
 FEATURES:
+        - import all data from a center
+            - write tests
+            - export all data to server
         - add-button in different views should always pop up a window with
           the information to add, never just an empty form
             -> delete fields when pressing 'new' and empty forms when switching tab

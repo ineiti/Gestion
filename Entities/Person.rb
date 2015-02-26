@@ -550,6 +550,21 @@ class Persons < Entities
       result
     end
   end
+
+  def icc_get(tr)
+    c = tr._center
+    return "Didn't find center #{c.inspect}}" unless center = Persons.find_by_login_name(c._login_name)
+    return "Passwords do not match for #{c.inspect}" unless center.password_plain == c._password_plain
+    login_name = "#{c._login_name}_#{tr._name.first}"
+    log_msg :Persons, "ICC-get for #{login_name.inspect}"
+    if p = Persons.match_by_login_name(login_name)
+      p = p.to_hash
+      p._login_name = tr._name.first
+      p
+    else
+      "Didn't find #{login_name}"
+    end
+  end
 end
 
 #

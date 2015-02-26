@@ -368,14 +368,23 @@ class Courses < Entities
     end
   end
 
+  def no_center(str, center)
+    str.sub(/^#{center.login_name}_/, '')
+  end
+
   def icc_courses(tr)
     dp tr.inspect
-    c = tr._data._center
-    return "Didn't find center #{c.inspect}}" unless
-        center = Persons.find_by_login_name(c._login_name)
-    return "Passwords do not match for #{c.inspect}" unless
-        center.password_plain == c._password_plain
-    courses = Courses.find_by_name("^#{center.login_name}_")
+    c = tr._center
+    return "Didn't find center #{c.inspect}}" unless center = Persons.find_by_login_name(c._login_name)
+    return "Passwords do not match for #{c.inspect}" unless center.password_plain == c._password_plain
+    courses = Courses.search_by_name("^#{center.login_name}_").collect { |c|
+      ret = c.to_hash
+      ret._students = c.students.collect { |s| no_center(s, center) }
+      ret._ctype = c.ctype.name
+      ret._teacher = no_center(c.teacher.login_name, center)
+      ret._responsible = no_center(c.responsible.login_name, center)
+      ret
+    }
     log_msg :ICC_courses, "Returning #{courses}"
     return courses
   end
