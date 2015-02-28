@@ -15,12 +15,12 @@ class AdminServer < View
     end
   end
 
-  def check_availability
+  def check_availability(t)
     if ConfigBase.server_url.to_s.length == 0
       [false, 'No server defined, aborting']
     else
       if Persons.center
-        [true, 'Fetching CourseTypes from server']
+        [true, "Fetching #{t} from server"]
       else
         [false, 'There is no center defined, aborting']
       end
@@ -42,7 +42,7 @@ class AdminServer < View
       case step
         when 0
           ms.auto_update = -1
-          downloading, status = check_availability
+          downloading, status = check_availability(:CourseTypes)
           reply(:window_show, :win_import) +
               if downloading
                 status_list(true, status: status)
@@ -140,7 +140,7 @@ class AdminServer < View
       case step
         when 0
           ms.auto_update = -1
-          downloading, status = check_availability
+          downloading, status = check_availability(:Courses)
           ms.step = (downloading ? 1 : 10)
           reply(:window_show, :win_import) +
               status_list(true, status: status)
@@ -166,6 +166,7 @@ class AdminServer < View
                 ctype = get_ctype(course._ctype, ms)
               rescue StandardError => e
                 ms.step = 10
+                ms.auto_update = 0
                 ms.status = status_list(true, status: "Error: #{e.inspect}")
                 return
               end

@@ -958,7 +958,7 @@ class Person < Entity
             course.data_set("_#{role}", nil)
           end
         end
-        dputs(3) { "Role #{role} is #{r.inspect}" }
+        ddputs(3) { "Role #{role} is #{r.inspect}" }
         if r and r.login_name == login_name
           raise IsNecessary.new(course)
         end

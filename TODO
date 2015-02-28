@@ -9,7 +9,7 @@ WORKING:
             - import in Entities/Internet
         x AdminServer: better log advancement of download
             x Fetch courses from server
-            - Use in
+            - Use in AdminServer.CourseType, too
 
 BUGS:
         - Person::Admin.groups is not kept in some circomstances (at least "share")
