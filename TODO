@@ -266,6 +266,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150302: samba-password is updated with hash if LDAP is there
         - B 150302: Merging with AfriCompta - veeery slow
         - B 150225: when creating report, not all sub-accounts are taken into account
         - B 150225: ReportExecutive.print doesn't work with another printer
