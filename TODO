@@ -9,6 +9,7 @@ WORKING:
             - import in Entities/Internet
 
 BUGS:
+        - Bug in merging with AfriCompta - veeery slow
         - AdminServer: better log advancement of download
         - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - change ConfigBase.send_config to rely on ConfigBase.update
