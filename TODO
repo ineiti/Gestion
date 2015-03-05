@@ -1,12 +1,7 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - use captive together with Monitor::Traffic which uses the mangle-table that are
-            valid for both INPUT and FORWARD
-            x added Network::Monitor::Traffic::User class to hold data for different
-              users (like traffic-report, online-stats)
-            x tested simple case with _diff_ and _total_
-            - import in Entities/Internet
+        - add internet.wifi-arguments to admin.profeda.org, too
 
 BUGS:
         - AdminServer: better log advancement of download
