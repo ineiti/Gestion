@@ -50,7 +50,7 @@ class Welcome < View
 
   # On pressing of the login-button, we search for the user and check the password
   def rpc_button_login(session, args)
-    ddputs(3) { "args is #{args.inspect}" }
+    dputs(3) { "args is #{args.inspect}" }
     login_name, password = args._username.gsub(/ /, '').downcase, args._password
     person = Entities.Persons.match_by_login_name(login_name)
     if person
@@ -91,9 +91,10 @@ class Welcome < View
     if selftabs
       tabs.unshift selftabs
     end
-    dputs(3) { "Tabs is now #{tabs.inspect}" }
+    ddputs(3) { "Tabs is now #{tabs.inspect}" }
     return reply(:session_id, session.sid) +
-        View.rpc_list(session)
+        reply(:list, views:tabs) +
+        (session.s_data._sub_tabs_only ? View.reply(:bar_position, 'top') : [])
   end
 
   def rpc_button_direct_connect(session, args)

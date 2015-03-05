@@ -175,7 +175,7 @@ class SelfInternet < View
     end
     o = session.owner
     Captive.user_keep o.login_name, ConfigBase.keep_idle_free.to_i, true
-    dp url = 'Bookmark for<br>'+ "<a href='http://#{session.web_req.header._host.first}/" +
+    url = 'Bookmark for<br>'+ "<a href='http://#{session.web_req.header._host.first}/" +
         "?user=#{o.login_name}&pass=#{o.password}'>" +
         'Internet-connection</a>'
     ret += reply_visible(Recharges.search_all_.count > 0, :bytes_left_today) +
