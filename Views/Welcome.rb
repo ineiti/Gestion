@@ -25,6 +25,12 @@ class Welcome < View
       if (version_local = ConfigBase.version_local) != ''
         version_local = "-#{version_local}"
       end
+      if session.web_req && ref = session.web_req.header._referer
+        user, pass = ref.first.match(/user=(.*)&pass=(.*)/).to_a[1..2]
+        if user && pass
+          return rpc_button_direct_connect(session, {username: user, password: pass})
+        end
+      end
       Sessions.search_by_owner('[0-9]').each { |s|
         if s.last_seen && Time.now.to_i - s.last_seen.to_i <= 15
           log_msg :Welcome, "Found session #{s.inspect} from ip #{s.client_ip}"
@@ -45,7 +51,7 @@ class Welcome < View
   # On pressing of the login-button, we search for the user and check the password
   def rpc_button_login(session, args)
     dputs(3) { "args is #{args.inspect}" }
-    login_name, password = args['username'].gsub(/ /, '').downcase, args['password']
+    login_name, password = args._username.gsub(/ /, '').downcase, args._password
     person = Entities.Persons.match_by_login_name(login_name)
     if person
       dputs(3) { "Person is #{person.inspect} and #{person.password}" }
@@ -85,9 +91,10 @@ class Welcome < View
     if selftabs
       tabs.unshift selftabs
     end
-    dputs(3) { "Tabs is now #{tabs.inspect}" }
+    ddputs(3) { "Tabs is now #{tabs.inspect}" }
     return reply(:session_id, session.sid) +
-        View.rpc_list(session)
+        reply(:list, views:tabs) +
+        (session.s_data._sub_tabs_only ? View.reply(:bar_position, 'top') : [])
   end
 
   def rpc_button_direct_connect(session, args)

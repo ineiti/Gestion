@@ -5,6 +5,8 @@ WORKING:
 BUGS:
         - Person::Admin.groups is not kept in some circomstances (at least "share")
         - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
+        - AdminServer: better log advancement of download
+        - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server, add the following:
             - ask for center when creating course
@@ -48,6 +50,7 @@ UI:
          tabs can be added
 
 FEATURES:
+        - Check auto-update of Antivirus and other stuff
         - import all data from a center
             - write tests
             - export all data to server
@@ -265,11 +268,17 @@ To check:
 
 
 ** FIXED **:
+        - F 150305: better login-link with bookmarkable link
+        - B 150302: samba-password is updated with hash if LDAP is there
+        - B 150302: Merging with AfriCompta - veeery slow
+        - B 150225: when creating report, not all sub-accounts are taken into account
+        - B 150225: ReportExecutive.print doesn't work with another printer
         - F 150305: AdminServer: better log advancement of download
             x Fetch courses from server
             x Use in AdminServer.CourseType, too
         - B 150225: when deleting a teacher, remove from Persons.responsibles
         - B 150225: Persons.responsibles returns some entries multiple times
+        - F 150224: Prepare Diplomas with fields
         - F 150224: Remove LogAction
             - check tests
         - B 150219: ConfigBase-notifier list is lost when Entities.delete_all is called

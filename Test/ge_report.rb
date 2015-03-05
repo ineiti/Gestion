@@ -6,44 +6,48 @@ class TC_Report < Test::Unit::TestCase
     Entities.delete_all_data()
 
     SQLite.dbs_close_all
-    FileUtils.cp("db.testGestion", "data/compta.db")
+    FileUtils.cp('db.testGestion', 'data/compta.db')
     SQLite.dbs_open_load_migrate
 
     ConfigBases.init
 
     ConfigBase.add_function(:accounting_courses)
 
-    @secretary = Entities.Persons.create(:login_name => "secretary", :password => "super",
-                                         :permissions => ["default", "teacher", "secretary"],
-                                         :first_name => "The", :family_name => "secretary")
+    @secretary =
+        Entities.Persons.create(:login_name => 'secretary', :password => 'super',
+                                :permissions => ['default', 'teacher', 'secretary'],
+                                :first_name => 'The', :family_name => 'secretary')
 
     @students = %w( Mahamat Younouss ).collect { |p|
       Persons.create(:login_name => p, :permissions => %w( student ))
     }
 
-    @maint_t = CourseTypes.create(:name => "maint", :duration => 72,
-                                  :desciption => "maintenance", :contents => "lots of work",
-                                  :file_diploma => ['base_gestion.odt'], :output => "certificate",
-                                  :diploma_type => ["simple"],
-                                  :account_base => Accounts.create_path("Root::Income::Courses"))
+    @maint_t =
+        CourseTypes.create(:name => 'maint', :duration => 72,
+                           :desciption => 'maintenance', :contents => 'lots of work',
+                           :file_diploma => ['base_gestion.odt'], :output => 'certificate',
+                           :diploma_type => ['simple'],
+                           :account_base => Accounts.create_path('Root::Income::Courses'))
 
-    @maint = Courses.create_ctype(@maint_t, "1404")
+    @maint = Courses.create_ctype(@maint_t, '1404')
     @maint.students = @students
 
-    @root = Accounts.find_by_path("Root")
+    @root = Accounts.find_by_path('Root')
 
-    @report_simple = Reports.create(:name => "basic",
-                                    :accounts => [
-                                        ReportAccounts.create(:root => @root, :level => 2,
-                                                              :account => Accounts.find_by_path("Root::Income")),
-                                    ])
-    @report_double = Reports.create(:name => "double",
-                                    :accounts => [
-                                        ReportAccounts.create(:root => @root, :level => 1,
-                                                              :account => Accounts.find_by_path("Root::Income")),
-                                        ReportAccounts.create(:root => @root, :level => 0,
-                                                              :account => Accounts.find_by_path("Root::Lending"))
-                                    ])
+    @report_simple =
+        Reports.create(:name => 'basic',
+                       :accounts => [
+                           ReportAccounts.create(:root => @root, :level => 2,
+                                                 :account => Accounts.find_by_path('Root::Income')),
+                       ])
+    @report_double =
+        Reports.create(:name => 'double',
+                       :accounts => [
+                           ReportAccounts.create(:root => @root, :level => 1,
+                                                 :account => Accounts.find_by_path('Root::Income')),
+                           ReportAccounts.create(:root => @root, :level => 0,
+                                                 :account => Accounts.find_by_path('Root::Lending'))
+                       ])
 
     [[0, 10000], [0, 5000], [1, 5000]].each { |s, c|
       @maint.payment(@secretary, @students[s], c)
@@ -62,15 +66,28 @@ class TC_Report < Test::Unit::TestCase
     assert_equal [[['Root::Income::Courses', [20.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20.0]]],
                   [['Root::Lending', [20.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20.0]]],
                   [['Total', [40.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40.0]],
-                  ["Running",
-                   [40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0]]]],
+                   ['Running',
+                    [40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0]]]],
+                 @report_double.print_list_monthly
+  end
+
+  def test_report_deep
+    courses = Accounts.find_by_path('Root::Income::Courses')
+    it = Accounts.create('it', nil, courses)
+    it_101 = Accounts.create('it-101', nil, it)
+    Movements.create('inscription', Date.today, 10, @root, it_101)
+    assert_equal [[['Root::Income::Courses', [30.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30.0]]],
+                  [['Root::Lending', [20.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20.0]]],
+                  [['Total', [50.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50.0]],
+                   ['Running',
+                    [50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0]]]],
                  @report_double.print_list_monthly
   end
 
   def test_heading
     assert_equal %w(Period 2014/09 2014/10 2014/11 2014/12 2015/01 2015/02
 2015/03 2015/04 2015/05 2015/06 2015/07 2015/08 Sum),
-                 @report_simple.print_heading_monthly(Date.new(2014,9)).flatten
+                 @report_simple.print_heading_monthly(Date.new(2014, 9)).flatten
   end
 
   def test_report_pdf

@@ -706,7 +706,7 @@ class Person < Entity
     end
   end
 
-  def update_smb_passwd(pass = password)
+  def update_smb_passwd(pass = password_plain)
     if ConfigBase.has_function?(:share) and (groups and groups.index('share'))
       add_user_account
       p = pass.chomp

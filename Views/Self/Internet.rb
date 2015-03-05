@@ -175,11 +175,11 @@ class SelfInternet < View
     end
     o = session.owner
     Captive.user_keep o.login_name, ConfigBase.keep_idle_free.to_i, true
+    url = 'Bookmark for<br>'+ "<a href='http://#{session.web_req.header._host.first}/" +
+        "?user=#{o.login_name}&pass=#{o.password}'>" +
+        'Internet-connection</a>'
     ret += reply_visible(Recharges.search_all_.count > 0, :bytes_left_today) +
-        reply(:update, auto_connection:
-                         'Bookmark for<br>'+
-                             "<a href='http://internet.wifi/connect.cgi?user=#{o.login_name}&pass=#{o.password}'>" +
-                             'Internet-connection</a>')
+        reply(:update, auto_connection: url)
     return ret
   end
 
