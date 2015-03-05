@@ -137,6 +137,7 @@ class AdminServer < View
 
   def rpc_button_import_courses(session, data)
     ms = MakeSteps.new(session, -1) { |session, data, step|
+      dputs_func
       case step
         when 0
           ms.auto_update = -1
@@ -180,7 +181,7 @@ class AdminServer < View
                   course[p] = 0
                   next
                 end
-                dputs(3) { "Fetching person #{person}" }
+                dputs(3) { "Fetching person #{person} for #{p}" }
                 course[p] = Persons.match_by_login_name(person) || get_person(person, ms)
               }
               course._students.each { |p|
@@ -192,6 +193,7 @@ class AdminServer < View
               }
             rescue StandardError => e
               ms.step = 10
+              ms.auto_update = 0
               ms.status = status_list(true, status: "Couldn't fetch person - #{e}")
               return
             end
@@ -202,6 +204,7 @@ class AdminServer < View
           ms.step = 10
           status_list(true, status: 'Everything downloaded')
         when 10
+          ms.step = -1
           reply(:window_hide)
       end
     }

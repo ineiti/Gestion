@@ -1,15 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - use captive together with Monitor::Traffic which uses the mangle-table that are
-            valid for both INPUT and FORWARD
-            x added Network::Monitor::Traffic::User class to hold data for different
-              users (like traffic-report, online-stats)
-            x tested simple case with _diff_ and _total_
-            - import in Entities/Internet
-        x AdminServer: better log advancement of download
-            x Fetch courses from server
-            - Use in AdminServer.CourseType, too
 
 BUGS:
         - Person::Admin.groups is not kept in some circomstances (at least "share")
@@ -274,6 +265,9 @@ To check:
 
 
 ** FIXED **:
+        - F 150305: AdminServer: better log advancement of download
+            x Fetch courses from server
+            x Use in AdminServer.CourseType, too
         - B 150225: when deleting a teacher, remove from Persons.responsibles
         - B 150225: Persons.responsibles returns some entries multiple times
         - F 150224: Remove LogAction
