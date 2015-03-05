@@ -4,9 +4,6 @@ WORKING:
 
 BUGS:
         - Person::Admin.groups is not kept in some circomstances (at least "share")
-        - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
-        - AdminServer: better log advancement of download
-        - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server, add the following:
             - ask for center when creating course
@@ -50,6 +47,7 @@ UI:
          tabs can be added
 
 FEATURES:
+        - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - Check auto-update of Antivirus and other stuff
         - import all data from a center
             - write tests
