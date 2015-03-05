@@ -419,8 +419,8 @@ class Course < Entity
     end
   end
 
-  def update_state
-    if @make_pdfs_state['0'] == 'undefined'
+  def update_state(force = false)
+    if @make_pdfs_state['0'] == 'undefined' || force
       @make_pdfs_state = {}
       students.collect { |s|
         dputs(3) { "Working on #{s}" }

@@ -56,7 +56,7 @@ class CourseDiploma < View
         ret = reply(:empty_nonlists, :diplomas_t)
         if args._courses.length > 0
           if course = Entities.Courses.match_by_course_id(args._courses.to_a[0])
-            course.update_state
+            course.update_state(true)
             ret += rpc_update_with_values(session, args)
           end
         end

@@ -3,9 +3,14 @@
 WORKING:
 
 BUGS:
-        - Person::Admin.groups is not kept in some circomstances (at least "share")
+        - Admin::Server.course_get doesn't copy grades
+        - 'enter'-key doesn't work as it should in Courses::Grade
+        - changed passwords shouldn't be shown, even in 'share' or 'center'-mode
+            - add 'changed'-flag or so
+        - LDAP-passwords override plain-passwords when transferring to server
+        - Person::Admin.groups is not kept in some circumstances (at least "share")
         - change ConfigBase.send_config to rely on ConfigBase.update
-        - when course_server, add the following:
+        - when course_server and user is admin, add the following:
             - ask for center when creating course
                 - only if there is more than one center
                 - display is not correct
@@ -266,6 +271,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150305: Course::Diplomas should update table when viewing again
         - F 150305: better login-link with bookmarkable link
         - B 150302: samba-password is updated with hash if LDAP is there
         - B 150302: Merging with AfriCompta - veeery slow
