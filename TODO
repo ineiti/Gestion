@@ -1,7 +1,6 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - add internet.wifi-arguments to admin.profeda.org, too
 
 BUGS:
         - AdminServer: better log advancement of download
@@ -261,6 +260,7 @@ To check:
 
 
 ** FIXED **:
+        - F 150305: better login-link with bookmarkable link
         - B 150302: samba-password is updated with hash if LDAP is there
         - B 150302: Merging with AfriCompta - veeery slow
         - B 150225: when creating report, not all sub-accounts are taken into account
