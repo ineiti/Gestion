@@ -24,7 +24,7 @@ class CourseGrade < View
           show_int_ro :files_saved
           show_str :remark
           show_table :grades, :headings => %w(Label grade), :widths => [150, 50],
-                     :columns => %w(0 align_right), #:callback => :edit,
+                     :columns => %w(0 align_right), :callback => :edit,
                      :edit => [1], :height => 200
         end
         gui_vbox :nogroup do

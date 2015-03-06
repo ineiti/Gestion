@@ -3,9 +3,12 @@
 WORKING:
 
 BUGS:
-        - Admin::Server.course_get doesn't copy grades
-        - 'enter'-key doesn't work as it should in Courses::Grade
-        - LDAP-passwords override plain-passwords when transferring to server
+        - transfer to server:
+            - some icc-calls are in wrong class
+            - Admin::Server.course_get doesn't copy grades
+            - LDAP-passwords override plain-passwords when transferring to server
+            - accounts should be deleted
+            - store special attributes like 'director' and 'admin'
         - Person::Admin.groups is not kept in some circumstances (at least "share")
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server and user is admin, add the following:
@@ -269,6 +272,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150306: 'enter'-key doesn't work as it should in Courses::Grade
         - B 150306: changed passwords shouldn't be shown, even in 'share' or 'center'-mode
             - don't display if 'share' is set
         - B 150305: Course::Diplomas should update table when viewing again
