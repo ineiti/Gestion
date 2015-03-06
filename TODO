@@ -5,8 +5,6 @@ WORKING:
 BUGS:
         - Admin::Server.course_get doesn't copy grades
         - 'enter'-key doesn't work as it should in Courses::Grade
-        - changed passwords shouldn't be shown, even in 'share' or 'center'-mode
-            - add 'changed'-flag or so
         - LDAP-passwords override plain-passwords when transferring to server
         - Person::Admin.groups is not kept in some circumstances (at least "share")
         - change ConfigBase.send_config to rely on ConfigBase.update
@@ -271,6 +269,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150306: changed passwords shouldn't be shown, even in 'share' or 'center'-mode
+            - don't display if 'share' is set
         - B 150305: Course::Diplomas should update table when viewing again
         - F 150305: better login-link with bookmarkable link
         - B 150302: samba-password is updated with hash if LDAP is there
