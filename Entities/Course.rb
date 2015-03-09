@@ -40,7 +40,7 @@ class Courses < Entities
     value_entity_person :responsible, :drop, :full_name
 
     value_block :center
-    value_entity_person_empty :center, :drop, :full_name
+    value_entity_person_empty_all :center, :drop, :full_name
 
     value_block :content
     value_str :description
@@ -420,15 +420,15 @@ class Course < Entity
   end
 
   def update_state(force = false)
-    if @make_pdfs_state['0'] == 'undefined' || force
-      @make_pdfs_state = {}
+    unde = @make_pdfs_state['0'] == 'undefined' and
+        @make_pdfs_state = {'0' => 'done'}
+    if unde || force
       students.collect { |s|
         dputs(3) { "Working on #{s}" }
         Persons.match_by_login_name(s)
       }.compact.each { |s|
         get_grade_args(s, true)
       }
-      @make_pdfs_state['0'] = 'done'
     end
   end
 
@@ -829,6 +829,7 @@ base_gestion
   end
 
   def make_pdfs(convert)
+    #dputs_func
     if @thread
       dputs(2) { 'Thread is here, killing' }
       begin

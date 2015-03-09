@@ -85,6 +85,8 @@ class CourseDiploma < View
   end
 
   def rpc_update_with_values(session, args)
+    #dputs_func
+
     args.to_sym!
     if true
       (course_id = args._courses[0]) or return []
@@ -107,6 +109,7 @@ class CourseDiploma < View
           reply(:hide, :do_diplomas) +
           reply(:update, :status => overall_state)
     end
+    dputs(3){"Overall_state is #{overall_state}"}
 
     states = case course.get_files.select { |f| f =~ /(000-4pp.pdf|zip)$/ }.first
                when /zip$/
@@ -120,6 +123,7 @@ class CourseDiploma < View
                  dputs(3) { course.get_files.inspect }
                  []
              end
+    dputs(3){"States is #{states}"}
 
     states += course.make_pdfs_state.keys.reject { |k| k == '0' }.
         collect { |s|

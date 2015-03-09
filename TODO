@@ -1,12 +1,12 @@
 /* -*- shiftwidth: 4; softtabstop: 4 -*- */
 
 WORKING:
-        - edit dnsmasq
 
 BUGS:
         - transfer to server:
             - some icc-calls are in wrong class
             - Admin::Server.course_get doesn't copy grades
+            - Is center correctly copied over?
             - LDAP-passwords override plain-passwords when transferring to server
             - accounts should be deleted
             - store special attributes like 'director' and 'admin'
@@ -273,6 +273,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150309: Course::Diploma.do_diplomas doesn't show update anymore
+        - F 150309: edit dnsmasq
         - B 150306: 'enter'-key doesn't work as it should in Courses::Grade
         - B 150306: changed passwords shouldn't be shown, even in 'share' or 'center'-mode
             - don't display if 'share' is set
