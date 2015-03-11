@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - Compta::Movements.modify doesn't update account_dst!
         - transfer to server:
             - some icc-calls are in wrong class
             - Admin::Server.course_get doesn't copy grades
@@ -54,6 +55,7 @@ UI:
          tabs can be added
 
 FEATURES:
+        - remove accounting from admin-rights
         - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - Check auto-update of Antivirus and other stuff
         - import all data from a center
