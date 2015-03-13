@@ -29,7 +29,7 @@ class CourseModify < View
             #show_arg :ctype, :all => true
             show_block :calendar
             show_block :teacher
-            show_block :center
+            #show_block :center
             show_button :edit_name
           end
           gui_vboxg :nogroup do

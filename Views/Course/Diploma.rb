@@ -10,7 +10,6 @@ class CourseDiploma < View
   def layout
     set_data_class :Courses
     @order = 30
-    @thread = nil
     @update = true
 
     gui_hbox do
@@ -198,11 +197,12 @@ class CourseDiploma < View
   end
 
   def rpc_button_abort(session, args)
-    course_id = args['courses'][0]
+    course_id = args._courses[0]
     course = Entities.Courses.match_by_course_id(course_id)
     course.abort_pdfs
     reply(:unhide, :do_diplomas) +
         reply(:hide, :abort) +
-        reply(:auto_update, 0)
+        reply(:auto_update, 0) +
+        rpc_list_choice(session, 'courses', args)
   end
 end

@@ -402,7 +402,7 @@ class Course < Entity
     end
 
     check_students_dir
-    @make_pdfs_state = {'0' => 'undefined'}
+    @make_pdfs_state = {'0' => 'done'}
     @only_psnup = false
   end
 
@@ -420,9 +420,7 @@ class Course < Entity
   end
 
   def update_state(force = false)
-    unde = @make_pdfs_state['0'] == 'undefined' and
-        @make_pdfs_state = {'0' => 'done'}
-    if unde || force
+    if @make_pdfs_state[0] == 'done' || force
       students.collect { |s|
         dputs(3) { "Working on #{s}" }
         Persons.match_by_login_name(s)
@@ -1313,9 +1311,10 @@ base_gestion
 
   def abort_pdfs
     if @thread
-      dputs(3) { "Killing thread #{@thread}" }
+      dputs(2) { "Killing thread #{@thread}" }
       @thread.kill
       @thread.join
+      @make_pdfs_state = {'0' => 'done'}
       dputs(3) { 'Joined thread' }
     end
   end

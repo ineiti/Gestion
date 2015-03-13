@@ -275,11 +275,11 @@ class Persons < Entities
   def add_internet_credit(session, data)
     dputs(5) { "data is #{data.inspect}" }
     client = match_by_login_name(data['login_name'].to_s)
-    if data['credit_add'] and client
+    if data._credit_add and client
       actor = session.owner
       dputs(3) { "Adding cash to #{client.full_name} from #{actor.full_name}" }
       if client.login_name.to_s.length > 0
-        actor.add_internet_credit(client, data['credit_add'])
+        actor.add_internet_credit(client, data._credit_add)
       else
         dputs(0) { "Bizarre client: #{client.inspect} - #{session.inspect} - #{data.inspect}" }
       end
@@ -732,15 +732,15 @@ class Person < Entity
     if internet_credit.to_i < 0 and internet_credit.to_i.abs > client.internet_credit.to_i
       internet_credit = -client.internet_credit.to_i
     end
-    client.data_set(:_internet_credit, (client.internet_credit.to_i + internet_credit.to_i).to_s)
-    pay_service(internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
-    log_msg(:AddCash, "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
-                        "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}")
-    log_msg(:AddCash, "Total due: #{account_total_due}")
+    if pay_service(internet_credit, "internet_credit pour -#{client.login_name}:#{internet_credit}-")
+      client.data_set(:_internet_credit, (client.internet_credit.to_i + internet_credit.to_i).to_s)
+      log_msg(:AddCash, "#{self.login_name} added #{internet_credit} for #{client.login_name}: " +
+                          "#{internet_credit_before} + #{internet_credit} = #{client.internet_credit}")
+      log_msg(:AddCash, "Total due: #{account_total_due}")
+    end
   end
 
   def pay_service(credit, msg, date = nil)
-    self.account_total_due = 0
     if account_due
       date = date ? Date.parse(date) : Date.today
 
@@ -748,9 +748,7 @@ class Person < Entity
                        credit.to_i / 1000.0, account_due, ConfigBase.account_services)
       self.account_total_due = (account_due.total.to_f * 1000.0).round.to_i
     else
-      #account_total_due = data_get( :account_total_due ).to_i + credit.to_i
-      total = self.account_total_due.to_i + credit.to_i
-      data_set(:_account_total_due, total)
+      return false
     end
   end
 
@@ -863,7 +861,7 @@ class Person < Entity
   end
 
   def simple
-    return true if ! permissions
+    return true if !permissions
     (permissions-%w(internet student)).length == 0
   end
 
@@ -1093,13 +1091,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-                                 [{:content => "#{m[0]}", :align => :center},
-                                  m[1],
-                                  {:content => "#{m[2]}", :align => :right},
-                                  {:content => "#{Account.total_form(
-                                      sum += m[2].gsub(',', '').to_f / 1000)}",
-                                   :align => :right}]
-                               }, :header => true, :column_widths => [70, 300, 75, 75])
+                                  [{:content => "#{m[0]}", :align => :center},
+                                   m[1],
+                                   {:content => "#{m[2]}", :align => :right},
+                                   {:content => "#{Account.total_form(
+                                       sum += m[2].gsub(',', '').to_f / 1000)}",
+                                    :align => :right}]
+                                }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

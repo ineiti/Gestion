@@ -3,17 +3,6 @@
 WORKING:
 
 BUGS:
-        - Courses::Diplomas.create
-            - can't abort
-            - no error-message in thread?
-        - transfer to server:
-            - some icc-calls are in wrong class
-            - Admin::Server.course_get doesn't copy grades
-            - Is center correctly copied over?
-            - LDAP-passwords override plain-passwords when transferring to server
-            - accounts should be deleted
-            - store special attributes like 'director' and 'admin'
-        - Person::Admin.groups is not kept in some circumstances (at least "share")
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server and user is admin, add the following:
             - ask for center when creating course
@@ -30,8 +19,6 @@ BUGS:
         - captive-tables are not updated when configuration changes
         - icc-calls are not secured with username/password
             - use encoding json-library
-        - Permission:admin can add credit, but will fall into black hole - only allow
-            for Permission:cybermanager to add credit
         - Get QooxView/Test/qv_gettext to run
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
     	- 10 crashes when not operating "properly"
@@ -278,6 +265,10 @@ To check:
 
 
 ** FIXED **:
+        - B 150313: Courses::Modify very slow - oups, left 'center'-button
+        - B 150313: Courses::Diplomas.create, can't abort -> only display-problem
+        - B 150313: Permission:admin can add credit, but will fall into black hole - only allow
+            for Permission:cybermanager to add credit
         - B 150313: Compta::Movements.modify doesn't update account_dst!
         - B 150313: Person.permission[accounting] sees passwords
             - only allow to see passwords of students and internet
