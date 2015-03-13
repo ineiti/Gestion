@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - lpstat: no destinations added - should disappear
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server and user is admin, add the following:
             - ask for center when creating course
@@ -12,7 +13,6 @@ BUGS:
             - add students with prefix of center, not of user
             - why is there a Course::center-method? This should come from Courses.setup_data!
         - profeda.org: can't edit student in course abc_PC-1_1500
-        - redirection to connection-screen fails for non-normal student
         - Network::Monitor::traffic doesn't show incoming and outgoing correctly
             - check with new version
         - SMScontrol: credit ends -> disconnect -> recharge -> no promotion asked

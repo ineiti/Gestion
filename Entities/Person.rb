@@ -289,7 +289,10 @@ class Persons < Entities
   end
 
   def get_login_with_permission(perm)
-    persons = Entities.Persons.search_by_permissions(perm)
+    #persons = Entities.Persons.search_by_permissions(perm)
+    persons = Persons.data.select { |k, v|
+      v._permissions && v._permissions.index(perm) }.
+        collect { |k, v| Persons.get_data_instance(k) }
     if persons
       # The "select" at the end removes empty entries
       persons.collect { |p|
@@ -1091,13 +1094,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-                                  [{:content => "#{m[0]}", :align => :center},
-                                   m[1],
-                                   {:content => "#{m[2]}", :align => :right},
-                                   {:content => "#{Account.total_form(
-                                       sum += m[2].gsub(',', '').to_f / 1000)}",
-                                    :align => :right}]
-                                }, :header => true, :column_widths => [70, 300, 75, 75])
+                                   [{:content => "#{m[0]}", :align => :center},
+                                    m[1],
+                                    {:content => "#{m[2]}", :align => :right},
+                                    {:content => "#{Account.total_form(
+                                        sum += m[2].gsub(',', '').to_f / 1000)}",
+                                     :align => :right}]
+                                 }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

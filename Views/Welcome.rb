@@ -91,7 +91,7 @@ class Welcome < View
     if selftabs
       tabs.unshift selftabs
     end
-    ddputs(3) { "Tabs is now #{tabs.inspect}" }
+    dputs(3) { "Tabs is now #{tabs.inspect}" }
     return reply(:session_id, session.sid) +
         reply(:list, views:tabs) +
         (session.s_data._sub_tabs_only ? View.reply(:bar_position, 'top') : [])
