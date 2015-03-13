@@ -3,6 +3,9 @@
 WORKING:
 
 BUGS:
+        - Courses::Diplomas.create
+            - can't abort
+            - no error-message in thread?
         - Compta::Movements.modify doesn't update account_dst!
         - transfer to server:
             - some icc-calls are in wrong class
@@ -55,6 +58,7 @@ UI:
          tabs can be added
 
 FEATURES:
+        - add "messieur/madame" in diploma
         - remove accounting from admin-rights
         - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - Check auto-update of Antivirus and other stuff
