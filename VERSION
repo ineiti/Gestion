@@ -1,5 +1,9 @@
 Important notices for versions:
 
+- 150313: 1.9.5
+  - lots of bug-fixes
+  - added update and first version with pacman-support!
+
 - 150203: 1.9.4
   - better account-updates with much fewer traffic to AfriCompta
   - use tables and naming in Course::Grades
