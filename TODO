@@ -265,6 +265,7 @@ To check:
 
 
 ** FIXED **:
+        - F 150313: Updating through web-interface!
         - B 150313: Courses::Modify very slow - oups, left 'center'-button
         - B 150313: Courses::Diplomas.create, can't abort -> only display-problem
         - B 150313: Permission:admin can add credit, but will fall into black hole - only allow
