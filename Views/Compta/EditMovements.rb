@@ -16,12 +16,6 @@ class ComptaEditMovements < View
         show_button :edit, :delete, :new
       end
 
-      gui_window :movement_move do
-        show_entity_account :account_move_list, :drop,
-                            :width => 400, :callback => true
-        show_button :movement_move, :close
-      end
-
       gui_window :movement_edit do
         show_entity_account :account_dst, :drop, :width => 400
         show_str :desc, :width => 300
@@ -46,6 +40,13 @@ class ComptaEditMovements < View
     if (mov = Movements.match_by_id(data._movement_list.first)).class == Movement
       mov.desc, mov.value, mov.date =
           data._desc, data._value.to_i / 1000.0, Date.from_web(data._date)
+
+      old = mov.get_other_account(data._account_src)
+      dputs(3){"Old account: #{old.get_path} - new account: #{data._account_dst.get_path}"}
+      if old != data._account_dst
+        mov.move_from_to(old, data._account_dst)
+      end
+
       reply(:window_hide) +
           update_list(data._account_archive, data._account_src)
     end
@@ -131,7 +132,7 @@ class ComptaEditMovements < View
   def rpc_list_choice_movement_list(session, data)
     if (mov = data._movement_list).class == Movement
       reply(:update, :desc => mov.desc, :value => (mov.value * 1000).to_i,
-               :date => mov.date.to_web)
+            :date => mov.date.to_web)
     end
   end
 

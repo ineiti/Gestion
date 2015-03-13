@@ -6,7 +6,6 @@ BUGS:
         - Courses::Diplomas.create
             - can't abort
             - no error-message in thread?
-        - Compta::Movements.modify doesn't update account_dst!
         - transfer to server:
             - some icc-calls are in wrong class
             - Admin::Server.course_get doesn't copy grades
@@ -279,6 +278,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150313: Compta::Movements.modify doesn't update account_dst!
         - B 150313: Person.permission[accounting] sees passwords
             - only allow to see passwords of students and internet
         - B 150309: Course::Diploma.do_diplomas doesn't show update anymore
