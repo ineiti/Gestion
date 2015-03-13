@@ -3,6 +3,8 @@
 WORKING:
 
 BUGS:
+        - Person.permission[accounting] sees passwords
+        - Network::Block can't deblock ips
         - Courses::Diplomas.create
             - can't abort
             - no error-message in thread?
