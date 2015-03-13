@@ -54,7 +54,8 @@ class ConfigBases < Entities
     cashbox email usage_report activities library ).sort.to_sym
     @@functions_base = {:network => [:internet, :share, :internet_only, :email,
                                      :sms_control, :network_pro],
-                        :internet => [:internet_simple, :internet_captive],
+                        :internet => [:internet_simple, :internet_captive,
+                                      :sms_control],
                         :courses => [:course_server, :course_client, :accounting_courses],
                         :accounting => [:accounting_courses],
                         :cashbox => [:accounting_courses],

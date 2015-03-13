@@ -117,13 +117,13 @@ class PersonModify < View
     if name == 'persons'
       dputs(2) { "Got data: #{data.inspect}" }
       if data['persons'][0] and
-          p = Persons.match_by_login_name(data['persons'].flatten[0])
+          p = Persons.match_by_login_name(data._persons.flatten[0])
         can_change = session.owner.has_all_rights_of(p) ||
             session.owner.has_permission?(:director)
         change_pwd =
             reply_one_two(can_change,
                           %i(new_password password_plain change_password), :not_allowed) +
-            reply_visible(!(p.groups && p.groups.index('share')), :password_plain) +
+            reply_visible(p.simple, :password_plain) +
             reply(:update, :not_allowed => "<b>Vous n'avez pas le droit<br>" +
                              'de changer ce mot de passe</b>')
         dputs(4) { "change_pwd is #{change_pwd.inspect}" }

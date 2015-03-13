@@ -862,12 +862,19 @@ class Person < Entity
     end
   end
 
-  def to_list
-    [login_name, "#{full_name} - #{login_name}:#{password_plain}"]
+  def simple
+    return true if ! permissions
+    (permissions-%w(internet student)).length == 0
   end
 
-  def to_list_id
-    [person_id, "#{full_name} - #{login_name}:#{password_plain}"]
+  def to_list(show_password = true)
+    [login_name, "#{full_name} - #{login_name}" +
+                   (show_password ? ":#{password_plain}" : '')]
+  end
+
+  def to_list_id(show_password = true)
+    [person_id, "#{full_name} - #{login_name}" +
+                  (show_password ? ":#{password_plain}" : '')]
   end
 
   def session
@@ -1086,13 +1093,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-                                [{:content => "#{m[0]}", :align => :center},
-                                 m[1],
-                                 {:content => "#{m[2]}", :align => :right},
-                                 {:content => "#{Account.total_form(
-                                     sum += m[2].gsub(',', '').to_f / 1000)}",
-                                  :align => :right}]
-                              }, :header => true, :column_widths => [70, 300, 75, 75])
+                                 [{:content => "#{m[0]}", :align => :center},
+                                  m[1],
+                                  {:content => "#{m[2]}", :align => :right},
+                                  {:content => "#{Account.total_form(
+                                      sum += m[2].gsub(',', '').to_f / 1000)}",
+                                   :align => :right}]
+                               }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

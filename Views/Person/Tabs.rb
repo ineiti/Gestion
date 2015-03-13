@@ -38,7 +38,7 @@ class PersonTabs < View
 
   def rpc_button_delete(session, args)
     if session.can_view(:FlagDeletePerson)
-      if (p_login = args["persons"]) and
+      if (p_login = args._persons) and
           (p = Persons.match_by_login_name(p_login[0]))
         dputs(3) { "Found person #{p.inspect} - #{p.class.name}" }
         return reply(:window_show, :win_confirm_delete) +
@@ -50,7 +50,7 @@ class PersonTabs < View
 
   def rpc_button_confirm_delete(session, args)
     if session.can_view(:FlagDeletePerson)
-      if (p_login = args["persons"]) and
+      if (p_login = args._persons) and
           (p = Persons.match_by_login_name(p_login[0]))
         dputs(3) { "Found person #{p.inspect} - #{p.class.name}" }
         begin
@@ -83,7 +83,7 @@ class PersonTabs < View
     dputs(2) { "New choice #{name} - #{args['persons']}" }
 
     if name == 'persons' and args and args['persons']
-      reply(:pass_tabs, ["list_choice", name, {:persons => [args['persons']]}]) +
+      reply(:pass_tabs, ['list_choice', name, {:persons => [args._persons]}]) +
           reply(:fade_in, :parent_child)
     else
       []
@@ -93,7 +93,7 @@ class PersonTabs < View
   def rpc_callback_search(session, data, do_list_choice = true)
     dputs(2) { "Got data: #{data.inspect}" }
 
-    s = data['search']
+    s = data._search
 
     # Don't search if there are few caracters and lots of Persons
     if (not s or s.length < 3) and (Persons.data.length > 100)
@@ -103,7 +103,7 @@ class PersonTabs < View
     result = %w( login_name family_name first_name 
         permissions person_id email phone groups ).collect { |f|
       ret = Entities.Persons.search_by(f, s)
-      if session.owner.permissions.index("center")
+      if session.owner.permissions.index('center')
         ret = ret.select { |p| p.login_name =~ /^#{session.owner.login_name}(_|$)/ }
       end
       dputs(3) { "Result for #{f} is: #{ret.collect { |r| r.login_name }}" }
@@ -132,7 +132,7 @@ class PersonTabs < View
 
     ret = reply(:empty_nonlists, [:persons]) +
         reply(:update, {:persons => result.collect { |p|
-                       p.to_list
+                       p.to_list(p.simple)
                      }, :search => s})
 
     if result.length > 0

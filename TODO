@@ -3,8 +3,6 @@
 WORKING:
 
 BUGS:
-        - Person.permission[accounting] sees passwords
-        - Network::Block can't deblock ips
         - Courses::Diplomas.create
             - can't abort
             - no error-message in thread?
@@ -281,6 +279,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150313: Person.permission[accounting] sees passwords
+            - only allow to see passwords of students and internet
         - B 150309: Course::Diploma.do_diplomas doesn't show update anymore
         - F 150309: edit dnsmasq
         - B 150306: 'enter'-key doesn't work as it should in Courses::Grade
