@@ -6,7 +6,7 @@ After=network.target
 [Service]
 Type=oneshot
 #PIDFile=/var/run/lib-net/pid
-ExecStart=/opt/profeda/Gestion/Binaries/update_gestion
+ExecStart=/opt/profeda/Gestion/Binaries/gestion_update.rb
 
 [Install]
 WantedBy=multi-user.target
