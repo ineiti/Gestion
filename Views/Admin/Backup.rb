@@ -1,4 +1,10 @@
 # Presents a simple interface to allow for backup and restore
+#
+# The following functions are implemented:
+# do_backup - call Binaries/backup to save files in data, Exas and Diplomas
+# do_restore - re-starts Gestion which will restore the backupped data
+# upload_backup - send a backup-file to the server
+# download_backup - get a backup-file from the server
 
 class AdminBackup < View
   def layout
@@ -8,21 +14,13 @@ class AdminBackup < View
     gui_hbox :nogroup do
       gui_vbox do
         show_list_single :backups, 'View.AdminBackup.list_backups', :width => 400
-        show_upload :upload_backup
-        show_button :do_backup, :do_restore
-        #show_button :do_send, :do_fetch
+        show_upload :upload_backup, callback: true
+        show_button :do_backup, :do_restore, :do_download
       end
 
-      gui_window :reload do
+      gui_window :status do
         show_html :txt
-        show_button :close
-      end
-
-      gui_window :remote do
-        show_str :host
-        show_str :user
-        show_str :pass
-        show_button :connect
+        show_button :restore, :close
       end
     end
   end
@@ -33,11 +31,36 @@ class AdminBackup < View
 
   def rpc_button_upload_backup(session, data)
     file = data._filename
-    if file =~ /.tar.gz$/
-      FileUtils.mv file, "#{GESTION_DIR}/Backups"
+    if file =~ /\.tgz$/
+      FileUtils.mv "/tmp/#{file}", "#{GESTION_DIR}/Backups"
+      reply(:empty_update, backups: list_backups) +
+          reply(:select, backups: [file]) +
+          reply(:window_show, :status) +
+          reply(:unhide, %w(close restore)) +
+          reply(:update, txt: "Do you want to restore #{file}?")
     else
-      reply(:window_show, :reload) +
-          reply(:update, txt: "#{file} does not end in .tar.gz")
+      reply(:window_show, :status) +
+          reply_show_hide(:close, :restore) +
+          reply(:update, txt: "#{file} does not end in .tgz")
+    end
+  end
+
+  def rpc_button_restore(session, data)
+    rpc_button_do_restore(session, data)
+  end
+
+  def rpc_button_do_download(session, data)
+    if file = data._backups[0]
+      FileUtils.cp "#{GESTION_DIR}/Backups/#{file}", "/tmp/#{file}"
+      reply(:eval, "window.open('/tmp/#{file}', '_blank');") +
+          reply(:window_show, :status) +
+          reply_show_hide(:close, :restore) +
+          reply(:update, txt: 'If the file is not downloaded, click the following link:' +
+                           "<br><a href='/tmp/#{file}' target='_blank'>#{file}</a>")
+    else
+      reply(:window_show, :status) +
+          reply_show_hide(:close, :restore) +
+          reply(:update, txt: 'Please chose a backup first')
     end
   end
 
@@ -56,22 +79,10 @@ class AdminBackup < View
       Thread.new {
         System.run_bool 'systemctl restart gestion'
       }
-      reply(:window_show, :reload) +
+      reply(:window_show, :status) +
+          reply(:hide, %w(restore close)) +
           reply(:update, :txt => '<h1>Recharger le navigateur avec ctrl+r ou F5</h1>')
     end
-  end
-
-  def rpc_button_do_send(session, data)
-    center = session.owner
-    if not center.permissions.index(:center)
-      reply(:window_show, :remote)
-    else
-      rpc_button_connect(session, data.merge)
-    end
-  end
-
-  def rpc_button_do_fetch(session, data)
-
   end
 
   def list_backups

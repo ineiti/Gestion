@@ -4,4 +4,3 @@ DATE=$( date +%Y-%m-%d_%H.%M.%S )
 
 DIRS="data config.yaml Exas Diplomas*"
 tar -C $WDIR --exclude LibreOffice -czf $BACKUP_DIR/${1}backup_$DATE.tgz $DIRS
-

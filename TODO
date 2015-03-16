@@ -3,7 +3,7 @@
 WORKING:
 
 BUGS:
-        - lpstat: no destinations added - should disappear
+        - Documentation, documentation
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server and user is admin, add the following:
             - ask for center when creating course
@@ -73,8 +73,6 @@ FEATURES:
             - show downloadable list of files
         - limit speed upon reaching threshold
             - calculate threshold
-        - AdminBackup
-            - faire un lien pour télécharger et un lien pour mettre
         - add EditAccounts::move
         - CourseType - add drop: "internet_always, internet_course, none"
         - better display in Course::Grades with regard to files, perhaps direct
@@ -265,6 +263,8 @@ To check:
 
 
 ** FIXED **:
+        - B 130316: lpstat: no destinations added - should disappear
+        - F 130316: AdminBackup - download and upload backups
         - F 150313: Updating through web-interface!
         - B 150313: Courses::Modify very slow - oups, left 'center'-button
         - B 150313: Courses::Diplomas.create, can't abort -> only display-problem
