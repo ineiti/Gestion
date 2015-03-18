@@ -5,7 +5,7 @@ WORKING:
 BUGS:
         - Persons::Tabs - sort by full_name
         - captive_dev should depend on the actual device used
-        - Report::executive 
+        - Report::executive
         - Documentation, documentation
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server and user is admin, add the following:
