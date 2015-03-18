@@ -263,6 +263,7 @@ To check:
 
 
 ** FIXED **:
+        - B 130518: update doesn't work correctly - snake bites its tail
         - B 130316: lpstat: no destinations added - should disappear
         - F 130316: AdminBackup - download and upload backups
         - F 150313: Updating through web-interface!

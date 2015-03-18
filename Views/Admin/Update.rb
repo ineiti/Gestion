@@ -54,8 +54,12 @@ class AdminUpdate < View
     Entities.save_all
     #log_msg :backup, 'Creating new backup'
     #System.run_bool "#{GESTION_DIR}/Binaries/backup"
-    IO.write('/tmp/gestion.update', file)
-    Service.start 'gestion_update'
+    System.run_bool "#{GESTION_DIR}/Binaries/gestion_update.rb #{file}"
+    #IO.write('/tmp/gestion.update', file)
+    Thread.new{
+      sleep 5
+      Service.restart 'gestion'
+    }
     reply(:eval, "document.location.href='http://local.profeda.org/update_progress.html'")
   end
 

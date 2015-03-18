@@ -2,30 +2,33 @@
 $LOAD_PATH.push '/opt/profeda/HelperClasses/lib/'
 require 'helperclasses'
 require 'net/http'
+require 'fileutils'
 include HelperClasses
+@file_update = '/tmp/gestion.update'
+@html_txt = []
+@html_dir = '/srv/http/local'
+@html_file = "#{@html_dir}/update_progress.html"
 
 def main
   begin
-    @html_txt = []
-    @html_dir = '/srv/http/local'
-    @html_file = "#{@html_dir}/update_progress.html"
-    file_update = '/tmp/gestion.update'
-    if ! File.exists? file_update
-      update_html("Didn't find #{file_update}", '0')
+    if !File.exists? @file_update
+      update_html("Didn't find #{@file_update}", '0')
       exit
     end
-    file = IO.read(file_update)
+    file = IO.read(@file_update)
     update_html("Updating using file #{file}")
-    update_html 'Waiting for Gestion to stop for 10 seconds'
-    Service.stop 'gestion'
-    sleep 2
-    update_html 'Waiting for Gestion to stop for 5 seconds'
-    sleep 5
+    if false
+      update_html 'Waiting for Gestion to stop for 10 seconds'
+      Service.stop 'gestion'
+      sleep 2
+      update_html 'Waiting for Gestion to stop for 5 seconds'
+      sleep 5
+    end
     update_html "Calling pacman to update #{file}"
     update = System.run_str "/usr/bin/pacman --noconfirm --force -U #{file}"
     update_html "<pre>#{update}</pre>"
-    update_html 'Re-starting Gestion'
-    Service.start 'gestion'
+    update_html 'Starting Gestion'
+    FileUtils.rm @file_update
     i = 0
     uri = URI('http://localhost:3302')
     loop do
@@ -123,4 +126,9 @@ def update_html(msg, content = '5')
 ")
 end
 
-main
+if ARGV.length > 0
+  IO.write(@file_update, ARGV.first)
+  update_html('Waiting to begin update')
+else
+  main
+end

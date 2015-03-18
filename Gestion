@@ -24,6 +24,12 @@ if [ "$( which ruby )" -a "$1" != "--install" ]; then
     tar xf Backups/$( cat dorestore )
     rm dorestore
   fi
+  if [ -f /tmp/gestion.update ]; then
+    Binaries/gestion_update.rb &
+    while [ -f /tmp/gestion.update ]; do
+      sleep 2
+    done
+  fi
   ./Gestion.rb $@
 else
   if [ "$1" = "--install" ]; then
