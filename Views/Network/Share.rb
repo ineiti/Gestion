@@ -54,13 +54,16 @@ class NetworkShare < View
       if users and share
         dputs(3) { "Acl of #{share.name} is #{share.acl.inspect}" }
         share.acl.collect { |k, v|
-          user = Persons.match_by_login_name(k)
-          users.delete(user)
-          access = v == 'ro' ? 'read-only' : 'read-write'
-          name = user.full_name
-          name.to_s == 0 and name = user.login_name
-          [k, "#{name}: #{access}"]
-        }.sort { |a, b| a[1] <=> b[1] } +
+          if user = Persons.match_by_login_name(k)
+            users.delete(user)
+            access = v == 'ro' ? 'read-only' : 'read-write'
+            name = user.full_name
+            name.to_s == 0 and name = user.login_name
+            [k, "#{name}: #{access}"]
+          else
+            nil
+          end
+        }.compact.sort { |a, b| a[1] <=> b[1] } +
             users.collect { |u|
               [u.login_name, u.full_name]
             }.sort { |a, b| a[1] <=> b[1] }

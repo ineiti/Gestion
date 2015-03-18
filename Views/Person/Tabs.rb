@@ -96,7 +96,7 @@ class PersonTabs < View
     s = data._search
 
     # Don't search if there are few caracters and lots of Persons
-    if (not s or s.length < 3) and (Persons.data.length > 100)
+    if (not s or s.length < 3) and (Persons.data.length > 20)
       return reply(:focus, :search)
     end
 

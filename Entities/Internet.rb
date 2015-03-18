@@ -149,6 +149,9 @@ module Internet
     return false
   end
 
+  # Decides whether a person is allowed to surf for free, depending on:
+  # - permissions (FlagInternetFree and internet_free_staff)
+  # - courses (date between :start and :end and internet_free_course)
   def free(user)
     case ConfigBase.allow_free
       when /all/
@@ -162,16 +165,18 @@ module Internet
     end
     if user
       dputs(3) { "Searching groups for user #{user.login_name}: #{user.groups.inspect}" }
-      if user.groups and user.groups.index('freesurf')
+      if user.groups && user.groups.index('freesurf')
         dputs(3) { "User #{user.login_name} is on freesurf" }
         return true
       end
-      if Permission.can_view(user.permissions, 'FlagInternetFree')
+      if ConfigBase.has_function?(:internet_free_staff) &&
+          Permission.can_view(user.permissions, 'FlagInternetFree')
         dputs(3) { "User #{user.login_name} has FlagInternetFree" }
         return true
       end
 
-      if self.active_course_for(user)
+      if ConfigBase.has_function?(:internet_free_course) &&
+          self.active_course_for(user)
         return true
       end
     end

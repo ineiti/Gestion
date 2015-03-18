@@ -3,6 +3,9 @@
 WORKING:
 
 BUGS:
+        - Persons::Tabs - sort by full_name
+        - captive_dev should depend on the actual device used
+        - Report::executive 
         - Documentation, documentation
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server and user is admin, add the following:
@@ -44,6 +47,11 @@ UI:
          tabs can be added
 
 FEATURES:
+        - Cashbox::Report - add "ajout" to report
+        - CourseType
+            x added internet_free_* to configbase
+            - add drop: "internet_always, internet_course, none"
+            - add to course
         - add "messieur/madame" in diploma
         - remove accounting from admin-rights
         - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
@@ -74,7 +82,6 @@ FEATURES:
         - limit speed upon reaching threshold
             - calculate threshold
         - add EditAccounts::move
-        - CourseType - add drop: "internet_always, internet_course, none"
         - better display in Course::Grades with regard to files, perhaps direct
             download of student-files
         - Pruning out left-overs in LibNet -> Network transition
