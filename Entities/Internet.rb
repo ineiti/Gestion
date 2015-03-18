@@ -3,7 +3,7 @@ Internet - an interface for the internet-part of Markas-al-Nour.
 =end
 
 module Internet
-  attr_accessor :operator, :device
+  attr_accessor :operator, :device, :traffic
   extend self
   include Network
 
@@ -23,7 +23,10 @@ module Internet
       end
       update('add', dev.first)
     end
-    #@traffic = Monitor::Traffic::User.new
+    dp 'setting up config'
+    Monitor::Traffic.setup_config
+    Monitor::Traffic.create_iptables
+    @traffic = Monitor::Traffic::User.new
   end
 
   def update(operation, dev = nil)
@@ -54,7 +57,7 @@ module Internet
   end
 
   def fetch_users
-    return until @operator
+    return unless @operator
 
     if (server = ConfigBase.internet_cash)
       begin
@@ -87,7 +90,7 @@ module Internet
 
   def take_money
     #dputs_func
-    return until @operator
+    return unless @operator
 
     Captive.cleanup
     Captive.users_connected.each { |u|
@@ -184,9 +187,17 @@ module Internet
     return false
   end
 
-  def user_connect(name, ip)
-    return until @operator
+  def update_traffic
+    return unless @traffic
+    dp 'updating traffic'
+    @traffic.update
+  end
 
+  def user_connect(name, ip)
+    return unless @operator
+
+    dp "Adding #{name} with ip #{ip}"
+    Monitor::Traffic.ip_add(ip, name)
     Captive.user_connect name, ip, (self.free(name) ? 'yes' : 'no')
   end
 

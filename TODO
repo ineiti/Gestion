@@ -3,6 +3,8 @@
 WORKING:
 
 BUGS:
+        - Network::Monitor::Traffic::User.traffic_user has to take care when
+            shifting days, so that there is no hole in 28..30-days months
         - Persons::Tabs - sort by full_name
         - captive_dev should depend on the actual device used
         - Report::executive

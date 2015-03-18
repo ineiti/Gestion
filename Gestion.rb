@@ -155,9 +155,12 @@ else
             dputs(0) { 'Internet-sleep is on 5!' }
             sleep 5
           else
-            sleep 60
+            (1..6).each{
+              sleep 10
+              Internet.update_traffic
+            }
           end
-          Internet::take_money
+          Internet.take_money
         end
       }
     }

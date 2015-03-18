@@ -18,6 +18,7 @@ class SelfInternet < View
       show_int_ro :bytes_left_today
       show_html :connection, :width => 100
       show_html :auto_connection
+      show_html :traffic
       show_button :connect, :disconnect
     end
   end
@@ -150,6 +151,20 @@ class SelfInternet < View
     rpc_update(session)
   end
 
+  def traffic_rxtx(t)
+    t.collect { |r, t| r+t }.join('-')
+  end
+
+  def get_traffic
+    return [] unless t = Internet.traffic
+    list = t.traffic.collect { |h, _k|
+      traff = [t.get_day(h, -3), t.get_hour(h, -Time.now.hour)].
+          collect { |tr| traffic_rxtx(tr) }
+      "#{h}: #{traff.join(' :: ')}<br>"
+    }
+    reply(:update, traffic: list)
+  end
+
   def rpc_update(session, nobutton = false)
     if nobutton
       nobutton = Internet.operator &&
@@ -180,7 +195,7 @@ class SelfInternet < View
         'Internet-connection</a>'
     ret += reply_visible(Recharges.search_all_.count > 0, :bytes_left_today) +
         reply(:update, auto_connection: url)
-    return ret
+    return ret + get_traffic
   end
 
   def rpc_show(session)
@@ -191,7 +206,7 @@ class SelfInternet < View
   def rpc_button_connect(session, data)
     if session.web_req
       log_msg :internet, "#{session.owner.login_name} connects with #{session.inspect}"
-      Captive.user_connect session.owner.login_name, session.client_ip
+      Internet.user_connect session.owner.login_name, session.client_ip
       rpc_update(session, true)
     end
   end
