@@ -139,21 +139,23 @@ else
     }
   end
 
+  # Initialize network and listen for new devices
   if ConfigBase.has_function? :network
     Network::Device.start
-    #dputs(1){'Waiting for Devices to initialize'}
-    #sleep 5
   end
 
+  # Start up internet-handling (traffic and credit)
   if ConfigBase.has_function? :internet
     dputs(1) { 'Starting internet' }
     Internet.setup
     $internet = Thread.new {
       loop {
         rescue_all "Couldn't take internet-money" do
+          # Simple debug-routine to make it faster to test
           if false
             dputs(0) { 'Internet-sleep is on 5!' }
             sleep 5
+            Internet.update_traffic
           else
             (1..6).each{
               sleep 10
@@ -166,6 +168,7 @@ else
     }
   end
 
+  # Shows time every minute in the logs
   if get_config(false, :showTime)
     dputs(1) { 'Showing time' }
     $show_time = Thread.new {
@@ -176,10 +179,12 @@ else
     }
   end
 
+  # Catch SIGINT signal so we can save everything before quitting
   trap('SIGINT') {
     throw :ctrl_c
   }
 
+  # Finally start QooxView
   catch :ctrl_c do
     rescue_all 'Error: QooxView aborted' do
       log_msg :main, "Started Gestion on port #{webrick_port}"
@@ -189,12 +194,13 @@ else
     end
   end
 
+  # Clean up all threads
   if get_config(true, :autosave)
     $autosave.kill
   end
-
   $internet and $internet.kill
   $show_time and $show_time.kill
 
+  # And finally save all before quitting
   Entities.save_all
 end

@@ -1,6 +1,30 @@
-=begin
-Internet - an interface for the internet-part of Markas-al-Nour.
+=begin rdoc
+=== Internet
+
+This module links the following external parts:
+* Network::Device - to handle internet-captive devices
+* Monitor::Traffic - to watch individual traffic from users
+
+To use it, call the #setup method, which will list all devices and start
+listening for new ones.
 =end
+
+class InternetClasses < Entities
+  def setup_data
+    value_str :name
+    value_int :limit_mo
+    value_list_drop :type, '%w(unlimited limit_daily limit_class limit_date)'
+  end
+end
+
+class InternetPersons < Entities
+  def setup_data
+    value_entity_person :person
+    value_entity_internetClasses :internetClass
+    value_date :start
+    value_int :duration
+  end
+end
 
 module Internet
   attr_accessor :operator, :device, :traffic
@@ -9,6 +33,8 @@ module Internet
 
   @operator = nil
 
+  # Gets all devices and adds an observer for new devices. Also sets up
+  # traffic-tables for users, loading if some already exist
   def setup
     if (cd = ConfigBase.captive_dev).to_s.length > 0 &&
         cd != 'false' && ConfigBase.has_function?(:internet_captive)
@@ -23,12 +49,18 @@ module Internet
       end
       update('add', dev.first)
     end
-    dp 'setting up config'
     Monitor::Traffic.setup_config
     Monitor::Traffic.create_iptables
-    @traffic = Monitor::Traffic::User.new
+    @traffic_save = Statics.get(:GestionTraffic)
+    if @traffic_save.data_str.class != String || @traffic_save.data_str.length == 0
+      @traffic = Monitor::Traffic::User.new
+    else
+      @traffic = Monitor::Traffic::User.from_json @traffic_save.data_str
+    end
   end
 
+  # Whenever a new device or a new operator is detected, this function
+  # updates the internal variables.
   def update(operation, dev = nil)
     case operation
       when /del/
@@ -56,38 +88,8 @@ module Internet
     end
   end
 
-  def fetch_users
-    return unless @operator
-
-    if (server = ConfigBase.internet_cash)
-      begin
-        ret = Net::HTTP.get(server, '/internetCash/fetch_users')
-        users = JSON.parse(ret.body)
-
-        Persons.search_all.each { |p|
-          p.groups = []
-        }
-
-        users.each { |user, pass, cash, free|
-          dputs(2) { "Updating #{user}-#{pass}-#{cash}-#{free}" }
-          if (u = Persons.find_by_login_name(user))
-            u.password = pass
-            u.internet_credit += cash
-            u.groups = [:freesurf] if free
-          else
-            u = Persons.create(:login_name => user, :password => pass,
-                               :internet_credit => cash,
-                               :groups => (free ? [:freesurf] : []))
-          end
-        }
-      rescue
-        dputs(0) { "Error: Couldn't contact server" }
-      end
-    else
-      dputs(0) { 'Error: no server defined - please add :LibNet:internetCash to config.yaml' }
-    end
-  end
-
+  # Scans all connected users and deduces money from all connected, non-free
+  # users. If there is not enough money left, it kicks the user.
   def take_money
     #dputs_func
     return unless @operator
@@ -127,6 +129,8 @@ module Internet
     }
   end
 
+  # Scan for all active courses (date_start <= date_now <= date_end) for a
+  # specific +user+, which should be of type #Persons
   def active_course_for(user)
     # We want an exact match, so we put the name between ^ and $
     courses = Courses.search_by_students("^#{user.login_name}$")
@@ -187,22 +191,59 @@ module Internet
     return false
   end
 
+  # Fetches new traffic and saves the actual traffic in Statics
   def update_traffic
     return unless @traffic
-    dp 'updating traffic'
     @traffic.update
+    @traffic_save.data_str = @traffic.to_json
   end
 
+  # Let's a user connect and adds its IP to the traffic-table
   def user_connect(name, ip)
     return unless @operator
 
-    dp "Adding #{name} with ip #{ip}"
     Monitor::Traffic.ip_add(ip, name)
+    # Free users have different auto-disconnect time than non-free users
     Captive.user_connect name, ip, (self.free(name) ? 'yes' : 'no')
   end
 
+  # Unused function. See #fetch_users
   def update_connection(ip, name)
     return "From #{ip} user #{name}"
   end
 
+  # Unused function. It's goal was to be able to split the internet-handling
+  # over two devices: a gateway which will listen for 'fetch_users', and a
+  # server that will communicate with the gateway
+  def fetch_users
+    return unless @operator
+
+    if (server = ConfigBase.internet_cash)
+      begin
+        ret = Net::HTTP.get(server, '/internetCash/fetch_users')
+        users = JSON.parse(ret.body)
+
+        Persons.search_all.each { |p|
+          p.groups = []
+        }
+
+        users.each { |user, pass, cash, free|
+          dputs(2) { "Updating #{user}-#{pass}-#{cash}-#{free}" }
+          if (u = Persons.find_by_login_name(user))
+            u.password = pass
+            u.internet_credit += cash
+            u.groups = [:freesurf] if free
+          else
+            u = Persons.create(:login_name => user, :password => pass,
+                               :internet_credit => cash,
+                               :groups => (free ? [:freesurf] : []))
+          end
+        }
+      rescue
+        dputs(0) { "Error: Couldn't contact server" }
+      end
+    else
+      dputs(0) { 'Error: no server defined - please add :LibNet:internetCash to config.yaml' }
+    end
+  end
 end

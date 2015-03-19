@@ -18,7 +18,7 @@ class SelfInternet < View
       show_int_ro :bytes_left_today
       show_html :connection, :width => 100
       show_html :auto_connection
-      show_html :traffic
+      show_table :traffic, headings: %w(Name Day-2 Day-1 Today)
       show_button :connect, :disconnect
     end
   end
@@ -158,10 +158,9 @@ class SelfInternet < View
   def get_traffic
     return [] unless t = Internet.traffic
     list = t.traffic.collect { |h, _k|
-      traff = [t.get_day(h, -3), t.get_hour(h, -Time.now.hour)].
-          collect { |tr| traffic_rxtx(tr) }
-      "#{h}: #{traff.join(' :: ')}<br>"
-    }
+      traffic = t.get_day(h, -3).collect{|r,t| ((r+t)/1000)/1000.0}
+      [h, [h] + traffic]
+    }.sort_by { |t| t[3] }.reverse
     reply(:update, traffic: list)
   end
 
