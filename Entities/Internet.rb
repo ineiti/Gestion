@@ -20,7 +20,7 @@ end
 class InternetPersons < Entities
   def setup_data
     value_entity_person :person
-    value_entity_internetClasses :internetClass
+    value_entity_internetClasses :iclass
     value_date :start
     value_int :duration
   end
@@ -36,7 +36,7 @@ module Internet
   # Gets all devices and adds an observer for new devices. Also sets up
   # traffic-tables for users, loading if some already exist
   def setup
-    dputs_func
+    #dputs_func
     if (cd = ConfigBase.captive_dev).to_s.length > 0 &&
         cd != 'false' && ConfigBase.has_function?(:internet_captive)
       @device = nil

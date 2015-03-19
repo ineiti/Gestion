@@ -161,7 +161,7 @@ class SelfInternet < View
     list = t.traffic.collect { |h, _k|
       traffic = t.get_day(h, -3).collect { |r, t| ((r+t)/1000)/1000.0 }
       [h, [h] + traffic]
-    }.sort_by { |t| t[0][3] }.reverse
+    }.sort_by { |t| t[1][3] }.reverse
     #list = [[:ineiti] + [20, 30, 40]]
     reply(:unhide, :traffic) +
         reply(:update, traffic: list)
