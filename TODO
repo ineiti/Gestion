@@ -3,6 +3,8 @@
 WORKING:
 
 BUGS:
+        - AfriCompta shouldn't allow inputs for later or earlier than 1 week
+            - when deleted movement exists, it's date is shown
         - Persons::Tabs - sort by full_name
         - captive_dev should depend on the actual device used
         - Report::executive
