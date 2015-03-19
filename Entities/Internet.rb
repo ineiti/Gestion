@@ -36,18 +36,21 @@ module Internet
   # Gets all devices and adds an observer for new devices. Also sets up
   # traffic-tables for users, loading if some already exist
   def setup
+    dputs_func
     if (cd = ConfigBase.captive_dev).to_s.length > 0 &&
         cd != 'false' && ConfigBase.has_function?(:internet_captive)
       @device = nil
       Device.add_observer(self)
 
-      dev = Device.search_dev({uevent: {interface: ConfigBase.captive_dev}})
-      if dev.length == 0
-        log_msg :Internet, "Couldn't find #{ConfigBase.captive_dev}"
-        Device.list
-        return
+      if ConfigBase.captive_dev != 'simul'
+        dev = Device.search_dev({uevent: {interface: ConfigBase.captive_dev}})
+        if dev.length == 0
+          log_msg :Internet, "Couldn't find #{ConfigBase.captive_dev}"
+          Device.list
+          return
+        end
+        update('add', dev.first)
       end
-      update('add', dev.first)
     end
     Monitor::Traffic.setup_config
     Monitor::Traffic.create_iptables
@@ -57,6 +60,7 @@ module Internet
     else
       @traffic = Monitor::Traffic::User.from_json @traffic_save.data_str
     end
+    dputs(4){"@traffic is #{@traffic}"}
   end
 
   # Whenever a new device or a new operator is detected, this function
