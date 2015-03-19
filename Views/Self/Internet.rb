@@ -129,9 +129,9 @@ class SelfInternet < View
   end
 
   def update_isp(session)
-    promo = (Internet.operator && Internet.operator.has_promo) ? :unhide : :hide
+    promo = (Internet.operator && Internet.operator.has_promo)
     dputs(3) { "promo is #{promo}: #{Internet.operator} - #{Internet.operator.has_promo.inspect}" }
-    reply(promo, :bytes_left) +
+    reply_visible(promo && session.owner.is_staff?, :bytes_left) +
         reply(:unhide, :connection_status)
   end
 
@@ -172,6 +172,8 @@ class SelfInternet < View
       nobutton = Internet.operator &&
           Internet.operator.connection_type == Operator::CONNECTION_ONDEMAND
     end
+    o = session.owner
+
     users = Captive.users_connected
     users_str = SelfInternet.make_users_str(users)
     dputs(4) { "session is #{session.inspect}" }
@@ -182,22 +184,24 @@ class SelfInternet < View
         update_button(session, nobutton) +
         update_connection_status(session) +
         update_isp(session) +
-        reply(:update, :internet_credit => session.owner.internet_credit.to_i) +
-        reply(:update, :users_connected =>
-                         "#{users.count}: #{users_str}")
-    if Internet.operator && Internet.operator.has_promo
+        reply(:update, :internet_credit => o.internet_credit.to_i) +
+        reply(:update, :users_connected => "#{users.count}: #{users_str}")
+    if Internet.operator && Internet.operator.has_promo && o.is_staff?
       left = Internet.operator.internet_left
-      ret += reply(:update, :bytes_left => left.to_MB('Mo')) +
-          reply(:update, bytes_left_today: Recharge.left_today(left).to_MB('Mo'))
+      ret += reply(:unhide, %w(bytes_left bytes_left_today)) +
+          reply(:update, :bytes_left => left.to_MB('Mo'),
+                bytes_left_today: Recharge.left_today(left).to_MB('Mo'))
+    else
+      ret += reply(:hide, %w(bytes_left bytes_left_today))
     end
-    o = session.owner
+
     Captive.user_keep o.login_name, ConfigBase.keep_idle_free.to_i, true
     url = 'Bookmark for<br>'+ "<a href='http://#{session.web_req.header._host.first}/" +
         "?user=#{o.login_name}&pass=#{o.password}'>" +
         'Internet-connection</a>'
-    ret += reply_visible(Recharges.search_all_.count > 0, :bytes_left_today) +
-        reply(:update, auto_connection: url)
-    return ret + get_traffic(session.owner)
+
+    ret + reply(:update, auto_connection: url) +
+        get_traffic(o)
   end
 
   def rpc_show(session)
