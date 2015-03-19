@@ -3,6 +3,8 @@
 WORKING:
 
 BUGS:
+        - Tigo::recharge doesn't react with
+            Souscription reussie:Internet Kattir 1111. 40 MB valide jusqu a minuit. Cout 800F .
         - AfriCompta shouldn't allow inputs for later or earlier than 1 week
             - when deleted movement exists, it's date is shown
         - Persons::Tabs - sort by full_name
