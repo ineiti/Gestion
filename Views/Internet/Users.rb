@@ -1,3 +1,10 @@
+=begin rdoc
+Allows to edit and add users with regard to InternetClass, so they only can
+use a certain amount of bytes per day.
+
+TODO: make a working add-button
+=end
+
 class InternetUsers < View
   def layout
     @order = 50
@@ -7,7 +14,7 @@ class InternetUsers < View
       gui_vbox :nogroup do
         show_str :search_str
         show_entity_person :persons, :single, :login_name, callback: true
-        show_button :search, :add
+        show_button :search#, :add
       end
       gui_vbox :nogroup do
         show_entity_internetClasses_all :iclass, :drop, :name
@@ -25,6 +32,10 @@ class InternetUsers < View
         show_button :add_user
       end
     end
+  end
+
+  def rpc_button_add(session, data)
+    reply(:window_show)
   end
 
   def rpc_update(session)

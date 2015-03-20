@@ -9,11 +9,24 @@ To use it, call the #setup method, which will list all devices and start
 listening for new ones.
 =end
 
+# Holds the different type of users with regard to internet.
+# TODO: add limit_class and limit_course to +type+
 class InternetClasses < Entities
   def setup_data
     value_str :name
     value_int :limit_mo
-    value_list_drop :type, '%w(unlimited limit_daily limit_class limit_date)'
+    value_list_drop :type, '%w(unlimited limit_daily)'
+  end
+end
+
+# Represents one usage-type
+class InternetClass < Entity
+  # Checks whether a given user is in limits of InternetClasses and thus
+  # allowed to use the internet
+  def in_limits?(host, today = Date.today)
+    return true if type == ['unlimited']
+    return true unless t = Internet.traffic
+    t.get_day(host, 1, today.to_time).first.inject(:+) < limit_mo.to_i * 1_000_000
   end
 end
 
@@ -23,6 +36,19 @@ class InternetPersons < Entities
     value_entity_internetClasses :iclass
     value_date :start
     value_int :duration
+  end
+end
+
+class InternetPerson < Entity
+  # checks whether that person has an active reference to #InternetClasses
+  def is_active?(today = Date.today)
+    duration.to_i == 0 ||
+        (start.to_s != '' && (Date.from_web(start) + duration.to_i >= today))
+  end
+
+  # checks whether a person is active and in limits
+  def in_limits?(today = Date.today)
+    is_active?(today) && iclass.in_limits?(person.login_name, today)
   end
 end
 
@@ -60,7 +86,7 @@ module Internet
     else
       @traffic = Monitor::Traffic::User.from_json @traffic_save.data_str
     end
-    dputs(4){"@traffic is #{@traffic}"}
+    dputs(4) { "@traffic is #{@traffic}" }
   end
 
   # Whenever a new device or a new operator is detected, this function
@@ -161,8 +187,11 @@ module Internet
   end
 
   # Decides whether a person is allowed to surf for free, depending on:
+  # - ConfigBase.allow_free ('all' - 'false' - 'true')
   # - permissions (FlagInternetFree and internet_free_staff)
+  # - freesurf-group
   # - courses (date between :start and :end and internet_free_course)
+  # - InternetPersons, where the different allowed traffics might be stored
   def free(user)
     case ConfigBase.allow_free
       when /all/
@@ -180,6 +209,7 @@ module Internet
         dputs(3) { "User #{user.login_name} is on freesurf" }
         return true
       end
+
       if ConfigBase.has_function?(:internet_free_staff) &&
           Permission.can_view(user.permissions, 'FlagInternetFree')
         dputs(3) { "User #{user.login_name} has FlagInternetFree" }
@@ -189,6 +219,10 @@ module Internet
       if ConfigBase.has_function?(:internet_free_course) &&
           self.active_course_for(user)
         return true
+      end
+
+      if ip = InternetPersons.match_by_person(user)
+        return ip.in_limits?
       end
     end
     dputs(3) { 'Found nothing' }
