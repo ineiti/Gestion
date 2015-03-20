@@ -51,7 +51,7 @@ class SelfInternet < View
   def update_connection_status(session)
     #dputs_func
     return reply(:hide, :connection_status) unless session.owner.has_role(:cybermanager)
-    ret = reply(Internet.free(session.owner) ? :hide : :unhide, :internet_credit)
+    ret = []
     cc = can_connect(session)
     dputs(3) { "CanConnect is #{cc}" }
     case cc
@@ -185,7 +185,8 @@ class SelfInternet < View
         update_connection_status(session) +
         update_isp(session) +
         reply(:update, :internet_credit => o.internet_credit.to_i) +
-        reply(:update, :users_connected => "#{users.count}: #{users_str}")
+        reply(:update, :users_connected => "#{users.count}: #{users_str}") +
+        reply_visible(!Internet.free(session.owner), :internet_credit)
     if Internet.operator && Internet.operator.has_promo && o.is_staff?
       left = Internet.operator.internet_left
       ret += reply(:unhide, %w(bytes_left bytes_left_today)) +

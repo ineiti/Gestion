@@ -193,6 +193,7 @@ module Internet
   # - courses (date between :start and :end and internet_free_course)
   # - InternetPersons, where the different allowed traffics might be stored
   def free(user)
+    #dputs_func
     case ConfigBase.allow_free
       when /all/
         return true
@@ -203,26 +204,34 @@ module Internet
       user = Persons.match_by_login_name(user)
       dputs(4) { "Found user #{user.login_name}" }
     end
+    login = user.login_name
     if user
-      dputs(3) { "Searching groups for user #{user.login_name}: #{user.groups.inspect}" }
+      dputs(3) { "Searching groups for user #{login}: #{user.groups.inspect}" }
       if user.groups && user.groups.index('freesurf')
-        dputs(3) { "User #{user.login_name} is on freesurf" }
+        dputs(3) { "User #{login} is on freesurf" }
         return true
       end
 
       if ConfigBase.has_function?(:internet_free_staff) &&
           Permission.can_view(user.permissions, 'FlagInternetFree')
-        dputs(3) { "User #{user.login_name} has FlagInternetFree" }
+        dputs(3) { "User #{login} has FlagInternetFree" }
         return true
       end
 
       if ConfigBase.has_function?(:internet_free_course) &&
           self.active_course_for(user)
+        dputs(3){"User #{login} is free for a course"}
         return true
       end
 
-      if ip = InternetPersons.match_by_person(user)
+      if (ip = InternetPersons.match_by_person(user)) && ip.iclass
+        dputs(3){"User #{login} has internetpersons #{ip.in_limits?}"}
         return ip.in_limits?
+      end
+
+      if ic = ConfigBase.iclass_default
+        dputs(3){"User #{login} falls into default : #{ic.in_limits?(login)}"}
+        return ic.in_limits?(login)
       end
     end
     dputs(3) { 'Found nothing' }
