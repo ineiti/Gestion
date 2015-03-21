@@ -137,7 +137,7 @@ module Internet
           dputs(3) { "Found user #{u}: #{user.full_name}" }
           if not (ag = AccessGroups.allow_user_now(u))[0]
             log_msg 'take_money', "Kicking user #{u} because of accessgroups: #{ag[1]}"
-            Captive.user_disconnect_name user.login_name
+            user_disconnect user.login_name
           elsif self.free(user)
             dputs(2) { "User #{u} goes free" }
             Captive.user_keep(user.login_name, ConfigBase.keep_idle_free.to_i)
@@ -148,7 +148,7 @@ module Internet
               user.internet_credit = user.internet_credit.to_i - cost
             else
               log_msg 'take_money', "User #{u} has not enough money left - kicking"
-              Captive.user_disconnect_name user.login_name
+              user_disconnect user.login_name
             end
           end
         else
@@ -252,6 +252,14 @@ module Internet
     Monitor::Traffic.ip_add(ip, name)
     # Free users have different auto-disconnect time than non-free users
     Captive.user_connect name, ip, (self.free(name) ? 'yes' : 'no')
+  end
+
+  # Disconnects the user and removes it's IP from the traffic-table
+  def user_disconnect(name)
+    return unless @operator
+
+    Captive.user_disconnect_name name
+    Monitor::Traffic.ip_del_name name
   end
 
   # Unused function. See #fetch_users

@@ -221,7 +221,7 @@ class SelfInternet < View
   def rpc_button_disconnect(session, data)
     if session.web_req
       log_msg :internet, "#{session.owner.login_name} disconnects"
-      Captive.user_disconnect_name session.owner.login_name
+      Internet.user_disconnect session.owner.login_name
       rpc_update(session, true)
     end
   end
