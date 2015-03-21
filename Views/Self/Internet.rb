@@ -19,7 +19,7 @@ class SelfInternet < View
       show_html :connection, :width => 100
       show_html :auto_connection
       show_table :traffic, headings: %w(Name Day-2 Day-1 Today),
-                 widths: [100, 50, 50, 50]
+                 widths: [100, 75, 75, 75]
       show_button :connect, :disconnect
     end
   end
