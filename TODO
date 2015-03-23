@@ -5,7 +5,8 @@ WORKING:
 BUGS:
         - measure-traffic: if different people from same IP connect, all are
             counted
-            - delete iptable-entry once a user disconnects
+            x delete iptable-entry once a user disconnects
+            - also delete iptable-entry when captive disconnects
         - measure-traffic: people overriding their total are not disconnected!
         - Network::Monitor::Traffic::User.traffic_user has to take care when
             shifting days, so that there is no hole in 28..30-days months
