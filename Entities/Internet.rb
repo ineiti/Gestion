@@ -26,7 +26,7 @@ class InternetClass < Entity
   def in_limits?(host, today = Date.today)
     return true if type == ['unlimited']
     return true unless t = Internet.traffic
-    t.get_day(host, 1, today.to_time).first.inject(:+) < limit_mo.to_i * 1_000_000
+    t.get_day(host, 1, today.to_time).flatten[0..1].inject(:+) < limit_mo.to_i * 1_000_000
   end
 end
 
@@ -78,6 +78,11 @@ module Internet
         update('add', dev.first)
       end
     end
+    setup_traffic
+    dputs(4) { "@traffic is #{@traffic}" }
+  end
+
+  def setup_traffic
     Monitor::Traffic.setup_config
     Monitor::Traffic.create_iptables
     @traffic_save = Statics.get(:GestionTraffic)
@@ -86,7 +91,6 @@ module Internet
     else
       @traffic = Monitor::Traffic::User.from_json @traffic_save.data_str
     end
-    dputs(4) { "@traffic is #{@traffic}" }
   end
 
   # Whenever a new device or a new operator is detected, this function
@@ -108,12 +112,14 @@ module Internet
           @operator = @device.operator
           @operator and Captive.setup(@device)
           log_msg :Internet, "Got new device #{@device} - #{ConfigBase.captive_dev}"
+          setup_traffic
         else
           log_msg :Internet, "New device #{dev} that doesn't match #{ConfigBase.captive_dev}"
         end
       when /operator/
         @operator = @device.operator
         Captive.setup(@device)
+        setup_traffic
         log_msg :Internet, "Got new operator #{@operator}"
     end
   end

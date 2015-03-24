@@ -13,7 +13,9 @@ BUGS:
             counted
             x delete iptable-entry once a user disconnects
             - also delete iptable-entry when captive disconnects
+                - move the whole traffic-setup to Captive
         - measure-traffic: people overriding their total are not disconnected!
+            - is this correct or just a case of somebody having freesurf?
         - Network::Monitor::Traffic::User.traffic_user has to take care when
             shifting days, so that there is no hole in 28..30-days months
         - Persons::Tabs - sort by full_name
@@ -42,10 +44,6 @@ BUGS:
 Bugs to watch:
         - Error in ConfigBase which doesn't update correctly the accounts when starting
           without accounting
-
-For CCE:
-        - Prepare Diplomas with fields
-        - Check auto-update of Antivirus and other stuff
 
 For 2.0:
         - Put data-directory elsewhere
