@@ -29,15 +29,15 @@ class AdminUpdate < View
   end
 
   def list_tmp
-    Dir.glob('/tmp/*.pkg.tar.xz').collect { |f| "file://#{f}" }
+    Dir.glob('/tmp/*.pkg.tar.*z').collect { |f| "file://#{f}" }
   end
 
   def list_files
     list_http + list_usb + list_tmp
   end
 
-  def rpc_update(_session)
-    reply(:empty_update, update_files: list_files) +
+  def rpc_update(_session, select = [])
+    reply(:empty_update, update_files: (list_files + select)) +
         reply(:update, upload_update: 'Upload')
   end
 
@@ -45,18 +45,19 @@ class AdminUpdate < View
     reply(:window_show, :confirm_win) +
         reply(:update, confirm_html: '<h1>Updating - Danger!</h1>' +
                          'Are you sure you want to update with<br>' +
-                         "<strong>#{data._update_files.first}</strong>?")
+                         "<strong>#{data._update_files.first}</strong>?") +
+        reply(:select, update_files: data._update_files.first)
   end
 
   def rpc_button_confirm_ok(session, data)
     file = data._update_files.first
     log_msg :AdminUpdate, "Preparing update with #{file}"
     Entities.save_all
-    #log_msg :backup, 'Creating new backup'
-    #System.run_bool "#{GESTION_DIR}/Binaries/backup"
+    log_msg :backup, 'Creating new backup'
+    System.run_bool "#{GESTION_DIR}/Binaries/backup"
     System.run_bool "#{GESTION_DIR}/Binaries/gestion_update.rb #{file}"
     #IO.write('/tmp/gestion.update', file)
-    Thread.new{
+    Thread.new {
       sleep 5
       Service.restart 'gestion'
     }
@@ -73,8 +74,7 @@ class AdminUpdate < View
 
   def rpc_button_upload_update(session, data)
     file = ["file:///tmp/#{data._filename}"]
-    rpc_button_update(session, update_files: file) +
-        rpc_update(session) +
-        reply(:select, update_files: file)
+    rpc_update(session, [file]) +
+        rpc_button_update(session, update_files: file)
   end
 end

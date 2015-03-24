@@ -3,6 +3,8 @@
 WORKING:
 
 BUGS:
+        - Update doesn't work correctly
+            - problem with upload that doesn't select the chosen file
         - Tigo::recharge doesn't react with
             Souscription reussie:Internet Kattir 1111. 40 MB valide jusqu a minuit. Cout 800F .
         - AfriCompta shouldn't allow inputs for later or earlier than 1 week
