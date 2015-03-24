@@ -9,6 +9,13 @@ BUGS:
             Souscription reussie:Internet Kattir 1111. 40 MB valide jusqu a minuit. Cout 800F .
         - AfriCompta shouldn't allow inputs for later or earlier than 1 week
             - when deleted movement exists, it's date is shown
+        - measure-traffic: if different people from same IP connect, all are
+            counted
+            x delete iptable-entry once a user disconnects
+            - also delete iptable-entry when captive disconnects
+        - measure-traffic: people overriding their total are not disconnected!
+        - Network::Monitor::Traffic::User.traffic_user has to take care when
+            shifting days, so that there is no hole in 28..30-days months
         - Persons::Tabs - sort by full_name
         - captive_dev should depend on the actual device used
         - Report::executive

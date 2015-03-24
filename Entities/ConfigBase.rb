@@ -39,6 +39,9 @@ class ConfigBases < Entities
     value_str :phone_main
     value_str :start_loaded
 
+    value_block :internet
+    value_entity_internetClass_empty_all :iclass_default, :drop, :name
+
     value_block :accounts
     value_entity_account :account_activities, :drop, :path
     value_entity_account :account_services, :drop, :path
