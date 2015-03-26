@@ -29,13 +29,17 @@ def permissions_init
 end
 permissions_init
 
+def do_bench(lvl = 1)
+  dputs(lvl){Benchmark.measure{yield}.to_s}
+end
+
 %x[ rm -rf data* ]
 
 QooxView.init( '../Entities', '../Views' )
 
 tests = Dir.glob( 'ge_*.rb' )
 #tests = %w( activity )
-#tests = %w( report )
+tests = %w( person )
 #tests = %w( configbase )
 tests.each{|t|
   begin

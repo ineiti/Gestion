@@ -69,9 +69,9 @@ class CashboxActivity < View
   def rpc_button_signed_up_students(session, data)
     reply(:empty, :students) +
         reply(:update, :students =>
-            ActivityPayments.search_by_activity(data._activities).collect { |ap|
-              ap.person_paid && ap.person_paid.to_list_id
-            }.compact.sort_by { |i| i[1]})
+                         ActivityPayments.search_by_activity(data._activities).collect { |ap|
+                           ap.person_paid && ap.person_paid.to_list_id
+                         }.compact.sort_by { |i| i[1] })
   end
 
   def rpc_button_new_student(session, data)
@@ -85,7 +85,8 @@ class CashboxActivity < View
 
   def rpc_button_search_student(session, data)
     return unless (data._full_name || data._full_name.to_s.length > 0)
-    Persons.search_in(data._full_name, :students)
+    reply(:empty_update, students: Persons.search_in(data._full_name).
+                           collect { |p| p.to_list_id })
   end
 
   def rpc_list_choice_activities(session, data)
@@ -113,8 +114,8 @@ class CashboxActivity < View
         var._students = var._activities.collect { |a| a.person_paid.login_name }
         ret += reply(:window_show, :printing) +
             reply(:update, :msg_print => 'Preparing students: <br><br>' +
-                var._students.each_slice(5).collect { |s| s.join(', ') }.
-                    join(',<br>')) +
+                             var._students.each_slice(5).collect { |s| s.join(', ') }.
+                                 join(',<br>')) +
             reply(:hide, :print_next)
       when 2
         dputs(3) { 'Printing pdfs' }
@@ -125,14 +126,14 @@ class CashboxActivity < View
         if not cmd
           ret = reply(:window_show, :printing) +
               reply(:update, :msg_print => 'Click on one of the links:<ul>' +
-                  var._pages.collect { |r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
-                  '</ul>')
+                               var._pages.collect { |r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
+                               '</ul>')
           var._step = 9
         elsif var._pages.length > 0
           ret = reply(:window_show, :printing) +
               reply(:update, :msg_print => 'Impression de la page face en cours pour<ul>' +
-                  "<li>#{var._students.join('</li><li>')}</li></ul>" +
-                  "<br>Cliquez sur 'suivant' pour imprimer les pages arrières") +
+                               "<li>#{var._students.join('</li><li>')}</li></ul>" +
+                               "<br>Cliquez sur 'suivant' pour imprimer les pages arrières") +
               reply(:unhide, :print_next)
           cmd += " #{var._pages[0]}"
           dputs(3) { "Printing-cmd is #{cmd.inspect}" }
@@ -145,7 +146,7 @@ class CashboxActivity < View
         dputs(3) { "Command is #{cmd} with pages #{var._pages.inspect}" }
         ret = reply(:window_show, :printing) +
             reply(:update, :msg_print => 'Impression de la page face arrière en cours<ul>' +
-                "<li>#{var._students.join('</li><li>')}</li></ul>") +
+                             "<li>#{var._students.join('</li><li>')}</li></ul>") +
             reply(:hide, :print_next)
         cmd += " -o outputorder=reverse #{var._pages[1]}"
         dputs(3) { "Printing-cmd is #{cmd.inspect}" }

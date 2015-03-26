@@ -1,7 +1,7 @@
 class PersonCredit < View
   def layout
     set_data_class :Persons
-    @order = 15
+    @order = 30
     @update = true
     @functions_need = [:internet]
 
@@ -24,15 +24,14 @@ class PersonCredit < View
 
   def rpc_button_search(session, data)
     return reply(:empty, :person) unless data._search.length > 2
-    results = Persons.data.select{|k,v| v._login_name =~ /data._search/}.
-        sort_by{|k,v| v._login_name == data._search}[0..20]
+    results = Persons.search_by_name(data._search, 20)
   end
 
   def rpc_button_add_credit(session, data)
     dputs(3) { 'Adding credit' }
     rep = []
     if person = Persons.add_internet_credit(session, data)
-      rep = reply(:update, :credit_add => "") +
+      rep = reply(:update, :credit_add => '') +
           reply(:update, :internet_credit => person.internet_credit)
     end
     rep + rpc_update(session)

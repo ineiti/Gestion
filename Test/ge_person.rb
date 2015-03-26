@@ -348,6 +348,26 @@ class TC_Person < Test::Unit::TestCase
     assert_equal %w(josue secr foo),
                  Persons.responsibles_raw.collect { |p| p.login_name }
     assert_equal %w(Foo Josue Secr),
-                 Persons.responsibles.collect{|i, n|n}
+                 Persons.responsibles.collect { |i, n| n }
+  end
+
+  def test_search_in
+    lvl = 0
+    assert_equal [], Persons.search_in('foobar')
+    assert_equal 2, Persons.search_in('student').length
+    assert_equal 0, Persons.search_in('test_search').length
+    assert_equal 0, Persons.search_in('test').length
+    assert_equal 0, Persons.search_in('search').length
+
+    (1..400).each { |i|
+      Persons.create(login_name: "test_search_#{i}", first_name: 'test',
+                     family_name: 'search')
+    }
+
+    do_bench(lvl) { assert_equal 20, Persons.search_in('test_search').length }
+    do_bench(lvl) { assert_equal 20, Persons.search_in('test').length }
+    do_bench(lvl) { assert_equal 20, Persons.search_in('search').length }
+
+    do_bench(lvl) { assert_equal 400, Persons.search_in('test_search', max: 400).length }
   end
 end

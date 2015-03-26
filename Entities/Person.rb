@@ -509,24 +509,40 @@ class Persons < Entities
     Persons.search_by_permissions(:center)
   end
 
-  def Persons.search_in(str, field = nil, center: nil)
+  def Persons.search_in(str, field = nil, center: nil, max: 20)
     # Don't search if there are few caracters and lots of Persons
-    if (not str or str.length < 3) and (Entities.Persons.new_id.values[0] > 100)
+    if (not str or str.length < 3) and (Persons.data.length > 100)
       field ? View.reply(:empty, field) : []
     end
 
-    # Search all these fields and merge the results
-    result = %w( login_name family_name first_name 
+    if false
+      # Search all these fields and merge the results
+      result = %w( login_name family_name first_name
         permissions person_id email phone groups ).collect { |f|
-      ret = Persons.search_by(f, str)
-      if center
-        ret = ret.select { |p| p.login_name =~ /^#{center}(_|$)/ }
-      end
-      dputs(3) { "Result for #{f} is: #{ret.collect { |r| r.login_name }}" }
-      ret
-    }.flatten.uniq.sort { |a, b|
-      a.login_name.to_s <=> b.login_name.to_s
-    }
+        ret = Persons.search_by(f, str)
+        if center
+          ret = ret.select { |p| p.login_name =~ /^#{center}(_|$)/ }
+        end
+        dputs(3) { "Result for #{f} is: #{ret.collect { |r| r.login_name }}" }
+        ret
+      }.flatten.uniq.sort { |a, b|
+        a.login_name.to_s <=> b.login_name.to_s
+      }
+    else
+      result = Persons.data.select{|k,v|
+        #dp v
+        ret = false
+        %i( login_name family_name first_name
+        permissions person_id email phone groups ).each{|i|
+          #dp "#{i} - #{v[i]}"
+          ret |= v[i] =~ /#{str}/
+        }
+        ret
+      }.sort { |a, b|
+        a[1]._login_name.to_s <=> b[1]._login_name.to_s
+      }.first(max).collect{|k,v| Persons.get_data_instance(k)}
+    end
+
     dputs(3) { "Result is: #{result.collect { |r| r.login_name }}" }
     not result and result = []
 
@@ -542,16 +558,7 @@ class Persons < Entities
       end
     end
 
-    if result.length > 20
-      result = result[0..19]
-    end
-
-    if field
-      return View.reply(:empty, field) +
-          View.reply(:update, {field => result.collect { |p| p.to_list_id }})
-    else
-      result
-    end
+    result.first(max)
   end
 
   def icc_get(tr)
@@ -1094,13 +1101,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-                                   [{:content => "#{m[0]}", :align => :center},
-                                    m[1],
-                                    {:content => "#{m[2]}", :align => :right},
-                                    {:content => "#{Account.total_form(
-                                        sum += m[2].gsub(',', '').to_f / 1000)}",
-                                     :align => :right}]
-                                 }, :header => true, :column_widths => [70, 300, 75, 75])
+                                     [{:content => "#{m[0]}", :align => :center},
+                                      m[1],
+                                      {:content => "#{m[2]}", :align => :right},
+                                      {:content => "#{Account.total_form(
+                                          sum += m[2].gsub(',', '').to_f / 1000)}",
+                                       :align => :right}]
+                                   }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

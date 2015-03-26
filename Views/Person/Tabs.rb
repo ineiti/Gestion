@@ -95,45 +95,15 @@ class PersonTabs < View
 
     s = data._search
 
-    # Don't search if there are few caracters and lots of Persons
-    if (not s or s.length < 3) and (Persons.data.length > 20)
-      return reply(:focus, :search)
-    end
+    center = session.owner.permissions.index('center') ?
+        session.owner.login_name : nil
+    result = Persons.search_in(s, center: center)
 
-    result = %w( login_name family_name first_name 
-        permissions person_id email phone groups ).collect { |f|
-      ret = Entities.Persons.search_by(f, s)
-      if session.owner.permissions.index('center')
-        ret = ret.select { |p| p.login_name =~ /^#{session.owner.login_name}(_|$)/ }
-      end
-      dputs(3) { "Result for #{f} is: #{ret.collect { |r| r.login_name }}" }
-      ret
-    }.flatten.uniq.sort { |a, b|
-      a.login_name.to_s <=> b.login_name.to_s
-    }
-    dputs(3) { "Result is: #{result.collect { |r| r.login_name }}" }
-    not result and result = []
-
-    # Check if we have an exact match on the login_name
-    dputs(3) { "Searching for exact match #{s}" }
-    if exact = Persons.match_by_login_name(s)
-      dputs(3) { 'Found exact match' }
-      if pos = result.index(exact)
-        dputs(3) { "Found exact match at position #{pos}" }
-        result.delete_at(pos)
-        result.unshift(exact)
-        dputs(3) { "result is now #{result.inspect}" }
-      end
-    end
-
-    if result.length > 20
-      result = result[0..19]
-    end
-
-    ret = reply(:empty_nonlists, [:persons]) +
-        reply(:update, {:persons => result.collect { |p|
-                       p.to_list(p.simple)
-                     }, :search => s})
+    ret = reply(:empty, :persons) +
+        reply(:update,
+              :persons => result.collect { |p|
+                p.to_list(p.simple) },
+              :search => s)
 
     if result.length > 0
       if do_list_choice
