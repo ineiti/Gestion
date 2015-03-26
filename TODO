@@ -3,6 +3,8 @@
 WORKING:
 
 BUGS:
+        - after a couple of logins, View.rpc_list is 10x slower - for the moment it
+            seems to be in Session.can_view
         - Update doesn't work correctly
             - problem with upload that doesn't select the chosen file
         - Tigo::recharge doesn't react with
