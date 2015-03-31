@@ -3,8 +3,9 @@
 WORKING:
 
 BUGS:
-        - after a couple of logins, View.rpc_list is 10x slower - for the moment it
-            seems to be in Session.can_view
+        - after a couple of logins, View.rpc_list is 10x slower
+            - seems like every hash-lookup is 10x slower - need to investigate
+                further
         - Update doesn't work correctly
             - problem with upload that doesn't select the chosen file
         - Tigo::recharge doesn't react with
@@ -46,6 +47,10 @@ BUGS:
 Bugs to watch:
         - Error in ConfigBase which doesn't update correctly the accounts when starting
           without accounting
+
+For CCE:
+        - Prepare Diplomas with fields
+        - Check auto-update of Antivirus and other stuff
 
 For 2.0:
         - Put data-directory elsewhere
