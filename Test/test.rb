@@ -8,7 +8,6 @@ DEBUG_LVL=0
 
 require 'QooxView'
 require 'ACQooxView'
-require 'LibNet'
 require '../Dependencies'
 Dependencies.load_path( here: '..' )
 Dependencies.load_dirs( here: '..' )

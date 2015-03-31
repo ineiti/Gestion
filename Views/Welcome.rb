@@ -7,6 +7,7 @@ class Welcome < View
 
   # Overwrite the standard rpc_show to speed up testing...
   def rpc_show(session)
+    GC.start
     web_req = session.web_req
     client_ip = RPCQooxdooHandler.get_ip(web_req)
     if get_config(false, :autologin)
@@ -81,17 +82,21 @@ class Welcome < View
       return reply(:window_show, :login_failed) +
           reply(:update, :reason => 'Please enter a valid login')
     end
+
     if View.SelfInternet.can_connect(session) == 0
       dputs(2) { "Auto-connecting #{session.owner.login_name}" }
       View.SelfInternet.rpc_button_connect(session, nil)
     end
+
     tabs = View.list(session)._views
+
     dputs(3) { "Tabs starts as #{tabs.inspect}" }
     selftabs = tabs.find { |v| v.first == 'SelfTabs' }
     tabs.delete_if { |v| v.first == 'SelfTabs' }
     if selftabs
       tabs.unshift selftabs
     end
+
     dputs(3) { "Tabs is now #{tabs.inspect}" }
     return reply(:session_id, session.sid) +
         reply(:list, views:tabs) +

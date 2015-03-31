@@ -6,8 +6,8 @@ class TC_View < Test::Unit::TestCase
     #Entities.delete_all_data()
     #@admin = Entities.Persons.create(:login_name => 'admin', :password => 'super123',
     #                                 :permissions => ['default'])
-    #@josue = Entities.Persons.create(:login_name => 'josue', :password => 'super',
-    #                                 :permissions => ['default'])
+    @foo = Entities.Persons.create(:login_name => 'foo', :password => 'bar',
+                                     :permissions => %w(default internet admin))
   end
 
   def teardown
@@ -36,7 +36,7 @@ Going to call View.Welcome, button. Args = [["login", {"username"=>"linus", "pas
 :2:RPCQooxdoo`request'******** Going to call View.SelfInternet, show. Args = [[]]
 =end
 
-  def get_reply(service, method, session, arguments)
+  def get_reply(service, method, session, arguments = [])
     #dp RPCQooxdooService::services
     s = RPCQooxdooService::services["View.#{service}"]
     m = "rpc_#{method}"
@@ -46,16 +46,22 @@ Going to call View.Welcome, button. Args = [["login", {"username"=>"linus", "pas
 
   def test_speed_login
     Struct.new('Webreq', :header, :peeraddr)
-    (1..100).each { |i|
+    (1..200).each { |i|
       Timing.measure("Measure #{i}") {
         session = Sessions.create
         session.web_req = Struct::Webreq.new({host: 'nil'}, [0, 0, 0, '192.168.1.1'])
         ret = get_reply(:Welcome, :button, session,
-                        ['login', {'username' => 'linus', 'password' => '1234'}])
-        session = Sessions.match_by_sid(ret[0]._session_id)
-        ret = get_reply(:SelfTabs, :show, session, [])
-        ret = get_reply(:SelfTabs, :list_tabs, session, [])
-        ret = get_reply(:SelfInternet, :show, session, [])
+                        ['login', {'username' => 'foo', 'password' => 'bar'}])
+        session = Sessions.match_by_sid(ret[0]._data)
+        get_reply(:SelfTabs, :show, session, [])
+        get_reply(:SelfTabs, :list_tabs, session, [])
+        get_reply(:SelfInternet, :show, session, [])
+        get_reply(:PersonTabs, :show, session)
+        get_reply(:PersonTabs, :list_tabs, session)
+        get_reply(:PersonModify, :show, session)
+        if i % 10 == 0
+          Entities.save_all
+        end
       }
     }
   end

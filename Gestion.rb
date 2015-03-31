@@ -133,6 +133,7 @@ else
       loop {
         sleep get_config(2 * 60, :autosave, :timer)
         rescue_all "Error: couldn't save all" do
+          dp 'saveall'
           Entities.save_all
         end
       }
@@ -150,6 +151,7 @@ else
     Internet.setup
     $internet = Thread.new {
       loop {
+        dp 'internet_money'
         rescue_all "Couldn't take internet-money" do
           # Simple debug-routine to make it faster to test
           if false
