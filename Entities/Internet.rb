@@ -10,12 +10,16 @@ listening for new ones.
 =end
 
 # Holds the different type of users with regard to internet.
-# TODO: add limit_class and limit_course to +type+
 class InternetClasses < Entities
   def setup_data
     value_str :name
-    value_int :limit_mo
-    value_list_drop :type, '%w(unlimited limit_daily)'
+    value_int :limit
+    value_list_drop :type, '%w(unlimited limit_daily_mo limit_daily_min)'
+  end
+
+  def migrate_1_raw(i)
+    i._type == ['limit_daily'] and i._type = ['limit_daily_mo']
+    i._limit = i._limit_mo
   end
 end
 

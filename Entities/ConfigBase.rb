@@ -52,6 +52,7 @@ class ConfigBases < Entities
     courses course_server course_client
     internet internet_simple internet_captive
     internet_free_course internet_free_staff
+    internet_cyber
     sms_control sms_control_autocharge
     inventory accounting quiz accounting_courses accounting_old
     plug_admin
@@ -59,12 +60,11 @@ class ConfigBases < Entities
     @@functions_base = {:network => [:internet, :share, :internet_only, :email,
                                      :sms_control, :network_pro],
                         :internet => [:internet_simple, :internet_captive,
-                                      :internet_free_course,
-                                      :internet_free_staff,
-                                      :sms_control],
+                                      :internet_free_course, :internet_free_staff,
+                                      :sms_control, :internet_cyber],
                         :courses => [:course_server, :course_client, :accounting_courses],
-                        :accounting => [:accounting_courses],
-                        :cashbox => [:accounting_courses],
+                        :accounting => [:accounting_courses, :cashbox],
+                        :cashbox => [:accounting_courses, :internet_cyber],
                         :activities => [:library],
                         :sms_control => [:sms_control_autocharge]
     }
