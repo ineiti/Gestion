@@ -1130,4 +1130,8 @@ class Person < Entity
     }
     return false
   end
+
+  def is_staff?
+    (permissions - %w(student internet)).length > 0
+  end
 end

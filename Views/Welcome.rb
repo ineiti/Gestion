@@ -7,6 +7,7 @@ class Welcome < View
 
   # Overwrite the standard rpc_show to speed up testing...
   def rpc_show(session)
+    GC.start
     web_req = session.web_req
     client_ip = RPCQooxdooHandler.get_ip(web_req)
     if get_config(false, :autologin)
@@ -50,9 +51,10 @@ class Welcome < View
 
   # On pressing of the login-button, we search for the user and check the password
   def rpc_button_login(session, args)
+    #dputs_func
     dputs(3) { "args is #{args.inspect}" }
     login_name, password = args._username.gsub(/ /, '').downcase, args._password
-    person = Entities.Persons.match_by_login_name(login_name)
+    person = Persons.match_by_login_name(login_name)
     if person
       dputs(3) { "Person is #{person.inspect} and #{person.password}" }
     end
@@ -80,17 +82,21 @@ class Welcome < View
       return reply(:window_show, :login_failed) +
           reply(:update, :reason => 'Please enter a valid login')
     end
+
     if View.SelfInternet.can_connect(session) == 0
       dputs(2) { "Auto-connecting #{session.owner.login_name}" }
       View.SelfInternet.rpc_button_connect(session, nil)
     end
+
     tabs = View.list(session)._views
+
     dputs(3) { "Tabs starts as #{tabs.inspect}" }
     selftabs = tabs.find { |v| v.first == 'SelfTabs' }
     tabs.delete_if { |v| v.first == 'SelfTabs' }
     if selftabs
       tabs.unshift selftabs
     end
+
     dputs(3) { "Tabs is now #{tabs.inspect}" }
     return reply(:session_id, session.sid) +
         reply(:list, views:tabs) +

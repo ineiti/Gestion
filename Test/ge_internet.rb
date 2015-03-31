@@ -212,4 +212,32 @@ class TC_Internet < Test::Unit::TestCase
     assert_equal true, Internet.active_course_for( user_2 )
   end
 
+  def test_internet_person
+    ic_inf = InternetClasses.create(name: 'unlimited', type: ['unlimited'])
+    ic_lim = InternetClasses.create(name: 'daily', type: ['limit_daily'])
+    ip = InternetPersons.create(person:@test, iclass: ic_inf)
+    t = Date.today
+    tr = Internet.traffic
+
+    assert ip.is_active?
+    ip.start = (t - 10).to_web
+    assert ip.is_active?
+    ip.duration = 1
+    assert !ip.is_active?
+    ip.duration = 10
+    assert ip.is_active?
+
+    tr.traffic_init(:test, [0,0])
+    assert_equal 0, tr.get_day(:test, 1).first.inject(:+)
+    assert ic_inf.in_limits?(:test)
+    assert !ic_lim.in_limits?(:test)
+    ic_lim.limit_mo = 1
+    assert ic_lim.in_limits?(:test)
+
+    ip.iclass = ic_lim
+    assert ip.in_limits?
+    tr.update_host(:test, [500_000, 500_000])
+    assert !ip.in_limits?
+  end
+
 end

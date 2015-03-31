@@ -18,6 +18,8 @@ class SelfInternet < View
       show_int_ro :bytes_left_today
       show_html :connection, :width => 100
       show_html :auto_connection
+      show_table :traffic, headings: %w(Name Day-2 Day-1 Today),
+                 widths: [100, 75, 75, 75]
       show_button :connect, :disconnect
     end
   end
@@ -49,7 +51,7 @@ class SelfInternet < View
   def update_connection_status(session)
     #dputs_func
     return reply(:hide, :connection_status) unless session.owner.has_role(:cybermanager)
-    ret = reply(Internet.free(session.owner) ? :hide : :unhide, :internet_credit)
+    ret = []
     cc = can_connect(session)
     dputs(3) { "CanConnect is #{cc}" }
     case cc
@@ -127,9 +129,9 @@ class SelfInternet < View
   end
 
   def update_isp(session)
-    promo = (Internet.operator && Internet.operator.has_promo) ? :unhide : :hide
+    promo = (Internet.operator && Internet.operator.has_promo)
     dputs(3) { "promo is #{promo}: #{Internet.operator} - #{Internet.operator.has_promo.inspect}" }
-    reply(promo, :bytes_left) +
+    reply_visible(promo && session.owner.is_staff?, :bytes_left) +
         reply(:unhide, :connection_status)
   end
 
@@ -150,11 +152,28 @@ class SelfInternet < View
     rpc_update(session)
   end
 
+  def traffic_rxtx(t)
+    t.collect { |r, t| r+t }.join('-')
+  end
+
+  def get_traffic(user)
+    return reply(:hide, :traffic) unless (t = Internet.traffic) && user.is_staff?
+    list = t.traffic.collect { |h, _k|
+      traffic = t.get_day(h, -3).collect { |r, t| ((r+t)/1000)/1000.0 }
+      [h, [h] + traffic]
+    }.sort_by { |t| t[1][3] }.reverse
+    #list = [[:ineiti] + [20, 30, 40]]
+    reply(:unhide, :traffic) +
+        reply(:update, traffic: list)
+  end
+
   def rpc_update(session, nobutton = false)
     if nobutton
       nobutton = Internet.operator &&
           Internet.operator.connection_type == Operator::CONNECTION_ONDEMAND
     end
+    o = session.owner
+
     users = Captive.users_connected
     users_str = SelfInternet.make_users_str(users)
     dputs(4) { "session is #{session.inspect}" }
@@ -165,22 +184,25 @@ class SelfInternet < View
         update_button(session, nobutton) +
         update_connection_status(session) +
         update_isp(session) +
-        reply(:update, :internet_credit => session.owner.internet_credit.to_i) +
-        reply(:update, :users_connected =>
-                         "#{users.count}: #{users_str}")
-    if Internet.operator && Internet.operator.has_promo
+        reply(:update, :internet_credit => o.internet_credit.to_i) +
+        reply(:update, :users_connected => "#{users.count}: #{users_str}") +
+        reply_visible(!Internet.free(session.owner), :internet_credit)
+    if Internet.operator && Internet.operator.has_promo && o.is_staff?
       left = Internet.operator.internet_left
-      ret += reply(:update, :bytes_left => left.to_MB('Mo')) +
-          reply(:update, bytes_left_today: Recharge.left_today(left).to_MB('Mo'))
+      ret += reply(:unhide, %w(bytes_left bytes_left_today)) +
+          reply(:update, :bytes_left => left.to_MB('Mo'),
+                bytes_left_today: Recharge.left_today(left).to_MB('Mo'))
+    else
+      ret += reply(:hide, %w(bytes_left bytes_left_today))
     end
-    o = session.owner
+
     Captive.user_keep o.login_name, ConfigBase.keep_idle_free.to_i, true
     url = 'Bookmark for<br>'+ "<a href='http://#{session.web_req.header._host.first}/" +
         "?user=#{o.login_name}&pass=#{o.password}'>" +
         'Internet-connection</a>'
-    ret += reply_visible(Recharges.search_all_.count > 0, :bytes_left_today) +
-        reply(:update, auto_connection: url)
-    return ret
+
+    ret + reply(:update, auto_connection: url) +
+        get_traffic(o)
   end
 
   def rpc_show(session)
@@ -191,7 +213,7 @@ class SelfInternet < View
   def rpc_button_connect(session, data)
     if session.web_req
       log_msg :internet, "#{session.owner.login_name} connects with #{session.inspect}"
-      Captive.user_connect session.owner.login_name, session.client_ip
+      Internet.user_connect session.owner.login_name, session.client_ip
       rpc_update(session, true)
     end
   end
@@ -199,7 +221,7 @@ class SelfInternet < View
   def rpc_button_disconnect(session, data)
     if session.web_req
       log_msg :internet, "#{session.owner.login_name} disconnects"
-      Captive.user_disconnect_name session.owner.login_name
+      Internet.user_disconnect session.owner.login_name
       rpc_update(session, true)
     end
   end
