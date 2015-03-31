@@ -79,7 +79,7 @@ class TC_Person < Test::Unit::TestCase
     josue_due = @josue.account_total_due.to_i
     dputs(1) { "surf_credit: #{surf_credit} - josue_due: #{josue_due}" }
     # Josue puts 500 on "surf"s account
-    View.PersonCredit.rpc_button(session, 'add_credit',
+    View.CashboxCredit.rpc_button(session, 'add_credit',
                                  {'person_id' => 2, 'login_name' => 'surf', 'credit_add' => 500})
     assert_equal 500, @surf.internet_credit.to_i - surf_credit, 'Credit'
     assert_equal -500, @josue.account_total_due.to_i - josue_due, 'account_total_due'
@@ -364,10 +364,10 @@ class TC_Person < Test::Unit::TestCase
                      family_name: 'search')
     }
 
-    do_bench(lvl) { assert_equal 20, Persons.search_in('test_search').length }
-    do_bench(lvl) { assert_equal 20, Persons.search_in('test').length }
-    do_bench(lvl) { assert_equal 20, Persons.search_in('search').length }
+    Timing.measure(lvl) { assert_equal 20, Persons.search_in('test_search').length }
+    Timing.measure(lvl) { assert_equal 20, Persons.search_in('test').length }
+    Timing.measure(lvl) { assert_equal 20, Persons.search_in('search').length }
 
-    do_bench(lvl) { assert_equal 400, Persons.search_in('test_search', max: 400).length }
+    Timing.measure(lvl) { assert_equal 400, Persons.search_in('test_search', max: 400).length }
   end
 end

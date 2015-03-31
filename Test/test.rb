@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require '../Dependencies'
-Dependencies.load_path( here: '..')
+Dependencies.load_path(here: '..')
 require 'test/unit'
 
 CONFIG_FILE='config_test.yaml'
@@ -10,34 +10,35 @@ require 'QooxView'
 require 'ACQooxView'
 require 'LibNet'
 require '../Dependencies'
-Dependencies.load_path( here: '..' )
-Dependencies.load_dirs( here: '..' )
+Dependencies.load_path(here: '..')
+Dependencies.load_dirs(here: '..')
 ACQooxView.load_entities
 
 def permissions_init
   Permission.clear
-  Permission.add( 'default', 'View,Welcome' )
-  Permission.add( 'admin', '.*', '.*' )
-  Permission.add( 'internet', 'Internet,PersonShow', 'default' )
-  Permission.add( 'student', '', 'internet' )
-  Permission.add( 'teacher', 'FlagResponsible', 'student' )
-  Permission.add( 'secretary', 'PersonModify,FlagAddInternet,PersonCredit',
-    'teacher' )
-  Permission.add( 'accountant', 'FlagAccounting' )
-  Permission.add( 'center', 'FlagAddCenter', 'teacher')
-  Permission.add( 'director', 'FlagAddCenter', 'teacher')
+  Permission.add('default', 'View,Welcome')
+  Permission.add('admin', '.*', '.*')
+  Permission.add('internet', 'Internet,PersonShow', 'default')
+  Permission.add('student', '', 'internet')
+  Permission.add('teacher', 'FlagResponsible', 'student')
+  Permission.add('secretary', 'PersonModify,FlagAddInternet,PersonCredit',
+                 'teacher')
+  Permission.add('accountant', 'FlagAccounting')
+  Permission.add('center', 'FlagAddCenter', 'teacher')
+  Permission.add('director', 'FlagAddCenter', 'teacher')
 end
+
 permissions_init
 
 %x[ rm -rf data* ]
 
-QooxView.init( '../Entities', '../Views' )
+QooxView.init('../Entities', '../Views')
 
-tests = Dir.glob( 'ge_*.rb' )
+tests = Dir.glob('ge_*.rb')
 #tests = %w( activity )
-tests = %w( person )
+#tests = %w( internet )
 #tests = %w( configbase )
-tests.each{|t|
+tests.each { |t|
   begin
     require "ge_#{t}"
   rescue LoadError => e

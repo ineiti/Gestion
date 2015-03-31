@@ -30,7 +30,7 @@ class InternetClass < Entity
   def in_limits?(host, today = Date.today)
     return true if type == ['unlimited']
     return true unless t = Internet.traffic
-    t.get_day(host, 1, today.to_time).flatten[0..1].inject(:+) < limit_mo.to_i * 1_000_000
+    t.get_day(host, 1, today.to_time).flatten[0..1].inject(:+) < limit.to_i * 1_000_000
   end
 end
 
