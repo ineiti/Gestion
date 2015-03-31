@@ -10,6 +10,7 @@ listening for new ones.
 =end
 
 # Holds the different type of users with regard to internet.
+# TODO: add limit_class and limit_course to +type+
 class InternetClasses < Entities
   def setup_data
     value_str :name
@@ -29,8 +30,8 @@ class InternetClass < Entity
   # allowed to use the internet
   def in_limits?(host, today = Date.today)
     return true if type == ['unlimited']
-    return true unless t = Internet.traffic
-    t.get_day(host, 1, today.to_time).flatten[0..1].inject(:+) < limit.to_i * 1_000_000
+    return true unless t = Captive.traffic
+    t.get_day(host, 1, today.to_time).flatten[0..1].inject(:+) < limit_mo.to_i * 1_000_000
   end
 end
 
@@ -57,7 +58,7 @@ class InternetPerson < Entity
 end
 
 module Internet
-  attr_accessor :operator, :device, :traffic
+  attr_accessor :operator, :device
   extend self
   include Network
 
@@ -67,6 +68,7 @@ module Internet
   # traffic-tables for users, loading if some already exist
   def setup
     #dputs_func
+    @traffic_save = Statics.get(:GestionTraffic)
     if (cd = ConfigBase.captive_dev).to_s.length > 0 &&
         cd != 'false' && ConfigBase.has_function?(:internet_captive)
       @device = nil
@@ -87,13 +89,8 @@ module Internet
   end
 
   def setup_traffic
-    Monitor::Traffic.setup_config
-    Monitor::Traffic.create_iptables
-    @traffic_save = Statics.get(:GestionTraffic)
-    if @traffic_save.data_str.class != String || @traffic_save.data_str.length == 0
-      @traffic = Monitor::Traffic::User.new
-    else
-      @traffic = Monitor::Traffic::User.from_json @traffic_save.data_str
+    if @traffic_save.data_str.to_s.length > 0
+      Captive.set_traffic @traffic_save.data_str
     end
   end
 
@@ -250,16 +247,15 @@ module Internet
 
   # Fetches new traffic and saves the actual traffic in Statics
   def update_traffic
-    return unless @traffic
-    @traffic.update
-    @traffic_save.data_str = @traffic.to_json
+    return unless Captive.traffic
+    Captive.traffic.update
+    @traffic_save.data_str = Captive.traffic.to_json
   end
 
   # Let's a user connect and adds its IP to the traffic-table
   def user_connect(name, ip)
     return unless @operator
 
-    Monitor::Traffic.ip_add(ip, name)
     # Free users have different auto-disconnect time than non-free users
     Captive.user_connect name, ip, (self.free(name) ? 'yes' : 'no')
   end
@@ -269,7 +265,6 @@ module Internet
     return unless @operator
 
     Captive.user_disconnect_name name
-    Monitor::Traffic.ip_del_name name
   end
 
   # Unused function. See #fetch_users
