@@ -29,13 +29,13 @@ def permissions_init
 end
 permissions_init
 
-%x[ rm -rf data* ]
+#%x[ rm -rf data* ]
 
 QooxView.init( '../Entities', '../Views' )
 
 tests = Dir.glob( 'ge_*.rb' )
 #tests = %w( activity )
-tests = %w( internet )
+tests = %w( view )
 #tests = %w( configbase )
 tests.each{|t|
   begin

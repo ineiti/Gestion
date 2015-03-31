@@ -50,9 +50,10 @@ class Welcome < View
 
   # On pressing of the login-button, we search for the user and check the password
   def rpc_button_login(session, args)
+    #dputs_func
     dputs(3) { "args is #{args.inspect}" }
     login_name, password = args._username.gsub(/ /, '').downcase, args._password
-    person = Entities.Persons.match_by_login_name(login_name)
+    person = Persons.match_by_login_name(login_name)
     if person
       dputs(3) { "Person is #{person.inspect} and #{person.password}" }
     end
