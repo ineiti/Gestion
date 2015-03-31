@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 150331: 1.9.6
+  - made more granularity in internet-functions, check what you need!
+
 - 150313: 1.9.5
   - lots of bug-fixes
   - added update and first version with pacman-support!

@@ -3,27 +3,20 @@
 WORKING:
 
 BUGS:
+        - Update doesn't work correctly
+            - problem with upload that doesn't select the chosen file
+        - AfriCompta shouldn't allow inputs for later or earlier than 1 week
+            - when deleted movement exists, it's date is shown
+        - Network::Monitor::Traffic::User.traffic_user has to take care when
+            shifting days, so that there is no hole in 28..30-days months
         - after a couple of logins, View.rpc_list is 10x slower
             - seems like every hash-lookup is 10x slower - need to investigate
                 further
-        - Update doesn't work correctly
-            - problem with upload that doesn't select the chosen file
         - Tigo::recharge doesn't react with
             Souscription reussie:Internet Kattir 1111. 40 MB valide jusqu a minuit. Cout 800F .
-        - AfriCompta shouldn't allow inputs for later or earlier than 1 week
-            - when deleted movement exists, it's date is shown
-        - measure-traffic: if different people from same IP connect, all are
-            counted
-            x delete iptable-entry once a user disconnects
-            - also delete iptable-entry when captive disconnects
-                - move the whole traffic-setup to Captive
-        - measure-traffic: people overriding their total are not disconnected!
-            - is this correct or just a case of somebody having freesurf?
-        - Network::Monitor::Traffic::User.traffic_user has to take care when
-            shifting days, so that there is no hole in 28..30-days months
-        - Persons::Tabs - sort by full_name
         - captive_dev should depend on the actual device used
-        - Report::executive
+        - Check Report::executive
+
         - Documentation, documentation
         - change ConfigBase.send_config to rely on ConfigBase.update
         - when course_server and user is admin, add the following:
@@ -48,10 +41,6 @@ Bugs to watch:
         - Error in ConfigBase which doesn't update correctly the accounts when starting
           without accounting
 
-For CCE:
-        - Prepare Diplomas with fields
-        - Check auto-update of Antivirus and other stuff
-
 For 2.0:
         - Put data-directory elsewhere
         - Make a gem-compatible installation
@@ -61,18 +50,14 @@ Security:
 UI:
         - Replace :empty_nonlists with :empty and :empty_update
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
-        - if only Course-tabs are visible, the basic tab is not shown, so no
-         tabs can be added
 
 FEATURES:
-        - Cashbox::Report - add "ajout" to report
         - CourseType
             x added internet_free_* to configbase
             - add drop: "internet_always, internet_course, none"
             - add to course
         - add "messieur/madame" in diploma
         - remove accounting from admin-rights
-        - Tigo: when SMS with promotion arrives, @internet_left needs to be updated
         - Check auto-update of Antivirus and other stuff
         - import all data from a center
             - write tests
@@ -288,6 +273,14 @@ To check:
 
 
 ** FIXED **:
+        - F 130331: Cashbox::Report - add "ajout" to report
+        - F 130331: Persons::Tabs - sort by full_name
+        - B 130331: measure-traffic: if different people from same IP connect, all are
+            counted
+            x delete iptable-entry once a user disconnects
+            x also delete iptable-entry when captive disconnects
+                x move the whole traffic-setup to Captive
+        - B 130331: measure-traffic: people overriding their total are not disconnected!
         - B 130518: update doesn't work correctly - snake bites its tail
         - B 130316: lpstat: no destinations added - should disappear
         - F 130316: AdminBackup - download and upload backups

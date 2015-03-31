@@ -1,15 +1,20 @@
+=begin
+This module allows for charging the internet-credit of a person. You can also
+add a new person
+=end
+
 class CashboxCredit < View
   def layout
     set_data_class :Persons
     @order = 30
     @update = true
-    @functions_need = [:internet]
+    @functions_need = [:internet, :internet_cyber]
 
     gui_hbox do
       gui_vbox :nogroup do
         show_str :search
         show_entity_person :person, :single, :login_name, :callback => true
-        show_button :search_person
+        show_button :search_person, :add_person
       end
 
       gui_vbox :nogroup do
@@ -19,7 +24,26 @@ class CashboxCredit < View
         show_int_ro :internet_credit
         show_button :add_credit
       end
+
+      gui_window :win_add do
+        show_str :full_name
+        show_button :win_add_person, :close
+      end
+
     end
+  end
+
+  def rpc_button_add_person(session, data)
+    reply(:window_show, :win_add) +
+        reply(:empty, :full_name)
+  end
+
+  def rpc_button_win_add_person(session, data)
+    ret = reply(:window_hide)
+    person = if data._full_name.to_s.length > 0
+               Persons.create(complete_name: data._full_name)
+             end
+    ret + (person ? rpc_button_search_person(session, search: person.login_name) : [])
   end
 
   def rpc_button_search_person(session, data)

@@ -1,6 +1,6 @@
 class NetworkBlock < View
   def layout
-    @functions_need = [:internet]
+    @functions_need = [:network]
     @order = 100
     @blocking = Entities.Statics.get(:NetworkBlock)
     @blocking.data_str.class != Hash and @blocking.data_str = []

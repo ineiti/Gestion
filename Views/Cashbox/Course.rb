@@ -52,7 +52,7 @@ class CashboxCourse < View
     reply(:empty, %w(cash remark receit_id)) +
         reply(:update, :payment_date => @date_pay.strftime('%d.%m.%Y')) +
         reply(:update, :payments =>
-            data._courses.student_payments(data._students.login_name))
+                         data._courses.student_payments(data._students.login_name))
   end
 
   def rpc_button_pay(session, data)
@@ -73,7 +73,8 @@ class CashboxCourse < View
     dputs(3) { "Data is #{data.inspect}" }
     if data._cash.to_i != 0
       data._courses.payment(session.owner, data._students, data._cash, @date_pay,
-                            session.owner.has_permission?(:admin) && data._old_cash.first == 'Yes')
+                            session.owner.has_permission?(:admin) && data._old_cash.first == 'Yes',
+                            remark: data._remark)
     end
     rpc_list_choice_students(session, data)
   end

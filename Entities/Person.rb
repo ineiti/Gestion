@@ -527,38 +527,45 @@ class Persons < Entities
         ret
       }.flatten.uniq.sort { |a, b|
         a.login_name.to_s <=> b.login_name.to_s
-      }
+      }.first(max)
+
+      # Check if we have an exact match on the login_name
+      dputs(3) { "Searching for exact match #{str}" }
+      if exact = Persons.match_by_login_name(str)
+        dputs(3) { 'Found exact match' }
+        if pos = result.index(exact)
+          dputs(3) { "Found exact match at position #{pos}" }
+          result.delete_at(pos)
+          result.unshift(exact)
+          dputs(3) { "result is now #{result.inspect}" }
+        end
+      end
     else
-      result = Persons.data.select{|k,v|
+      result = Persons.data.select { |k, v|
         #dp v
         ret = false
         %i( login_name family_name first_name
-        permissions person_id email phone groups ).each{|i|
+        permissions person_id email phone groups ).each { |i|
           #dp "#{i} - #{v[i]}"
           ret |= v[i] =~ /#{str}/
         }
         ret
       }.sort { |a, b|
-        a[1]._login_name.to_s <=> b[1]._login_name.to_s
-      }.first(max).collect{|k,v| Persons.get_data_instance(k)}
+        if a[1]._login_name.to_s == str
+          -1
+        elsif b[1]._login_name.to_s == str
+          1
+        else
+          "#{a[1]._first_name} #{a[1]._family_name}" <=>
+              "#{b[1]._first_name} #{b[1]._family_name}"
+        end
+      }.first(max).collect { |k, v| Persons.get_data_instance(k) }
     end
 
     dputs(3) { "Result is: #{result.collect { |r| r.login_name }}" }
     not result and result = []
 
-    # Check if we have an exact match on the login_name
-    dputs(3) { "Searching for exact match #{str}" }
-    if exact = Persons.match_by_login_name(str)
-      dputs(3) { 'Found exact match' }
-      if pos = result.index(exact)
-        dputs(3) { "Found exact match at position #{pos}" }
-        result.delete_at(pos)
-        result.unshift(exact)
-        dputs(3) { "result is now #{result.inspect}" }
-      end
-    end
-
-    result.first(max)
+    result
   end
 
   def icc_get(tr)
@@ -1101,13 +1108,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-                                     [{:content => "#{m[0]}", :align => :center},
-                                      m[1],
-                                      {:content => "#{m[2]}", :align => :right},
-                                      {:content => "#{Account.total_form(
-                                          sum += m[2].gsub(',', '').to_f / 1000)}",
-                                       :align => :right}]
-                                   }, :header => true, :column_widths => [70, 300, 75, 75])
+                                      [{:content => "#{m[0]}", :align => :center},
+                                       m[1],
+                                       {:content => "#{m[2]}", :align => :right},
+                                       {:content => "#{Account.total_form(
+                                           sum += m[2].gsub(',', '').to_f / 1000)}",
+                                        :align => :right}]
+                                    }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

@@ -352,7 +352,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_search_in
-    lvl = 0
+    lvl = 3
     assert_equal [], Persons.search_in('foobar')
     assert_equal 2, Persons.search_in('student').length
     assert_equal 0, Persons.search_in('test_search').length

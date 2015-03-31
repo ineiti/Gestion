@@ -1426,9 +1426,10 @@ base_gestion
       total = 0
       (movs.select { |e| e.desc =~ / #{s}:/ }.collect { |e|
         total += e.value
+        remark = (e.desc =~ / -- /) ? e.desc.sub(/.*-- /, '') : ''
         [e.global_id,
          [e.date,
-          '',
+          remark,
           e.value_form,
           ''
          ]] } +
@@ -1451,11 +1452,12 @@ base_gestion
     end
   end
 
-  def payment(secretary, student, amount, date = Date.today, oldcash = false)
+  def payment(secretary, student, amount, date = Date.today, oldcash = false,
+              remark: '')
     log_msg :course_payment, "#{secretary.full_login} got #{amount} " +
                                "of #{student.full_name} in #{name}"
     Movements.create("For student #{student.login_name}:" +
-                         "#{student.full_name}",
+                         "#{student.full_name} -- #{remark}",
                      date.strftime('%Y-%m-%d'), amount.to_f / 1000,
                      secretary.account_due, entries)
     if secretary.has_permission?(:admin) && oldcash
