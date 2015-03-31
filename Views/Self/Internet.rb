@@ -157,7 +157,7 @@ class SelfInternet < View
   end
 
   def get_traffic(user)
-    return reply(:hide, :traffic) unless (t = Internet.traffic) && user.is_staff?
+    return reply(:hide, :traffic) unless (t = Captive.traffic) && user.is_staff?
     list = t.traffic.collect { |h, _k|
       traffic = t.get_day(h, -3).collect { |r, t| ((r+t)/1000)/1000.0 }
       [h, [h] + traffic]

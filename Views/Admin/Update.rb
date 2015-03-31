@@ -4,13 +4,10 @@ class AdminUpdate < View
     @update = true
 
     gui_hbox do
-      gui_vbox do
+      gui_vbox :nogroup do
         show_list_single :update_files, width: 300
         show_upload :upload_update, callback: true
         show_button :update, :delete
-      end
-      gui_vbox do
-        show_html :info
       end
 
       gui_window :confirm_win do
@@ -33,7 +30,7 @@ class AdminUpdate < View
   end
 
   def list_files
-    list_http + list_usb + list_tmp
+    dp list_http + list_usb + list_tmp
   end
 
   def rpc_update(_session, select = [])
@@ -42,21 +39,22 @@ class AdminUpdate < View
   end
 
   def rpc_button_update(session, data)
+    dp data
     reply(:window_show, :confirm_win) +
         reply(:update, confirm_html: '<h1>Updating - Danger!</h1>' +
                          'Are you sure you want to update with<br>' +
                          "<strong>#{data._update_files.first}</strong>?") +
-        reply(:select, update_files: data._update_files.first)
+        reply(:select, update_files: [data._update_files.first])
   end
 
   def rpc_button_confirm_ok(session, data)
+    dp data
     file = data._update_files.first
     log_msg :AdminUpdate, "Preparing update with #{file}"
     Entities.save_all
     log_msg :backup, 'Creating new backup'
     System.run_bool "#{GESTION_DIR}/Binaries/backup"
     System.run_bool "#{GESTION_DIR}/Binaries/gestion_update.rb #{file}"
-    #IO.write('/tmp/gestion.update', file)
     Thread.new {
       sleep 5
       Service.restart 'gestion'
@@ -74,7 +72,7 @@ class AdminUpdate < View
 
   def rpc_button_upload_update(session, data)
     file = ["file:///tmp/#{data._filename}"]
-    rpc_update(session, [file]) +
+    rpc_update(session, file) +
         rpc_button_update(session, update_files: file)
   end
 end
