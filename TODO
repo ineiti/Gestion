@@ -3,8 +3,13 @@
 WORKING:
 
 BUGS:
-        - Internet::Users shows passwords
-        - Can't search for freesurf
+        - smscontrol -> internet
+        - Connections -> Connexions (fr)
+        - Connections -> Internet (left part) and Admin (right part)
+        - traffic-display doesn't show up before first connection
+            - doesn't save used traffic
+        x Internet::Users shows passwords
+        x Can't search for freesurf
         - Dokuwiki update-check is not
         - AfriCompta shouldn't allow inputs for later or earlier than 1 week
             - when deleted movement exists, it's date is shown

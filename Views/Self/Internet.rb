@@ -10,17 +10,21 @@ class SelfInternet < View
     @functions_need = [:internet, :internet_captive]
     @functions_reject = [:internet_simple]
 
-    gui_vbox do
-      show_html :connection_status
-      show_int_ro :internet_credit
-      show_int_ro :users_connected
-      show_int_ro :bytes_left
-      show_int_ro :bytes_left_today
-      show_html :connection, :width => 100
-      show_html :auto_connection
-      show_table :traffic, headings: %w(Name Day-2 Day-1 Today),
-                 widths: [100, 75, 75, 75]
-      show_button :connect, :disconnect
+    gui_hbox do
+      gui_vbox :nogroup do
+        show_html :connection_status
+        show_int_ro :internet_credit
+        show_int_ro :users_connected
+        show_int_ro :bytes_left
+        show_int_ro :bytes_left_today
+        show_html :connection, :width => 100
+        show_html :auto_connection
+        show_button :connect, :disconnect
+      end
+      gui_vbox :nogroup do
+        show_table :traffic, headings: %w(Name Day-2 Day-1 Today),
+                   widths: [100, 75, 75, 75]
+      end
     end
   end
 
@@ -139,13 +143,13 @@ class SelfInternet < View
     users_str = [[]]
     users.split.sort.each { |u|
       if users_str.last.count > 3
-        users_str[-1] = users_str.last.join(", ")
+        users_str[-1] = users_str.last.join(', ')
         users_str.push []
       end
       users_str.last.push u
     }
-    users_str[-1] = users_str.last.join(", ")
-    users_str.join(",<br>")
+    users_str[-1] = users_str.last.join(', ')
+    users_str.join(',<br>')
   end
 
   def rpc_update_async(session)
@@ -189,9 +193,14 @@ class SelfInternet < View
         reply_visible(!Internet.free(session.owner), :internet_credit)
     if Internet.operator && Internet.operator.has_promo && o.is_staff?
       left = Internet.operator.internet_left
-      ret += reply(:unhide, %w(bytes_left bytes_left_today)) +
-          reply(:update, :bytes_left => left.to_MB('Mo'),
-                bytes_left_today: Recharge.left_today(left).to_MB('Mo'))
+      ret += reply(:unhide, :bytes_left) +
+          reply(:update, :bytes_left => left.to_MB('Mo'))
+      if Recharges.enabled?
+        ret += reply(:unhide, :bytes_left_today) +
+            reply(:update, bytes_left_today: Recharge.left_today(left).to_MB('Mo'))
+      else
+        ret += reply(:hide, :bytes_left_today)
+      end
     else
       ret += reply(:hide, %w(bytes_left bytes_left_today))
     end
