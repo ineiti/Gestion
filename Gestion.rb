@@ -179,6 +179,20 @@ else
     }
   end
 
+  # Shows time every minute in the logs
+  if true
+    $test_hash = {a: 1, b:2, c:3}
+    $test_hash_big = (1..100).collect{|i| ["value#{i}", i]}.to_h
+    $show_time = Thread.new {
+      loop {
+        Timing.measure('Small hash'){$test_hash._a}
+        Timing.measure('Big hash'){$test_hash_big['value50']}
+        Timing.measure('Big method_missing'){$test_hash_big._value50}
+        sleep 10
+      }
+    }
+  end
+
   # Catch SIGINT signal so we can save everything before quitting
   trap('SIGINT') {
     throw :ctrl_c
