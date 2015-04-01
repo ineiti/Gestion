@@ -18,7 +18,7 @@ class InternetClasses < Entities
     value_list_drop :type, '%w(unlimited limit_daily_mo limit_daily_min)'
   end
 
-  def migrate_1_raw(i)
+  def migration_1_raw(i)
     i._type == ['limit_daily'] and i._type = ['limit_daily_mo']
     i._limit = i._limit_mo
   end
@@ -30,8 +30,8 @@ class InternetClass < Entity
   # allowed to use the internet
   def in_limits?(host, today = Date.today)
     return true if type == ['unlimited']
-    return true unless t = Captive.traffic
-    t.get_day(host, 1, today.to_time).flatten[0..1].inject(:+) < limit_mo.to_i * 1_000_000
+    return true unless t = Network::Captive.traffic
+    t.get_day(host, 1, today.to_time).flatten[0..1].inject(:+) < limit.to_i * 1_000_000
   end
 end
 

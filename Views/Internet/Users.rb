@@ -39,7 +39,7 @@ class InternetUsers < View
   end
 
   def rpc_update(session)
-    return unless t = Internet.traffic
+    return unless t = Network::Captive.traffic
     list = t.traffic.collect { |h, _k|
       [h, t.get_day(h, 1).inject(:+)]
     }.sort_by { |t| t[1] }.reverse[0..10].collect { |t|

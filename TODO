@@ -273,6 +273,8 @@ To check:
 
 
 ** FIXED **:
+        - B 130331: Network::Measure::Traffic has to update all users, even those not
+            used actually
         - F 130331: Cashbox::Report - add "ajout" to report
         - F 130331: Persons::Tabs - sort by full_name
         - B 130331: measure-traffic: if different people from same IP connect, all are
