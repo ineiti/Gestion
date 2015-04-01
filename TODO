@@ -3,8 +3,6 @@
 WORKING:
 
 BUGS:
-        - Update doesn't work correctly
-            - problem with upload that doesn't select the chosen file
         - AfriCompta shouldn't allow inputs for later or earlier than 1 week
             - when deleted movement exists, it's date is shown
         - Network::Monitor::Traffic::User.traffic_user has to take care when
@@ -52,10 +50,12 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
+        - Add Cashbox::Other which covers all other Income-accounts
         - CourseType
             x added internet_free_* to configbase
             - add drop: "internet_always, internet_course, none"
             - add to course
+        - Update: Should open gestion in new window
         - add "messieur/madame" in diploma
         - remove accounting from admin-rights
         - Check auto-update of Antivirus and other stuff
@@ -273,7 +273,9 @@ To check:
 
 
 ** FIXED **:
-        - B 130331: Network::Measure::Traffic has to update all users, even those not
+        - B 130401: Update doesn't work correctly
+            - problem with upload that doesn't select the chosen file
+        - B 130401: Network::Measure::Traffic has to update all users, even those not
             used actually
         - F 130331: Cashbox::Report - add "ajout" to report
         - F 130331: Persons::Tabs - sort by full_name

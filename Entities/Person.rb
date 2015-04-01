@@ -317,8 +317,8 @@ class Persons < Entities
 
   def listp_account_due
     search_by_account_due('.+').select { |p|
-      # PersonCredit-permission is the least for everybody who handles money.
-      p.account_due and p.login_name != 'admin' and p.has_permission?(:PersonCredit)
+      # CashboxCredit-permission is the least for everybody who handles money.
+      p.account_due and p.login_name != 'admin' and p.has_permission?(:CashboxCredit)
     }.collect { |p|
       dputs(4) { "p is #{p.full_name}" }
       dputs(4) { "account is #{p.account_due.get_path}" }
