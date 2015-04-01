@@ -3,6 +3,9 @@
 WORKING:
 
 BUGS:
+        - Internet::Users shows passwords
+        - Can't search for freesurf
+        - Dokuwiki update-check is not
         - AfriCompta shouldn't allow inputs for later or earlier than 1 week
             - when deleted movement exists, it's date is shown
         - Network::Monitor::Traffic::User.traffic_user has to take care when

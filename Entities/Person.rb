@@ -547,8 +547,8 @@ class Persons < Entities
         ret = false
         %i( login_name family_name first_name
         permissions person_id email phone groups ).each { |i|
-          #dp "#{i} - #{v[i]}"
-          ret |= v[i] =~ /#{str}/
+          #dp "#{i} - #{v[i]} - #{v[i].to_s =~ /#{str}/}"
+          ret ||= v[i].to_s =~ /#{str}/
         }
         ret
       }.sort { |a, b|
