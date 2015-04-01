@@ -30,7 +30,7 @@ class AdminUpdate < View
   end
 
   def list_files
-    dp list_http + list_usb + list_tmp
+    list_http + list_usb + list_tmp
   end
 
   def rpc_update(_session, select = [])
@@ -39,7 +39,6 @@ class AdminUpdate < View
   end
 
   def rpc_button_update(session, data)
-    dp data
     reply(:window_show, :confirm_win) +
         reply(:update, confirm_html: '<h1>Updating - Danger!</h1>' +
                          'Are you sure you want to update with<br>' +
@@ -48,7 +47,6 @@ class AdminUpdate < View
   end
 
   def rpc_button_confirm_ok(session, data)
-    dp data
     file = data._update_files.first
     log_msg :AdminUpdate, "Preparing update with #{file}"
     Entities.save_all

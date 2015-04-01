@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.5\n"
 "POT-Creation-Date: 2015-03-31 21:15+0100\n"
-"PO-Revision-Date: 2015-03-31 21:19+0100\n"
+"PO-Revision-Date: 2015-04-01 07:49+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: French <fr@profeda.org>\n"
 "Language: \n"
@@ -3286,7 +3286,7 @@ msgstr "Promotion restante"
 #. Comes from file Views/Network/SMS.rb and line is           show_int_ro :promotion_left
 #: ../Views/Network/SMS.rb:27
 msgid "promotion_left"
-msgstr "Promotion restante"
+msgstr "Promotion du jour"
 
 #. Comes from file Views/Network/SMS.rb and line is           show_str_ro :state_now
 #: ../Views/Network/SMS.rb:28

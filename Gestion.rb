@@ -179,8 +179,8 @@ else
     }
   end
 
-  # Shows time every minute in the logs
-  if true
+  # Trying to debug mysterious slowdown
+  if false
     $test_hash = {a: 1, b:2, c:3}
     $test_hash_big = (1..100).collect{|i| ["value#{i}", i]}.to_h
     $show_time = Thread.new {

@@ -511,8 +511,9 @@ class Persons < Entities
 
   def Persons.search_in(str, field = nil, center: nil, max: 20)
     # Don't search if there are few caracters and lots of Persons
-    if (not str or str.length < 3) and (Persons.data.length > 100)
-      field ? View.reply(:empty, field) : []
+    dputs(3) { "search_in - _#{str}_ - #{Persons.data.length}" }
+    if (!str || str.length < 3) && (Persons.data.length > max)
+      return field ? View.reply(:empty, field) : []
     end
 
     if false
@@ -1108,13 +1109,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-                                      [{:content => "#{m[0]}", :align => :center},
-                                       m[1],
-                                       {:content => "#{m[2]}", :align => :right},
-                                       {:content => "#{Account.total_form(
-                                           sum += m[2].gsub(',', '').to_f / 1000)}",
-                                        :align => :right}]
-                                    }, :header => true, :column_widths => [70, 300, 75, 75])
+                                        [{:content => "#{m[0]}", :align => :center},
+                                         m[1],
+                                         {:content => "#{m[2]}", :align => :right},
+                                         {:content => "#{Account.total_form(
+                                             sum += m[2].gsub(',', '').to_f / 1000)}",
+                                          :align => :right}]
+                                      }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

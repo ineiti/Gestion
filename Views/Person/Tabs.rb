@@ -30,6 +30,7 @@ class PersonTabs < View
 
   def rpc_update(session)
     super(session)
+    #+ rpc_callback_search(session, {}, false)
   end
 
   def rpc_button_start_search(session, args)
@@ -99,13 +100,13 @@ class PersonTabs < View
         session.owner.login_name : nil
     result = Persons.search_in(s, center: center)
 
-    ret = reply(:empty, :persons) +
-        reply(:update,
-              :persons => result.collect { |p|
-                p.to_list(p.simple) },
-              :search => s)
+    ret = reply(:empty, :persons)
 
     if result.length > 0
+      ret += reply(:update,
+                   :persons => result.collect { |p|
+                     p.to_list(p.simple) },
+                   :search => s)
       if do_list_choice
         ret += reply(:update, :persons => [result[0].login_name])
       end
