@@ -772,26 +772,30 @@ base_gestion
         if responsible.role_diploma.to_s.length > 0
           role_diploma = responsible.role_diploma
         end
-        doc.gsub!(/-RESP_ROLE-/, role_diploma)
-        doc.gsub!(/-RESP-/, responsible.full_name)
-        doc.gsub!(/-NAME-/, student.full_name)
-        doc.gsub!(/-DURATION-/, duration.to_s)
-        doc.gsub!(/-COURSE-/, description)
-        doc.gsub!(/-COURSE_ID-/, name)
         show_year = start.gsub(/.*\./, '') != self.end.gsub(/.*\./, '')
-        doc.gsub!(/-SPECIAL-/, '')
-        doc.gsub!(/-GRADE-/, grade.mention)
-        doc.gsub!(/-DATE-/, date_i18n(sign))
-        doc.gsub!(/-FROM-/, date_i18n(start, show_year))
-        doc.gsub!(/-TO-/, date_i18n(self.end))
-        doc.gsub!(/-COURSE_TYPE-/, ctype.name)
-        doc.gsub!(/-URL_LABEL-/, grade.get_url_label)
         c = center
-        doc.gsub!(/-CENTER_NAME-/, c.full_name)
-        doc.gsub!(/-CENTER_ADDRESS-/, c.address || '')
-        doc.gsub!(/-CENTER_PLACE-/, c.town || '')
-        doc.gsub!(/-CENTER_PHONE-/, c.phone || '')
-        doc.gsub!(/-CENTER_EMAIL-/, c.email || '')
+        OpenPrint.replace(
+            doc,
+            [[/-RESP_ROLE-/, role_diploma],
+             [/-RESP-/, responsible.full_name],
+             [/-NAME-/, student.full_name],
+             [/_NAME_/, student.full_name.upcase],
+             [/-DURATION-/, duration.to_s],
+             [/-COURSE-/, description],
+             [/-COURSE_ID-/, name],
+             [/-SPECIAL-/, ''],
+             [/-GRADE-/, grade.mention],
+             [/-DATE-/, date_i18n(sign)],
+             [/-FROM-/, date_i18n(start, show_year)],
+             [/-TO-/, date_i18n(self.end)],
+             [/-COURSE_TYPE-/, ctype.name],
+             [/-URL_LABEL-/, grade.get_url_label],
+             [/-CENTER_NAME-/, c.full_name],
+             [/-CENTER_ADDRESS-/, c.address || ''],
+             [/-CENTER_PLACE-/, c.town || ''],
+             [/-CENTER_PHONE-/, c.phone || ''],
+             [/-CENTER_EMAIL-/, c.email || ''],
+             [/-MEAN-/, grade.mean.to_s]])
 
         dputs(3) { "ctype is #{ctype.inspect}" }
         if ctype.diploma_type.first =~ /report/
@@ -809,7 +813,6 @@ base_gestion
             end
           end
         end
-        doc.gsub!(/-MEAN-/, grade.mean.to_s)
         doc.gsub!(/(number-rows-spanned=)\"3\"/, "\\1\"#{ctype.tests_nbr.to_i+1}\"")
         z.get_output_stream('content.xml') { |f|
           f.write(doc)

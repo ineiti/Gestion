@@ -3,13 +3,12 @@
 WORKING:
 
 BUGS:
+        - error in View:Course:Diplomas when printing, cancelling, printing again
         - smscontrol -> internet
         - Connections -> Connexions (fr)
         - Connections -> Internet (left part) and Admin (right part)
         - traffic-display doesn't show up before first connection
-            - doesn't save used traffic
-        x Internet::Users shows passwords
-        x Can't search for freesurf
+            - doesn't save used traffic under some circomstances
         - Dokuwiki update-check is not
         - AfriCompta shouldn't allow inputs for later or earlier than 1 week
             - when deleted movement exists, it's date is shown
@@ -281,21 +280,26 @@ To check:
 
 
 ** FIXED **:
-        - B 130401: Update doesn't work correctly
+        - F 150401: OpenPrint: if label is _..._, capitalize all letters
+        - B 150401: Internet::Users shows passwords
+        - B 150401: Can't search for freesurf
+        - B 150401: Monitor::Traffic should honor systems where "iptables -w" doesn't work
+        - B 150401: Monitor::Traffic hangs when using iptables -L without -n
+        - B 150401: Update doesn't work correctly
             - problem with upload that doesn't select the chosen file
-        - B 130401: Network::Measure::Traffic has to update all users, even those not
+        - B 150401: Network::Measure::Traffic has to update all users, even those not
             used actually
-        - F 130331: Cashbox::Report - add "ajout" to report
-        - F 130331: Persons::Tabs - sort by full_name
-        - B 130331: measure-traffic: if different people from same IP connect, all are
+        - F 150331: Cashbox::Report - add "ajout" to report
+        - F 150331: Persons::Tabs - sort by full_name
+        - B 150331: measure-traffic: if different people from same IP connect, all are
             counted
             x delete iptable-entry once a user disconnects
             x also delete iptable-entry when captive disconnects
                 x move the whole traffic-setup to Captive
-        - B 130331: measure-traffic: people overriding their total are not disconnected!
-        - B 130518: update doesn't work correctly - snake bites its tail
-        - B 130316: lpstat: no destinations added - should disappear
-        - F 130316: AdminBackup - download and upload backups
+        - B 150331: measure-traffic: people overriding their total are not disconnected!
+        - B 150518: update doesn't work correctly - snake bites its tail
+        - B 150316: lpstat: no destinations added - should disappear
+        - F 150316: AdminBackup - download and upload backups
         - F 150313: Updating through web-interface!
         - B 150313: Courses::Modify very slow - oups, left 'center'-button
         - B 150313: Courses::Diplomas.create, can't abort -> only display-problem
