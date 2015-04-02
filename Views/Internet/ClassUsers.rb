@@ -5,9 +5,9 @@ use a certain amount of bytes per day.
 TODO: make a working add-button
 =end
 
-class InternetUsers < View
+class InternetClassUsers < View
   def layout
-    @order = 50
+    @order = 300
     @update = true
 
     gui_hbox do

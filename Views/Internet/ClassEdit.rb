@@ -1,9 +1,9 @@
-class InternetEditClasses < View
+class InterneClassEdit < View
   include VTListPane
 
   def layout
     set_data_class :InternetClasses
-    @order = 100
+    @order = 400
 
     gui_hbox do
       gui_vbox :nogroup do

@@ -55,7 +55,6 @@ FEATURES:
             x added internet_free_* to configbase
             - add drop: "internet_always, internet_course, none"
             - add to course
-        - Add Cashbox::Other which covers all other Income-accounts
         - add "messieur/madame" in diploma
         - remove accounting from admin-rights
         - Check auto-update of Antivirus and other stuff
@@ -68,7 +67,7 @@ FEATURES:
             - empty forms should be disabled (like Person::Modify), in
               TemplateCourse, NetworkShare, ...
         - Get time and date from SMS
-        - SMScontrol: find better name!
+        - Add Cashbox::Other which covers all other Income-accounts
         - make simple printer-conf
         - CoursesTabs - Drop-down to select courses
         - Bibliotheque
@@ -273,6 +272,7 @@ To check:
 
 
 ** FIXED **:
+        - F 150402: SMScontrol: find better name -> MobileControl
         - F 150402: smscontrol -> internet as mobilecontrol
         - F 150402: Connections -> Connexions (fr)
         - F 150402: Connections -> Internet (left part) and Admin (right part)

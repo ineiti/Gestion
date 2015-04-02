@@ -1,4 +1,4 @@
-class TemplateAccounts < View
+class AccountDefaults < View
   def layout
     @order = 300
     @update = true

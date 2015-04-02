@@ -17,16 +17,15 @@ def main
     end
     file = IO.read(@file_update)
     update_html("Updating using file #{file}")
-    if false
-      update_html 'Waiting for Gestion to stop for 10 seconds'
-      Service.stop 'gestion'
-      sleep 2
-      update_html 'Waiting for Gestion to stop for 5 seconds'
-      sleep 5
-    end
     update_html "Calling pacman to update #{file}"
-    update = System.run_str "/usr/bin/pacman --noconfirm --force -U #{file}"
-    update_html "<pre>#{update}</pre>"
+    update = Thread.new {
+      System.run_str "/usr/bin/pacman --noconfirm --force -U #{file} > /tmp/gestion.update"
+    }
+    while update.alive?
+      update_html "<pre>#{IO.read('/tmp/gestion.update')}</pre>", true
+      sleep 4
+    end
+    update_html "<pre>#{IO.read('/tmp/gestion.update')}</pre>"
     update_html 'Starting Gestion'
     FileUtils.rm @file_update
     i = 0
@@ -42,7 +41,7 @@ def main
       end
     end
     update_html('Hope the update went well - goodbye',
-                '5; URL=http://admin.profeda.org')
+                refresh: '5; URL=http://admin.profeda.org')
   rescue Exception => e
     update_html("Error: #{e.to_s}")
     update_html("Error: #{caller.inspect}")
@@ -50,14 +49,14 @@ def main
   System.run_str "cat #{@html_file} | mail -S 'update gestion on $(hostname)' root@localhost"
 end
 
-def update_html(msg, content = '5')
+def update_html(msg, noadd = false, refresh: '5')
   return unless Dir.exists? @html_dir
   p msg
   @html_txt.push msg
-  IO.write(@html_file, "
+  IO.write("#{@html_file}.tmp", "
 <html>
 <head>
-<META http-equiv='refresh' content='#{content}'>
+<META http-equiv='refresh' content='#{refresh}'>
   <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
   <title>Update of Gestion</title>
   <style>
@@ -124,6 +123,8 @@ def update_html(msg, content = '5')
 </body>
 </html>
 ")
+  FileUtils.mv "#{@html_file}.tmp", @html_file
+  noadd and @html_txt.pop
 end
 
 if ARGV.length > 0

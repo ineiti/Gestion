@@ -2,7 +2,7 @@ class InternetAccess < View
   include VTListPane
 
   def layout
-    @order = 90
+    @order = 500
     @functions_need = [:internet, :network_pro]
 
     set_data_class :AccessGroups

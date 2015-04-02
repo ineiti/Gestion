@@ -6,7 +6,7 @@ class InternetMobile < View
 
   def layout
     @functions_need = [:sms_control]
-    @order = 10
+    @order = 100
     @update = true
     @auto_update_async = 10
     @auto_update_send_values = false
@@ -29,7 +29,7 @@ class InternetMobile < View
           show_str_ro :state_goal
           show_str_ro :emails
           show_str_ro :vpn
-          show_list_drop :umts_connection, 'View.NetworkSMS.umts_connection',
+          show_list_drop :umts_connection, 'View.InternetMobile.umts_connection',
                          :callback => true
           show_button :connect, :disconnect, :reload
         end

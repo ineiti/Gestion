@@ -1,14 +1,14 @@
-class NetworkConnection < View
+class InternetConfig < View
   def layout
     set_data_class :ConfigBases
     #@visible = false
-    @order = 100
+    @order = 200
     @update = true
-    @functions_need = [:network]
+    @functions_need = [:network, :internet]
 
     gui_vbox do
-      show_block :captive
-      show_arg :prerouting, :width => 300
+      show_block :operator
+      show_block :internet
       show_button :save_costs
     end
   end
@@ -20,9 +20,5 @@ class NetworkConnection < View
 
   def update(session)
     ConfigBase.to_hash
-  end
-
-  def rpc_update(session)
-    super
   end
 end

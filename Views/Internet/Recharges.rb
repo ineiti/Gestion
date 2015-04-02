@@ -1,17 +1,17 @@
 class InternetRecharges < View
   def layout
-    @order = 150
+    @order = 600
     @update = true
     @functions_need = [:sms_control, :network_pro]
     set_data_class :Recharges
 
     gui_hbox do
-      gui_vbox do
+      gui_vbox :nogroup do
         show_entity_recharge_all :recharges, :single, :time,
-                                 flexheight: 1, width: 200, callback: true
+                                 width: 200, callback: true
         show_button :new, :delete
       end
-      gui_vbox do
+      gui_vbox :nogroup do
         show_block :default, width: 200
         show_button :save
       end
