@@ -69,7 +69,6 @@ class CourseDiploma < View
       end
     else
       course.prepare_diplomas
-      dp course.make_pdfs_state['0']
 
       rpc_list_choice(session, :courses, :courses => [course_id.to_s])
     end
@@ -93,7 +92,7 @@ class CourseDiploma < View
 
     ret = []
 
-    dp overall_state = course.make_pdfs_state['0']
+    overall_state = course.make_pdfs_state['0']
     if overall_state == 'done'
       ret += reply(:auto_update, 0) +
           reply(:hide, [:abort, :status]) +

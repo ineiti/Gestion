@@ -53,6 +53,7 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
+        - pacman::make_mac should update pkgver and pkgrel automatically
         - smscontrol -> internet
         - Connections -> Connexions (fr)
         - Connections -> Internet (left part) and Admin (right part)

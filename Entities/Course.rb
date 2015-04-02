@@ -1319,7 +1319,7 @@ base_gestion
       @thread.join
       @thread = nil
       @make_pdfs_state = {'0' => 'done'}
-      ddputs(3) { 'Joined thread' }
+      dputs(3) { 'Joined thread' }
     end
   end
 
