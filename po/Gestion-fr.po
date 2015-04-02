@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.5\n"
 "POT-Creation-Date: 2015-03-31 21:15+0100\n"
-"PO-Revision-Date: 2015-04-01 07:49+0100\n"
+"PO-Revision-Date: 2015-04-02 21:06+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: French <fr@profeda.org>\n"
 "Language: \n"
@@ -3211,7 +3211,7 @@ msgstr "Bloquer"
 #. Comes from file Views/Network/Connection.rb and line is class NetworkConnection < View
 #: ../Views/Network/Connection.rb:1
 msgid "NetworkConnection"
-msgstr "Connections"
+msgstr "Connexions"
 
 #. Comes from file Views/Network/Connection.rb and line is       show_button :save_costs
 #: ../Views/Network/Connection.rb:20
@@ -3927,7 +3927,7 @@ msgstr "FAI"
 #. Comes from file Views/Self/Internet.rb and line is       show_html :auto_connection
 #: ../Views/Self/Internet.rb:20
 msgid "auto_connection"
-msgstr "Connection automatique"
+msgstr "Connexion automatique"
 
 #. Comes from file Views/Self/Internet.rb and line is       show_table :traffic, headings: %w(Name Day-2 Day-1 Today),
 #: ../Views/Self/Internet.rb:21

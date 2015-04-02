@@ -3,7 +3,7 @@ require 'helperclasses'
 require 'erb'
 
 
-class SMSinfo < RPCQooxdooPath
+class Mobileinfo < RPCQooxdooPath
   def self.parse(method, path, query)
     dputs(3) { "Got #{method} - #{path} - #{query}" }
     ERB.new(File.open('Files/smsinfo.erb') { |f| f.read }).result(binding)

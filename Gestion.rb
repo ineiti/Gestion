@@ -63,10 +63,10 @@ begin
                                  'ComptaReport,ComptaShow,ComptaEdit.*,Cashbox.*,Report.*,' +
                                  'ComptaCheck', 'secretary')
   Permission.add('maintenance', 'Inventory.*,AdminBackup,AdminPower', 'default')
-  Permission.add('cybermanager', 'CashboxCredit,NetworkTigo,FlagAddInternet,' +
-                                   'FlagPersonAdd,CashboxService,NetworkSMS', '')
+  Permission.add('cybermanager', 'CashboxCredit,FlagAddInternet,' +
+                                   'FlagPersonAdd,CashboxService,InternetMobile', '')
   Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,' +
-                               'PersonAdmin,PersonCourse,NetworkConnection,CourseStats,Report.*,' +
+                               'PersonAdmin,PersonCourse,InternetConnection,CourseStats,Report.*,' +
                                'Template.*',
                  'secretary,cybermanager,teacher')
   Permission.add('center', 'CourseModify,FlagAdminCourse,CourseGrade,' +

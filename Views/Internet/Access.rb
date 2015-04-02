@@ -1,4 +1,4 @@
-class NetworkAccess < View
+class InternetAccess < View
   include VTListPane
 
   def layout

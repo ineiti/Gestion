@@ -1,7 +1,7 @@
 require 'network'
 require 'helperclasses'
 
-class NetworkSMS < View
+class InternetMobile < View
   include Network
 
   def layout
@@ -99,20 +99,20 @@ class NetworkSMS < View
   end
 
   def recharges_list
-    return 'No recharge possible' if $SMScontrol.operator_missing?
-    list = $SMScontrol.operator.internet_cost_available.reverse.
+    return 'No recharge possible' if $MobileControl.operator_missing?
+    list = $MobileControl.operator.internet_cost_available.reverse.
         collect { |c, v|
       "#{c} CFAs for #{(v.to_i/1_000_000).separator} MB" }
     list.size == 0 ? 'No recharge possible' : list
   end
 
   def rpc_update(session)
-    return unless $SMScontrol
-    cl, il, recharge = if $SMScontrol.operator_missing?
+    return unless $MobileControl
+    cl, il, recharge = if $MobileControl.operator_missing?
                          [-1, -1, 'No recharge possible']
                        else
-                         [$SMScontrol.operator.credit_left,
-                          $SMScontrol.operator.internet_left,
+                         [$MobileControl.operator.credit_left,
+                          $MobileControl.operator.internet_left,
                          recharges_list]
                        end
     #cl, il = s_unknown(cl), s_unknown(il)
@@ -123,11 +123,11 @@ class NetworkSMS < View
                            'sed -e "s/OpenVPN.*//"') :
         System.run_str('pgrep openvpn')
     vpns = vpns.scan(/.{20}/).join("\n")
-    ussds = $SMScontrol.device ? $SMScontrol.device.ussd_list : 'Down'
-    operator = $SMScontrol.operator ? $SMScontrol.operator.name : 'Unknown'
+    ussds = $MobileControl.device ? $MobileControl.device.ussd_list : 'Down'
+    operator = $MobileControl.operator ? $MobileControl.operator.name : 'Unknown'
     reply(:update,
-          :state_now => s_status($SMScontrol.state_now),
-          :state_goal => s_status($SMScontrol.state_goal),
+          :state_now => s_status($MobileControl.state_now),
+          :state_goal => s_status($MobileControl.state_goal),
           :credit => cl,
           :promotion => il.separator,
           :promotion_left => Recharge.left_today(il).separator,
@@ -149,51 +149,51 @@ class NetworkSMS < View
 
   def rpc_button_send_sms(session, data)
     if data._sms_number.to_s.length == 0
-      $SMScontrol.inject_sms(data._sms_text)
+      $MobileControl.inject_sms(data._sms_text)
     else
-      $SMScontrol.device.sms_send(data._sms_number, data._sms_text)
+      $MobileControl.device.sms_send(data._sms_number, data._sms_text)
     end
   end
 
   def rpc_button_connect(session, data)
-    if $SMScontrol.operator.internet_left.to_i <= 1_000_000
-      $SMScontrol.operator.internet_left = 100_000_000
+    if $MobileControl.operator.internet_left.to_i <= 1_000_000
+      $MobileControl.operator.internet_left = 100_000_000
     end
-    $SMScontrol.state_goal = Device::CONNECTED
+    $MobileControl.state_goal = Device::CONNECTED
     rpc_update(session)
   end
 
   def rpc_button_disconnect(session, data)
-    $SMScontrol.state_goal = Device::DISCONNECTED
+    $MobileControl.state_goal = Device::DISCONNECTED
     rpc_update(session)
   end
 
   def rpc_button_send_ussd(session, data)
-    $SMScontrol.device.ussd_send(data._ussd)
+    $MobileControl.device.ussd_send(data._ussd)
     rpc_update(session)
   end
 
   def rpc_button_add_credit(session, data)
-    $SMScontrol.recharge_hold = true
-    $SMScontrol.operator.credit_add(data._ussd)
+    $MobileControl.recharge_hold = true
+    $MobileControl.operator.credit_add(data._ussd)
     rpc_update(session)
   end
 
   def rpc_button_recharge(session, data)
     dp data
     if data._menu.to_s.length == 0
-      if $SMScontrol.operator_missing?
+      if $MobileControl.operator_missing?
         credit = 0
       else
-        credit = $SMScontrol.operator.internet_cost_available.reverse.first[0].to_i
+        credit = $MobileControl.operator.internet_cost_available.reverse.first[0].to_i
       end
     else
       credit = data._menu.match(/^[0-9]*/)[0].to_i
     end
     if credit > 0
-      log_msg :NetworkSMS, "Asking for recharge of #{credit}"
-      $SMScontrol.recharge_hold = false
-      $SMScontrol.recharge_all(credit)
+      log_msg :NetworkMobile, "Asking for recharge of #{credit}"
+      $MobileControl.recharge_hold = false
+      $MobileControl.recharge_all(credit)
     end
     rpc_update(session)
   end

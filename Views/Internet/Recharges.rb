@@ -1,4 +1,4 @@
-class NetworkRecharges < View
+class InternetRecharges < View
   def layout
     @order = 150
     @update = true

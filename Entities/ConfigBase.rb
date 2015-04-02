@@ -141,26 +141,26 @@ class ConfigBase < Entity
     end
     if ConfigBase.has_function?(:sms_control)
       start_smscontrol
-      $SMScontrol.autocharge = ConfigBase.has_function?(:sms_control_autocharge)
+      $MobileControl.autocharge = ConfigBase.has_function?(:sms_control_autocharge)
     else
       stop_smscontrol
     end
   end
 
   def start_smscontrol
-    return if $SMScontrol
+    return if $MobileControl
     if (na = ConfigBase.network_actions) && File.exists?(na)
       require na
     end
     dputs(1) { 'Starting sms-control' }
-    $SMScontrol = Network::SMScontrol.new
+    $MobileControl = Network::MobileControl.new
 
-    $sms_control = Thread.new {
+    @mobile_thread = Thread.new {
       loop {
-        rescue_all 'Error with SMScontrol' do
-          $SMScontrol.check_connection
-          $SMScontrol.check_sms
-          dputs(2) { $SMScontrol.state_to_s }
+        rescue_all 'Error with MobileControl' do
+          $MobileControl.check_connection
+          $MobileControl.check_sms
+          dputs(2) { $MobileControl.state_to_s }
           sleep 10
         end
       }
@@ -168,9 +168,12 @@ class ConfigBase < Entity
   end
 
   def stop_smscontrol
-    $sms_control and $sms_control.kill
-    $sms_control = nil
-    $SMScontrol = nil
+    if @mobile_thread
+      @mobile_thread.kill
+      @mobile_thread.join
+      @mobile_thread = nil
+    end
+    $MobileControl = nil
   end
 
   def server_uri

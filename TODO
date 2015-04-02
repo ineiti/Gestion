@@ -3,9 +3,6 @@
 WORKING:
 
 BUGS:
-        - traffic-display doesn't show up before first connection
-            - doesn't save used traffic under some circomstances
-        - Dokuwiki update-check is not
         - AfriCompta shouldn't allow inputs for later or earlier than 1 week
             - when deleted movement exists, it's date is shown
         - Network::Monitor::Traffic::User.traffic_user has to take care when
@@ -53,16 +50,12 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
-        - pacman::make_mac should update pkgver and pkgrel automatically
-        - smscontrol -> internet
-        - Connections -> Connexions (fr)
-        - Connections -> Internet (left part) and Admin (right part)
-        - Add Cashbox::Other which covers all other Income-accounts
+        - make nice 503-error page
         - CourseType
             x added internet_free_* to configbase
             - add drop: "internet_always, internet_course, none"
             - add to course
-        - Update: Should open gestion in new window
+        - Add Cashbox::Other which covers all other Income-accounts
         - add "messieur/madame" in diploma
         - remove accounting from admin-rights
         - Check auto-update of Antivirus and other stuff
@@ -280,6 +273,12 @@ To check:
 
 
 ** FIXED **:
+        - F 150402: smscontrol -> internet as mobilecontrol
+        - F 150402: Connections -> Connexions (fr)
+        - F 150402: Connections -> Internet (left part) and Admin (right part)
+        - B 150401: traffic-display doesn't show up before first connection
+            - doesn't save used traffic under some circomstances
+        - F 150402: pacman::make_mac should update pkgver and pkgrel automatically
         - B 150402: error in View:Course:Diplomas when printing, cancelling, printing again
         - B 150402: backup fails to backup the links
         - F 150401: OpenPrint: if label is _..._, capitalize all letters
