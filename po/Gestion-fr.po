@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.8.5\n"
-"POT-Creation-Date: 2015-04-02 22:08+0100\n"
-"PO-Revision-Date: 2015-04-02 22:09+0100\n"
+"POT-Creation-Date: 2015-04-02 22:19+0100\n"
+"PO-Revision-Date: 2015-04-02 22:20+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: French <fr@profeda.org>\n"
 "Language: \n"
@@ -3072,9 +3072,9 @@ msgstr "Ajouter membre"
 msgid "delete_member"
 msgstr "Effacer membre"
 
-#. Comes from file Views/Internet/ClassEdit.rb and line is class InterneClassEdit < View
+#. Comes from file Views/Internet/ClassEdit.rb and line is class InternetClassEdit < View
 #: ../Views/Internet/ClassEdit.rb:1
-msgid "InterneClassEdit"
+msgid "InternetClassEdit"
 msgstr "Classes Modifier"
 
 #. Comes from file Views/Internet/ClassEdit.rb and line is         vtlp_list :classes, :name
@@ -4099,14 +4099,6 @@ msgstr "Numéro de Version"
 msgid "direct_connect"
 msgstr "Connexion Internet"
 
-#. Comes from file Views/Internet/ClassEdit.rb and line is class InternetEditClasses < View
-#~ msgid "InternetEditClasses"
-#~ msgstr "Modifier"
-
-#. Comes from file Views/Internet/Connection.rb and line is class InternetConnection < View
-#~ msgid "InternetConnection"
-#~ msgstr "Configuration"
-
-#. Comes from file Views/Network/Connection.rb and line is class NetworkConnection < View
-#~ msgid "NetworkConnection"
-#~ msgstr "Connexions"
+#. Comes from file Views/Internet/ClassEdit.rb and line is class InterneClassEdit < View
+#~ msgid "InterneClassEdit"
+#~ msgstr "Classes Modifier"
