@@ -280,6 +280,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150402: backup fails to backup the links
         - F 150401: OpenPrint: if label is _..._, capitalize all letters
         - B 150401: Internet::Users shows passwords
         - B 150401: Can't search for freesurf
