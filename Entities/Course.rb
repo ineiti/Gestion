@@ -842,6 +842,7 @@ base_gestion
         puts e.backtrace
       end
     end
+    @make_pdfs_state = {'0' => 'collecting'}
 
     dputs(2) { 'Starting new thread' }
     @thread = Thread.new {
@@ -959,7 +960,6 @@ base_gestion
         FileUtils.rm_rf(Dir.glob(dir_diplomas + '/*'))
       end
     end
-    @make_pdfs_state = {'0' => 'collecting'}
     #@make_pdfs_state = {}
     make_pdfs(convert)
   end
@@ -1317,8 +1317,9 @@ base_gestion
       dputs(2) { "Killing thread #{@thread}" }
       @thread.kill
       @thread.join
+      @thread = nil
       @make_pdfs_state = {'0' => 'done'}
-      dputs(3) { 'Joined thread' }
+      ddputs(3) { 'Joined thread' }
     end
   end
 

@@ -3,7 +3,6 @@
 WORKING:
 
 BUGS:
-        - error in View:Course:Diplomas when printing, cancelling, printing again
         - traffic-display doesn't show up before first connection
             - doesn't save used traffic under some circomstances
         - Dokuwiki update-check is not
@@ -280,6 +279,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150402: error in View:Course:Diplomas when printing, cancelling, printing again
         - B 150402: backup fails to backup the links
         - F 150401: OpenPrint: if label is _..._, capitalize all letters
         - B 150401: Internet::Users shows passwords

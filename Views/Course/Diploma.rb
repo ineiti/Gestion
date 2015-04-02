@@ -46,25 +46,20 @@ class CourseDiploma < View
         reply_print(session)
   end
 
-  def rpc_list_choice(session, name, args)
+  def rpc_list_choice_courses(session, args)
     args.to_sym!
-    dputs(3) { "rpc_list_choice with #{name.inspect} - #{args.inspect}" }
-    ret = []
-    case name.to_s
-      when 'courses'
-        ret = reply(:empty_nonlists, :diplomas_t)
-        if args._courses.length > 0
-          if course = Entities.Courses.match_by_course_id(args._courses.to_a[0])
-            course.update_state(true)
-            ret += rpc_update_with_values(session, args)
-          end
-        end
+    ret = reply(:empty_nonlists, :diplomas_t)
+    if args._courses.length > 0
+      if course = Courses.match_by_course_id(args._courses.to_a[0])
+        course.update_state(true)
+        ret += rpc_update_with_values(session, args)
+      end
     end
     return ret
   end
 
   def rpc_button_do_diplomas(session, args)
-    course_id = args['courses'][0]
+    course_id = args._courses[0]
     course = Courses.match_by_course_id(course_id)
     if not course or course.export_check
       if course
@@ -74,6 +69,7 @@ class CourseDiploma < View
       end
     else
       course.prepare_diplomas
+      dp course.make_pdfs_state['0']
 
       rpc_list_choice(session, :courses, :courses => [course_id.to_s])
     end
@@ -97,7 +93,7 @@ class CourseDiploma < View
 
     ret = []
 
-    overall_state = course.make_pdfs_state['0']
+    dp overall_state = course.make_pdfs_state['0']
     if overall_state == 'done'
       ret += reply(:auto_update, 0) +
           reply(:hide, [:abort, :status]) +
@@ -108,7 +104,7 @@ class CourseDiploma < View
           reply(:hide, :do_diplomas) +
           reply(:update, :status => overall_state)
     end
-    dputs(3){"Overall_state is #{overall_state}"}
+    dputs(3) { "Overall_state is #{overall_state}" }
 
     states = case course.get_files.select { |f| f =~ /(000-4pp.pdf|zip)$/ }.first
                when /zip$/
@@ -122,7 +118,7 @@ class CourseDiploma < View
                  dputs(3) { course.get_files.inspect }
                  []
              end
-    dputs(3){"States is #{states}"}
+    dputs(3) { "States is #{states}" }
 
     states += course.make_pdfs_state.keys.reject { |k| k == '0' }.
         collect { |s|
