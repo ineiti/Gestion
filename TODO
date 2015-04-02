@@ -4,9 +4,6 @@ WORKING:
 
 BUGS:
         - error in View:Course:Diplomas when printing, cancelling, printing again
-        - smscontrol -> internet
-        - Connections -> Connexions (fr)
-        - Connections -> Internet (left part) and Admin (right part)
         - traffic-display doesn't show up before first connection
             - doesn't save used traffic under some circomstances
         - Dokuwiki update-check is not
@@ -57,6 +54,9 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
+        - smscontrol -> internet
+        - Connections -> Connexions (fr)
+        - Connections -> Internet (left part) and Admin (right part)
         - Add Cashbox::Other which covers all other Income-accounts
         - CourseType
             x added internet_free_* to configbase
