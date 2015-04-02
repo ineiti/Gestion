@@ -1,4 +1,4 @@
-class InterneClassEdit < View
+class InternetClassEdit < View
   include VTListPane
 
   def layout
