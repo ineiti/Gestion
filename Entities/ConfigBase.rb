@@ -71,16 +71,9 @@ class ConfigBases < Entities
     @@functions_conflict = [[:course_server, :course_client]]
   end
 
-  def replace_function(old, new)
-    if c._functions.index(old.to_sym)
-      c._functions -= [old.to_sym]
-      c._functions += [new.to_sym]
-    end
-  end
-
   def migration_7(c)
-    replace_function(:sms_control, :internet_mobile)
-    replace_function(:sms_control_autocharge, :internet_mobile_autocharge)
+    c.replace_function(:sms_control, :internet_mobile)
+    c.replace_function(:sms_control_autocharge, :internet_mobile_autocharge)
   end
 
   def migration_6(c)
@@ -156,6 +149,13 @@ class ConfigBase < Entity
       $MobileControl.autocharge = ConfigBase.has_function?(:internet_mobile_autocharge)
     else
       stop_smscontrol
+    end
+  end
+
+  def replace_function(old, new)
+    if functions.index(old.to_sym)
+      functions -= [old.to_sym]
+      functions += [new.to_sym]
     end
   end
 

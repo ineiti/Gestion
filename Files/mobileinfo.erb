@@ -59,28 +59,28 @@
 </head>
 <body>
 <div class="main">
-  <h1>Information about SMS-control</h1>
+  <h1>Information about Mobile-connection</h1>
 
-  <% if $SMScontrol %>
+  <% if $MobileControl %>
       <ul>
         <li>USB-modem is
-          <%= $SMScontrol.device ? 'Present' : 'MISSING' %>
+          <%= $MobileControl.device ? 'Present' : 'MISSING' %>
         </li>
         <li>Operator is
           <%= begin
-                $SMScontrol.operator.name
+                $MobileControl.operator.name
               rescue NoMethodError => e
                 'MISSING'
               end %></li>
         <li>Promotion left: <%= begin
-                                  "#{$SMScontrol.operator.internet_left / 1000}k"
+                                  "#{$MobileControl.operator.internet_left / 1000}k"
                                 rescue NoMethodError => e
                                   'MISSING'
                                 end %>
         </li>
         <li>Internet is
           <%= begin
-                $SMScontrol.is_connected ? 'Connected' : 'Disconnected'
+                $MobileControl.is_connected ? 'Connected' : 'Disconnected'
               rescue NoMethodError => e
                 'MISSING'
               end %></li>
@@ -101,7 +101,7 @@
           %></li>
       </ul>
   <% else %>
-      <h2>SMScontrol is disabled</h2>
+      <h2>MobileControl is disabled</h2>
   <% end %>
 </div>
 </body>
