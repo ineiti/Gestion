@@ -5,7 +5,7 @@ class InternetMobile < View
   include Network
 
   def layout
-    @functions_need = [:sms_control]
+    @functions_need = [:internet_mobile]
     @order = 100
     @update = true
     @auto_update_async = 10

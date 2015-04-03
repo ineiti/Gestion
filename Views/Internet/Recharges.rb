@@ -2,7 +2,7 @@ class InternetRecharges < View
   def layout
     @order = 600
     @update = true
-    @functions_need = [:sms_control, :network_pro]
+    @functions_need = [:internet_mobile, :network_pro]
     set_data_class :Recharges
 
     gui_hbox do

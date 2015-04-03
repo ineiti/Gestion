@@ -53,22 +53,34 @@ class ConfigBases < Entities
     internet internet_simple internet_captive
     internet_free_course internet_free_staff
     internet_cyber
-    sms_control sms_control_autocharge
+    internet_mobile internet_mobile_autocharge
     inventory accounting quiz accounting_courses accounting_old
     plug_admin
     cashbox email usage_report activities library ).sort.to_sym
     @@functions_base = {:network => [:internet, :share, :internet_only, :email,
-                                     :sms_control, :network_pro],
+                                     :internet_mobile, :network_pro],
                         :internet => [:internet_simple, :internet_captive,
                                       :internet_free_course, :internet_free_staff,
-                                      :sms_control, :internet_cyber],
+                                      :internet_mobile, :internet_cyber],
                         :courses => [:course_server, :course_client, :accounting_courses],
                         :accounting => [:accounting_courses, :cashbox],
                         :cashbox => [:accounting_courses, :internet_cyber],
                         :activities => [:library],
-                        :sms_control => [:sms_control_autocharge]
+                        :internet_mobile => [:internet_mobile_autocharge]
     }
     @@functions_conflict = [[:course_server, :course_client]]
+  end
+
+  def replace_function(old, new)
+    if c._functions.index(old.to_sym)
+      c._functions -= [old.to_sym]
+      c._functions += [new.to_sym]
+    end
+  end
+
+  def migration_7(c)
+    replace_function(:sms_control, :internet_mobile)
+    replace_function(:sms_control_autocharge, :internet_mobile_autocharge)
   end
 
   def migration_6(c)
@@ -139,9 +151,9 @@ class ConfigBase < Entity
     else
       Service.stop_disable(:samba)
     end
-    if ConfigBase.has_function?(:sms_control)
+    if ConfigBase.has_function?(:internet_mobile)
       start_smscontrol
-      $MobileControl.autocharge = ConfigBase.has_function?(:sms_control_autocharge)
+      $MobileControl.autocharge = ConfigBase.has_function?(:internet_mobile_autocharge)
     else
       stop_smscontrol
     end
