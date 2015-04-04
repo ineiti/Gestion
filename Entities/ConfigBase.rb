@@ -153,10 +153,12 @@ class ConfigBase < Entity
   end
 
   def replace_function(old, new)
-    if functions.index(old.to_sym)
-      functions -= [old.to_sym]
-      functions += [new.to_sym]
+    func = self.functions.to_sym
+    if func.index(old.to_sym)
+      func -= [old.to_sym]
+      func += [new.to_sym]
     end
+    self.functions = func
   end
 
   def start_smscontrol
