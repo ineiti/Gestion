@@ -19,6 +19,8 @@ def main
     update_html("Updating using file #{file}")
     update_html "Calling pacman to update #{file}"
     update = Thread.new {
+      System.run_str '/usr/bin/killall -9 pacman'
+      FileUtils.rm '/var/lib/pacman/db.lck'
       System.run_str "/usr/bin/pacman --noconfirm --force -U #{file} > /tmp/gestion.update"
     }
     while update.alive?
