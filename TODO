@@ -276,6 +276,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150404: don't ask to copy default config-file
+        - B 150404: gestion.pacman has error on installation when running "Gestion -p"
         - F 150402: SMScontrol: find better name -> MobileControl
         - F 150402: smscontrol -> internet as mobilecontrol
         - F 150402: Connections -> Connexions (fr)

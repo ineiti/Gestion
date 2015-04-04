@@ -18,11 +18,8 @@ require 'fileutils'
 GESTION_DIR=File.dirname(__FILE__)
 CONFIG_FILE='config.yaml'
 if not FileTest.exists? CONFIG_FILE
-  puts "Config-file doesn't exist"
-  puts 'Do you want me to copy a standard one? [Y/n] '
-  if gets.chomp.downcase != 'n'
-    FileUtils.cp 'config.yaml.default', 'config.yaml'
-  end
+  puts "Config-file doesn't exist, copying a standard one"
+  FileUtils.cp 'config.yaml.default', 'config.yaml'
 end
 
 begin
@@ -157,7 +154,7 @@ else
             sleep 5
             Internet.update_traffic
           else
-            (1..6).each{
+            (1..6).each {
               sleep 10
               Internet.update_traffic
             }
@@ -181,13 +178,13 @@ else
 
   # Trying to debug mysterious slowdown
   if false
-    $test_hash = {a: 1, b:2, c:3}
-    $test_hash_big = (1..100).collect{|i| ["value#{i}", i]}.to_h
+    $test_hash = {a: 1, b: 2, c: 3}
+    $test_hash_big = (1..100).collect { |i| ["value#{i}", i] }.to_h
     $show_time = Thread.new {
       loop {
-        Timing.measure('Small hash'){$test_hash._a}
-        Timing.measure('Big hash'){$test_hash_big['value50']}
-        Timing.measure('Big method_missing'){$test_hash_big._value50}
+        Timing.measure('Small hash') { $test_hash._a }
+        Timing.measure('Big hash') { $test_hash_big['value50'] }
+        Timing.measure('Big method_missing') { $test_hash_big._value50 }
         sleep 10
       }
     }
