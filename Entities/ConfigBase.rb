@@ -145,10 +145,10 @@ class ConfigBase < Entity
       Service.stop_disable(:samba)
     end
     if ConfigBase.has_function?(:internet_mobile)
-      start_smscontrol
+      start_mobile_control
       $MobileControl.autocharge = ConfigBase.has_function?(:internet_mobile_autocharge)
     else
-      stop_smscontrol
+      stop_mobile_control
     end
   end
 
@@ -161,12 +161,12 @@ class ConfigBase < Entity
     self.functions = func
   end
 
-  def start_smscontrol
+  def start_mobile_control
     return if $MobileControl
     if (na = ConfigBase.network_actions) && File.exists?(na)
       require na
     end
-    dputs(1) { 'Starting sms-control' }
+    dputs(1) { 'Starting mobile-control' }
     $MobileControl = Network::MobileControl.new
 
     @mobile_thread = Thread.new {
@@ -181,7 +181,7 @@ class ConfigBase < Entity
     }
   end
 
-  def stop_smscontrol
+  def stop_mobile_control
     if @mobile_thread
       @mobile_thread.kill
       @mobile_thread.join
