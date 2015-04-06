@@ -84,14 +84,7 @@ module Internet
         update('add', dev.first)
       end
     end
-    setup_traffic
     dputs(4) { "@traffic is #{@traffic}" }
-  end
-
-  def setup_traffic
-    if @traffic_save.data_str.to_s.length > 0
-      Captive.set_traffic @traffic_save.data_str
-    end
   end
 
   # Whenever a new device or a new operator is detected, this function
@@ -111,16 +104,14 @@ module Internet
           @device = dev
           @device.add_observer(self)
           @operator = @device.operator
-          @operator and Captive.setup(@device)
+          @operator and Captive.setup(@device, @traffic_save.data_str)
           log_msg :Internet, "Got new device #{@device} - #{ConfigBase.captive_dev}"
-          setup_traffic
         else
           log_msg :Internet, "New device #{dev} that doesn't match #{ConfigBase.captive_dev}"
         end
       when /operator/
         @operator = @device.operator
-        Captive.setup(@device)
-        setup_traffic
+        Captive.setup(@device, @traffic_save.data_str)
         log_msg :Internet, "Got new operator #{@operator}"
     end
   end
