@@ -3,10 +3,6 @@
 WORKING:
 
 BUGS:
-        - Monitor::Traffic - save and load from Static has an error where
-            everything can be deleted. Perhaps:
-            - it loads AFTER it saves? Mismatch in Entities::Internet and
-            Monitor::Traffic?
         - AfriCompta shouldn't allow inputs for later or earlier than 1 week
             - when deleted movement exists, it's date is shown
         - Network::Monitor::Traffic::User.traffic_user has to take care when
@@ -278,6 +274,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150406: Monitor::Traffic - save and load from Static has an error where
+            everything can be deleted. it loads AFTER it saves
         - B 150404: don't ask to copy default config-file
         - B 150404: gestion.pacman has error on installation when running "Gestion -p"
         - F 150402: SMScontrol: find better name -> MobileControl
