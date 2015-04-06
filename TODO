@@ -54,6 +54,8 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
+        - put 'internet-connection' on welcome-screen as default if
+            'internet_captive' is active
         - make nice 503-error page
         - CourseType
             x added internet_free_* to configbase
