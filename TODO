@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - why does sms "status" not work anymore?
         - AfriCompta shouldn't allow inputs for later or earlier than 1 week
             - when deleted movement exists, it's date is shown
         - Network::Monitor::Traffic::User.traffic_user has to take care when
@@ -50,6 +51,7 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
+        - mobile_control: add sms to charge
         - put 'internet-connection' on welcome-screen as default if
             'internet_captive' is active
         - make nice 503-error page
