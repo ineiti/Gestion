@@ -57,6 +57,7 @@ FEATURES:
             x added internet_free_* to configbase
             - add drop: "internet_always, internet_course, none"
             - add to course
+        - Update: Should open gestion in new window
         - add "messieur/madame" in diploma
         - remove accounting from admin-rights
         - Check auto-update of Antivirus and other stuff
@@ -293,6 +294,9 @@ To check:
         - B 150401: Monitor::Traffic should honor systems where "iptables -w" doesn't work
         - B 150401: Monitor::Traffic hangs when using iptables -L without -n
         - B 150401: Update doesn't work correctly
+        - B 130406: AfriCompta shouldn't allow inputs for later or earlier than 1 week
+            - when deleted movement exists, it's date is shown
+        - B 130401: Update doesn't work correctly
             - problem with upload that doesn't select the chosen file
         - B 150401: Network::Measure::Traffic has to update all users, even those not
             used actually
