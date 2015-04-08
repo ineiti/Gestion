@@ -3,11 +3,8 @@
 WORKING:
 
 BUGS:
-        - why does sms "status" not work anymore?
         - Network::Monitor::Traffic::User.traffic_user has to take care when
             shifting days, so that there is no hole in 28..30-days months
-        - Tigo::recharge doesn't react with
-            Souscription reussie:Internet Kattir 1111. 40 MB valide jusqu a minuit. Cout 800F .
         - captive_dev should depend on the actual device used
         - Check Report::executive
         - after a couple of logins, View.rpc_list is 10x slower
@@ -24,7 +21,6 @@ BUGS:
             - add students with prefix of center, not of user
             - why is there a Course::center-method? This should come from Courses.setup_data!
         - profeda.org: can't edit student in course abc_PC-1_1500
-        - SMScontrol: credit ends -> disconnect -> recharge -> no promotion asked
         - captive-tables are not updated when configuration changes
         - icc-calls are not secured with username/password
             - use encoding json-library
@@ -47,6 +43,7 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
+        - SerialModem: needs to be ported as a clas
         - update: search on profeda for latest version
         - mobile_control: add sms to charge
         - put 'internet-connection' on welcome-screen as default if
@@ -74,13 +71,6 @@ FEATURES:
         - CoursesTabs - Drop-down to select courses
         - Bibliotheque
 
-        - SMScontrol: redo check_sms with regard to auto-charging and such. Write a
-            clean state-diagram with connected/disconnected/internet_left/credit_left
-            and write who should do what when...
-            - in Tigo and Airtel, check all SMS for
-                - adding credit (*Cash, cPourToi, credits)
-                - adding promotion
-            - send 'update' to an observable
         - Courses::Grades can have more than the necessary files ->
             - show downloadable list of files
         - limit speed upon reaching threshold
@@ -274,12 +264,22 @@ To check:
 
 
 ** FIXED **:
+        - F 150409: MobileControl: redo check_sms with regard to auto-charging and such. Write a
+            clean state-diagram with connected/disconnected/internet_left/credit_left
+            and write who should do what when...
+            - in Tigo and Airtel, check all SMS for
+                - adding credit (*Cash, cPourToi, credits)
+                - adding promotion
+            - send 'update' to an observable
+        - B 150409: Tigo::recharge doesn't react with
+            Souscription reussie:Internet Kattir 1111. 40 MB valide jusqu a minuit. Cout 800F .
+        - B 150409: why does sms "status" not work anymore?
         - B 150406: Persons::search_in doesn't search correctly for search-strings with spaces
         - B 150406: Monitor::Traffic - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves
         - B 150404: don't ask to copy default config-file
         - B 150404: gestion.pacman has error on installation when running "Gestion -p"
-        - F 150402: SMScontrol: find better name -> MobileControl
+        - F 150402: MobileControl: find better name -> MobileControl
         - F 150402: smscontrol -> internet as mobilecontrol
         - F 150402: Connections -> Connexions (fr)
         - F 150402: Connections -> Internet (left part) and Admin (right part)
@@ -426,8 +426,7 @@ To check:
         - B 150116: clean-up of mobile-scripts in Profeda-dir
         - B 150113: problem with sms not received when *342*2#
         - B 150113: re-plugging USB-stick gives error in SerialModem
-            - lot of cleanups in SerialModem-module, still needs to be ported
-             as a class
+            - lot of cleanups in SerialModem-module
         - B 150110: Library-adding-student doesn't fill in any permission
         - B 150109: Admin::Accounts - should only show Root:: and sub-accounts
         - B 150109: Report::Executive never completes

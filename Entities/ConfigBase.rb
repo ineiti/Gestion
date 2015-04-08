@@ -173,7 +173,6 @@ class ConfigBase < Entity
       loop {
         rescue_all 'Error with MobileControl' do
           $MobileControl.check_connection
-          $MobileControl.check_sms
           dputs(2) { $MobileControl.state_to_s }
           sleep 10
         end
