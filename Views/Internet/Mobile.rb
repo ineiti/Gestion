@@ -149,7 +149,7 @@ class InternetMobile < View
 
   def rpc_button_send_sms(session, data)
     if data._sms_number.to_s.length == 0
-      $MobileControl.inject_sms(data._sms_text)
+      $MobileControl.device.sms_inject(data._sms_text)
     else
       $MobileControl.device.sms_send(data._sms_number, data._sms_text)
     end
