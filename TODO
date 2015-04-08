@@ -3,19 +3,16 @@
 WORKING:
 
 BUGS:
-        - Persons::search_in doesn't search correctly for search-strings with spaces
         - why does sms "status" not work anymore?
-        - AfriCompta shouldn't allow inputs for later or earlier than 1 week
-            - when deleted movement exists, it's date is shown
         - Network::Monitor::Traffic::User.traffic_user has to take care when
             shifting days, so that there is no hole in 28..30-days months
-        - after a couple of logins, View.rpc_list is 10x slower
-            - seems like every hash-lookup is 10x slower - need to investigate
-                further
         - Tigo::recharge doesn't react with
             Souscription reussie:Internet Kattir 1111. 40 MB valide jusqu a minuit. Cout 800F .
         - captive_dev should depend on the actual device used
         - Check Report::executive
+        - after a couple of logins, View.rpc_list is 10x slower
+            - seems like every hash-lookup is 10x slower - need to investigate
+                further
 
         - Documentation, documentation
         - change ConfigBase.send_config to rely on ConfigBase.update
@@ -27,8 +24,6 @@ BUGS:
             - add students with prefix of center, not of user
             - why is there a Course::center-method? This should come from Courses.setup_data!
         - profeda.org: can't edit student in course abc_PC-1_1500
-        - Network::Monitor::traffic doesn't show incoming and outgoing correctly
-            - check with new version
         - SMScontrol: credit ends -> disconnect -> recharge -> no promotion asked
         - captive-tables are not updated when configuration changes
         - icc-calls are not secured with username/password
@@ -278,6 +273,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150406: Persons::search_in doesn't search correctly for search-strings with spaces
         - B 150406: Monitor::Traffic - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves
         - B 150404: don't ask to copy default config-file
@@ -297,9 +293,9 @@ To check:
         - B 150401: Monitor::Traffic should honor systems where "iptables -w" doesn't work
         - B 150401: Monitor::Traffic hangs when using iptables -L without -n
         - B 150401: Update doesn't work correctly
-        - B 130406: AfriCompta shouldn't allow inputs for later or earlier than 1 week
+        - B 150406: AfriCompta shouldn't allow inputs for later or earlier than 1 week
             - when deleted movement exists, it's date is shown
-        - B 130401: Update doesn't work correctly
+        - B 150401: Update doesn't work correctly
             - problem with upload that doesn't select the chosen file
         - B 150401: Network::Measure::Traffic has to update all users, even those not
             used actually
