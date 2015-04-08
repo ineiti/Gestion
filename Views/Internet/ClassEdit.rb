@@ -19,7 +19,6 @@ class InternetClassEdit < View
   end
 
   def rpc_list_choice_type(session, data)
-    dp data
     reply_visible(data._type.first == 'limit_daily', :limit_mo)
   end
 end

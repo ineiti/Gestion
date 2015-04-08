@@ -373,7 +373,6 @@ class Courses < Entities
   end
 
   def icc_courses(tr)
-    dp tr.inspect
     c = tr._center
     return "Didn't find center #{c.inspect}}" unless center = Persons.find_by_login_name(c._login_name)
     return "Passwords do not match for #{c.inspect}" unless center.password_plain == c._password_plain

@@ -180,7 +180,6 @@ class InternetMobile < View
   end
 
   def rpc_button_recharge(session, data)
-    dp data
     if data._menu.to_s.length == 0
       if $MobileControl.operator_missing?
         credit = 0
