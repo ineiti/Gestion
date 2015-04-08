@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - iptables -w option still not used everywhere
         - Network::Monitor::Traffic::User.traffic_user has to take care when
             shifting days, so that there is no hole in 28..30-days months
         - captive_dev should depend on the actual device used
