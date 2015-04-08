@@ -47,6 +47,7 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
+        - update: search on profeda for latest version
         - mobile_control: add sms to charge
         - put 'internet-connection' on welcome-screen as default if
             'internet_captive' is active
