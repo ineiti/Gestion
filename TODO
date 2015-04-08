@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - Persons::search_in doesn't search correctly for search-strings with spaces
         - why does sms "status" not work anymore?
         - AfriCompta shouldn't allow inputs for later or earlier than 1 week
             - when deleted movement exists, it's date is shown

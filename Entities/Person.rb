@@ -544,13 +544,15 @@ class Persons < Entities
     else
       result = Persons.data.select { |k, v|
         #dp v
-        ret = false
-        %i( login_name family_name first_name
+        str.split(/ /).collect { |s|
+          ret = false
+          %i( login_name family_name first_name
         permissions person_id email phone groups ).each { |i|
-          #dp "#{i} - #{v[i]} - #{v[i].to_s =~ /#{str}/}"
-          ret ||= v[i].to_s =~ /#{str}/
-        }
-        ret
+            #dp "#{i} - #{v[i]} - #{v[i].to_s =~ /#{str}/}"
+            ret ||= !!(v[i].to_s =~ /#{s}/i)
+          }
+          ret
+        }.compact.inject(:&)
       }.sort { |a, b|
         if a[1]._login_name.to_s == str
           -1
@@ -1109,13 +1111,13 @@ class Person < Entity
                     {:content => ch, :align => :center} }]
         dputs(3) { "Movs is #{movs.inspect}" }
         pdf.table(header + movs.collect { |m_id, m|
-                                        [{:content => "#{m[0]}", :align => :center},
-                                         m[1],
-                                         {:content => "#{m[2]}", :align => :right},
-                                         {:content => "#{Account.total_form(
-                                             sum += m[2].gsub(',', '').to_f / 1000)}",
-                                          :align => :right}]
-                                      }, :header => true, :column_widths => [70, 300, 75, 75])
+                    [{:content => "#{m[0]}", :align => :center},
+                     m[1],
+                     {:content => "#{m[2]}", :align => :right},
+                     {:content => "#{Account.total_form(
+                         sum += m[2].gsub(',', '').to_f / 1000)}",
+                      :align => :right}]
+                  }, :header => true, :column_widths => [70, 300, 75, 75])
         pdf.move_down(2.cm)
       end
 

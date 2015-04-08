@@ -52,6 +52,8 @@ class TC_Person < Test::Unit::TestCase
     @accountant = Persons.create(:login_name => 'accountant',
                                  :permissions => ['accountant'])
 
+    @long = Persons.create(first_name: 'foo', family_name: 'bar')
+
   end
 
   def teardown
@@ -358,6 +360,7 @@ class TC_Person < Test::Unit::TestCase
     assert_equal 0, Persons.search_in('test_search').length
     assert_equal 0, Persons.search_in('test').length
     assert_equal 0, Persons.search_in('search').length
+    assert_equal 1, Persons.search_in('foo bar').length
 
     (1..400).each { |i|
       Persons.create(login_name: "test_search_#{i}", first_name: 'test',
