@@ -3,8 +3,9 @@
 WORKING:
 
 BUGS:
-        - Network::Monitor::Traffic::User.traffic_user has to take care when
-            shifting days, so that there is no hole in 28..30-days months
+        - Monitor::Traffic - save and load from Static has an error where
+            everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
+            pressed during startup
         - captive_dev should depend on the actual device used
         - Check Report::executive
         - after a couple of logins, View.rpc_list is 10x slower
@@ -264,6 +265,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150409: Network::Monitor::Traffic::User.traffic_user has to take care when
+            shifting days, so that there is no hole in 28..30-days months
         - B 150409: iptables -w option still not used everywhere
         - B 150409: when Entities::SMS deletes first SMS, new SMS gets at this same position
             -> it should rotate. Do we need a new option in Entities? always_add?
@@ -278,8 +281,6 @@ To check:
             Souscription reussie:Internet Kattir 1111. 40 MB valide jusqu a minuit. Cout 800F .
         - B 150409: why does sms "status" not work anymore?
         - B 150406: Persons::search_in doesn't search correctly for search-strings with spaces
-        - B 150406: Monitor::Traffic - save and load from Static has an error where
-            everything can be deleted. it loads AFTER it saves
         - B 150404: don't ask to copy default config-file
         - B 150404: gestion.pacman has error on installation when running "Gestion -p"
         - F 150402: MobileControl: find better name -> MobileControl
