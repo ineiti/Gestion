@@ -4,8 +4,6 @@ WORKING:
 
 BUGS:
         - iptables -w option still not used everywhere
-        - when Entities::SMS deletes first SMS, new SMS gets at this same position
-            -> it should rotate. Do we need a new option in Entities? always_add?
         - Network::Monitor::Traffic::User.traffic_user has to take care when
             shifting days, so that there is no hole in 28..30-days months
         - captive_dev should depend on the actual device used
@@ -267,6 +265,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150409: when Entities::SMS deletes first SMS, new SMS gets at this same position
+            -> it should rotate. Do we need a new option in Entities? always_add?
         - F 150409: MobileControl: redo check_sms with regard to auto-charging and such. Write a
             clean state-diagram with connected/disconnected/internet_left/credit_left
             and write who should do what when...
