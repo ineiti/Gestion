@@ -3,7 +3,7 @@ require 'helperclasses'
 require 'erb'
 
 
-class Mobileinfo < RPCQooxdooPath
+class MobileInfo < RPCQooxdooPath
   def self.parse(method, path, query)
     dputs(3) { "Got #{method} - #{path} - #{query}" }
     ERB.new(File.open('Files/mobileinfo.erb') { |f| f.read }).result(binding)
@@ -13,6 +13,7 @@ class Mobileinfo < RPCQooxdooPath
     File.open('/tmp/status.html', 'w') { |f|
       f.write(ERB.new(File.open('Files/mobileinfo.erb') { |f| f.read }).result(binding))
     }
-    system('echo ".-=-." | mail -a /tmp/status.html -s "$( hostname ): Connected" root@localhost')
+    System.run_bool('echo ".-=-." | mail -a /tmp/status.html -s "$( hostname ): Connected" root@localhost')
+    log_msg :MobileInfo, 'Sent e-mail'
   end
 end

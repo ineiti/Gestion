@@ -69,19 +69,25 @@
         <li>Operator is
           <%= begin
                 $MobileControl.operator.name
-              rescue NoMethodError => e
+              rescue NoMethodError
                 'MISSING'
               end %></li>
         <li>Promotion left: <%= begin
-                                  "#{$MobileControl.operator.internet_left / 1000}k"
-                                rescue NoMethodError => e
+                                  "#{($MobileControl.operator.internet_left / 1000).separator("'")}k"
+                                rescue NoMethodError
+                                  'MISSING'
+                                end %>
+        </li>
+        <li>Credit left: <%= begin
+                                  "#{$MobileControl.operator.credit_left}CFA"
+                                rescue NoMethodError
                                   'MISSING'
                                 end %>
         </li>
         <li>Internet is
           <%= begin
                 $MobileControl.is_connected ? 'Connected' : 'Disconnected'
-              rescue NoMethodError => e
+              rescue NoMethodError
                 'MISSING'
               end %></li>
         <li>Last SMS received:
