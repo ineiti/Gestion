@@ -3,9 +3,11 @@
 WORKING:
 
 BUGS:
-        - Monitor::Traffic - save and load from Static has an error where
+        - Monitor::Traffic
+            - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
             pressed during startup
+            - count is most probably wrong - output things from one user permanently
         - captive_dev should depend on the actual device used
         - Check Report::executive
         - after a couple of logins, View.rpc_list is 10x slower
