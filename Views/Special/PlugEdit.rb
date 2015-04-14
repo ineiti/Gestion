@@ -1,4 +1,4 @@
-class PlugEdit < View
+class SpecialPlug < View
   include VTListPane
 
   def layout

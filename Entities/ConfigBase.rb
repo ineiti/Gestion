@@ -55,7 +55,7 @@ class ConfigBases < Entities
     internet_cyber
     internet_mobile internet_mobile_autocharge
     inventory accounting quiz accounting_courses accounting_old
-    plug_admin
+    plug_admin special
     cashbox email usage_report activities library ).sort.to_sym
     @@functions_base = {:network => [:internet, :share, :internet_only, :email,
                                      :internet_mobile, :network_pro],

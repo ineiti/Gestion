@@ -4,9 +4,9 @@
 class SelfChat < View
   def layout
     @@box_length = 40
-    @@disc = Entities.Statics.get(:SelfChat)
+    @@disc = Statics.get(:SelfChat)
     @@disc.data_str.length < @@box_length and
-        @@disc.data_str = Array.new(@@box_length, "")
+        (@@disc.data_str = Array.new(@@box_length, ''))
     @order = 100
     @update = true
     @auto_update_async = 10
@@ -28,8 +28,8 @@ class SelfChat < View
   def rpc_update_view(session, args = nil)
     super(session, args) +
         if get_config(false, :multilogin)
-          reply(:update, :email => "anonyme@profeda.org") +
-              reply(:update, :replace => "<h1>Ajoutez votre courriel!</h1>")
+          reply(:update, :email => 'anonyme@profeda.org') +
+              reply(:update, :replace => '<h1>Ajoutez votre courriel!</h1>')
         else
           reply(:hide, [:replace, :email])
         end
@@ -49,7 +49,7 @@ class SelfChat < View
 
   def rpc_button_send(session, data)
     name, ret = if get_config(false, :multilogin)
-                  [data._email, if data._email != "anonyme@profeda.org"
+                  [data._email, if data._email != 'anonyme@profeda.org'
                                   reply(:hide, :replace)
                                 end.to_a]
                 else
@@ -57,7 +57,7 @@ class SelfChat < View
                 end
     @@disc.data_str.push("#{Time.now.strftime('%H:%M')} - " +
                              "#{name}: #{data._talk}")
-    log_msg "chat", "#{name} says - #{data._talk}"
+    log_msg 'chat', "#{name} says - #{data._talk}"
     ret + reply(:empty, [:talk]) +
         rpc_update(session)
   end
