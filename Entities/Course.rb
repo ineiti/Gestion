@@ -702,7 +702,8 @@ base_gestion
               'not synched'
             elsif exam_files(student).count < ctype.files_nbr.to_i
               'incomplete'
-            elsif (not grade) or (grade.to_s == 'NP')
+            elsif (!grade || grade.to_s == 'NP') &&
+                ctype.diploma_type != %w(report)
               'not passed'
             elsif update
               if get_files.find { |f| f =~ /^[0-9]+-#{student.login_name}\./ }
