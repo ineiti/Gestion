@@ -3,6 +3,9 @@
 WORKING:
 
 BUGS:
+        - Monitor::Ping
+            - the idea of logrotate is very clumsy. Store everything in a file in
+                /var/log/monitor/ping_yymmdd.log and delete oldest files
         - Monitor::Traffic
             - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
@@ -267,6 +270,9 @@ To check:
 
 
 ** FIXED **:
+        - F 150414: also print 'reports' of people not passed in Courses
+        - F 150414: added an automatic VNC-client on ArchLinux to connect to
+            MacOSX
         - B 150409: Network::Monitor::Traffic::User.traffic_user has to take care when
             shifting days, so that there is no hole in 28..30-days months
         - B 150409: iptables -w option still not used everywhere
