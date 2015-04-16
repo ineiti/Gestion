@@ -269,6 +269,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150416: catch error if squirrelmail or fetchmail not present
         - F 150414: add config-value for showing passwords or not
         - F 150414: also print 'reports' of people not passed in Courses
         - F 150414: added an automatic VNC-client on ArchLinux to connect to

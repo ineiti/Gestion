@@ -498,6 +498,10 @@ class Persons < Entities
       FileUtils.chown 'fetchmail', 'nobody', '/etc/fetchmailrc'
     rescue Errno::EACCES => e
       dputs(0) { "Can't write fetchmailrc here..." }
+      self.permissions = permissions - %w(email)
+    rescue ArgumentError
+      dputs(0) { "Didn't find fetchmail-user" }
+      self.permissions = permissions - %w(email)
     end
   end
 
@@ -677,12 +681,13 @@ class Person < Entity
       }
       FileUtils.chown login_name, login_name, Dir.glob("/home/#{login_name}/**/**")
     end
-    squirrel_pref = "/srv/http/squirrelmail/config/var/data/#{login_name}.pref"
-    if !File.exists? squirrel_pref
-      File.open(squirrel_pref, 'w') { |f|
-        f.write("full_name=#{full_name}\nemail_address=#{email}")
-      }
-      FileUtils.chown 'http', 'http', squirrel_pref
+    squirrel_base = '/srv/http/squirrelmail/config/var/data'
+    if Files.exists? squirrel_base
+      squirrel_pref = "#{squirrel_base}/#{login_name}.pref"
+      if !File.exists? squirrel_pref
+        IO.write(squirrel_pref, "full_name=#{full_name}\nemail_address=#{email}")
+        FileUtils.chown 'http', 'http', squirrel_pref
+      end
     end
     update_local_passwd(password)
   end
