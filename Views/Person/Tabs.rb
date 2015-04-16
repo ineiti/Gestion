@@ -80,8 +80,8 @@ class PersonTabs < View
   end
 
   def rpc_list_choice(session, name, args)
-    dputs(2) { "args is #{args.inspect}" }
-    dputs(2) { "New choice #{name} - #{args['persons']}" }
+    dputs(3) { "args is #{args.inspect}" }
+    dputs(3) { "New choice #{name} - #{args['persons']}" }
 
     if name == 'persons' and args and args['persons']
       reply(:pass_tabs, ['list_choice', name, {:persons => [args._persons]}]) +
@@ -92,7 +92,7 @@ class PersonTabs < View
   end
 
   def rpc_callback_search(session, data, do_list_choice = true)
-    dputs(2) { "Got data: #{data.inspect}" }
+    dputs(3) { "Got data: #{data.inspect}" }
 
     s = data._search
 
@@ -105,7 +105,7 @@ class PersonTabs < View
     if result.length > 0
       ret += reply(:update,
                    :persons => result.collect { |p|
-                     p.to_list(p.simple) },
+                     p.to_list(session.owner) },
                    :search => s)
       if do_list_choice
         ret += reply(:update, :persons => [result[0].login_name])
@@ -125,7 +125,7 @@ class PersonTabs < View
       if args['search']
         ret += rpc_callback_search(session, args, false)
       else
-        ret += reply(:update, :persons => [p.to_list]) +
+        ret += reply(:update, :persons => [p.to_list(session.owner)]) +
             reply(:update, :search => p.login_name)
       end
       ret += reply(:update, :persons => [p.login_name])

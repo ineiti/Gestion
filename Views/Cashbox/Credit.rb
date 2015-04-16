@@ -49,7 +49,7 @@ class CashboxCredit < View
   def rpc_button_search_person(session, data)
     return reply(:empty, :person) unless data._search.length > 2
     results = Persons.search_in(data._search, 20)
-    reply(:empty_update, :person => results.collect { |r| r.to_list_id } +
+    reply(:empty_update, :person => results.collect { |r| r.to_list_id(session.owner) } +
                            [results.first.person_id])
   end
 

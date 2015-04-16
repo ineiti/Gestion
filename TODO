@@ -49,9 +49,8 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
-        - SerialModem: needs to be ported as a clas
+        - SerialModem: needs to be ported as a class
         - update: search on profeda for latest version
-        - mobile_control: add sms to charge
         - put 'internet-connection' on welcome-screen as default if
             'internet_captive' is active
         - make nice 503-error page
@@ -270,9 +269,11 @@ To check:
 
 
 ** FIXED **:
+        - F 150414: add config-value for showing passwords or not
         - F 150414: also print 'reports' of people not passed in Courses
         - F 150414: added an automatic VNC-client on ArchLinux to connect to
             MacOSX
+        - F 150409: mobile_control: add sms to charge
         - B 150409: Network::Monitor::Traffic::User.traffic_user has to take care when
             shifting days, so that there is no hole in 28..30-days months
         - B 150409: iptables -w option still not used everywhere

@@ -516,54 +516,27 @@ class Persons < Entities
       return field ? View.reply(:empty, field) : []
     end
 
-    if false
-      # Search all these fields and merge the results
-      result = %w( login_name family_name first_name
-        permissions person_id email phone groups ).collect { |f|
-        ret = Persons.search_by(f, str)
-        if center
-          ret = ret.select { |p| p.login_name =~ /^#{center}(_|$)/ }
-        end
-        dputs(3) { "Result for #{f} is: #{ret.collect { |r| r.login_name }}" }
-        ret
-      }.flatten.uniq.sort { |a, b|
-        a.login_name.to_s <=> b.login_name.to_s
-      }.first(max)
-
-      # Check if we have an exact match on the login_name
-      dputs(3) { "Searching for exact match #{str}" }
-      if exact = Persons.match_by_login_name(str)
-        dputs(3) { 'Found exact match' }
-        if pos = result.index(exact)
-          dputs(3) { "Found exact match at position #{pos}" }
-          result.delete_at(pos)
-          result.unshift(exact)
-          dputs(3) { "result is now #{result.inspect}" }
-        end
-      end
-    else
-      result = Persons.data.select { |k, v|
-        #dp v
-        str.split(/ /).collect { |s|
-          ret = false
-          %i( login_name family_name first_name
+    result = Persons.data.select { |k, v|
+      #dp v
+      str.split(/ /).collect { |s|
+        ret = false
+        %i( login_name family_name first_name
         permissions person_id email phone groups ).each { |i|
-            #dp "#{i} - #{v[i]} - #{v[i].to_s =~ /#{str}/}"
-            ret ||= !!(v[i].to_s =~ /#{s}/i)
-          }
-          ret
-        }.compact.inject(:&)
-      }.sort { |a, b|
-        if a[1]._login_name.to_s == str
-          -1
-        elsif b[1]._login_name.to_s == str
-          1
-        else
-          "#{a[1]._first_name} #{a[1]._family_name}" <=>
-              "#{b[1]._first_name} #{b[1]._family_name}"
-        end
-      }.first(max).collect { |k, v| Persons.get_data_instance(k) }
-    end
+          #dp "#{i} - #{v[i]} - #{v[i].to_s =~ /#{str}/}"
+          ret ||= !!(v[i].to_s =~ /#{s}/i)
+        }
+        ret
+      }.compact.inject(:&)
+    }.sort { |a, b|
+      if a[1]._login_name.to_s == str
+        -1
+      elsif b[1]._login_name.to_s == str
+        1
+      else
+        "#{a[1]._first_name} #{a[1]._family_name}" <=>
+            "#{b[1]._first_name} #{b[1]._family_name}"
+      end
+    }.first(max).collect { |k, v| Persons.get_data_instance(k) }
 
     dputs(3) { "Result is: #{result.collect { |r| r.login_name }}" }
     not result and result = []
@@ -885,14 +858,14 @@ class Person < Entity
     (permissions-%w(internet student)).length == 0
   end
 
-  def to_list(show_password = true)
+  def to_list(user = nil)
     [login_name, "#{full_name} - #{login_name}" +
-                   (show_password ? ":#{password_plain}" : '')]
+                   (show_password?(user) ? ":#{password_plain}" : '')]
   end
 
-  def to_list_id(show_password = true)
+  def to_list_id(user = nil)
     [person_id, "#{full_name} - #{login_name}" +
-                  (show_password ? ":#{password_plain}" : '')]
+                  (show_password?(user) ? ":#{password_plain}" : '')]
   end
 
   def session
@@ -1130,8 +1103,8 @@ class Person < Entity
     file
   end
 
-  def to_frontend
-    to_list_id
+  def to_frontend(owner)
+    to_list_id(owner)
   end
 
   def is_responsible?
@@ -1143,5 +1116,18 @@ class Person < Entity
 
   def is_staff?
     (permissions - %w(student internet)).length > 0
+  end
+
+  def show_password?(user = nil)
+    case ConfigBase.show_passwords.first
+      when 'always'
+        return true
+      when 'never'
+        return false
+      when 'students'
+        return !is_staff?
+      when 'lesser'
+        return user ? user.has_all_rights_of(self) : false
+    end
   end
 end

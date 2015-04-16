@@ -15,13 +15,13 @@ class LibraryPerson < View
     end
   end
 
-  def library_users
-    Activities.tagged_users('library').to_frontend
+  def library_users(owner)
+    Activities.tagged_users('library').to_frontend(owner)
   end
 
   def rpc_update(session)
     reply(:empty, :users) +
-        reply(:update, users: library_users )
+        reply(:update, users: library_users(session.owner) )
   end
 
   def rpc_list_choice_users(session, data)

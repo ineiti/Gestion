@@ -5,6 +5,7 @@ class ConfigBases < Entities
     @convert_values = true
 
     value_block :vars_narrow
+    value_list_drop :show_passwords, '%w(always lesser students never)'
     value_str :keep_idle_free
     value_int :max_upload_size
     value_str :captive_dev
@@ -69,6 +70,10 @@ class ConfigBases < Entities
                         :internet_mobile => [:internet_mobile_autocharge]
     }
     @@functions_conflict = [[:course_server, :course_client]]
+  end
+
+  def migration_8(c)
+    c.show_passwords = %w(lesser)
   end
 
   def migration_7(c)

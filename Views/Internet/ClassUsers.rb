@@ -44,7 +44,7 @@ class InternetClassUsers < View
       [h, t.get_day(h, 1).inject(:+)]
     }.sort_by { |t| t[1] }.reverse[0..10].collect { |t|
       p = Persons.match_by_login_name t[0]
-      p.to_list_id(false)
+      p.to_list_id(session.owner)
     }
     reply(:empty_update, persons: list)
   end

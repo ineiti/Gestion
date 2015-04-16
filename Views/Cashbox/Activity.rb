@@ -70,7 +70,7 @@ class CashboxActivity < View
     reply(:empty, :students) +
         reply(:update, :students =>
                          ActivityPayments.search_by_activity(data._activities).collect { |ap|
-                           ap.person_paid && ap.person_paid.to_list_id
+                           ap.person_paid and ap.person_paid.to_list_id(session.owner)
                          }.compact.sort_by { |i| i[1] })
   end
 
@@ -86,7 +86,7 @@ class CashboxActivity < View
   def rpc_button_search_student(session, data)
     return unless (data._full_name || data._full_name.to_s.length > 0)
     reply(:empty_update, students: Persons.search_in(data._full_name).
-                           collect { |p| p.to_list_id })
+                           collect { |p| p.to_list_id(session.owner) })
   end
 
   def rpc_list_choice_activities(session, data)
