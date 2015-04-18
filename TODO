@@ -13,12 +13,8 @@ BUGS:
             - count is most probably wrong - output things from one user permanently
         - captive_dev should depend on the actual device used
         - Check Report::executive
-        - after a couple of logins, View.rpc_list is 10x slower
-            - seems like every hash-lookup is 10x slower - need to investigate
-                further
-
         - Documentation, documentation
-        - change ConfigBase.send_config to rely on ConfigBase.update
+
         - when course_server and user is admin, add the following:
             - ask for center when creating course
                 - only if there is more than one center
@@ -28,10 +24,9 @@ BUGS:
             - why is there a Course::center-method? This should come from Courses.setup_data!
         - profeda.org: can't edit student in course abc_PC-1_1500
         - captive-tables are not updated when configuration changes
-        - icc-calls are not secured with username/password
-            - use encoding json-library
-        - Get QooxView/Test/qv_gettext to run
-        - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
+        - after a couple of logins, View.rpc_list is 10x slower, but only on Cubox
+            - seems like every hash-lookup is 10x slower - need to investigate
+                further
     	- 10 crashes when not operating "properly"
 
 Bugs to watch:
@@ -49,6 +44,8 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
+        - Courses::Grades - replace list with table that shows grades and files,
+            kick password
         - SerialModem: needs to be ported as a class
         - update: search on profeda for latest version
         - put 'internet-connection' on welcome-screen as default if
@@ -135,6 +132,11 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
+        - change ConfigBase.send_config to rely on ConfigBase.update
+        - icc-calls are not secured with username/password
+            - use encoding json-library
+        - Get QooxView/Test/qv_gettext to run
+        - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
             - there would have to be a storage of the old names, like the first line

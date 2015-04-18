@@ -1,4 +1,4 @@
-class AccountDefaults < View
+class ComptaDefaults < View
   def layout
     @order = 300
     @update = true
