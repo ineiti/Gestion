@@ -22,7 +22,7 @@ class SpecialVNC < View
     reply(:update, status: System.run_str('pgrep -af vnc'))
   end
 
-  def rpc_button_start(session, data)
+  def rpc_button_start_x(session, data)
     @static._password = data._password
     if Service.system == :ArchLinux
       System.run_str("echo #{data._password} | vncpasswd -f > /root/.vnc/passwd")
