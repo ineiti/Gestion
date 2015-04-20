@@ -3,6 +3,9 @@
 WORKING:
 
 BUGS:
+        - Admin::Import - both buttons have same label
+        - pacman-gestion-first-installation: doesn't create symlinks
+        - restore overwrites symlinks -> restore to /var/lib/profeda
         - Monitor::Ping
             - the idea of logrotate is very clumsy. Store everything in a file in
                 /var/log/monitor/ping_yymmdd.log and delete oldest files
@@ -44,8 +47,10 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
-        - Courses::Grades - replace list with table that shows grades and files,
-            kick password
+        - Courses::Grades
+            - replace list with table that shows grades and files, kick password
+            x put download-link for exams
+            x allow also 19,5 and not only 19.5
         - SerialModem: needs to be ported as a class
         - update: search on profeda for latest version
         - put 'internet-connection' on welcome-screen as default if
@@ -271,6 +276,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150420: Courses::Grades - upload-button description should be emptied on change
+            of student
         - B 150416: catch error if squirrelmail or fetchmail not present
         - F 150414: add config-value for showing passwords or not
         - F 150414: also print 'reports' of people not passed in Courses

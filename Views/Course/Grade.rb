@@ -146,13 +146,18 @@ class CourseGrade < View
         end
       when 'students'
         student = Entities.Persons.match_by_login_name(data._students.first)
-        ret += reply(:update,
-                     name_file_direct: course.exam_files(student).first) +
+        file = course.exam_files(student).first
+        ret += reply(:update, name_file_direct: exam_file_to_href(course, student, file)) +
             update_grade(data) +
             reply(:focus, {table: 'grades', col: 1, row: 0})
     end
 
     ret
+  end
+
+  def exam_file_to_href(course, student, file)
+    dst = "#{course.name}/#{student.login_name}"
+    file ? "<a href='/exas/#{dst}/#{file}' target='_blank'>#{file}</a>" : 'Upload file'
   end
 
   def rpc_button_save(session, data)
@@ -282,7 +287,7 @@ class CourseGrade < View
         file_nb = exam_files.index { |f| f =~ /^#{i}-/ }
         file = file_nb ? exam_files[file_nb] : ''
         ret += reply(:update, "name_file_#{i}" =>
-                                "file ##{i}: #{file}") +
+                                "file ##{i}: #{exam_file_to_href(course,student,file)}") +
             reply(:update, "upload_file_#{i}" => ctype.files_arr[i-1])
       end
       dputs(3) { "Return is #{ret.inspect}" }
@@ -333,7 +338,7 @@ class CourseGrade < View
     ct.tests_arr.zip(means).collect { |t, m|
       i+= 1
       if i == new_grades._element_id.to_i then
-        new_grades._grade.to_f
+        new_grades._grade.sub(/,/, '.').to_f
       else
         m ? m : 0
       end
