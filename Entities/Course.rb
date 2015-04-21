@@ -465,7 +465,7 @@ class Course < Entity
           [(by_id ? person.person_id : s),
            "#{person.full_name} - #{person.login_name}:#{person.password_plain}"]
         end
-      }.select { |s| s }.sort { |a, b| a[1] <=> b[1] }
+      }.compact.sort { |a, b| a[1] <=> b[1] }
     end
     ret
   end

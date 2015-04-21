@@ -12,7 +12,10 @@ class CourseGrade < View
     #    gui_vboxgl do
     gui_hboxg do
       gui_vboxg :nogroup do
-        show_list_single :students, :width => 300, :callback => true, :flexheight => 1
+        show_table :students, headings: %w(Name Grade Files Status),
+                   widths: [250, 40, 40, 50], callback: :click,
+                   height: 300, width: 390, single: true
+        #show_list_single :students, :width => 300, :callback => true, :flexheight => 1
         show_str_ro :last_synched
         show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
       end
@@ -98,6 +101,25 @@ class CourseGrade < View
     end
   end
 
+  def update_students_table(course)
+    reply_table_columns_visible(course.ctype.files_nbr > 0, students: [2]) +
+        reply_table_columns_visible(course.ctype.diploma_type == %w(accredited),
+                                    students: [3]) +
+        reply(:update,
+              students:
+                  course.students.collect { |s|
+                    if person = Persons.match_by_login_name(s)
+                      mean, random = if grade = Grades.match_by_course_person(course, person)
+                                       [grade.mean, grade.random]
+                                     else
+                                       ['--', nil]
+                                     end
+                      [s, [person.full_name, mean, course.exam_files(person).length,
+                           random ? 'OK' : 'sync']]
+                    end
+                  }.compact.sort_by { |a, b| b[0] })
+  end
+
   def rpc_list_choice(session, name, data)
     dputs(3) { "rpc_list_choice with #{name} - #{data.inspect}" }
     ret = []
@@ -109,11 +131,12 @@ class CourseGrade < View
           dputs(3) { 'replying' }
           ret = rpc_update(session) +
               reply(:empty_nonlists, :students) +
-              update_form_data(course) +
-              reply(:update, {:courses => [course_id]})
+              reply(:update, courses: [course_id]) +
+              update_students_table(course)
           if course.students.size > 0 && course.list_students.size > 0
             first = course.list_students[0][0]
-            ret += reply(:update, {:students => [first]})
+            ret += reply(:select, students: [first]) +
+                rpc_table_students(session, data.merge(students: [first]))
           end
 
           dputs(3) { "CType is #{course.ctype.inspect} - #{course.ctype.files_nbr.inspect}" }
@@ -144,20 +167,9 @@ class CourseGrade < View
 
           dputs(4) { "Course is #{course} - ret is #{ret.inspect}" }
         end
-      when 'students'
-        student = Entities.Persons.match_by_login_name(data._students.first)
-        file = course.exam_files(student).first
-        ret += reply(:update, name_file_direct: exam_file_to_href(course, student, file)) +
-            update_grade(data) +
-            reply(:focus, {table: 'grades', col: 1, row: 0})
     end
 
     ret
-  end
-
-  def exam_file_to_href(course, student, file)
-    dst = "#{course.name}/#{student.login_name}"
-    file ? "<a href='/exas/#{dst}/#{file}' target='_blank'>#{file}</a>" : 'Upload file'
   end
 
   def rpc_button_save(session, data)
@@ -184,27 +196,26 @@ class CourseGrade < View
       grades = data._grades.first
       element = grades ? grades._element_id.to_i : 0
 
-      if element >= course.ctype.tests_nbr.to_i
-        element = 0
-        # Find next student
-        course = course.to_hash
-        saved = course[:students].index { |i|
-          i[0] == data._students[0]
-        }
-        dputs(2) { "Found student at #{saved}" }
-        data._students = course[:students][(saved + 1) % course[:students].size]
-        dputs(2) { "Next student is #{data._students.inspect}" }
-        if false
-          reply(:empty_nonlists, :students) +
-              reply(:update, :students => course[:students]) +
-              reply(:update, :students => [data._students[0]])
-        else
-          reply(:select, students: [data._students[0]])
-        end
-      else
-        update_grade(data) +
-            reply(:focus, {table: 'grades', row: element, col: 1})
-      end
+      update_students_table(course) +
+          if element >= course.ctype.tests_nbr.to_i
+            # Find next student
+            course = course.to_hash
+            if saved = course[:students].index { |i|
+              i[0] == data._students[0]
+            }
+              dputs(2) { "Found student at #{saved}" }
+              data._students = course[:students][(saved + 1) % course[:students].size]
+              dputs(2) { "Next student is #{data._students.inspect}" }
+              reply(:select, students: [data._students[0]]) +
+                  rpc_table_students(session, data)
+            else
+              []
+            end
+          else
+            update_grade(data) +
+                reply(:focus, {table: 'grades', row: element, col: 1}) +
+                reply(:select, students: [data._students[0]])
+          end
     end
   end
 
@@ -287,7 +298,7 @@ class CourseGrade < View
         file_nb = exam_files.index { |f| f =~ /^#{i}-/ }
         file = file_nb ? exam_files[file_nb] : ''
         ret += reply(:update, "name_file_#{i}" =>
-                                "file ##{i}: #{exam_file_to_href(course,student,file)}") +
+                                "file ##{i}: #{exam_file_to_href(course, student, file)}") +
             reply(:update, "upload_file_#{i}" => ctype.files_arr[i-1])
       end
       dputs(3) { "Return is #{ret.inspect}" }
@@ -365,6 +376,15 @@ class CourseGrade < View
     else
       reply(:focus, {table: 'grades', row: element, col: 1})
     end
+  end
+
+  def rpc_table_students(session, data)
+    course_id = data._courses[0]
+    course = Courses.match_by_course_id(course_id)
+    student = Entities.Persons.match_by_login_name(data._students.first)
+    reply(:update, name_file_direct: course.exam_files(student).first) +
+        update_grade(data) +
+        reply(:focus, {table: 'grades', col: 1, row: 0})
   end
 
   def rpc_button_upload_direct(session, data)
