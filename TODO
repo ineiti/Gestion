@@ -4,18 +4,13 @@ WORKING:
 
 BUGS:
         - update doesn't work
-        - Admin::Import - both buttons have same label
         - pacman-gestion-first-installation: doesn't create symlinks
         - restore overwrites symlinks -> restore to /var/lib/profeda
-        - Monitor::Ping
-            - the idea of logrotate is very clumsy. Store everything in a file in
-                /var/log/monitor/ping_yymmdd.log and delete oldest files
         - Monitor::Traffic
             - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
             pressed during startup
             - count is most probably wrong - output things from one user permanently
-        - captive_dev should depend on the actual device used
         - Check Report::executive
         - Documentation, documentation
 
@@ -50,10 +45,10 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
-        - Courses::Grades
-            - replace list with table that shows grades and files, kick password
-            x put download-link for exams
-            x allow also 19,5 and not only 19.5
+        - Monitor::Ping
+            - the idea of logrotate is very clumsy. Store everything in a file in
+                /var/log/monitor/ping_yymmdd.log and delete oldest files
+        - captive_dev should depend on the actual device used
         - SerialModem: needs to be ported as a class
         - update: search on profeda for latest version
         - put 'internet-connection' on welcome-screen as default if
@@ -279,6 +274,11 @@ To check:
 
 
 ** FIXED **:
+        - F 150421: Courses::Grades
+            - replace list with table that shows grades and files, kick password
+            - put download-link for exams
+            - allow also 19,5 and not only 19.5
+        - B 150421: Admin::Import - both buttons have same label
         - B 150421: Course::Grade::sync_with_server - should update table when done
         - B 150421: add mail.profeda.org to /etc/hosts
         - B 150420: Courses::Grades - upload-button description should be emptied on change
