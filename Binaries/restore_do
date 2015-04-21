@@ -13,7 +13,7 @@ sleep 5
 touch /tmp/stop_gestion
 $WDIR/Binaries/kill_gestion
 echo Going to restore $BACKUP_DIR/$DATE > /tmp/restore
-tar -C $WDIR -Pxzf $BACKUP_DIR/$DATE
+tar -C /var/lib/gestion -Pxzf $BACKUP_DIR/$DATE
 
 sleep 5
 systemctl start gestion

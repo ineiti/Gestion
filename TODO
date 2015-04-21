@@ -4,8 +4,6 @@ WORKING:
 
 BUGS:
         - update doesn't work
-        - pacman-gestion-first-installation: doesn't create symlinks
-        - restore overwrites symlinks -> restore to /var/lib/profeda
         - Monitor::Traffic
             - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
@@ -274,6 +272,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150421: backup doesn't work neither
+        - B 150421: restore overwrites symlinks -> restore to /var/lib/gestion
         - F 150421: Courses::Grades
             - replace list with table that shows grades and files, kick password
             - put download-link for exams
