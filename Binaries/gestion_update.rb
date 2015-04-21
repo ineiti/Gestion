@@ -4,13 +4,17 @@ require 'helperclasses'
 require 'net/http'
 require 'fileutils'
 include HelperClasses
+include HelperClasses::DPuts
 @file_update = '/tmp/gestion.update'
 @html_txt = []
 @html_dir = '/srv/http/local'
+@pacman_lock = '/var/lib/pacman/db.lck'
 @html_file = "#{@html_dir}/update_progress.html"
+DEBUG_LVL = 2
 
 def main
   begin
+    dputs_func
     if !File.exists? @file_update
       update_html("Didn't find #{@file_update}", '0')
       exit
@@ -20,13 +24,18 @@ def main
     update_html "Calling pacman to update #{file}"
     update = Thread.new {
       System.run_str '/usr/bin/killall -9 pacman'
-      FileUtils.rm '/var/lib/pacman/db.lck'
-      System.run_str "/usr/bin/pacman --noconfirm --force -U #{file} > /tmp/gestion.update"
+      puts @pacman_lock
+      File.exists?(@pacman_lock) and
+          FileUtils.rm(@pacman_lock)
+      puts System.run_str("/usr/bin/pacman --noconfirm --force -U #{file} > "+
+                              '/tmp/gestion.update')
     }
     while update.alive?
+      dputs(3) { 'Update is alive' }
       update_html "<pre>#{IO.read('/tmp/gestion.update')}</pre>", true
       sleep 4
     end
+    dputs(3) { 'Update should be done' }
     update_html "<pre>#{IO.read('/tmp/gestion.update')}</pre>"
     update_html 'Starting Gestion'
     FileUtils.rm @file_update
@@ -37,6 +46,7 @@ def main
       i += 1
       begin
         Net::HTTP.get(uri)
+        update_html("OK, we're good")
         break
       rescue Errno::ECONNREFUSED => e
         update_html("Count: #{i} - gestion not yet up and running")
