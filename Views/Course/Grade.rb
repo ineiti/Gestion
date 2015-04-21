@@ -203,9 +203,9 @@ class CourseGrade < View
             if saved = course[:students].index { |i|
               i[0] == data._students[0]
             }
-              dputs(2) { "Found student at #{saved}" }
+              dputs(3) { "Found student at #{saved}" }
               data._students = course[:students][(saved + 1) % course[:students].size]
-              dputs(2) { "Next student is #{data._students.inspect}" }
+              dputs(3) { "Next student is #{data._students.inspect}" }
               reply(:select, students: [data._students[0]]) +
                   rpc_table_students(session, data)
             else
