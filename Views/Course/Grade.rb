@@ -14,7 +14,7 @@ class CourseGrade < View
       gui_vboxg :nogroup do
         show_table :students, headings: %w(Name Grade Files Status),
                    widths: [250, 40, 40, 50], callback: :click,
-                   height: 300, width: 390, single: true
+                   height: 350, width: 390, single: true
         #show_list_single :students, :width => 300, :callback => true, :flexheight => 1
         show_str_ro :last_synched
         show_button :prepare_files, :fetch_files, :transfer_files, :sync_server
@@ -133,11 +133,6 @@ class CourseGrade < View
               reply(:empty_nonlists, :students) +
               reply(:update, courses: [course_id]) +
               update_students_table(course)
-          if course.students.size > 0 && course.list_students.size > 0
-            first = course.list_students[0][0]
-            ret += reply(:select, students: [first]) +
-                rpc_table_students(session, data.merge(students: [first]))
-          end
 
           dputs(3) { "CType is #{course.ctype.inspect} - #{course.ctype.files_nbr.inspect}" }
           buttons = []
@@ -155,6 +150,11 @@ class CourseGrade < View
             if Shares.match_by_name('CourseFiles')
               buttons.push :prepare_files, :fetch_files
             end
+          end
+          if course.students.size > 0 && course.list_students.size > 0
+            first = course.list_students[0][0]
+            ret += reply(:select, students: [first]) +
+                rpc_table_students(session, data.merge(students: [first]))
           end
           if course.ctype.diploma_type[0] == 'accredited' and
               ConfigBase.has_function?(:course_client)
@@ -382,7 +382,8 @@ class CourseGrade < View
     course_id = data._courses[0]
     course = Courses.match_by_course_id(course_id)
     student = Entities.Persons.match_by_login_name(data._students.first)
-    reply(:update, name_file_direct: course.exam_files(student).first) +
+    file = course.exam_files(student).first
+    reply(:update, name_file_direct: exam_file_to_href(course, student, file)) +
         update_grade(data) +
         reply(:focus, {table: 'grades', col: 1, row: 0})
   end
@@ -391,4 +392,9 @@ class CourseGrade < View
     rpc_button(session, 'upload_file_1', data)
   end
 
+
+  def exam_file_to_href(course, student, file)
+    dst = "#{course.name}/#{student.login_name}"
+    file ? "<a href='/exas/#{dst}/#{file}' target='_blank'>#{file}</a>" : 'Upload file'
+  end
 end
