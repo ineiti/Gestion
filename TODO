@@ -4,6 +4,8 @@ WORKING:
 
 BUGS:
         - update doesn't work
+            - soso, but Diplomas-directory still poses problem, as it's both in
+             the pacman-pkg and should be moved...
         - Monitor::Traffic
             - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
