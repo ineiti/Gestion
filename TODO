@@ -4,7 +4,6 @@ WORKING:
 
 BUGS:
         - update doesn't work
-        - Course::Diplomas - labels not right anymore when creating diplomas
         - Admin::Import - both buttons have same label
         - pacman-gestion-first-installation: doesn't create symlinks
         - restore overwrites symlinks -> restore to /var/lib/profeda
@@ -20,6 +19,8 @@ BUGS:
         - Check Report::executive
         - Documentation, documentation
 
+        - Course::Diplomas - labels not right anymore when creating diplomas
+            - probably only when multiple people create diplomas at the same time
         - when course_server and user is admin, add the following:
             - ask for center when creating course
                 - only if there is more than one center

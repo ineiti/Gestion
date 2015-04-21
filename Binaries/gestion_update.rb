@@ -45,7 +45,7 @@ def main
     update_html('Hope the update went well - goodbye',
                 refresh: '5; URL=http://admin.profeda.org')
   rescue Exception => e
-    update_html("Error: #{e.to_s}")
+    update_html("Error: #{e.to_s} - #{e.inspect}")
     update_html("Error: #{caller.inspect}")
   end
   System.run_str "cat #{@html_file} | mail -S 'update gestion on $(hostname)' root@localhost"
