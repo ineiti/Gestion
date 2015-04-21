@@ -3,6 +3,8 @@
 WORKING:
 
 BUGS:
+        - update doesn't work
+        - Course::Diplomas - labels not right anymore when creating diplomas
         - Admin::Import - both buttons have same label
         - pacman-gestion-first-installation: doesn't create symlinks
         - restore overwrites symlinks -> restore to /var/lib/profeda
@@ -276,6 +278,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150421: Course::Grade::sync_with_server - should update table when done
+        - B 150421: add mail.profeda.org to /etc/hosts
         - B 150420: Courses::Grades - upload-button description should be emptied on change
             of student
         - B 150416: catch error if squirrelmail or fetchmail not present

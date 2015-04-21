@@ -261,7 +261,8 @@ class CourseGrade < View
     if course = Courses.match_by_course_id(data._courses[0])
       ret = reply(:update, :synching => 'Sync-state:<ul>' + course.sync_state)
       if course.sync_state =~ /(finished|Error:)/
-        ret += reply(:auto_update, 0)
+        ret += reply(:auto_update, 0) +
+            update_students_table(course)
       end
     end
     ret
