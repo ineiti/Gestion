@@ -34,6 +34,9 @@ Bugs to watch:
 For 2.0:
         - Put data-directory elsewhere
         - Make a gem-compatible installation
+        - Migrations:
+            - all statics in views and entities
+                - View::Network::Block
 
 Security:
 

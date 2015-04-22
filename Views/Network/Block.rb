@@ -3,7 +3,7 @@ class NetworkBlock < View
     @functions_need = [:network]
     @order = 100
     @blocking = Entities.Statics.get(:NetworkBlock)
-    @blocking.data_str.class != Hash and @blocking.data_str = []
+    @blocking.data_str.class != Array and @blocking.data_str = []
     update_block(@blocking.data_str)
 
     @hosts = Entities.Statics.get(:NetworkBlockHosts)
