@@ -16,6 +16,9 @@ if [ "$( which ruby )" -a "$1" != "--install" ]; then
       echo "Not started as root, doing nothing"
     fi
   fi
+  if [ ! -e Diplomas ]; then
+    cp -a Diplomas.src Diplomas
+  fi
   if [ -f dorestore ]; then
     RESTORE=restore_$( date +%Y-%m-%d_%H.%M.%S )
     for d in data config.yaml Exas Diplomas*; do
