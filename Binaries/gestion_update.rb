@@ -32,7 +32,7 @@ def main
     }
     while update.alive?
       dputs(3) { 'Update is alive' }
-      update_html "<pre>#{IO.read('/tmp/gestion.update')}</pre>", true
+      update_html("<pre>#{IO.read('/tmp/gestion.update')}</pre>", true)
       sleep 4
     end
     dputs(3) { 'Update should be done' }
@@ -49,7 +49,7 @@ def main
         update_html("OK, we're good")
         break
       rescue Errno::ECONNREFUSED => e
-        update_html("Count: #{i} - gestion not yet up and running")
+        update_html("Count: #{i} - gestion not yet up and running", true)
       end
     end
     update_html('Hope the update went well - goodbye',

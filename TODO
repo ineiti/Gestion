@@ -3,10 +3,6 @@
 WORKING:
 
 BUGS:
-        - update doesn't work
-            - soso, but Diplomas-directory still poses problem, as it's both in
-             the pacman-pkg and should be moved...
-        - Statics get added instead of updated!
         - Monitor::Traffic
             - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
@@ -275,6 +271,10 @@ To check:
 
 
 ** FIXED **:
+        - B 150422: update doesn't work
+            - soso, but Diplomas-directory still poses problem, as it's both in
+             the pacman-pkg and should be moved...
+        - B 150422: Statics get added instead of updated!
         - B 150421: backup doesn't work neither
         - B 150421: restore overwrites symlinks -> restore to /var/lib/gestion
         - F 150421: Courses::Grades
