@@ -829,6 +829,7 @@ class Person < Entity
     }
     replace = [[/--NAME1--/, first_name],
                [/--NAME2--/, family_name],
+               [/--GENDER--/, gender_i18n(ConfigBase.locale_force)],
                [/--BDAY--/, birthday],
                [/--TDAY--/, System.run_str('LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"')],
                [/--TOWN--/, town],
@@ -1133,6 +1134,18 @@ class Person < Entity
         return !is_staff?
       when 'lesser'
         return user ? user.has_all_rights_of(self) : false
+    end
+  end
+
+  def gender_i18n(lang)
+    g = (gender ? gender.first : '').to_sym
+    case lang
+      when /en/
+        {male: 'Mister', female: 'Madam'}[g]
+      when /fr/
+        {male: 'Monsieur', female: 'Madame'}[g]
+      else
+        ''
     end
   end
 end

@@ -786,6 +786,7 @@ base_gestion
              [/-COURSE-/, description],
              [/-COURSE_ID-/, name],
              [/-SPECIAL-/, ''],
+             [/-GENDER-/, student.gender_i18n(ctype.diploma_lang.first)],
              [/-GRADE-/, grade.mention],
              [/-DATE-/, date_i18n(sign)],
              [/-FROM-/, date_i18n(start, show_year)],

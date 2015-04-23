@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - ALL print-buttons are "{}"
         - Monitor::Traffic
             - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
@@ -44,9 +45,13 @@ Security:
 UI:
         - Replace :empty_nonlists with :empty and :empty_update
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
+        - add-button in different views should always pop up a window with
+          the information to add, never just an empty form
+            -> delete fields when pressing 'new' and empty forms when switching tab
+            - empty forms should be disabled (like Person::Modify), in
+              TemplateCourse, NetworkShare, ...
 
 FEATURES:
-        - add "messieur/madame" in diploma
         - Monitor::Ping
             - the idea of logrotate is very clumsy. Store everything in a file in
                 /var/log/monitor/ping_yymmdd.log and delete oldest files
@@ -64,11 +69,6 @@ FEATURES:
         - import all data from a center
             - write tests
             - export all data to server
-        - add-button in different views should always pop up a window with
-          the information to add, never just an empty form
-            -> delete fields when pressing 'new' and empty forms when switching tab
-            - empty forms should be disabled (like Person::Modify), in
-              TemplateCourse, NetworkShare, ...
         - Get time and date from SMS
         - Add Cashbox::Other which covers all other Income-accounts
         - make simple printer-conf
@@ -271,6 +271,7 @@ To check:
 
 
 ** FIXED **:
+        - F 150423: add "messieur/madame" in diploma
         - F 150423: put 'internet-connection' on welcome-screen as default if
             'internet_captive' is active
         - B 150423: Cleaning up %x and `` and service-invocations
