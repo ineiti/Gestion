@@ -3,12 +3,12 @@
 WORKING:
 
 BUGS:
-        - View::Courses::Print
         - Monitor::Traffic
             - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
             pressed during startup
             - count is most probably wrong - output things from one user permanently
+            - sometimes the iptables-nat and iptables-mangle doesn't work as it should
         - Check Report::executive
         - Documentation, documentation
 
@@ -273,6 +273,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150423: Course::print_presence can't switch between PDF and printer
         - B 150423: file-traversal path in Gestion/Paths
         - B 150422: update doesn't work
             - soso, but Diplomas-directory still poses problem, as it's both in

@@ -639,7 +639,7 @@ base_gestion
          else
            @proxy.print_presence
          end
-    lp_cmd and pp.lp_cmd = lp_cmd
+    pp.lp_cmd = lp_cmd
     pp.print(studs.flatten(1) + dow_adds + [
                  [/Teacher/, teacher.full_name],
                  [/Course_name/, name],
