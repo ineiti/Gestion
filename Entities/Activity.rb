@@ -161,7 +161,7 @@ class ActivityPayment < Entity
 
   def print
     st = person_paid
-    date = `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"`
+    date = System.run_str('LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"')
     replace = {NAME1: st.first_name, NAME2: st.family_name,
                BDAY: st.birthday, ADDRESS: st.address, TOWN: st.town,
                TEL: st.phone, UNAME: st.login_name, PASS: st.password_plain,

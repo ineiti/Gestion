@@ -77,7 +77,7 @@ class AdminBackup < View
       dputs(1) { "Going to call restore for #{file}" }
       File.open('dorestore', 'w') { |f| f.write file }
       Thread.new {
-        System.run_bool 'systemctl restart gestion'
+        Service.restart('gestion')
       }
       reply(:window_show, :status) +
           reply(:hide, %w(restore close)) +

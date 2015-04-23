@@ -93,12 +93,12 @@ class TC_Usage < Test::Unit::TestCase
     dputs(1) { 'Benchmarking different search strategies' }
     dputs(1) { '   total   description' }
     dputs(1) { Benchmark.measure('finding with grep') {
-      results = %x[ grep "GET /Files" reports/report_long ]
+      results = System.run_str("grep 'GET /Files' reports/report_long")
       assert_equal 31, results.split("\n").count
     }.format('%t  %n') }
 
     dputs(1) { Benchmark.measure('finding with grep') {
-      results = %x[ grep "GET /Files" reports/report_long ]
+      results = System.run_str("grep 'GET /Files' reports/report_long")
       assert_equal 31, results.split("\n").count
     }.format('%t  %n') }
 

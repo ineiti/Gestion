@@ -137,7 +137,7 @@ class CashboxActivity < View
               reply(:unhide, :print_next)
           cmd += " #{var._pages[0]}"
           dputs(3) { "Printing-cmd is #{cmd.inspect}" }
-          %x[ #{cmd} ]
+          System.run_bool(cmd)
         else
           var._step = 9
         end
@@ -150,7 +150,7 @@ class CashboxActivity < View
             reply(:hide, :print_next)
         cmd += " -o outputorder=reverse #{var._pages[1]}"
         dputs(3) { "Printing-cmd is #{cmd.inspect}" }
-        %x[ #{cmd} ]
+        System.run_bool(cmd)
       when 4..10
         dputs(3) { 'Hiding' }
         ret = reply(:window_hide)

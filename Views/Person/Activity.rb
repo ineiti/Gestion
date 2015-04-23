@@ -103,8 +103,8 @@ class PersonActivity < View
     lp_cmd = cmd_printer(session, :print_activity)
     files = OpenPrint.pdf_nup_duplex([act.print])
     if lp_cmd
-      %x[ #{lp_cmd} #{files.pop} ]
-      %x[ #{lp_cmd} #{files.pop} ]
+      System.run_bool("#{lp_cmd} #{files.pop}")
+      System.run_bool("#{lp_cmd} #{files.pop}")
       rep += reply(:window_show, :printing) +
           reply(:update, :msg_print => "Printing is finished on #{lp_cmd.sub(/.* /,'')}")
     else

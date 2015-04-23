@@ -243,7 +243,7 @@ class Persons < Entities
 
     if defined? @cmd_after_new
       dputs(2) { "Going to call #{@cmd_after_new}" }
-      %x[ #{@cmd_after_new} #{person.login_name} #{person.password_plain} ]
+      System.run_bool("#{@cmd_after_new} #{person.login_name} #{person.password_plain}")
     end
 
     return person
@@ -355,7 +355,7 @@ class Persons < Entities
       if Kernel.system("ldapadduser #{user} plugdev")
         if defined? @adduser_cmd
           dputs(2) { "Going to call #{@adduser_cmd} #{user.inspect}" }
-          %x[ #{@adduser_cmd} #{user} ]
+          System.run_bool("#{@adduser_cmd} #{user}")
         end
       else
         dputs(0) { "Error: Couldn't create #{user}" }
@@ -667,7 +667,7 @@ class Person < Entity
   def update_local_passwd(pass)
     if permissions and permissions.index 'email'
       dputs(2) { "Updating password #{pass} for #{login_name}" }
-      %x[ echo -e "#{pass}\n#{pass}" | passwd #{login_name} ]
+      System.run_bool("echo -e '#{pass}\n#{pass}' | passwd #{login_name}")
     end
   end
 
@@ -697,8 +697,8 @@ class Person < Entity
       if Persons.admin_users
         if !File.exist? "/home/#{login_name}"
           log_msg :Person, "Adding user-account for #{login_name} with #{permissions.inspect}"
-          %x[ if which adduser; then adduser --disabled-password --gecos "#{self.full_name}" #{self.login_name};
-            else useradd -m #{self.login_name}; fi ]
+          System.run_str("if which adduser; then adduser --disabled-password --gecos '#{self.full_name}' #{self.login_name};
+            else useradd -m #{self.login_name}; fi")
         end
       end
     end
@@ -770,7 +770,7 @@ class Person < Entity
     p = pass.chomp
     if @proxy.has_storage? :LDAP
       dputs(2) { "Changing password for #{self.login_name}: #{pass}" }
-      p = %x[ slappasswd -s #{pass} ].chomp
+      p = System.run_str("slappasswd -s #{pass}").chomp
       dputs(2) { "Hashed password for #{self.login_name} is: #{pass}" }
     end
     update_smb_passwd(pass)
@@ -830,7 +830,7 @@ class Person < Entity
     replace = [[/--NAME1--/, first_name],
                [/--NAME2--/, family_name],
                [/--BDAY--/, birthday],
-               [/--TDAY--/, `LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"`],
+               [/--TDAY--/, System.run_str('LC_ALL=fr_FR.UTF-8 date +"%d %B %Y"'),
                [/--TOWN--/, town],
                [/--TEL--/, phone],
                [/--UNAME--/, login_name],
@@ -988,11 +988,11 @@ class Person < Entity
         dputs(0) { "Error: couldn't delete user #{self.inspect}" }
       end
     elsif Persons.admin_users
-      %x[ if which deluser; then deluser #{self.login_name}; else
-          userdel #{self.login_name}; fi ]
+      System.run_bool("if which deluser; then deluser #{self.login_name}; else
+          userdel #{self.login_name}; fi")
     end
     if ConfigBase.has_function?(:share)
-      %x[ smbpasswd -x #{self.login_name} ]
+      System.run_bool("smbpasswd -x #{self.login_name}")
     end
     super
 

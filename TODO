@@ -273,6 +273,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150423: Cleaning up %x and `` and service-invocations
         - B 150423: Course::print_presence can't switch between PDF and printer
         - B 150423: file-traversal path in Gestion/Paths
         - B 150422: update doesn't work

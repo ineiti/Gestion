@@ -26,7 +26,7 @@ class AdminPower < View
     case name
       when /reboot_gestion/ then
         Thread.new {
-          System.run_bool 'systemctl restart gestion'
+          Service.restart('gestion')
         }
         msg = '<h1>Recharger le navigateur avec ctrl+r ou F5</h1>'
       when /reboot_dreamplug/ then
@@ -37,7 +37,7 @@ class AdminPower < View
             '<h2>Attention: il faudra attendre au moins 2 minutes!</h2>'
       when /update_files/ then
         Thread.new {
-          `nohup /home/ftp/Files/update_files`
+          System.run_bool('nohup /home/ftp/Files/update_files')
         }
         msg = '<h1>Les fichiers vont être mises à jour - patience</h1>'
       when /OK/ then

@@ -74,16 +74,7 @@ class Shares < Entities
         f.write(a)
       }
 
-      if File.exists? '/etc/init.d/samba'
-        System.run_str('/etc/init.d/samba restart')
-      elsif File.exists? '/etc/init.d/smb'
-        System.run_str('/etc/init.d/smb restart')
-        System.run_str('/etc/init.d/nmb restart')
-      elsif File.exists? '/etc/systemd'
-        System.run_str('systemctl restart smbd nmbd')
-      else
-        dputs(0) { "Error: Couldn't restart samba as there was no init.d-file" }
-      end
+      Service.restart('samba')
     end
   end
 end
@@ -113,7 +104,7 @@ Require valid-user
             when /rw|ro/
               dputs(4) { "Really adding #{k} to #{passfile}" }
               user = Persons.find_by_login_name(k)
-              %x[ htpasswd -bnd #{user.login_name} "#{user.password_plain }" >> #{passfile} ]
+              System.run_bool("htpasswd -bnd #{user.login_name} '#{user.password_plain }' >> #{passfile}")
           end
         }
       end

@@ -883,8 +883,8 @@ base_gestion
             @thread.kill
           end
           dputs(2) { "Creating -#{format.inspect}-#{list.inspect}-" }
-          `date >> /tmp/cp`
-          %x[ ls -l #{dir_diplomas} >> /tmp/cp ]
+          System.run_bool('date >> /tmp/cp')
+          System.run_bool("ls -l #{dir_diplomas} >> /tmp/cp")
           outfiles = []
           dir = File::dirname(list.first)
           @only_psnup and list = []
@@ -918,7 +918,7 @@ base_gestion
             if outfiles.length > 1
               cmd = "pdfunite #{outfiles.join(' ')} #{all}"
               dputs(3) { "Putting it all in one file: #{cmd}" }
-              %x[ #{cmd} ]
+              System.run_bool(cmd)
             else
               dputs(3) { "#{outfiles.first} - #{all}" }
               FileUtils.cp(outfiles.first, all)
@@ -927,7 +927,7 @@ base_gestion
             pf = ctype.data_get(:page_format, true)[0]
             format = ['', '-f', '-l', '-r'][pf - 1]
             dputs(3) { "Page-format is #{pf.inspect}: #{format}" }
-            `pdftops #{all} - | psnup -4 #{format} | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp`
+            System.run_bool("pdftops #{all} - | psnup -4 #{format} | ps2pdf -sPAPERSIZE=a4 - #{psn}.tmp")
             FileUtils.mv("#{psn}.tmp", psn)
             dputs(2) { 'Finished' }
           else
@@ -1099,7 +1099,7 @@ base_gestion
   def exas_prepare_files
     name.length == 0 and return
     if File.exists? dir_exas_share
-      %x[ rm -rf #{dir_exas_share} ]
+      FileUtils.rm_rf dir_exas_share
     end
 
     FileUtils.mkdir dir_exas_share
@@ -1111,7 +1111,7 @@ base_gestion
         FileUtils.mkdir "#{dir_exas_share}/#{s}"
       end
     }
-    %x[ rm -rf #{dir_exas} ]
+    FileUtils.rm_rf(dir_exas)
   end
 
   def exas_fetch_files
@@ -1129,7 +1129,7 @@ base_gestion
         end
       }
     end
-    %x[ rm -rf #{dir_exas_share} ]
+    FileUtils.rm_rf dir_exas_share
   end
 
   def sync_transfer(field, transfer = '', json = true)

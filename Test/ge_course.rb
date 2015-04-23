@@ -387,7 +387,7 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.center = @center
     @maint_t.diploma_type = [:files]
 
-    %x[ rm -rf Exas ]
+    FileUtils.rm_rf 'Exas'
     FileUtils.mkdir 'Exas'
 
     file = @maint_2.zip_create(for_server: false)
@@ -493,8 +493,8 @@ class TC_Course < Test::Unit::TestCase
     students = %w( secretaire admin surf )
     @maint_2.students.concat students
 
-    %x[ rm -rf #{@maint_2.dir_exas} ]
-    %x[ rm -rf #{@maint_2.dir_exas_share} ]
+    FileUtils.rm_rf(@maint_2.dir_exas)
+    FileUtils.rm_rf(@maint_2.dir_exas_share)
 
     @maint_2.exas_prepare_files
     assert !File.exists?(@maint_2.dir_exas)

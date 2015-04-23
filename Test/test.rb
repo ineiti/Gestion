@@ -30,8 +30,7 @@ end
 
 permissions_init
 
-%x[ rm -rf data* ]
-
+FileUtils.rm_rf Dir.glob('data*')
 QooxView.init('../Entities', '../Views')
 
 tests = Dir.glob('ge_*.rb')

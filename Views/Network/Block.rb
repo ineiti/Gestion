@@ -68,7 +68,7 @@ class NetworkBlock < View
   end
 
   def list_dhcp
-    `cut -d " " -f 3,4 /var/lib/misc/dnsmasq.leases`.split("\n")
+    System.run_str('cut -d " " -f 3,4 /var/lib/misc/dnsmasq.leases').split("\n")
   end
 
   def rpc_update_view(session)

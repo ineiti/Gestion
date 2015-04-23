@@ -168,7 +168,7 @@ class CourseDiploma < View
         names = []
         files.each { |name, file|
           if File.exists? file
-            `#{lp_cmd} #{file}`
+            System.run_bool("#{lp_cmd} #{file}")
             names.push name
           end
         }
@@ -180,7 +180,7 @@ class CourseDiploma < View
             reply(:update, :msg_print => 'Choisir le pdf:<ul>' +
                              files.collect { |name, file|
                                if File.exists? file
-                                 %x[ cp #{file} /tmp ]
+                                 FileUtils.cp file, '/tmp'
                                  "<li><a target='other' href=\"/tmp/#{File.basename(file)}\">#{name}</a></li>"
                                else
                                  "<li>#{name} - not found</li>"
