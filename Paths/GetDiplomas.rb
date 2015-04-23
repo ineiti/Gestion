@@ -4,7 +4,7 @@ class GetDiplomas < RPCQooxdooPath
     dputs( 4 ){ "GetDiplomas: #{req.inspect}" }
     path, query, addr = req.path, req.query.to_sym, RPCQooxdooHandler.get_ip( req )
     if req.request_method == 'GET'
-      filename = path.sub( /^.[^\/]*./, '' )
+      filename = RPCQooxdooPath.sanitize(path.sub( /^.[^\/]*./, '' ))
       res['content-type'] = case filename
       when /pdf$/i
         'application/pdf'

@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - View::Courses::Print
         - Monitor::Traffic
             - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
@@ -45,21 +46,21 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
-        - Monitor::Ping
-            - the idea of logrotate is very clumsy. Store everything in a file in
-                /var/log/monitor/ping_yymmdd.log and delete oldest files
-        - captive_dev should depend on the actual device used
-        - SerialModem: needs to be ported as a class
-        - update: search on profeda for latest version
         - put 'internet-connection' on welcome-screen as default if
             'internet_captive' is active
         - make nice 503-error page
+        - Update: Should open gestion in new window
+        - add "messieur/madame" in diploma
+        - Monitor::Ping
+            - the idea of logrotate is very clumsy. Store everything in a file in
+                /var/log/monitor/ping_yymmdd.log and delete oldest files
+        - update: search on profeda for latest version
+        - captive_dev should depend on the actual device used
+        - SerialModem: needs to be ported as a class
         - CourseType
             x added internet_free_* to configbase
             - add drop: "internet_always, internet_course, none"
             - add to course
-        - Update: Should open gestion in new window
-        - add "messieur/madame" in diploma
         - remove accounting from admin-rights
         - Check auto-update of Antivirus and other stuff
         - import all data from a center
@@ -74,15 +75,13 @@ FEATURES:
         - Add Cashbox::Other which covers all other Income-accounts
         - make simple printer-conf
         - CoursesTabs - Drop-down to select courses
-        - Bibliotheque
 
+        - Bibliotheque
         - Courses::Grades can have more than the necessary files ->
             - show downloadable list of files
         - limit speed upon reaching threshold
             - calculate threshold
         - add EditAccounts::move
-        - better display in Course::Grades with regard to files, perhaps direct
-            download of student-files
         - Pruning out left-overs in LibNet -> Network transition
             - Entity and taking care of values (int, str, bool, array)
         - Adding ScheduleType to schools
@@ -135,18 +134,19 @@ FEATURES:
 	-3 check diploma-templates
 
 Programming:
-        - change ConfigBase.send_config to rely on ConfigBase.update
+        - migration: don't migrate on new installation, but use something like
+          'default_values'-method
+        - ConfigBase: include default-values
         - icc-calls are not secured with username/password
             - use encoding json-library
+
+        - change ConfigBase.send_config to rely on ConfigBase.update
         - Get QooxView/Test/qv_gettext to run
         - QooxView-libs are not loaded before ruby-gems, e.g. librqrcode
         - when migrating with old value-names, it gives an error - how to keep
           old names during migration?
             - there would have to be a storage of the old names, like the first line
              of the CVS or the data given by the sql-database
-        - migration: don't migrate on new installation, but use something like
-          'default_values'-method
-        - ConfigBase: include default-values
         - change gui_* :nogroup to gui_* only and add gui_* :group
         - use list with entities also in reply( :update, :students => student )
             - for the moment add .to_frontend:
@@ -236,7 +236,6 @@ Rare bugs:
 Unconfirmed bugs:
         -V Sync-error on server if family-name is not given
         -? lpstat localhost:631 hangs if no cups is running - what system?
-        - ??? Wrong printer-dialog in Cours/Attestations/Print
 	- PersonAdd - password is not stored - not repeatable
 	- Default focus and button:
 		- Frontend: when pressing a button, focus doesn't go back to the "std-focus"-element
@@ -274,6 +273,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150423: file-traversal path in Gestion/Paths
         - B 150422: update doesn't work
             - soso, but Diplomas-directory still poses problem, as it's both in
              the pacman-pkg and should be moved...

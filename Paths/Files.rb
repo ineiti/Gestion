@@ -4,7 +4,7 @@ class Files < RPCQooxdooPath
     dputs( 4 ){ "Files: #{req.inspect}" }
     path, query, addr = req.path, req.query.to_sym, RPCQooxdooHandler.get_ip( req )
     if req.request_method == 'GET'
-      filename = path.sub( /^.[^\/]*./, '' )
+      filename = RPCQooxdooPath.sanitize(path.sub( /^.[^\/]*./, '' ))
       res['content-type'] = case filename
       when /js$/i
         'text/javascript'
@@ -13,7 +13,6 @@ class Files < RPCQooxdooPath
       end
       dputs(4){"Request is #{req.inspect}" }
       dputs(3){"filename is #{filename} - content-type is #{res['content-type']}" }
-      # TODO: avoid path-traversing exploit
       return IO.read( 'Files/' + filename )
     end
   end

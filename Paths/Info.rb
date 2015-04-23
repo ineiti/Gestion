@@ -15,7 +15,7 @@ class Info < RPCQooxdooPath
       self.send( method, q.to_sym, ip )
     else
       dputs(0){ "Error: method #{method} not in Info" }
-      ""
+      ''
     end
   end
 
