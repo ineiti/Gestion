@@ -3,6 +3,7 @@ class Welcome < View
     show_str :username
     show_str :version
     show_str :direct_connect
+    show_str :simple_connect
   end
 
   # Overwrite the standard rpc_show to speed up testing...
@@ -45,12 +46,13 @@ class Welcome < View
       }
       super +
           reply(:update, :version => VERSION_GESTION + version_local) +
-          reply(:update, :links => ConfigBase.welcome_text)
+          reply(:update, :links => ConfigBase.welcome_text) +
+          reply_visible(ConfigBase.has_function?(:internet_captive), :direct_connect)
     end
   end
 
   # On pressing of the login-button, we search for the user and check the password
-  def rpc_button_login(session, args)
+  def rpc_button_simple_connect(session, args)
     #dputs_func
     dputs(3) { "args is #{args.inspect}" }
     login_name, password = args._username.gsub(/ /, '').downcase, args._password
@@ -104,7 +106,7 @@ class Welcome < View
   end
 
   def rpc_button_direct_connect(session, args)
-    ret = rpc_button_login(session, args)
+    ret = rpc_button_simple_connect(session, args)
     if ret.first._cmd == :window_show
       return ret
     else

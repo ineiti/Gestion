@@ -46,15 +46,13 @@ UI:
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
 
 FEATURES:
-        - put 'internet-connection' on welcome-screen as default if
-            'internet_captive' is active
-        - make nice 503-error page
-        - Update: Should open gestion in new window
         - add "messieur/madame" in diploma
         - Monitor::Ping
             - the idea of logrotate is very clumsy. Store everything in a file in
                 /var/log/monitor/ping_yymmdd.log and delete oldest files
+        - Update: Should open gestion in new window
         - update: search on profeda for latest version
+        - make nice 503-error page
         - captive_dev should depend on the actual device used
         - SerialModem: needs to be ported as a class
         - CourseType
@@ -273,6 +271,8 @@ To check:
 
 
 ** FIXED **:
+        - F 150423: put 'internet-connection' on welcome-screen as default if
+            'internet_captive' is active
         - B 150423: Cleaning up %x and `` and service-invocations
         - B 150423: Course::print_presence can't switch between PDF and printer
         - B 150423: file-traversal path in Gestion/Paths
