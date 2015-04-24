@@ -7,7 +7,7 @@ class Exas < RPCQooxdooPath
       res['content-type'] = 'data/binary'
       dputs(4) { "Request is #{req.inspect}" }
       dputs(3) { "filename is #{filename} - content-type is #{res['content-type']}" }
-      return IO.read("#{Courses.dir_exas}/#{filename}")
+      return IO.read("#{Courses.dir_exams}/#{filename}")
     end
   end
 end

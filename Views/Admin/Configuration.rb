@@ -9,8 +9,12 @@ class AdminConfiguration < View
         gui_vbox :nogroup do
           show_block :vars_wide
           show_field :template_dir
+          show_field :diploma_dir
+          show_field :exam_dir
           show_list_drop :card_student, 'ConfigBase.templates'
           show_list_drop :card_responsible, 'ConfigBase.templates'
+          show_list_drop :presence_sheet, 'ConfigBase.templates'
+          show_list_drop :presence_sheet_small, 'ConfigBase.templates'
           show_arg :server_url, :width => 300
         end
         gui_vbox :nogroup do
@@ -24,7 +28,7 @@ class AdminConfiguration < View
 
   def rpc_update(session)
     reply(:empty_nonlists) +
-        update_form_data(ConfigBases.singleton)
+        dp( update_form_data(ConfigBases.singleton))
   end
 
   def rpc_button_save(session, data)

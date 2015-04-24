@@ -6,20 +6,27 @@ class ConfigBases < Entities
 
     value_block :vars_narrow
     value_list_drop :show_passwords, '%w(always lesser students never)'
-    value_str :keep_idle_free
-    value_int :max_upload_size
-    value_str :captive_dev
 
     value_block :vars_wide
     value_str :internet_cash
     value_str :server_url
     value_str :label_url
     value_str :network_actions
+    value_str :dputs_logfile
 
     value_block :templates
     value_str :template_dir
+    value_str :diploma_dir
+    value_str :exam_dir
+    value_str :presence_sheet
+    value_str :presence_sheet_small
     value_str :card_student
     value_str :card_responsible
+
+    value_block :captive_conn
+    value_str :keep_idle_free
+    value_str :keep_idle_minutes
+    value_str :captive_dev
 
     value_block :captive
     value_str :prerouting
@@ -30,7 +37,6 @@ class ConfigBases < Entities
     value_str :openvpn_allow_double
     value_str :allow_src_direct
     value_str :allow_src_proxy
-    value_str :keep_idle_minutes
     value_str :allow_double
 
     value_block :operator
@@ -72,6 +78,21 @@ class ConfigBases < Entities
     @@functions_conflict = [[:course_server, :course_client]]
   end
 
+  def migration_9(c)
+    c.diploma_dir = get_config('Diplomas', :Entities, :Courses, :dir_diplomas)
+    c.exam_dir = get_config('Exams', :Entities, :Courses, :dir_exas)
+    # Old installation had default directory of 'Exas'
+    File.exists?('Exas') && c.exam_dir != 'Exas' and FileUtils.mv('Exas', c.exam_dir)
+    c.presence_sheet = get_config('presence_sheet.ods',
+                                  :Entities, :Courses, :presence_sheet).to_a
+    c.presence_sheet_small = get_config('presence_sheet_small.ods',
+                                        :Entities, :Courses, :presence_sheet_small).to_a
+    c.dputs_logfile = '/var/log/gestion/events.log'
+    c.dputs_showtime = %w(min)
+    c.dputs_silence = %w(false)
+    c.dputs_terminal_width = 160
+  end
+
   def migration_8(c)
     c.show_passwords = %w(lesser)
   end
@@ -106,20 +127,17 @@ class ConfigBases < Entities
   end
 
   def migration_3(c)
-    c._max_upload_size = 1_000_000
+    c._cost_base = 0
+    c._cost_shared = 0
+    c._allow_free = 'false'
   end
 
   def migration_2(c)
-    c.block_size = 16_384
+    c._keep_idle_free = 5
+    c._keep_idle_minutes = 3
   end
 
-  def migration_1(c)
-    c._debug_lvl = DEBUG_LVL
-    c._locale_force = get_config(nil, :locale_force)
-    c._version_local = get_config('orig', :version_local)
-    c._welcome_text = get_config(false, :welcome_text)
-    dputs(3) { "Migrating out: #{c.inspect}" }
-  end
+  # Migration_1 is taken by QooxView-ConfigBase!
 
   def delete_all(local_only = false)
     super(local_only)
@@ -209,8 +227,8 @@ class ConfigBase < Entity
   end
 
   def templates
-    (Dir.glob("#{template_dir}/*odt") +
-        Dir.glob("#{template_dir}/*odg")).
+    (Dir.glob("#{template_dir}/*.od?") +
+        Dir.glob("#{template_dir}/*.od?")).
         collect { |f| f.sub(/^.*\//, '') }.
         sort
   end

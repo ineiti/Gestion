@@ -324,7 +324,7 @@ class CourseGrade < View
         course.check_students_dir
         filename = UploadFiles.escape_chars(data._filename)
         src = "/tmp/#{filename}"
-        dst = "#{Courses.dir_exas}/#{course.name}/#{student}"
+        dst = "#{Courses.dir_exams}/#{course.name}/#{student}"
         dputs(3) { "Moving #{src} to #{dst}" }
         FileUtils.rm Dir.glob("#{dst}/#{number}-*")
         FileUtils.mv src, "#{dst}/#{number}-#{filename}"

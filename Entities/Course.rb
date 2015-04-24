@@ -13,7 +13,7 @@ require 'base64'
 
 
 class Courses < Entities
-  attr_reader :dir_diplomas, :dir_exas, :dir_exas_share,
+  attr_reader :dir_diplomas, :dir_exams, :dir_exams_share,
               :print_presence, :print_presence_small, :print_exa, :print_exa_long
 
   def setup_data
@@ -57,11 +57,11 @@ class Courses < Entities
     value_block :account
     value_entity_account_empty :entries, :drop, :path
 
-    @dir_diplomas ||= 'Diplomas'
-    @dir_exas ||= 'Exas'
-    @dir_exas_share ||= 'Exas/Share'
+    @dir_diplomas = ConfigBase.diploma_dir
+    @dir_exams = ConfigBase.exam_dir
+    @dir_exams_share = "#{@dir_exams}/Share"
 
-    [@dir_exas, @dir_exas_share].each { |d|
+    [@dir_diplomas, @dir_exams, @dir_exams_share].each { |d|
       File.exists? d or FileUtils.mkdir d
     }
 
@@ -449,11 +449,11 @@ class Course < Entity
   end
 
   def dir_exas
-    @proxy.dir_exas + "/#{self.name}"
+    @proxy.dir_exams + "/#{self.name}"
   end
 
   def dir_exas_share
-    @proxy.dir_exas_share + "/#{self.name}"
+    @proxy.dir_exams_share + "/#{self.name}"
   end
 
   def list_students(by_id = false)
@@ -1037,7 +1037,7 @@ base_gestion
     name.length == 0 and return
 
     dir_zip = "exa-#{name.sub(/^#{center}_/, '')}"
-    dir_exas = @proxy.dir_exas + "/#{name}"
+    dir_exas = @proxy.dir_exams + "/#{name}"
     dir_exas_tmp = "/tmp/#{name}"
     file = f || "/tmp/#{dir_zip}.zip"
     dputs(3) { "dir_zip: #{dir_zip}, dir_exas: #{dir_exas}, dir_exas_tmp: #{dir_exas_tmp}, " +
@@ -1090,7 +1090,7 @@ base_gestion
   def exam_files(student)
     student_name = student.class == Person ? student.login_name : student
     dputs(4) { "Student-name is #{student_name.inspect}" }
-    dir_exas = @proxy.dir_exas + "/#{name}"
+    dir_exas = @proxy.dir_exams + "/#{name}"
     dir_student = "#{dir_exas}/#{student_name}"
     File.exists?(dir_student) ?
         Dir.entries(dir_student).select { |f| !(f =~ /^\./) } : []
@@ -1549,10 +1549,10 @@ base_gestion
 
   def rename(new_name)
     log_msg :Courses, "Renaming #{name} to #{new_name}"
-    dir = "#{@proxy.dir_exas}/#{name}"
+    dir = "#{@proxy.dir_exams}/#{name}"
     if File.exists?(dir)
       log_msg :Courses, "Moving files of #{name} to #{new_name}"
-      FileUtils.mv dir, "#{@proxy.dir_exas}/#{new_name}"
+      FileUtils.mv dir, "#{@proxy.dir_exams}/#{new_name}"
     end
     self.name = new_name
     if entries

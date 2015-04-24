@@ -19,8 +19,7 @@ class Activities < Entities
   end
 
   def files
-    Dir.glob(get_config('.', :Entities, :Courses, :dir_diplomas) + '/*.{ods,odg}').
-        collect { |f| f.cut(/^.*\//) }
+    ConfigBase.templates.collect { |f| f.cut(/^.*\//) }
   end
 
   def tagged(*tags)

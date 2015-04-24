@@ -30,12 +30,6 @@ UploadFiles:
 Webrick:
 #  port: 3302
 
-Accounting:
-#  lending: Root::Lending
-#  cash: Root::Cash
-#  service: Root::Income::Internet
-#  course: Root::Income::IT-Courses
-
 Samba:
   simulation: false
   config_dir: /etc/samba
@@ -46,24 +40,18 @@ AfriCompta:
 Views:
 #  CourseTabs:
 #    order: 0
-#  Welcome:
-#    direct_internet: true
 
 Entities:
   Courses:
 #    dir_diplomas: Diplomas
 #    dir_exas: Exas
 #    dir_exas_share: Exas/Share
-#    hostname: localhost
 #    presence_sheet: presence_sheet.ods
 #    presence_sheet_small: presence_sheet_small.ods
   Persons:
-#    student_card: student_card.odg
 #    adduser_cmd: Binaries/adduser_to_buzz
 #    cmd_after_new: Binaries/update_users
 #    admin_users: false
-  LogActions:
-#    logging: false
 
 DPuts:
 #  terminal_width: 160
@@ -75,4 +63,3 @@ LDAPConfig:
 #  array: host, base, root, group_users, password
 #  ldapscripts: /etc/ldapscripts/ldapscripts.conf
 #  ldapsecret: /etc/ldap.secret
-

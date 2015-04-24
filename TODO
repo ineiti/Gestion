@@ -57,7 +57,6 @@ FEATURES:
                 /var/log/monitor/ping_yymmdd.log and delete oldest files
         - Update: Should open gestion in new window
         - update: search on profeda for latest version
-        - make nice 503-error page
         - captive_dev should depend on the actual device used
         - SerialModem: needs to be ported as a class
         - CourseType
@@ -271,6 +270,7 @@ To check:
 
 
 ** FIXED **:
+        - F 150424: make nice 503-error page
         - B 150424: ALL print-buttons are "{}"
         - F 150423: add "messieur/madame" in diploma
         - F 150423: put 'internet-connection' on welcome-screen as default if

@@ -493,23 +493,23 @@ class TC_Course < Test::Unit::TestCase
     students = %w( secretaire admin surf )
     @maint_2.students.concat students
 
-    FileUtils.rm_rf(@maint_2.dir_exas)
-    FileUtils.rm_rf(@maint_2.dir_exas_share)
+    FileUtils.rm_rf(@maint_2.dir_exams)
+    FileUtils.rm_rf(@maint_2.dir_exams_share)
 
     @maint_2.exas_prepare_files
-    assert !File.exists?(@maint_2.dir_exas)
-    assert File.exists?(@maint_2.dir_exas_share)
+    assert !File.exists?(@maint_2.dir_exams)
+    assert File.exists?(@maint_2.dir_exams_share)
     students.each { |s|
-      student_dir = "#{@maint_2.dir_exas_share}/#{s}"
+      student_dir = "#{@maint_2.dir_exams_share}/#{s}"
       assert File.exists?(student_dir)
       FileUtils.touch "#{student_dir}/exa.doc"
     }
 
     @maint_2.exas_fetch_files
-    assert File.exists?(@maint_2.dir_exas)
-    assert !File.exists?(@maint_2.dir_exas_share)
+    assert File.exists?(@maint_2.dir_exams)
+    assert !File.exists?(@maint_2.dir_exams_share)
     students.each { |s|
-      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      student_dir = "#{@maint_2.dir_exams}/#{s}"
       assert File.exists?(student_dir)
       assert File.exists?("#{student_dir}/exa.doc")
     }
@@ -537,7 +537,7 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.exas_prepare_files
     @maint_2.exas_fetch_files
     students[0..1].each { |s|
-      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      student_dir = "#{@maint_2.dir_exams}/#{s}"
       FileUtils.touch("#{student_dir}/exa.doc")
     }
 
@@ -558,7 +558,7 @@ class TC_Course < Test::Unit::TestCase
 
     dputs(1) { "Diploma-dir is #{foo_maint.dir_exas}" }
 
-    assert File.exists? foo_maint.dir_exas
+    assert File.exists? foo_maint.dir_exams
   end
 
   # Syncs, aborts and sends again, checking if only new files are transmitted
@@ -567,11 +567,11 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.students = students
 
     @maint_2.name = "foo_#{@maint_2.name}"
-    dputs(3) { "Clearing directory #{@maint_2.dir_exas}" }
-    FileUtils.rm_rf @maint_2.dir_exas
+    dputs(3) { "Clearing directory #{@maint_2.dir_exams}" }
+    FileUtils.rm_rf @maint_2.dir_exams
     @maint_2.check_students_dir
     students[0..1].each { |s|
-      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      student_dir = "#{@maint_2.dir_exams}/#{s}"
       dputs(2) { "Adding a simple doc to #{student_dir}" }
       FileUtils.touch("#{student_dir}/exa.doc")
     }
@@ -586,11 +586,11 @@ class TC_Course < Test::Unit::TestCase
 
     # Test normal creation of zip-file
     @maint_2.name = @maint_2.name.sub(/^foo_/, '')
-    dputs(3) { "Clearing directory #{@maint_2.dir_exas}" }
-    FileUtils.rm_rf @maint_2.dir_exas
+    dputs(3) { "Clearing directory #{@maint_2.dir_exams}" }
+    FileUtils.rm_rf @maint_2.dir_exams
     @maint_2.check_students_dir
     students[0..1].each { |s|
-      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      student_dir = "#{@maint_2.dir_exams}/#{s}"
       dputs(2) { "Adding a simple doc to #{student_dir}" }
       FileUtils.touch("#{student_dir}/exa.doc")
     }
@@ -604,8 +604,8 @@ class TC_Course < Test::Unit::TestCase
     }
 
     # Test ignoring files already there
-    FileUtils.touch("#{@maint_2.dir_exas}/surf/exa.doc")
-    FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa2.doc")
+    FileUtils.touch("#{@maint_2.dir_exams}/surf/exa.doc")
+    FileUtils.touch("#{@maint_2.dir_exams}/secretaire/exa2.doc")
     zip = @maint_2.zip_create(md5sums: files_hash)
     exams = []
     Zip::File.open("/tmp/#{zip}") { |zf|
@@ -620,7 +620,7 @@ class TC_Course < Test::Unit::TestCase
 
     # Test adding files already there but with other md5sum
     files_hash = @maint_2.md5_exams
-    File.open("#{@maint_2.dir_exas}/surf/exa.doc", 'w') { |f| f.write('hello') }
+    File.open("#{@maint_2.dir_exams}/surf/exa.doc", 'w') { |f| f.write('hello') }
     zip = @maint_2.zip_create(md5sums: files_hash)
     exams = []
     Zip::File.open("/tmp/#{zip}") { |zf|
@@ -635,19 +635,19 @@ class TC_Course < Test::Unit::TestCase
     # Test merging of directory with additional (to-be-deleted) files and
     # copying of files not transferred but locally available
     files_hash = @maint_2.md5_exams
-    FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa3.doc")
-    FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa5.doc")
+    FileUtils.touch("#{@maint_2.dir_exams}/secretaire/exa3.doc")
+    FileUtils.touch("#{@maint_2.dir_exams}/secretaire/exa5.doc")
     zip = @maint_2.zip_create(for_server: false, md5sums: files_hash)
-    FileUtils.touch("#{@maint_2.dir_exas}/secretaire/exa4.doc")
-    FileUtils.rm("#{@maint_2.dir_exas}/secretaire/exa5.doc")
+    FileUtils.touch("#{@maint_2.dir_exams}/secretaire/exa4.doc")
+    FileUtils.rm("#{@maint_2.dir_exams}/secretaire/exa5.doc")
     @maint_2.zip_read("/tmp/#{zip}")
-    assert File.exists?("#{@maint_2.dir_exas}/surf/exa.doc"),
+    assert File.exists?("#{@maint_2.dir_exams}/surf/exa.doc"),
            "Didn't restore non-transferred file"
-    assert File.exists?("#{@maint_2.dir_exas}/secretaire/exa3.doc"),
+    assert File.exists?("#{@maint_2.dir_exams}/secretaire/exa3.doc"),
            "Didn't add transferred file"
-    assert File.exists?("#{@maint_2.dir_exas}/secretaire/exa5.doc"),
+    assert File.exists?("#{@maint_2.dir_exams}/secretaire/exa5.doc"),
            "Didn't add transferred but deleted file"
-    assert !File.exists?("#{@maint_2.dir_exas}/secretaire/exa4.doc"),
+    assert !File.exists?("#{@maint_2.dir_exams}/secretaire/exa4.doc"),
            "Didn't delete additional file"
   end
 
@@ -663,17 +663,17 @@ class TC_Course < Test::Unit::TestCase
 
     # Test normal creation of zip-file
     @maint_2.name = @maint_2.name.sub(/^foo_/, '')
-    dputs(3) { "Clearing directory #{@maint_2.dir_exas}" }
-    FileUtils.rm_rf @maint_2.dir_exas
+    dputs(3) { "Clearing directory #{@maint_2.dir_exams}" }
+    FileUtils.rm_rf @maint_2.dir_exams
     @maint_2.check_students_dir
     students[0..1].each { |s|
-      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      student_dir = "#{@maint_2.dir_exams}/#{s}"
       dputs(2) { "Adding a simple doc to #{student_dir}" }
       write_file("#{student_dir}/exa.doc")
     }
-    write_file("#{@maint_2.dir_exas}/secretaire/exa2.doc", 'hi')
-    write_file("#{@maint_2.dir_exas}/surf/exa.doc")
-    write_file("#{@maint_2.dir_exas}/surf/zpresentation.doc")
+    write_file("#{@maint_2.dir_exams}/secretaire/exa2.doc", 'hi')
+    write_file("#{@maint_2.dir_exams}/surf/exa.doc")
+    write_file("#{@maint_2.dir_exams}/surf/zpresentation.doc")
 
     ConfigBase.max_upload_size = 10
     zips = @maint_2.zip_create_chunks(@maint_2.md5_exams, {})
@@ -723,7 +723,7 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.exas_prepare_files
     @maint_2.exas_fetch_files
     students[0..1].each { |s|
-      student_dir = "#{@maint_2.dir_exas}/#{s}"
+      student_dir = "#{@maint_2.dir_exams}/#{s}"
       FileUtils.touch("#{student_dir}/exa.doc")
     }
 
