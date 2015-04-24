@@ -37,7 +37,7 @@ class InternetRecharges < View
   end
 
   def rpc_button_delete(session, data)
-    return unless data._recharges.class == Entities::Recharge
+    return unless data._recharges.class == Recharge
     data._recharges.delete
     rpc_update(session)
   end

@@ -3,7 +3,7 @@
 WORKING:
 
 BUGS:
-        - ALL print-buttons are "{}"
+        - Admin::Import::Courses - doesn't download grades and exams
         - Monitor::Traffic
             - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
@@ -271,6 +271,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150424: ALL print-buttons are "{}"
         - F 150423: add "messieur/madame" in diploma
         - F 150423: put 'internet-connection' on welcome-screen as default if
             'internet_captive' is active

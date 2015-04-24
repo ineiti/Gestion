@@ -54,7 +54,7 @@ class CashboxCredit < View
   end
 
   def rpc_button_add_credit(session, data)
-    dputs(3) { 'Adding credit' }
+    dputs(3) { "Adding credit #{data.inspect}" }
     rep = []
     if person = Persons.add_internet_credit(session, data)
       rep = reply(:update, :credit_add => '') +

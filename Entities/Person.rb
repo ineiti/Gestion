@@ -85,7 +85,7 @@ class Persons < Entities
   end
 
   def update_config(action, value, old)
-    dputs(3) { "Updating #{action} with #{value}" }
+    dputs(3) { "Updating #{action} with #{value.inspect}" }
     case action
       when :function_add
         if value.index :accounting_courses
@@ -318,7 +318,7 @@ class Persons < Entities
   def listp_account_due
     search_by_account_due('.+').select { |p|
       # CashboxCredit-permission is the least for everybody who handles money.
-      p.account_due and p.login_name != 'admin' and p.has_permission?(:CashboxCredit)
+      p.login_name != 'admin' && p.has_permission?(:CashboxCredit)
     }.collect { |p|
       dputs(4) { "p is #{p.full_name}" }
       dputs(4) { "account is #{p.account_due.get_path}" }
@@ -403,8 +403,9 @@ class Persons < Entities
 
   def self.responsibles_raw
     return Persons.data.select { |k, v|
-      Permission.can_view(v._permissions.reject { |perm| perm.to_s == 'admin' },
-                          'FlagResponsible')
+      v._permissions &&
+          Permission.can_view(v._permissions.reject { |perm| perm.to_s == 'admin' },
+                              'FlagResponsible')
     }.collect { |k, v| Persons.find_by_person_id(k) }
   end
 
@@ -574,14 +575,6 @@ class Person < Entity
 
     self.internet_credit = internet_credit.to_i
     update_accounts
-  end
-
-  # This is only for testing - don't use in real life!
-  def disable_africompta
-    internet_credit = internet_credit
-    internet_credit = 0 if not internet_credit
-    self.account_total_due = internet_credit
-    account_due = nil
   end
 
   def update_accounts
@@ -1005,6 +998,7 @@ class Person < Entity
   end
 
   def has_permission?(perm)
+    #dputs_func
     dputs(4) { "Checking #{perm.inspect} in #{permissions.inspect}" }
     dputs(4) { "Which is #{Permission.views(permissions).inspect }" }
     return false unless permissions

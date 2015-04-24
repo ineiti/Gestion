@@ -69,8 +69,7 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_addcash
-    @josue.disable_africompta
-    @surf.disable_africompta
+    ConfigBase.store(functions: %w(accounting accounting_courses))
     assert_equal @josue, Entities.Persons.match_by_login_name('josue')
     assert_equal @surf, Entities.Persons.match_by_login_name('surf')
     assert_equal @admin, Entities.Persons.match_by_login_name('admin')
@@ -82,7 +81,7 @@ class TC_Person < Test::Unit::TestCase
     dputs(1) { "surf_credit: #{surf_credit} - josue_due: #{josue_due}" }
     # Josue puts 500 on "surf"s account
     View.CashboxCredit.rpc_button(session, 'add_credit',
-                                 {'person_id' => 2, 'login_name' => 'surf', 'credit_add' => 500})
+                                  {'login_name' => 'surf', 'credit_add' => 500})
     assert_equal 500, @surf.internet_credit.to_i - surf_credit, 'Credit'
     assert_equal -500, @josue.account_total_due.to_i - josue_due, 'account_total_due'
   end
@@ -167,10 +166,10 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_has_all_rights
-    assert_equal %w(FlagAddCenter FlagAddInternet FlagResponsible Internet PersonCredit
-                  PersonModify PersonShow View Welcome),
+    assert_equal %w(CashboxCredit FlagAddCenter FlagAddInternet FlagResponsible
+                 Internet PersonModify PersonShow View Welcome),
                  Permission.views(@josue.permissions)
-    assert_equal %w(FlagAddInternet FlagResponsible Internet PersonCredit
+    assert_equal %w(CashboxCredit FlagAddInternet FlagResponsible Internet
                   PersonModify PersonShow View Welcome),
                  Permission.views(@secretary.permissions)
     assert_equal %w(View Welcome), Permission.views(@surf.permissions)
@@ -290,10 +289,10 @@ class TC_Person < Test::Unit::TestCase
 
   def test_create_person
     person = Persons.create_person('Foo bar')
-    assert_equal 'bfoo', person.login_name
+    assert_equal 'bfoo2', person.login_name
 
     person = Persons.create_person('Foo bar', @secretary)
-    assert_equal 'bfoo2', person.login_name
+    assert_equal 'bfoo3', person.login_name
 
     person = Persons.create_person('Foo bar', @secretary, 'foobar')
     assert_equal 'foobar', person.login_name
@@ -335,9 +334,9 @@ class TC_Person < Test::Unit::TestCase
     Entities.load_all
 
     linus = Persons.match_by_login_name :linus
-    assert_equal lending, linus.account_due
-    assert_equal paid, linus.account_due_paid
-    assert_equal cash, linus.account_cash
+    assert_equal lending.to_s, linus.account_due.to_s
+    assert_equal paid.to_s, linus.account_due_paid.to_s
+    assert_equal cash.to_s, linus.account_cash.to_s
   end
 
   def test_double_responsibles

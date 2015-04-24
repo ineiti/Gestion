@@ -319,7 +319,7 @@ class TC_Course < Test::Unit::TestCase
     english.data_set_hash(students: students, start: '1.1.2015', end: '28.2.2015',
                           teacher: @surf, responsible: @secretaire)
 
-    assert dp(english.print_exam_file)
+    assert english.print_exam_file
   end
 
   def test_migration_2

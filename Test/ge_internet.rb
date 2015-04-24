@@ -217,7 +217,7 @@ class TC_Internet < Test::Unit::TestCase
     ic_lim = InternetClasses.create(name: 'daily', type: ['limit_daily_mo'])
     ip = InternetPersons.create(person:@test, iclass: ic_inf)
     t = Date.today
-    tr = Internet.traffic
+    tr = Captive.traffic
 
     assert ip.is_active?
     ip.start = (t - 10).to_web

@@ -781,7 +781,6 @@ base_gestion
             [[/-RESP_ROLE-/, role_diploma],
              [/-RESP-/, responsible.full_name],
              [/-NAME-/, student.full_name],
-             [/_NAME_/, student.full_name.upcase],
              [/-DURATION-/, duration.to_s],
              [/-COURSE-/, description],
              [/-COURSE_ID-/, name],

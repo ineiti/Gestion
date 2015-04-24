@@ -29,7 +29,7 @@ class TC_View < Test::Unit::TestCase
         session = Sessions.create
         session.web_req = Struct::Webreq.new({host: 'nil'}, [0, 0, 0, '192.168.1.1'])
         ret = get_reply(:Welcome, :button, session,
-                        ['login', {'username' => 'foo', 'password' => 'bar'}])
+                        ['simple_connect', {'username' => 'foo', 'password' => 'bar'}])
         session = Sessions.match_by_sid(ret[0]._data)
         get_reply(:SelfTabs, :show, session, [])
         get_reply(:SelfTabs, :list_tabs, session, [])

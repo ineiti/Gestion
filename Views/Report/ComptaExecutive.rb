@@ -78,7 +78,7 @@ class ReportComptaExecutive < View
     reply(:empty, :accounts) +
         reply(:update, :name => report.name) +
         reply(:update, :accounts => report.listp_accounts) +
-        reply(:update, :accounts => (account.class == Entities::ReportAccount) ?
+        reply(:update, :accounts => (account.class == ReportAccount) ?
                          [account.id] : nil)
   end
 
