@@ -151,8 +151,12 @@ class AdminServer < View
           if ms.data._code == 'Error'
             ms.step = 10
             status_list(true, status: "Error: #{ms.data._msg}")
-          else
+          elsif ms.data._msg
             status_list(false, list: ms.data._msg.collect { |c| [c._course_id, c._name] })
+          else
+            ms.step = 10
+            ms.auto_update = 0
+            ms.status = status_list(true, status: 'Nothing received')
           end
         when 2
           ms.auto_update = -1

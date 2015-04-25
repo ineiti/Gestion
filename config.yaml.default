@@ -42,22 +42,10 @@ Views:
 #    order: 0
 
 Entities:
-  Courses:
-#    dir_diplomas: Diplomas
-#    dir_exas: Exas
-#    dir_exas_share: Exas/Share
-#    presence_sheet: presence_sheet.ods
-#    presence_sheet_small: presence_sheet_small.ods
   Persons:
 #    adduser_cmd: Binaries/adduser_to_buzz
 #    cmd_after_new: Binaries/update_users
 #    admin_users: false
-
-DPuts:
-#  terminal_width: 160
-#  silent: false
-#  show_time: sec
-  log: /var/log/gestion/events.log
 
 LDAPConfig:
 #  array: host, base, root, group_users, password

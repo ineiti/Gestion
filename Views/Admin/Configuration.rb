@@ -7,6 +7,7 @@ class AdminConfiguration < View
     gui_vbox do
       gui_hbox :nogroup do
         gui_vbox :nogroup do
+          show_str :dputs_logfile
           show_block :vars_wide
           show_field :template_dir
           show_field :diploma_dir
@@ -28,7 +29,7 @@ class AdminConfiguration < View
 
   def rpc_update(session)
     reply(:empty_nonlists) +
-        dp( update_form_data(ConfigBases.singleton))
+        update_form_data(ConfigBases.singleton)
   end
 
   def rpc_button_save(session, data)

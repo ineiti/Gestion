@@ -257,44 +257,4 @@ module Internet
 
     Captive.user_disconnect_name name
   end
-
-  # Unused function. See #fetch_users
-  def update_connection(ip, name)
-    return "From #{ip} user #{name}"
-  end
-
-  # Unused function. It's goal was to be able to split the internet-handling
-  # over two devices: a gateway which will listen for 'fetch_users', and a
-  # server that will communicate with the gateway
-  def fetch_users
-    return unless @operator
-
-    if (server = ConfigBase.internet_cash)
-      begin
-        ret = Net::HTTP.get(server, '/internetCash/fetch_users')
-        users = JSON.parse(ret.body)
-
-        Persons.search_all.each { |p|
-          p.groups = []
-        }
-
-        users.each { |user, pass, cash, free|
-          dputs(2) { "Updating #{user}-#{pass}-#{cash}-#{free}" }
-          if (u = Persons.find_by_login_name(user))
-            u.password = pass
-            u.internet_credit += cash
-            u.groups = [:freesurf] if free
-          else
-            u = Persons.create(:login_name => user, :password => pass,
-                               :internet_credit => cash,
-                               :groups => (free ? [:freesurf] : []))
-          end
-        }
-      rescue
-        dputs(0) { "Error: Couldn't contact server" }
-      end
-    else
-      dputs(0) { 'Error: no server defined - please add :LibNet:internetCash to config.yaml' }
-    end
-  end
 end

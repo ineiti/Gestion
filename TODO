@@ -270,6 +270,7 @@ To check:
 
 
 ** FIXED **:
+        - P 150425: cleaned up ConfigBase and config.yaml
         - F 150424: make nice 503-error page
         - B 150424: ALL print-buttons are "{}"
         - F 150423: add "messieur/madame" in diploma

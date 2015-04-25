@@ -8,11 +8,9 @@ class ConfigBases < Entities
     value_list_drop :show_passwords, '%w(always lesser students never)'
 
     value_block :vars_wide
-    value_str :internet_cash
     value_str :server_url
     value_str :label_url
     value_str :network_actions
-    value_str :dputs_logfile
 
     value_block :templates
     value_str :template_dir
@@ -88,8 +86,8 @@ class ConfigBases < Entities
     c.presence_sheet_small = get_config('presence_sheet_small.ods',
                                         :Entities, :Courses, :presence_sheet_small).to_a
     c.dputs_logfile = '/var/log/gestion/events.log'
-    c.dputs_showtime = %w(min)
-    c.dputs_silence = %w(false)
+    c.dputs_show_time = %w(min)
+    c.dputs_silent = %w(false)
     c.dputs_terminal_width = 160
   end
 
@@ -107,6 +105,7 @@ class ConfigBases < Entities
   end
 
   def migration_5(c)
+    ACQooxView.check_db
     c.account_services = Accounts.get_by_path_or_create(
         get_config('Root::Income::Services', :Accounting, :service))
     c.account_lending = Accounts.get_by_path_or_create(
@@ -127,14 +126,17 @@ class ConfigBases < Entities
   end
 
   def migration_3(c)
-    c._cost_base = 0
-    c._cost_shared = 0
-    c._allow_free = 'false'
+    c.cost_base = 0
+    c.cost_shared = 0
+    c.allow_free = 'false'
   end
 
   def migration_2(c)
-    c._keep_idle_free = 5
-    c._keep_idle_minutes = 3
+    c.keep_idle_free = 5
+    c.keep_idle_minutes = 3
+    c.server_url = 'icc.profeda.org'
+    c.label_url = 'label.profeda.org'
+    c.network_actions = '/usr/local/bin/actions.rb'
   end
 
   # Migration_1 is taken by QooxView-ConfigBase!
@@ -145,9 +147,9 @@ class ConfigBases < Entities
   end
 
   def init
-    ACQooxView.check_db
-    cb = ConfigBases.search_all_.first || ConfigBases.create(functions: [])
-    migration_5(cb)
+    #ACQooxView.check_db
+    #cb = ConfigBases.search_all_.first || ConfigBases.create(functions: [])
+    #migration_5(cb)
   end
 end
 
