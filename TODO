@@ -3,7 +3,6 @@
 WORKING:
 
 BUGS:
-        - Gestion-tests not working anymore
         - Admin::Import::Courses - doesn't download grades and exams
         - Monitor::Traffic
             - save and load from Static has an error where
@@ -271,6 +270,8 @@ To check:
 
 
 ** FIXED **:
+        - F 250425: logging of Africompta-deletion
+        - B 150425: Gestion-tests not working anymore
         - P 150425: cleaned up ConfigBase and config.yaml
         - F 150424: make nice 503-error page
         - B 150424: ALL print-buttons are "{}"
