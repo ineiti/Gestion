@@ -2,6 +2,8 @@
 require '../Dependencies'
 Dependencies.load_path(here: '..')
 require 'test/unit'
+require 'fileutils'
+FileUtils.rm_rf Dir.glob('data*')
 
 CONFIG_FILE='config_test.yaml'
 DEBUG_LVL=0
@@ -11,8 +13,8 @@ require 'ACQooxView'
 require 'LibNet'
 require '../Dependencies'
 Dependencies.load_path(here: '..')
-Dependencies.load_dirs(here: '..')
 ACQooxView.load_entities
+Dependencies.load_dirs(here: '..')
 
 def permissions_init
   Permission.clear
@@ -30,7 +32,6 @@ end
 
 permissions_init
 
-FileUtils.rm_rf Dir.glob('data*')
 QooxView.init('../Entities', '../Views')
 
 tests = Dir.glob('ge_*.rb')

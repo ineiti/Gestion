@@ -147,9 +147,9 @@ class ConfigBases < Entities
   end
 
   def init
-    #ACQooxView.check_db
-    #cb = ConfigBases.search_all_.first || ConfigBases.create(functions: [])
-    #migration_5(cb)
+    ACQooxView.check_db
+    cb = ConfigBases.search_all_.first || ConfigBases.create(functions: [])
+    migration_5(cb)
   end
 end
 

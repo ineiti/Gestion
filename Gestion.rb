@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
+DEBUG_LVL = 2
 require './Dependencies'
 Dependencies.load_path
 

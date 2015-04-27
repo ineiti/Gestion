@@ -387,8 +387,8 @@ class TC_Course < Test::Unit::TestCase
     @maint_2.center = @center
     @maint_t.diploma_type = [:files]
 
-    FileUtils.rm_rf 'Exas'
-    FileUtils.mkdir 'Exas'
+    FileUtils.rm_rf 'Exams'
+    FileUtils.mkdir 'Exams'
 
     file = @maint_2.zip_create(for_server: false)
     file_tmp = "/tmp/#{file}"
@@ -398,8 +398,8 @@ class TC_Course < Test::Unit::TestCase
     FileUtils.copy(file_tmp, file_exa_tmp)
     @maint_2.zip_read
 
-    assert File.exists?("Exas/#{@maint_2.name}")
-    assert(!File.exists?("Exas/#{@maint_2.name}/#{center}-admin"))
+    assert File.exists?("Exams/#{@maint_2.name}")
+    assert(!File.exists?("Exams/#{@maint_2.name}/#{center}-admin"))
 
     FileUtils.copy(file_tmp, file_exa_tmp)
     Zip::File.open(file_exa_tmp) { |z|
@@ -411,11 +411,11 @@ class TC_Course < Test::Unit::TestCase
 
     @maint_2.zip_read
     %w( admin surf ).each { |s|
-      dir = "Exas/#{@maint_2.name}/#{s}"
+      dir = "Exams/#{@maint_2.name}/#{s}"
       assert File.exists? dir
       assert File.exists? "#{dir}/first.doc"
     }
-    dir = "Exas/#{@maint_2.name}/secretaire"
+    dir = "Exams/#{@maint_2.name}/secretaire"
     assert File.exists?(dir)
     assert !File.exists?("#{dir}/first.doc")
 

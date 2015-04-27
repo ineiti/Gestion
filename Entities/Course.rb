@@ -430,7 +430,7 @@ class Course < Entity
   end
 
   def check_dir
-    [dir_diplomas, dir_exas, dir_exas_share].each { |d|
+    [dir_diplomas, dir_exams, dir_exams_share].each { |d|
       (!File.exists? d) and FileUtils.mkdir_p(d)
     }
   end
@@ -438,7 +438,7 @@ class Course < Entity
   def check_students_dir
     check_dir
     students and students.each { |s|
-      [dir_exas, dir_exas_share].each { |d|
+      [dir_exams, dir_exams_share].each { |d|
         (!File.exists? "#{d}/#{s}") and FileUtils.mkdir("#{d}/#{s}")
       }
     }
@@ -448,11 +448,11 @@ class Course < Entity
     @proxy.dir_diplomas + "/#{self.name}"
   end
 
-  def dir_exas
+  def dir_exams
     @proxy.dir_exams + "/#{self.name}"
   end
 
-  def dir_exas_share
+  def dir_exams_share
     @proxy.dir_exams_share + "/#{self.name}"
   end
 
@@ -994,8 +994,8 @@ base_gestion
           dputs(3) { "Creating #{p}" }
           z.mkdir(p)
           if include_files
-            dputs(3) { "Searching in #{dir_exas}/#{s}" }
-            Dir.glob("#{dir_exas}/#{s}/*").sort.each { |exa_f|
+            dputs(3) { "Searching in #{dir_exams}/#{s}" }
+            Dir.glob("#{dir_exams}/#{s}/*").sort.each { |exa_f|
               exa_md5 = Digest::MD5.file(exa_f).hexdigest
               file_add = true
               filename = exa_f.sub(/.*\//, '')
@@ -1004,7 +1004,7 @@ base_gestion
                   if (f == filename) && (md5 == exa_md5)
                     dputs(3) { "Found file #{filename} to be excluded" }
                     file_add = false
-                    files_excluded.push exa_f.sub(/^#{dir_exas}\//, '')
+                    files_excluded.push exa_f.sub(/^#{dir_exams}\//, '')
                   end
                 }
               end
@@ -1037,34 +1037,34 @@ base_gestion
     name.length == 0 and return
 
     dir_zip = "exa-#{name.sub(/^#{center}_/, '')}"
-    dir_exas = @proxy.dir_exams + "/#{name}"
-    dir_exas_tmp = "/tmp/#{name}"
+    dir_exams = @proxy.dir_exams + "/#{name}"
+    dir_exams_tmp = "/tmp/#{name}"
     file = f || "/tmp/#{dir_zip}.zip"
-    dputs(3) { "dir_zip: #{dir_zip}, dir_exas: #{dir_exas}, dir_exas_tmp: #{dir_exas_tmp}, " +
+    dputs(3) { "dir_zip: #{dir_zip}, dir_exams: #{dir_exams}, dir_exams_tmp: #{dir_exams_tmp}, " +
         "file: #{file}" }
 
     if File.exists?(file) && students
       # Save existing exams in /tmp
-      FileUtils.rm_rf dir_exas_tmp
-      if File.exists? dir_exas
-        dputs(3) { "Moving #{dir_exas} to /tmp" }
-        dputs(3) { "#{dir_exas} is " + Dir.glob("#{dir_exas}/**/*").join(' ') }
-        FileUtils.mv dir_exas, dir_exas_tmp
+      FileUtils.rm_rf dir_exams_tmp
+      if File.exists? dir_exams
+        dputs(3) { "Moving #{dir_exams} to /tmp" }
+        dputs(3) { "#{dir_exams} is " + Dir.glob("#{dir_exams}/**/*").join(' ') }
+        FileUtils.mv dir_exams, dir_exams_tmp
       end
-      FileUtils.mkdir dir_exas
+      FileUtils.mkdir dir_exams
 
       dputs(3) { "Opening zip-file #{file}" }
       Zip::File.open(file) { |z|
         students.each { |s|
           dir_zip_student = "#{dir_zip}/#{s}"
-          dir_exas_student = "#{dir_exas}/#{s}"
+          dir_exams_student = "#{dir_exams}/#{s}"
 
           begin
-            FileUtils.mkdir(dir_exas_student)
+            FileUtils.mkdir(dir_exams_student)
             if (files_student = z.dir.entries(dir_zip_student)).size > 0
               files_student.each { |fs|
-                dputs(3) { "Extracting #{dir_exas_student}/#{fs}" }
-                z.extract("#{dir_zip_student}/#{fs}", "#{dir_exas_student}/#{fs}")
+                dputs(3) { "Extracting #{dir_exams_student}/#{fs}" }
+                z.extract("#{dir_zip_student}/#{fs}", "#{dir_exams_student}/#{fs}")
               }
             end
           rescue Errno::ENOENT => e
@@ -1076,8 +1076,8 @@ base_gestion
               "#{center.login_name}_" : ''
           JSON.parse(z.read("#{dir_zip}/files_excluded")).each { |f|
             dputs(3) { "Transferring file #{f} from old to new directory" }
-            FileUtils.cp "#{dir_exas_tmp}/#{center_pre + f}",
-                         "#{dir_exas}/#{center_pre + f}"
+            FileUtils.cp "#{dir_exams_tmp}/#{center_pre + f}",
+                         "#{dir_exams}/#{center_pre + f}"
           }
         rescue Errno::ENOENT => e
           dputs(3) { 'No files_excluded here' }
@@ -1090,46 +1090,46 @@ base_gestion
   def exam_files(student)
     student_name = student.class == Person ? student.login_name : student
     dputs(4) { "Student-name is #{student_name.inspect}" }
-    dir_exas = @proxy.dir_exams + "/#{name}"
-    dir_student = "#{dir_exas}/#{student_name}"
+    dir_exams = @proxy.dir_exams + "/#{name}"
+    dir_student = "#{dir_exams}/#{student_name}"
     File.exists?(dir_student) ?
         Dir.entries(dir_student).select { |f| !(f =~ /^\./) } : []
   end
 
   def exas_prepare_files
     name.length == 0 and return
-    if File.exists? dir_exas_share
-      FileUtils.rm_rf dir_exas_share
+    if File.exists? dir_exams_share
+      FileUtils.rm_rf dir_exams_share
     end
 
-    FileUtils.mkdir dir_exas_share
+    FileUtils.mkdir dir_exams_share
     students.each { |s|
-      dir_s_exas = "#{dir_exas}/#{s}"
+      dir_s_exas = "#{dir_exams}/#{s}"
       if File.exists? dir_s_exas
-        FileUtils.mv dir_s_exas, dir_exas_share
+        FileUtils.mv dir_s_exas, dir_exams_share
       else
-        FileUtils.mkdir "#{dir_exas_share}/#{s}"
+        FileUtils.mkdir "#{dir_exams_share}/#{s}"
       end
     }
-    FileUtils.rm_rf(dir_exas)
+    FileUtils.rm_rf(dir_exams)
   end
 
   def exas_fetch_files
     name.length == 0 and return
     dputs(3) { "Starting to fetch files for #{name}" }
-    if File.exists? dir_exas_share
-      dputs(3) { "#{dir_exas_share} exists" }
-      File.exists? dir_exas or FileUtils.mkdir dir_exas
+    if File.exists? dir_exams_share
+      dputs(3) { "#{dir_exams_share} exists" }
+      File.exists? dir_exams or FileUtils.mkdir dir_exams
       students.each { |s|
         dputs(3) { "Checking on student #{s}" }
-        dir_student = "#{dir_exas_share}/#{s}"
+        dir_student = "#{dir_exams_share}/#{s}"
         if File.exists? dir_student
           dputs(3) { "Moving student-dir of #{s}" }
-          FileUtils.move dir_student, "#{dir_exas}"
+          FileUtils.move dir_student, "#{dir_exams}"
         end
       }
     end
-    FileUtils.rm_rf dir_exas_share
+    FileUtils.rm_rf dir_exams_share
   end
 
   def sync_transfer(field, transfer = '', json = true)
@@ -1328,7 +1328,7 @@ base_gestion
   def delete
     abort_pdfs
 
-    [dir_diplomas, dir_exas, dir_exas_share].each { |d|
+    [dir_diplomas, dir_exams, dir_exams_share].each { |d|
       FileUtils.remove_entry_secure(d, true)
     }
     super
@@ -1538,7 +1538,7 @@ base_gestion
     dputs(3) { "Fetching existing files with center -#{center_pre}-" }
     Hash[students.map { |s|
            [s.sub(/^#{center_pre}/, ''),
-            Dir.glob("#{dir_exas}/#{s}/*").map { |exa_f|
+            Dir.glob("#{dir_exams}/#{s}/*").map { |exa_f|
               md5 = Digest::MD5.file(exa_f).hexdigest
               exa_rel = exa_f.sub(/^.*\//, '')
               dputs(3) { "Adding file #{exa_rel} with md5 #{md5}" }
