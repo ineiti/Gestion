@@ -7,7 +7,8 @@ BUGS:
         - Monitor::Traffic
             - save and load from Static has an error where
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
-            pressed during startup
+            pressed during startup - or/and there is a problem when the date and time
+            are way off (because the RTC is wrong and ntp hasn't reached anything yet)
             - count is most probably wrong - output things from one user permanently
             - sometimes the iptables-nat and iptables-mangle doesn't work as it should
         - Check Report::executive
