@@ -17,6 +17,7 @@ Test/data/*
 Test/data2/*
 Test/Diplomas/*
 Test/Exas/*
+Test/Exams/*
 Test/log
 Test/run
 Diplomas/*/*
@@ -24,6 +25,7 @@ Diplomas.Profeda*
 Diplomas.Man
 old/*
 Exas/
+Exams/
 po/*mo
 po/*pot
 tmp/

@@ -10,7 +10,7 @@ BUGS:
             pressed during startup - or/and there is a problem when the date and time
             are way off (because the RTC is wrong and ntp hasn't reached anything yet)
             - count is most probably wrong - output things from one user permanently
-            - sometimes the iptables-nat and iptables-mangle doesn't work as it should
+            - sometimes the iptables-nat and iptables-mangle don't work as they should
         - Check Report::executive
         - Documentation, documentation
 
@@ -57,7 +57,7 @@ FEATURES:
             - the idea of logrotate is very clumsy. Store everything in a file in
                 /var/log/monitor/ping_yymmdd.log and delete oldest files
         - Update: Should open gestion in new window
-        - update: search on profeda for latest version
+        - update: search on profeda/github for latest version
         - captive_dev should depend on the actual device used
         - SerialModem: needs to be ported as a class
         - CourseType
