@@ -4,8 +4,6 @@
 # for example for chat
 #multilogin: true
 
-title: "Gestion avec Profeda"
-
 StorageHandler:
   Replace:
     LDAP: CSV
@@ -14,38 +12,15 @@ StorageType:
   CSV:
     backup_count: 5
 
-#autosave: true
-#  timer: 120
-
-OpenPrint:
-#  simulation: true
-#  search_remote: .*
-
-UploadFiles:
-#  path: /tmp
-
 #profiling: profile.txt
 #  duration: 30
 
 Webrick:
 #  port: 3302
 
-Samba:
-  simulation: false
-  config_dir: /etc/samba
-
-AfriCompta:
-#  filename: compta.rb
-
 Views:
 #  CourseTabs:
 #    order: 0
-
-Entities:
-  Persons:
-#    adduser_cmd: Binaries/adduser_to_buzz
-#    cmd_after_new: Binaries/update_users
-#    admin_users: false
 
 LDAPConfig:
 #  array: host, base, root, group_users, password

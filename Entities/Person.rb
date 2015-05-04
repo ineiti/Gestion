@@ -78,7 +78,7 @@ class Persons < Entities
     value_str :password_plain
     value_int_LDAP :person_id, :ldap_name => 'uidnumber'
 
-    @admin_users = true unless defined? @admin_users
+    @admin_users = ConfigBase.persons_add_del_users == %w(true)
     @resps = []
     ConfigBases.add_observer(self, :update_config)
     update_config(nil, nil, nil)
@@ -241,9 +241,9 @@ class Persons < Entities
     person.password_plain = d.has_key?(:password) ? d[:password] : rand(10000).to_s.rjust(4, '0')
     person.password = person.password_plain
 
-    if defined? @cmd_after_new
-      dputs(2) { "Going to call #{@cmd_after_new}" }
-      System.run_bool("#{@cmd_after_new} #{person.login_name} #{person.password_plain}")
+    if (cmd = ConfigBase.persons_addeduser_cmd).to_s.length > 0
+      dputs(2) { "Going to call #{cmd}" }
+      System.run_bool("#{cmd} #{person.login_name} #{person.password_plain}")
     end
 
     return person
@@ -353,9 +353,9 @@ class Persons < Entities
     if has_storage? :LDAP
       user = data[:login_name]
       if Kernel.system("ldapadduser #{user} plugdev")
-        if defined? @adduser_cmd
-          dputs(2) { "Going to call #{@adduser_cmd} #{user.inspect}" }
-          System.run_bool("#{@adduser_cmd} #{user}")
+        if (cmd = ConfigBase.persons_adduser_cmd).to_s.length > 0
+          dputs(2) { "Going to call #{cmd} #{user.inspect}" }
+          System.run_bool("#{cmd} #{user}")
         end
       else
         dputs(0) { "Error: Couldn't create #{user}" }
@@ -710,7 +710,7 @@ class Person < Entity
 
   def account_total_due
     if account_due
-      dputs(2) { "internet_credit is #{account_due.total.inspect}" }
+      dputs(3) { "account_due is #{account_due.total.inspect}" }
       (account_due.total.to_f * 1000.0).round.to_i
     else
       _account_total_due

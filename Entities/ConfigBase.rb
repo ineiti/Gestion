@@ -6,11 +6,22 @@ class ConfigBases < Entities
 
     value_block :vars_narrow
     value_list_drop :show_passwords, '%w(always lesser students never)'
+    value_list_drop :autosave, '%w(true false)'
+    value_int :autosave_timer
+    value_list_drop :openprint_simul, '%w(true false)'
+    value_str :openprint_search
+    value_list_drop :samba_simul, '%w(true false)'
+    value_str :samba_config
+    value_list_drop :persons_add_del_users, '%w(true false)'
+    value_str :persons_adduser_cmd
+    value_str :persons_addeduser_cmd
 
     value_block :vars_wide
     value_str :server_url
     value_str :label_url
     value_str :network_actions
+    value_str :html_title
+    value_str :upload_files
 
     value_block :templates
     value_str :template_dir
@@ -89,6 +100,14 @@ class ConfigBases < Entities
     c.dputs_show_time = %w(min)
     c.dputs_silent = %w(false)
     c.dputs_terminal_width = 160
+    c.html_title = 'Gestion from Profeda'
+    c.autosave = %w(true)
+    c.autosave_timer = get_config(60, :autosave, :timer)
+    c.openprint_simul = %w(false)
+    c.openprint_search = get_config('.*', :OpenPrint, :search_remote)
+    c.upload_files = get_config('/tmp', :UploadFiles, :path)
+    c.persons_adduser_cmd = get_config('', :Persons, :adduser_cmd)
+    c.persons_addeduser_cmd = get_config('', :Persons, :cmd_after_new)
   end
 
   def migration_8(c)
