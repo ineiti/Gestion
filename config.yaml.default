@@ -4,8 +4,6 @@
 # for example for chat
 #multilogin: true
 
-title: "Gestion avec Profeda"
-
 StorageHandler:
   Replace:
     LDAP: CSV
@@ -14,28 +12,11 @@ StorageType:
   CSV:
     backup_count: 5
 
-#autosave: true
-#  timer: 120
-
-OpenPrint:
-#  simulation: true
-#  search_remote: .*
-
-UploadFiles:
-#  path: /tmp
-
 #profiling: profile.txt
 #  duration: 30
 
 Webrick:
 #  port: 3302
-
-Samba:
-  simulation: false
-  config_dir: /etc/samba
-
-AfriCompta:
-#  filename: compta.rb
 
 Views:
 #  CourseTabs:
@@ -51,3 +32,22 @@ LDAPConfig:
 #  array: host, base, root, group_users, password
 #  ldapscripts: /etc/ldapscripts/ldapscripts.conf
 #  ldapsecret: /etc/ldap.secret
+
+
+## These can be done in ConfigBase
+
+title: "Gestion avec Profeda"
+
+#autosave: true
+#  timer: 120
+
+OpenPrint:
+#  simulation: true
+#  search_remote: .*
+
+UploadFiles:
+#  path: /tmp
+
+Samba:
+  simulation: false
+  config_dir: /etc/samba
