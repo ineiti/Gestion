@@ -12,3 +12,11 @@ class Plugs < Entities
     value_int :storage_size
   end
 end
+
+class PlugStats < Entities
+  def setup_data
+    value_time :time
+    value_str :msg
+    value_entity :plug
+  end
+end

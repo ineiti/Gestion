@@ -9,8 +9,8 @@ BUGS:
             everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
             pressed during startup - or/and there is a problem when the date and time
             are way off (because the RTC is wrong and ntp hasn't reached anything yet)
-            - count is most probably wrong - output things from one user permanently
             - sometimes the iptables-nat and iptables-mangle don't work as they should
+                - can't reproduce
         - Check Report::executive
         - Documentation, documentation
 
@@ -53,6 +53,9 @@ UI:
               TemplateCourse, NetworkShare, ...
 
 FEATURES:
+        - Add control-panel for distributed Cuboxes
+        - Distributed Cuboxes search and execute automatically a command
+        - send reports home
         - Monitor::Ping
             - the idea of logrotate is very clumsy. Store everything in a file in
                 /var/log/monitor/ping_yymmdd.log and delete oldest files
