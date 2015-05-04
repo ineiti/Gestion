@@ -125,11 +125,11 @@ CPUPROFILE_FREQUENCY=500
   end
 else
   # Autosave every 2 minutes
-  if get_config(true, :autosave)
+  if ConfigBase.autosave == %w(true)
     dputs(1) { 'Starting autosave' }
     $autosave = Thread.new {
       loop {
-        sleep get_config(2 * 60, :autosave, :timer)
+        sleep ConfigBase.autosave_timer.to_i
         rescue_all "Error: couldn't save all" do
           Entities.save_all
         end

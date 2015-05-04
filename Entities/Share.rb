@@ -68,8 +68,8 @@ class Shares < Entities
       #a += "  create mask = 741\n  map archive = yes\n  map system = yes\n" +
       #  "  map hidden = yes\n"
     }
-    if not get_config(false, :Samba, :simulation)
-      file_smb = "#{get_config('/etc/samba', :Samba, :config_dir)}/smb.conf"
+    if ConfigBase.samba_simul == %w(false)
+      file_smb = "#{ConfigBase.samba_config}/smb.conf"
       File.open(file_smb, 'w') { |f|
         f.write(a)
       }

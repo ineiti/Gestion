@@ -22,32 +22,7 @@ Views:
 #  CourseTabs:
 #    order: 0
 
-Entities:
-  Persons:
-#    adduser_cmd: Binaries/adduser_to_buzz
-#    cmd_after_new: Binaries/update_users
-#    admin_users: false
-
 LDAPConfig:
 #  array: host, base, root, group_users, password
 #  ldapscripts: /etc/ldapscripts/ldapscripts.conf
 #  ldapsecret: /etc/ldap.secret
-
-
-## These can be done in ConfigBase
-
-title: "Gestion avec Profeda"
-
-#autosave: true
-#  timer: 120
-
-OpenPrint:
-#  simulation: true
-#  search_remote: .*
-
-UploadFiles:
-#  path: /tmp
-
-Samba:
-  simulation: false
-  config_dir: /etc/samba

@@ -20,6 +20,8 @@ class AdminConfiguration < View
         end
         gui_vbox :nogroup do
           show_block :narrow
+        end
+        gui_vbox :nogroup do
           show_block :vars_narrow
         end
       end
