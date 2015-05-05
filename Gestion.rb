@@ -26,7 +26,7 @@ end
 begin
   require 'QooxView'
   require 'ACQooxView'
-  ACQooxView.load_entities
+  ACQooxView.load_entities(false)
   Dependencies.load_dirs
 rescue Exception => e
   puts "#{e.inspect}"
@@ -85,9 +85,6 @@ begin
   else
     admin.permissions = ['admin'];
   end
-
-  dputs(1) { 'Loading database' }
-  ACQooxView::check_db
 
 rescue Exception => e
   case e.to_s

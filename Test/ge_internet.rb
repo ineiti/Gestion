@@ -12,7 +12,7 @@ end
 
 class TC_Internet < Test::Unit::TestCase
   def setup
-    Entities.delete_all_data()
+    Entities.delete_all_data
     ConfigBase.store(functions:[:internet_captive])
     @test = Persons.create(:login_name => 'test', :internet_credit => 50)
     Sessions.create(@test).web_req = Web_req.new(10)
@@ -29,6 +29,7 @@ class TC_Internet < Test::Unit::TestCase
     ConfigBase.send_config
     Captive.cleanup_skip = true
     Internet.setup
+    Captive.setup
   end
 
   def teardown
@@ -36,12 +37,12 @@ class TC_Internet < Test::Unit::TestCase
 
   def libnet_isp_gprs
     @operator.connection_type = Operator::CONNECTION_ONDEMAND
-    Operator.allow_free = false
+    ConfigBase.allow_free = false
   end
 
   def libnet_isp_vsat
     @operator.connection_type = Operator::CONNECTION_ALWAYS
-    Operator.allow_free = true
+    ConfigBase.allow_free = true
   end
 
   def test_take_money
@@ -69,7 +70,7 @@ class TC_Internet < Test::Unit::TestCase
     Internet.take_money
     assert_equal 17, @test.internet_credit
     assert_equal 32, @test2.internet_credit
-    assert_equal 50, @free.internet_credit
+    assert_equal 42, @free.internet_credit
 
     Captive.user_disconnect( :free, 12 )
     Captive.user_disconnect( :test2, 11 )

@@ -11,7 +11,6 @@ class TC_Configbase < Test::Unit::TestCase
 
   def test_migration_5
     Entities.delete_all_data
-    ACQooxView.check_db
 
     FileUtils.mkdir_p 'data2'
     IO.write 'data2/MigrationVersions.csv',

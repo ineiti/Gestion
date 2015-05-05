@@ -1,5 +1,5 @@
 class ConfigBases < Entities
-  self.needs :Accounts
+  self.needs %w(Accounts)
 
   def add_config
     @convert_values = true
@@ -8,8 +8,6 @@ class ConfigBases < Entities
     value_list_drop :show_passwords, '%w(always lesser students never)'
     value_list_drop :autosave, '%w(true false)'
     value_int :autosave_timer
-    value_list_drop :openprint_simul, '%w(true false)'
-    value_str :openprint_search
     value_list_drop :samba_simul, '%w(true false)'
     value_str :samba_config
     value_list_drop :persons_add_del_users, '%w(true false)'
@@ -124,7 +122,6 @@ class ConfigBases < Entities
   end
 
   def migration_5(c)
-    ACQooxView.check_db
     c.account_services = Accounts.get_by_path_or_create(
         get_config('Root::Income::Services', :Accounting, :service))
     c.account_lending = Accounts.get_by_path_or_create(
@@ -159,17 +156,6 @@ class ConfigBases < Entities
   end
 
   # Migration_1 is taken by QooxView-ConfigBase!
-
-  def delete_all(local_only = false)
-    super(local_only)
-    init
-  end
-
-  def init
-    ACQooxView.check_db
-    cb = ConfigBases.search_all_.first || ConfigBases.create(functions: [])
-    migration_5(cb)
-  end
 end
 
 class ConfigBase < Entity

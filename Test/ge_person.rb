@@ -312,10 +312,8 @@ class TC_Person < Test::Unit::TestCase
   end
 
   def test_migrate_5
-    #dp ''
-    Entities.delete_all_data()
-    ACQooxView.check_db
-    #dp Accounts.search_by_name('Lending')
+    Entities.delete_all_data
+
     lending = Accounts.create('Linus', 'Too lazy', Accounts.match_by_name('Lending'))
     paid = Accounts.create('Paid', '', lending)
     cash = Accounts.create('Linus', 'Too lazy', Accounts.match_by_name('Cash'))

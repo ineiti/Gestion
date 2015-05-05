@@ -194,8 +194,10 @@ module Internet
     #dputs_func
     case ConfigBase.allow_free
       when /all/
+        dputs(3){"User #{user} is free because ALL are free"}
         return true
       when /false/
+        dputs(3){"User #{user} is NOT free because NONE are free"}
         return false
     end
     if user.class != Person
