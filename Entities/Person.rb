@@ -549,6 +549,11 @@ class Persons < Entities
     result
   end
 
+  def Persons.check_login(login, password)
+    return nil unless p = Persons.match_by_login_name(login)
+    p.check_pass(password) ? p : nil
+  end
+
   def icc_get(tr)
     c = tr._center
     return "Didn't find center #{c.inspect}}" unless center = Persons.find_by_login_name(c._login_name)
