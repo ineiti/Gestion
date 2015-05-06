@@ -6,7 +6,7 @@ class ChatMsgs < Entities
     value_str :login
 
     @max_msgs ||= 200
-    @static._client_times |= {}
+    @static._client_times ||= {}
   end
 
   # Pushes a message to the server and returns eventual new messages
@@ -27,7 +27,7 @@ class ChatMsgs < Entities
     icc_msg_pull(tr)
   end
 
-  # Gets new messages sinces last call
+  # Gets new messages since last call
   # tr holds the following keys:
   # center: hash with {login, pass} keys
   def icc_msg_pull(tr)
@@ -37,11 +37,16 @@ class ChatMsgs < Entities
       return "Error: center #{center.inspect} has wrong password or is not a center"
     end
     @static._client_times ||= {}
-    last_time = @static._client_times[center.login_name] || Time.new(2000,1,1)
+    last_time = @static._client_times[center.login_name] || Time.new(2000, 1, 1)
     @static._client_times[center.login_name] = Time.now
-    search_all.select{|msg| msg.time > last_time && msg.center != center}.collect{|msg|
+    search_all.select { |msg| msg.time > last_time && msg.center != center }.collect { |msg|
       msg.to_hash.merge(center: msg.center.login_name)
     }
+  end
+
+  def center_hash
+    return {} unless center = Persons.center
+    {center: {login: center.login_name, pass: center.password_plain}}
   end
 
   def new_msg(person, msg, center = Persons.center)
@@ -52,8 +57,38 @@ class ChatMsgs < Entities
     end
   end
 
+  def new_msg_send(person, msg)
+    new_msg(person, msg)
+    ICC.get(:ChatMsgs, :msg_push, args: center_hash.merge(person: person, msg: msg))
+  end
+
   def show_list
-    search_all_.collect{|cm| "#{cm.time.strftime('%H:%M')} - #{cm.login}: #{cm.msg}"}.
+    search_all_.collect { |cm| "#{cm.time.strftime('%H:%M')} - #{cm.login}: #{cm.msg}" }.
         join("\n")
+  end
+
+  def pull_server_start(wait = 60)
+    return unless Persons.center
+    @thread = Thread.new {
+      loop do
+        ret = ICC.get(:ChatMsgs, :msg_pull, args: center_hash)
+        dputs(2) { "Got reply #{ret.inspect}" }
+        if ret._code =~ /^error/i
+          dputs(0) { "Error #{ret._msg} while fetching chat-messages" }
+        else
+          ret._msg.each { |m|
+            dputs(2) { "Got message #{m.inspect}" }
+            new_msg("#{m._login}@#{m._center}", m._msg)
+          }
+        end
+
+        sleep wait
+      end
+    }
+  end
+
+  def pull_server_kill
+    @thread.kill
+    @thread.join
   end
 end

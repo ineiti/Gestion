@@ -17,11 +17,27 @@ class TC_Chat < Test::Unit::TestCase
     @student_2 = Persons.create(login_name: 'student2', permissions: %w(student))
 
     ConfigBase.add_function(:course_server)
+    ConfigBase.server_url = 'localhost:3302/icc'
   end
 
   def teardown
   end
 
+  def with_server
+    ConfigBase.block_size = 4096
+
+    @port = 3302
+    @url = "http://localhost:#{@port}/icc"
+    @main = Thread.new {
+      QooxView::startWeb(@port)
+    }
+    dputs(1) { "Starting at port #{@port}" }
+    sleep 1
+
+    yield @port, @url, @main
+
+    @main.kill.join
+  end
 
   def test_push
     ChatMsgs.icc_msg_push(center: {login: 'center1', pass: ''})
@@ -67,5 +83,24 @@ class TC_Chat < Test::Unit::TestCase
     assert_equal({msg: 'hello1', center: 'center1', login: 'foo'},
                  chat_format(ChatMsgs.icc_msg_pull(@clogin2).first))
     assert_equal [], ChatMsgs.icc_msg_pull(@clogin2)
+  end
+
+  def center_hash
+    return {} unless center = Persons.center
+    {center: {login: center.login_name, pass: center.password_plain}}
+  end
+
+  def test_thread
+    with_server do
+      ChatMsgs.pull_server_start(0.5)
+      sleep 1
+      assert_equal 0, ChatMsgs.search_all.length
+      ChatMsgs.new_msg_send('foo', 'hello1')
+
+      sleep 1
+      assert_equal 2, ChatMsgs.search_all.length
+
+      ChatMsgs.pull_server_kill
+    end
   end
 end
