@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - ConfigBase::send_config is called before migrate_*
         - Admin::Import::Courses - doesn't download grades and exams
         - Monitor::Traffic
             - save and load from Static has an error where

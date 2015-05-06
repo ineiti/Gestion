@@ -17,7 +17,6 @@ class ConfigBases < Entities
     value_block :vars_wide
     value_str :server_url
     value_str :label_url
-    value_str :network_actions
     value_str :html_title
     value_str :upload_files
 
@@ -55,6 +54,13 @@ class ConfigBases < Entities
 
     value_block :internet
     value_entity_internetClass_empty_all :iclass_default, :drop, :name
+
+    value_block :mobilecontrol
+    value_text :connection_cmds_up
+    value_text :connection_cmds_down
+    value_str :connection_services_up
+    value_str :connection_services_down
+    value_str :connection_vpns
 
     value_block :accounts
     value_entity_account :account_activities, :drop, :path
@@ -106,6 +112,15 @@ class ConfigBases < Entities
     c.upload_files = get_config('/tmp', :UploadFiles, :path)
     c.persons_adduser_cmd = get_config('', :Persons, :adduser_cmd)
     c.persons_addeduser_cmd = get_config('', :Persons, :cmd_after_new)
+    c.connection_cmds_up = "postqueue -f\n/usr/local/bin/dnsmasq-internet.sh"
+    c.connection_cmds_down = "/usr/local/bin/dnsmasq-catchall.sh"
+    c.connection_services_up = "ntpd fetchmail"
+    c.connection_services_down = "fetchmail"
+    c.connection_vpns = if (vpns = Dir.glob('/etc/openvpn/*conf')).length > 0
+                          vpns.collect { |v| File.basename v, '.conf' }.join(' ')
+                        else
+                          nil
+                        end
   end
 
   def migration_8(c)
@@ -152,7 +167,6 @@ class ConfigBases < Entities
     c.keep_idle_minutes = 3
     c.server_url = 'icc.profeda.org'
     c.label_url = 'label.profeda.org'
-    c.network_actions = '/usr/local/bin/actions.rb'
   end
 
   # Migration_1 is taken by QooxView-ConfigBase!
@@ -176,6 +190,7 @@ class ConfigBase < Entity
     end
     if ConfigBase.has_function?(:internet_mobile)
       start_mobile_control
+      save_block_to_object :mobilecontrol, $MobileControl
       $MobileControl.autocharge = ConfigBase.has_function?(:internet_mobile_autocharge)
     else
       stop_mobile_control
@@ -193,9 +208,6 @@ class ConfigBase < Entity
 
   def start_mobile_control
     return if $MobileControl
-    if (na = ConfigBase.network_actions) && File.exists?(na)
-      require na
-    end
     dputs(1) { 'Starting mobile-control' }
     $MobileControl = Network::MobileControl.new
 

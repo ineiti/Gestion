@@ -7,8 +7,15 @@ class InternetConfig < View
     @functions_need = [:network, :internet]
 
     gui_vbox do
-      show_block :operator
-      show_block :internet
+      gui_hbox :nogroup do
+        gui_vbox :nogroup do
+          show_block :operator
+          show_block :internet
+        end
+        gui_vbox :nogroup do
+          show_block :mobilecontrol
+        end
+      end
       show_button :save_costs
     end
   end
