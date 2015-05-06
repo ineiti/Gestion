@@ -124,7 +124,6 @@ class InternetMobile < View
         System.run_str('pgrep openvpn')
     vpns = vpns.scan(/.{20}/).join("\n")
     ussds = $MobileControl.device ? $MobileControl.device.ussd_list : 'Down'
-    operator = $MobileControl.operator ? $MobileControl.operator.name : 'Unknown'
     reply(:update,
           :state_now => s_status($MobileControl.state_now),
           :state_goal => s_status($MobileControl.state_goal),
@@ -137,7 +136,7 @@ class InternetMobile < View
           }.join("\n"),
           :ussd_received => ussds,
           :recharge => recharge,
-          :operator => operator) +
+          :operator => $MobileControl.operator_name) +
         reply_visible(Recharges.enabled?, :promotion_left) +
         reply_visible(File.exists?(@umts_netctl), :umts_connection)
   end
