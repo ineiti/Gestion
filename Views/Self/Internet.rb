@@ -167,8 +167,9 @@ class SelfInternet < View
     list = t.traffic.collect { |h, _k|
       traffic = t.get_day(h, -3).collect { |r, t| ((r+t)/1000)/1000.0 }
       [h, [h] + traffic]
+    }.select { |t| t[1][1..3].inject(:+) > 0
     }.sort_by { |t| t[1][3] }.reverse
-    #list = [[:ineiti] + [20, 30, 40]]
+    #list = [[:ineiti], [20, 30, 40]]
     reply(:unhide, :traffic) +
         reply(:update, traffic: list)
   end
@@ -239,7 +240,7 @@ class SelfInternet < View
 
   def rpc_button_disconnect_user(session, data)
     return unless session.owner.is_responsible?
-    data._traffic.each{|u|
+    data._traffic.each { |u|
       log_msg :internet, "#{session.owner.login_name} disconnects #{u}"
       Internet.user_disconnect u
       rpc_update(session, true)
