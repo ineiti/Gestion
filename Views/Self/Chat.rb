@@ -20,6 +20,8 @@ class SelfChat < View
         show_text :discussion, :flexheight => 1, :flexwidth => 1
       end
     end
+
+    ChatMsgs.pull_server_start(10)
   end
 
   def rpc_update_view(session, args = nil)

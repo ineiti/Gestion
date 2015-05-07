@@ -83,6 +83,7 @@ class TC_Chat < Test::Unit::TestCase
     assert_equal({msg: 'hello1', center: 'center1', login: 'foo'},
                  chat_format(ChatMsgs.icc_msg_pull(@clogin2).first))
     assert_equal [], ChatMsgs.icc_msg_pull(@clogin2)
+    assert ChatMsgs.show_list
   end
 
   def center_hash

@@ -17,7 +17,7 @@ class ChatMsgs < Entities
   #
   # It returns the results from icc_msg_pull
   def icc_msg_push(tr)
-    return nil unless ConfigBase.functions.index(:course_server)
+    #return 'Error: no course_server' unless ConfigBase.functions.index(:course_server)
     center = Persons.check_login(tr._center._login, tr._center._pass)
     if center && center.has_permission?(:center)
       new_msg(tr._person, tr._msg, center)
@@ -31,7 +31,7 @@ class ChatMsgs < Entities
   # tr holds the following keys:
   # center: hash with {login, pass} keys
   def icc_msg_pull(tr)
-    return 'Error: not a server here' unless ConfigBase.has_function?(:course_server)
+    #return 'Error: not a server here' unless ConfigBase.has_function?(:course_server)
     center = Persons.check_login(tr._center._login, tr._center._pass)
     if !center || !center.has_permission?(:center)
       return "Error: center #{center.inspect} has wrong password or is not a center"
@@ -49,9 +49,9 @@ class ChatMsgs < Entities
     {center: {login: center.login_name, pass: center.password_plain}}
   end
 
-  def new_msg(person, msg, center = Persons.center)
+  def new_msg(person, msg, center = nil)
     create(time: Time.now, msg: msg, center: center,
-           login: person)
+           login: center ? "#{person}@#{center.login_name}" : person)
     log_msg :ChatMsgs, "#{person} says - #{msg}"
     if @data.length > @max_msgs
       get_data_instance(@data.keys.first).delete
@@ -62,6 +62,7 @@ class ChatMsgs < Entities
     new_msg(person, msg)
     if ConfigBase.has_function?(:remote_chat)&&
         ConfigBase.server_url.to_s.length > 0
+      log_msg :ChatMsgs, "Sending msg from #{person} to server"
       ICC.get(:ChatMsgs, :msg_push, args: center_hash.merge(person: person, msg: msg))
     end
   end
@@ -95,5 +96,12 @@ class ChatMsgs < Entities
   def pull_server_kill
     @thread.kill
     @thread.join
+  end
+
+  def load
+    super
+    ChatMsgs.search_all.each{|cm|
+      cm.time = Time.parse(cm.time)
+    }
   end
 end
