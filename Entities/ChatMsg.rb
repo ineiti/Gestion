@@ -52,6 +52,7 @@ class ChatMsgs < Entities
   def new_msg(person, msg, center = Persons.center)
     create(time: Time.now, msg: msg, center: center,
            login: person)
+    log_msg :ChatMsgs, "#{person} says - #{msg}"
     if @data.length > @max_msgs
       get_data_instance(@data.keys.first).delete
     end
@@ -59,12 +60,16 @@ class ChatMsgs < Entities
 
   def new_msg_send(person, msg)
     new_msg(person, msg)
-    ICC.get(:ChatMsgs, :msg_push, args: center_hash.merge(person: person, msg: msg))
+    if ConfigBase.has_function?(:remote_chat)&&
+        ConfigBase.server_url.to_s.length > 0
+      ICC.get(:ChatMsgs, :msg_push, args: center_hash.merge(person: person, msg: msg))
+    end
   end
 
-  def show_list
-    search_all_.collect { |cm| "#{cm.time.strftime('%H:%M')} - #{cm.login}: #{cm.msg}" }.
-        join("\n")
+  def show_list(max = 100)
+    search_all_.reverse[0...max].collect { |cm|
+      "#{cm.time.strftime('%H:%M')} - #{cm.login}: #{cm.msg}"
+    }.join("\n")
   end
 
   def pull_server_start(wait = 60)

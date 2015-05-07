@@ -4,9 +4,6 @@
 class SelfChat < View
   def layout
     @@box_length = 40
-    @@disc = Statics.get(:SelfChat)
-    @@disc.data_str.length < @@box_length and
-        (@@disc.data_str = Array.new(@@box_length, ''))
     @order = 100
     @update = true
     @auto_update_async = 10
@@ -36,14 +33,7 @@ class SelfChat < View
   end
 
   def rpc_update(session)
-    today_date = "--- #{Date.today.strftime('%Y-%m-%d')} ---"
-    last_date = @@disc.data_str.select { |str| str =~ /^---/ }.last
-    if not last_date or last_date != today_date
-      @@disc.data_str.push today_date
-    end
-    @@disc.data_str = @@disc.data_str.last(200)
-    reply(:update, :discussion => @@disc.data_str[-@@box_length..-1].
-        reverse.join("\n")) +
+    reply(:update, discussion: ChatMsgs.show_list) +
         reply(:focus, :talk)
   end
 
@@ -55,9 +45,7 @@ class SelfChat < View
                 else
                   [session.owner.login_name, []]
                 end
-    @@disc.data_str.push("#{Time.now.strftime('%H:%M')} - " +
-                             "#{name}: #{data._talk}")
-    log_msg 'chat', "#{name} says - #{data._talk}"
+    ChatMsgs.new_msg_send(name, data._talk)
     ret + reply(:empty, [:talk]) +
         rpc_update(session)
   end
