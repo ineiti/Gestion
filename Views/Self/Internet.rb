@@ -24,6 +24,7 @@ class SelfInternet < View
       gui_vbox :nogroup do
         show_table :traffic, headings: %w(Name Day-2 Day-1 Today),
                    widths: [100, 75, 75, 75]
+        show_button :disconnect_user
       end
     end
   end
@@ -129,7 +130,8 @@ class SelfInternet < View
       reply_one_two(show_button == :connect, :connect, :disconnect)
     end +
         reply(:update, :connection =>
-                         "<img src='/Images/connection_#{connected ? 'yes' : 'no'}.png' height='50'>")
+                         "<img src='/Images/connection_#{connected ? 'yes' : 'no'}.png' height='50'>") +
+        reply_visible(session.owner.is_responsible?, :disconnect_user)
   end
 
   def update_isp(session)
@@ -233,6 +235,15 @@ class SelfInternet < View
       Internet.user_disconnect session.owner.login_name
       rpc_update(session, true)
     end
+  end
+
+  def rpc_button_disconnect_user(session, data)
+    return unless session.owner.is_responsible?
+    data._traffic.each{|u|
+      log_msg :internet, "#{session.owner.login_name} disconnects #{u}"
+      Internet.user_disconnect u
+      rpc_update(session, true)
+    }
   end
 
 end
