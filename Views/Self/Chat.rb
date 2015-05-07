@@ -21,7 +21,7 @@ class SelfChat < View
       end
     end
 
-    ChatMsgs.pull_server_start(10)
+    ChatMsgs.pull_server_start(60)
   end
 
   def rpc_update_view(session, args = nil)
@@ -35,6 +35,7 @@ class SelfChat < View
   end
 
   def rpc_update(session)
+    ChatMsgs.wait_counter -= 10
     reply(:update, discussion: ChatMsgs.show_list) +
         reply(:focus, :talk)
   end

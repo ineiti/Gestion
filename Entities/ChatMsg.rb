@@ -1,4 +1,6 @@
 class ChatMsgs < Entities
+  attr_accessor :wait_counter
+
   def setup_data
     value_time :time
     value_str :msg
@@ -39,8 +41,9 @@ class ChatMsgs < Entities
     @static._client_times ||= {}
     last_time = @static._client_times[center.login_name] || Time.new(2000, 1, 1)
     @static._client_times[center.login_name] = Time.now
-    search_all.select { |msg| msg.time > last_time && msg.center != center }.collect { |msg|
-      msg.to_hash.merge(center: msg.center.login_name)
+    search_all_.select { |msg| msg.time > last_time && msg.center != center }.collect { |msg|
+      center = msg.center ? msg.center.login_name : Persons.master_center_login_name
+      msg.to_hash.merge(center: center)
     }
   end
 
@@ -58,37 +61,43 @@ class ChatMsgs < Entities
     end
   end
 
-  def new_msg_send(person, msg)
-    new_msg(person, msg)
-    if ConfigBase.has_function?(:remote_chat)&&
-        ConfigBase.server_url.to_s.length > 0
-      log_msg :ChatMsgs, "Sending msg from #{person} to server"
-      ICC.get(:ChatMsgs, :msg_push, args: center_hash.merge(person: person, msg: msg))
+  def add_remote_msg(ret)
+    dputs(2) { "Got reply #{ret.inspect}" }
+    if ret._code =~ /^error/i
+      dputs(0) { "Error #{ret._msg} while fetching chat-messages" }
+    else
+      ret._msg.each { |m|
+        dputs(2) { "Got message #{m.inspect}" }
+        new_msg("#{m._login}@#{m._center}", m._msg)
+      }
     end
   end
 
-  def show_list(max = 100)
-    search_all_.reverse[0...max].collect { |cm|
-      "#{cm.time.strftime('%H:%M')} - #{cm.login}: #{cm.msg}"
-    }.join("\n")
+  def new_msg_send(person, msg)
+    if ConfigBase.has_function?(:remote_chat)&&
+        ConfigBase.server_url.to_s.length > 0
+      log_msg :ChatMsgs, "Sending msg from #{person} to server"
+      arg = center_hash.merge(person: person, msg: msg)
+      # As we'll get the new messages, no need to fetch them again
+      @wait_counter = @wait_init
+      add_remote_msg(ICC.get(:ChatMsgs, :msg_push, args: arg))
+    end
+    new_msg(person, msg)
   end
 
   def pull_server_start(wait = 60)
     return unless Persons.center
+    @wait_init = wait
     @thread = Thread.new {
       loop do
-        ret = ICC.get(:ChatMsgs, :msg_pull, args: center_hash)
-        dputs(2) { "Got reply #{ret.inspect}" }
-        if ret._code =~ /^error/i
-          dputs(0) { "Error #{ret._msg} while fetching chat-messages" }
-        else
-          ret._msg.each { |m|
-            dputs(2) { "Got message #{m.inspect}" }
-            new_msg("#{m._login}@#{m._center}", m._msg)
-          }
-        end
+        add_remote_msg(ICC.get(:ChatMsgs, :msg_pull, args: center_hash))
 
-        sleep wait
+        # Now we can decrease the counter on some events and get faster pulls
+        @wait_counter = @wait_init
+        while @wait_counter > 0
+          sleep 1
+          dp @wait_counter -= 1
+        end
       end
     }
   end
@@ -98,9 +107,15 @@ class ChatMsgs < Entities
     @thread.join
   end
 
+  def show_list(max = 100)
+    search_all_.reverse[0...max].collect { |cm|
+      "#{cm.time.strftime('%H:%M')} - #{cm.login}: #{cm.msg}"
+    }.join("\n")
+  end
+
   def load
     super
-    ChatMsgs.search_all.each{|cm|
+    ChatMsgs.search_all_.each { |cm|
       cm.time = Time.parse(cm.time)
     }
   end
