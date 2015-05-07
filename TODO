@@ -5,13 +5,7 @@ WORKING:
 BUGS:
         - ConfigBase::send_config is called before migrate_*
         - Admin::Import::Courses - doesn't download grades and exams
-        - Monitor::Traffic
-            - save and load from Static has an error where
-            everything can be deleted. it loads AFTER it saves - probably when <ctrl-c> is
-            pressed during startup - or/and there is a problem when the date and time
-            are way off (because the RTC is wrong and ntp hasn't reached anything yet)
-            - sometimes the iptables-nat and iptables-mangle don't work as they should
-                - can't reproduce
+        - Monitor::Traffic - all data is lost when RTC is wrong!
         - Check Report::executive
         - Documentation, documentation
 

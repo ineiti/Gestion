@@ -79,24 +79,27 @@ class ChatMsgs < Entities
       log_msg :ChatMsgs, "Sending msg from #{person} to server"
       arg = center_hash.merge(person: person, msg: msg)
       # As we'll get the new messages, no need to fetch them again
-      @wait_counter = @wait_init
+      @wait_counter = 0
       add_remote_msg(ICC.get(:ChatMsgs, :msg_push, args: arg))
     end
     new_msg(person, msg)
   end
 
-  def pull_server_start(wait = 60)
+  # This thread checks every second if the @wait_counter is bigger or equal to
+  # _wait_, in which case it resets it to 0 and checks for new messages.
+  # That way we save precious bandwith
+  def pull_server_start(wait = 5)
     return unless Persons.center
-    @wait_init = wait
+    @wait_max = wait
     @thread = Thread.new {
       loop do
         add_remote_msg(ICC.get(:ChatMsgs, :msg_pull, args: center_hash))
 
-        # Now we can decrease the counter on some events and get faster pulls
-        @wait_counter = @wait_init
-        while @wait_counter > 0
+        # If more than @wait_max increases are done, we check for new messages
+        @wait_counter = 0
+        while @wait_counter < @wait_max
           sleep 1
-          dp @wait_counter -= 1
+          dp @wait_counter
         end
       end
     }
