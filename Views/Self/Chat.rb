@@ -6,7 +6,7 @@ class SelfChat < View
     @@box_length = 40
     @order = 100
     @update = true
-    @auto_update_async = 10
+    @auto_update_async = 5
     @auto_update_send_values = false
 
     gui_vboxg do
@@ -21,7 +21,7 @@ class SelfChat < View
       end
     end
 
-    ChatMsgs.pull_server_start(3)
+    ChatMsgs.wait_max = 3
   end
 
   def rpc_update_view(session, args = nil)
@@ -35,7 +35,7 @@ class SelfChat < View
   end
 
   def rpc_update(session)
-    ChatMsgs.wait_counter += 1
+    ChatMsgs.wait_counter_add
     reply(:update, discussion: ChatMsgs.show_list) +
         reply(:focus, :talk)
   end

@@ -1,6 +1,4 @@
 class ChatMsgs < Entities
-  attr_accessor :wait_counter
-
   def setup_data
     value_time :time
     value_str :msg
@@ -9,6 +7,8 @@ class ChatMsgs < Entities
 
     @max_msgs ||= 200
     @static._client_times ||= {}
+    @wait_counter = 0
+    @wait_max = 5
   end
 
   # Pushes a message to the server and returns eventual new messages
@@ -62,7 +62,7 @@ class ChatMsgs < Entities
   end
 
   def add_remote_msg(ret)
-    dputs(2) { "Got reply #{ret.inspect}" }
+    dputs(3) { "Got reply #{ret.inspect}" }
     if ret._code =~ /^error/i
       dputs(0) { "Error #{ret._msg} while fetching chat-messages" }
     else
@@ -79,35 +79,29 @@ class ChatMsgs < Entities
       log_msg :ChatMsgs, "Sending msg from #{person} to server"
       arg = center_hash.merge(person: person, msg: msg)
       # As we'll get the new messages, no need to fetch them again
-      @wait_counter = 0
+      wait_counter_reset
       add_remote_msg(ICC.get(:ChatMsgs, :msg_push, args: arg))
     end
     new_msg(person, msg)
   end
 
-  # This thread checks every second if the @wait_counter is bigger or equal to
-  # _wait_, in which case it resets it to 0 and checks for new messages.
-  # That way we save precious bandwith
-  def pull_server_start(wait = 5)
-    return unless Persons.center
-    @wait_max = wait
-    @thread = Thread.new {
-      loop do
-        add_remote_msg(ICC.get(:ChatMsgs, :msg_pull, args: center_hash))
-
-        # If more than @wait_max increases are done, we check for new messages
-        @wait_counter = 0
-        while @wait_counter < @wait_max
-          sleep 1
-          dp @wait_counter
-        end
-      end
-    }
+  def wait_max=(max)
+    @wait_max = max
   end
 
-  def pull_server_kill
-    @thread.kill
-    @thread.join
+  # if @wait_counter is bigger or equal to @wait_counter, it checks for
+  # new messages.
+  # That way we save precious bandwith
+  def wait_counter_add
+    @wait_counter += 1
+    if @wait_counter >= @wait_max
+      add_remote_msg(ICC.get(:ChatMsgs, :msg_pull, args: center_hash))
+      wait_counter_reset
+    end
+  end
+
+  def wait_counter_reset
+    @wait_counter = 0
   end
 
   def show_list(max = 100)
