@@ -514,6 +514,14 @@ class Persons < Entities
     Persons.search_by_permissions(:center)
   end
 
+  def Persons.master_center
+    Persons.centers.find { |c| c.has_permission?(:center_director) }
+  end
+
+  def Persons.master_center_login_name
+    (c = Persons.master_center) ? c.login_name : 'master'
+  end
+
   def Persons.search_in(str, field = nil, center: nil, max: 20)
     # Don't search if there are few caracters and lots of Persons
     dputs(3) { "search_in - _#{str}_ - #{Persons.data.length}" }
