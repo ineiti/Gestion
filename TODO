@@ -275,7 +275,8 @@ To check:
 
 
 ** FIXED **:
-        - F 250425: logging of Africompta-deletion
+        - F 150507: remote chat!
+        - F 150425: logging of Africompta-deletion
         - B 150425: Gestion-tests not working anymore
         - P 150425: cleaned up ConfigBase and config.yaml
         - F 150424: make nice 503-error page
