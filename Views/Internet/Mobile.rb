@@ -113,7 +113,7 @@ class InternetMobile < View
                        else
                          [$MobileControl.operator.credit_left,
                           $MobileControl.operator.internet_left,
-                         recharges_list]
+                          recharges_list]
                        end
     #cl, il = s_unknown(cl), s_unknown(il)
     emails = System.exists?('postqueue') ?
@@ -124,21 +124,29 @@ class InternetMobile < View
         System.run_str('pgrep openvpn')
     vpns = vpns.scan(/.{20}/).join("\n")
     ussds = $MobileControl.device ? $MobileControl.device.ussd_list : 'Down'
-    reply(:update,
-          :state_now => s_status($MobileControl.state_now),
-          :state_goal => s_status($MobileControl.state_goal),
-          :credit => cl,
-          :promotion => il.separator,
-          :promotion_left => Recharge.left_today(il).separator,
-          :emails => emails, :vpn => vpns,
-          :sms_received => SMSs.last(5).reverse.collect { |sms|
-            "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
-          }.join("\n"),
-          :ussd_received => ussds,
-          :recharge => recharge,
-          :operator => $MobileControl.operator_name) +
-        reply_visible(Recharges.enabled?, :promotion_left) +
-        reply_visible(File.exists?(@umts_netctl), :umts_connection)
+    services = $MobileControl.operator_missing? ? [] : $MobileControl.operator.services
+    {connection: %i(connect disconnect),
+     sms: %i(sms_number sms_text send_sms sms_received),
+     ussd: %i(ussd send_ussd add_credit recharge ussd_received),
+     credit: %i(credit),
+     promotion: %i(promotion promotion_left recharge),
+     umts: %i(umts_connection)}.collect { |service, fields|
+      reply_visible(services.index(service), fields)
+    }.flatten +
+        reply(:update,
+              :state_now => s_status($MobileControl.state_now),
+              :state_goal => s_status($MobileControl.state_goal),
+              :credit => cl,
+              :promotion => il.separator,
+              :promotion_left => Recharge.left_today(il).separator,
+              :emails => emails, :vpn => vpns,
+              :sms_received => SMSs.last(5).reverse.collect { |sms|
+                "#{sms.date}::#{sms.phone}:: ::#{sms.text}"
+              }.join("\n"),
+              :ussd_received => ussds,
+              :recharge => recharge,
+              :operator => $MobileControl.operator_name) +
+        reply_visible(Recharges.enabled?, :promotion_left)
   end
 
   def rpc_update_async(session)
@@ -199,4 +207,5 @@ class InternetMobile < View
   def rpc_button_reload(session, data)
     rpc_update(session)
   end
+
 end
