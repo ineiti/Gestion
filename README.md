@@ -1,9 +1,9 @@
-= Gestion
+# Gestion
 
 Allows for handling of day-to-day tasks in a small school, think cultural center
 that offers classes.
 
-== Functions
+## Functions
 
 For the cultural center-part, the following functions are implemented:
 
@@ -24,12 +24,12 @@ There is also a network-part which has the following functions:
   * Access-control of students when installed as captive gateway
   * Controlling internet-credit, works for now only for Chad
 
-== Hardware
+## Hardware
 
 It has been tested on ArchLinux running on different ARM-boxes (Dreamplug,
 Smileplug and Cubox-i). Most of the parts also run on Ubuntu.
 
-== Software
+## Software
 
 The user-interface is using http://QooxDoo.org with a ruby-back-end called
 QooxView. Different libraries are used:
@@ -42,10 +42,19 @@ QooxView. Different libraries are used:
     backend with CSV-files
   * SerialModem - interface for simple ttyUSB-modems
 
-== Installation
+## Installation
 
-Download the different parts under 'Software' from GitHub and put them all in one
-directory. Then you can cd into 'Gestion' and run ```./Gestion``` which will do
-some basic checks and offer to install missing packages.
+Unfortunately there is no gem-package available as yet. But a pacman-version exists 
+that you can download under http://github.com/ineiti/Gestion/releases/latest
 
-An installation-package for ArchLinux is in preparation.
+If you're adventurous, you can try the following:
+
+```
+for s in AfriCompta Gestion HelperClasses HilinkModem Network QooxView SerialModem; do
+  git clone https://github.com/ineiti/$s
+done
+cd Gestion
+./Gestion
+```
+
+Which 'should work' (tm).
