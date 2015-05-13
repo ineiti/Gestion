@@ -41,3 +41,5 @@ ac_work
 Test/reports
 Diplomas
 Diplomas.src/*/*
+.bundle
+bundle/vendor
