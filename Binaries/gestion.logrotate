@@ -5,7 +5,7 @@
   mail root@localhost
   #nomail
   postrotate
-    /opt/profeda/Gestion/Binaries/log_scan_errors
+    /opt/gestion/Binaries/log_scan_errors
   endscript
   nocompress
 }
@@ -16,7 +16,7 @@
   rotate 30
   mail root@localhost
   prerotate
-    /opt/profeda/Gestion/Binaries/sort_events /var/log/gestion/events.log /tmp/gestion_events.log
+    /opt/gestion/Binaries/sort_events /var/log/gestion/events.log /tmp/gestion_events.log
     SUBJ="Events from $( hostname )"
     #if [ -x /usr/bin/mutt ]; then
     #  echo "Gestion log-file" | mutt -s "$SUBJ" -a /tmp/gestion_events.log -- root@localhost
