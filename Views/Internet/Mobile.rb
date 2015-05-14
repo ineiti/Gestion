@@ -1,5 +1,5 @@
 require 'network'
-require 'helperclasses'
+require 'helper_classes'
 
 class InternetMobile < View
   include Network

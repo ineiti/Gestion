@@ -1,12 +1,11 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
 DEBUG_LVL = 2
-require './Dependencies'
-Dependencies.load_path
-
-require 'helperclasses'
-include HelperClasses::System
+require 'bundler/setup'
+require 'helper_classes'
 include HelperClasses
+include System
+$LOAD_PATH.push '.'
 
 Encoding.default_external = Encoding::UTF_8
 
@@ -24,10 +23,12 @@ if not FileTest.exists? CONFIG_FILE
 end
 
 begin
-  require 'QooxView'
-  require 'ACQooxView'
+  require 'qooxview'
+  require 'africompta/acqooxview'
   ACQooxView.load_entities(false)
-  Dependencies.load_dirs
+  %w( Modules Paths ).each { |dir|
+    Dir.glob("#{dir}/*").each { |d| require d }
+  }
 rescue Exception => e
   puts "#{e.inspect}"
   puts "#{e.to_s}"

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.push '/opt/profeda/HelperClasses/lib/'
-require 'helperclasses'
+require 'helper_classes'
 require 'net/http'
 require 'fileutils'
 include HelperClasses
