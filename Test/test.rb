@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
-require '../Dependencies'
-Dependencies.load_path(here: '..')
+require 'bundler/setup'
 require 'test/unit'
 require 'fileutils'
 FileUtils.rm_rf Dir.glob('data*')
@@ -8,13 +7,10 @@ FileUtils.rm_rf Dir.glob('data*')
 CONFIG_FILE='config_test.yaml'
 DEBUG_LVL=0
 
-require 'QooxView'
-require 'ACQooxView'
-require 'LibNet'
-require '../Dependencies'
-Dependencies.load_path(here: '..')
+require 'qooxview'
+require 'network'
+require 'africompta'
 ACQooxView.load_entities
-Dependencies.load_dirs(here: '..')
 
 def permissions_init
   Permission.clear

@@ -42,4 +42,4 @@ Test/reports
 Diplomas
 Diplomas.src/*/*
 .bundle
-vendor/bundle
+vendor

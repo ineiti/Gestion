@@ -1,4 +1,38 @@
 GIT
+  remote: ../AfriCompta
+  revision: b8563e3b49b93585bdcf3d571652cfbde4f7d28c
+  branch: gemify-things
+  specs:
+    africompta (1.9.8)
+      qooxview
+
+GIT
+  remote: ../HelperClasses
+  revision: 13b0df9435e9c2337e96dab7f83bc229652d59e2
+  branch: gemify-things
+  specs:
+    helper_classes (0.3.1)
+
+GIT
+  remote: ../HilinkModem
+  revision: 8fd4a2a12a03b74dbacd30bfd855e22b30f0cb1d
+  branch: gemify-things
+  specs:
+    hilink_modem (0.3.1)
+      activesupport (~> 3.1)
+      serialport (~> 1.3)
+
+GIT
+  remote: ../Network
+  revision: f0613ee449393ca079daae21875fa17b589f72cf
+  branch: gemify-things
+  specs:
+    network (0.3.1)
+      helper_classes (= 0.3.1)
+      hilink_modem (= 0.3.1)
+      serial_modem (= 0.3.0)
+
+GIT
   remote: ../QooxView
   revision: 6c629e464074a93ddac1c0c6bf2197df2e6cc624
   branch: gemify-things
@@ -29,34 +63,10 @@ GIT
       text (= 1.2.3)
       ttfunk (= 1.4.0)
 
-PATH
-  remote: ../AfriCompta
-  specs:
-    africompta (1.9.8)
-      qooxview
-
-PATH
-  remote: ../HelperClasses
-  specs:
-    helper_classes (0.3.1)
-
-PATH
-  remote: ../HilinkModem
-  specs:
-    hilink_modem (0.3.1)
-      activesupport (~> 3.1)
-      serialport (~> 1.3)
-
-PATH
-  remote: ../Network
-  specs:
-    network (0.3.1)
-      helper_classes (= 0.3.1)
-      hilink_modem (= 0.3.1)
-      serial_modem (= 0.3.0)
-
-PATH
+GIT
   remote: ../SerialModem
+  revision: a465f92d6040ea4b221617f4d98db1044813f806
+  branch: gemify-things
   specs:
     serial_modem (0.3.0)
       serialport (= 1.3.1)
