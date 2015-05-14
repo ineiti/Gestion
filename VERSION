@@ -1,5 +1,8 @@
 Important notices for versions:
 
+- 150514: 1.9.9
+  - now using bundler to put everything into place
+
 - 150331: 1.9.6
   - made more granularity in internet-functions, check what you need!
 

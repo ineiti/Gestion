@@ -5,14 +5,14 @@ require 'bundler/setup'
 require 'helper_classes'
 include HelperClasses
 include System
-$LOAD_PATH.push '.'
+$LOAD_PATH.push __dir__
 
 Encoding.default_external = Encoding::UTF_8
 
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad.
 
-VERSION_GESTION='1.9.8'
+VERSION_GESTION='1.9.9'
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
