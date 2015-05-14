@@ -269,6 +269,7 @@ To check:
 
 
 ** FIXED **:
+        - F 150514: Put things into gems
         - B 150512: Network::Operators::Tawali - if internet_left is set right away,
             mobilecontrol never picks that up
         - B 150508: Views::Internet::Mobile shows more fields than necessary for
