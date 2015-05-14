@@ -11,18 +11,18 @@ class Welcome < View
     GC.start
     web_req = session.web_req
     client_ip = RPCQooxdooHandler.get_ip(web_req)
-    if get_config(false, :autologin)
-      person = Entities.Persons.match_by_login_name(get_config(false, :autologin))
+    person = if get_config(false, :autologin)
+               Entities.Persons.match_by_login_name(get_config(false, :autologin))
+             else
+               nil
+             end
+    if person
       person and dputs(3) { "Found login #{person.data.inspect}" }
-      if person then
-        session = get_config(false, :multilogin) ? Sessions.find_by_owner(person.person_id) : nil
-        session ||= Sessions.create(person)
-        dputs(3) { "Session is #{session.inspect}" }
-        return reply(:session_id, person.session_id) +
-            View.rpc_list(session)
-      else
-        return nil
-      end
+      session = get_config(false, :multilogin) ? Sessions.find_by_owner(person.person_id) : nil
+      session ||= Sessions.create(person)
+      dputs(3) { "Session is #{session.inspect}" }
+      return reply(:session_id, person.session_id) +
+          View.rpc_list(session)
     else
       if (version_local = ConfigBase.version_local) != ''
         version_local = "-#{version_local}"
@@ -101,7 +101,7 @@ class Welcome < View
 
     dputs(3) { "Tabs is now #{tabs.inspect}" }
     return reply(:session_id, session.sid) +
-        reply(:list, views:tabs) +
+        reply(:list, views: tabs) +
         (session.s_data._sub_tabs_only ? View.reply(:bar_position, 'top') : [])
   end
 
@@ -120,4 +120,5 @@ class Welcome < View
     session.close
     return super.rpc_show(session)
   end
+
 end

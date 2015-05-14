@@ -9,7 +9,7 @@ DEBUG_LVL=0
 
 require 'qooxview'
 require 'network'
-require 'africompta'
+require 'africompta/acqooxview'
 ACQooxView.load_entities
 
 def permissions_init
@@ -28,7 +28,8 @@ end
 
 permissions_init
 
-QooxView.init('../Entities', '../Views')
+dir = File.expand_path('..', __dir__)
+QooxView.init("#{dir}/Entities", "#{dir}/Views")
 
 tests = Dir.glob('ge_*.rb')
 #tests = %w( activity )
