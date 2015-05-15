@@ -3,7 +3,7 @@
 WDIR=$( dirname ${BASH_SOURCE[0]} )
 cd $WDIR
 if [ "$1" = "update" ]; then
-  Binaries/gestion_update.service
+  Binaries/gestion_update.rb
   exit
 fi
 

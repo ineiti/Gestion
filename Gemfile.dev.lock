@@ -1,8 +1,8 @@
 PATH
   remote: ../AfriCompta
   specs:
-    africompta (1.9.8)
-      qooxview
+    africompta (1.9.9)
+      qooxview (= 1.9.9)
 
 PATH
   remote: ../HelperClasses
@@ -19,15 +19,15 @@ PATH
 PATH
   remote: ../Network
   specs:
-    network (0.3.1)
+    network (0.3.2)
       helper_classes (= 0.3.1)
       hilink_modem (= 0.3.1)
-      serial_modem (= 0.3.0)
+      serial_modem (= 0.3.1)
 
 PATH
   remote: ../QooxView
   specs:
-    qooxview (2.0.0.pre.pre2)
+    qooxview (1.9.9)
       activemodel (= 3.1.1)
       activerecord (= 3.1.1)
       activesupport (= 3.1.1)
@@ -56,7 +56,7 @@ PATH
 PATH
   remote: ../SerialModem
   specs:
-    serial_modem (0.3.0)
+    serial_modem (0.3.1)
       serialport (= 1.3.1)
 
 GEM
