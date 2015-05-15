@@ -2,6 +2,11 @@
 
 WDIR=$( dirname ${BASH_SOURCE[0]} )
 cd $WDIR
+if [ "$1" = "update" ]; then
+  Binaries/gestion_update.service
+  exit
+fi
+
 echo ""
 mkdir -p Backups
 if [ "$( which ruby )" -a "$1" != "--install" ]; then
