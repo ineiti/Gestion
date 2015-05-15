@@ -17,7 +17,7 @@ DEBUG_LVL = 2
 
 def reverse_update
   return unless File.exists?(@file_update)
-  "<textarea rows='20' cols='100'>#{Time.now.to_s }\n" +
+  "#{Time.now.to_s }<br><textarea rows='20' cols='100'>" +
       IO.read(@file_update).split("\n").reverse.join("\n") +
       '</textarea>'
 end
