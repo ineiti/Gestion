@@ -1,10 +1,6 @@
 #!/usr/bin/env ruby
-$LOAD_PATH.push '/opt/profeda/HelperClasses/lib/'
-require 'helper_classes'
 require 'net/http'
 require 'fileutils'
-include HelperClasses
-include HelperClasses::DPuts
 @file_update = '/tmp/gestion.update'
 @file_switch_versions = '/tmp/gestion.switch_versions'
 @html_txt = []
@@ -15,7 +11,6 @@ DEBUG_LVL = 2
 
 def main
   begin
-    #dputs_func
     if !File.exists? @file_switch_versions
       if !File.exists? @file_update
         update_html("Didn't find #{@file_update}", '0')
@@ -148,6 +143,11 @@ def update_html(msg, noadd = false, refresh: '5')
 ")
   FileUtils.mv "#{@html_file}.tmp", @html_file
   noadd and @html_txt.pop
+end
+
+def dputs(lvl)
+  return unless lvl <= DEBUG_LVL
+  puts "#{lvl}: #{yield}"
 end
 
 if ARGV.length > 0
