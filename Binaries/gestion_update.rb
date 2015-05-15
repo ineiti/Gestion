@@ -18,6 +18,7 @@ DEBUG_LVL = 2
 def reverse_update
   return unless File.exists?(@file_update)
   "<textarea rows='20' cols='100'>" +
+      Time.now.to_s +
       IO.read(@file_update).split("\n").reverse.join("\n") +
       '</textarea>'
 end
@@ -76,7 +77,7 @@ def main
     end
     update_html('Hope the update went well - goodbye',
                 refresh: '5; URL=http://admin.profeda.org')
-  rescue Exception => e
+  rescue StandardError => e
     update_html("Error: #{e.to_s} - #{e.inspect}")
     update_html("Error: #{caller.inspect}")
   end
@@ -112,6 +113,10 @@ def update_html(msg, noadd = false, refresh: '5')
           padding: 10px;
           width: 70%;
           background-color: #b0deb0;
+      }
+
+      textarea {
+          background-color: #d0ded0;
       }
 
       a:link {
