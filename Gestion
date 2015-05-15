@@ -1,5 +1,7 @@
 #!/bin/bash
 
+WDIR=$( dirname ${BASH_SOURCE[0]} )
+cd $WDIR
 echo ""
 mkdir -p Backups
 if [ "$( which ruby )" -a "$1" != "--install" ]; then
@@ -26,12 +28,6 @@ if [ "$( which ruby )" -a "$1" != "--install" ]; then
     done
     tar xf Backups/$( cat dorestore )
     rm dorestore
-  fi
-  if [ -f /tmp/gestion.update ]; then
-    Binaries/gestion_update.rb &
-    while [ -f /tmp/gestion.update ]; do
-      sleep 2
-    done
   fi
   ./Gestion.rb $@
 else
