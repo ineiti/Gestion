@@ -17,7 +17,9 @@ DEBUG_LVL = 2
 
 def reverse_update
   return unless File.exists?(@file_update)
-  IO.read(@file_update).split("\n").reverse.join("\n")
+  "<textarea rows='20' cols='100'>" +
+      IO.read(@file_update).split("\n").reverse.join("\n") +
+      '</textarea>'
 end
 
 def main
@@ -41,7 +43,7 @@ def main
       }
       while update.alive?
         dputs(3) { 'Update is alive' }
-        update_html("<pre>#{reverse_update}</pre>", true)
+        update_html(reverse_update, true)
         sleep 4
       end
       dputs(3) { 'Update should be done' }
@@ -49,12 +51,13 @@ def main
       FileUtils.rm @file_update
     else
       update_content = reverse_update
+      FileUtils.rm @file_switch_versions
       while File.exists? @file_update
         sleep 1
       end
       Service.stop('gestion')
     end
-    update_html "<pre>#{update_content}</pre>"
+    update_html update_content
     update_html 'Starting Gestion'
     Service.reload
     Service.start('gestion')
