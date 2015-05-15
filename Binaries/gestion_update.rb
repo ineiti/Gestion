@@ -17,8 +17,7 @@ DEBUG_LVL = 2
 
 def reverse_update
   return unless File.exists?(@file_update)
-  "<textarea rows='20' cols='100'>" +
-      Time.now.to_s +
+  "<textarea rows='20' cols='100'>#{Time.now.to_s }\n" +
       IO.read(@file_update).split("\n").reverse.join("\n") +
       '</textarea>'
 end
@@ -32,6 +31,8 @@ def main
         exit
       end
       file = IO.read(@file_update)
+      update_html('Stopping Gestion')
+      Service.stop('gestion')
       update_html("Updating using file #{file}")
       update_html "Calling pacman to update #{file}"
       update = Thread.new {
