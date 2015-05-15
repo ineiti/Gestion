@@ -15,8 +15,14 @@ include HelperClasses::DPuts
 @html_file = "#{@html_dir}/update_progress.html"
 DEBUG_LVL = 2
 
+def reverse_update
+  return unless File.exists?(@file_update)
+  IO.read(@file_update).split("\n").reverse.join("\n")
+end
+
 def main
   begin
+    update_content = ''
     if !File.exists? @file_switch_versions
       if !File.exists? @file_update
         update_html("Didn't find #{@file_update}", '0')
@@ -31,23 +37,24 @@ def main
         File.exists?(@pacman_lock) and
             FileUtils.rm(@pacman_lock)
         puts System.run_str("/usr/bin/pacman --noconfirm --force -U #{file} > "+
-                                '/tmp/gestion.update')
+                                @file_update)
       }
       while update.alive?
         dputs(3) { 'Update is alive' }
-        reverse_update = IO.read('/tmp/gestion.update').split("\n").reverse.join("\n")
         update_html("<pre>#{reverse_update}</pre>", true)
         sleep 4
       end
       dputs(3) { 'Update should be done' }
+      update_content = reverse_update
       FileUtils.rm @file_update
     else
+      update_content = reverse_update
       while File.exists? @file_update
         sleep 1
       end
       Service.stop('gestion')
     end
-    update_html "<pre>#{IO.read('/tmp/gestion.update')}</pre>"
+    update_html "<pre>#{update_content}</pre>"
     update_html 'Starting Gestion'
     Service.reload
     Service.start('gestion')
