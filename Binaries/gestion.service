@@ -4,10 +4,7 @@ Requires=network.target
 After=network.target
 
 [Service]
-Type=forking
-#PIDFile=/var/run/lib-net/pid
-ExecStart=/opt/gestion/Binaries/start_gestion
-ExecStop=/opt/gestion/Binaries/kill_gestion
+ExecStart=ExecStart=/usr/bin/sudo -i /opt/gestion/Gestion
 
 [Install]
 WantedBy=multi-user.target

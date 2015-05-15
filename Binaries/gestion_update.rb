@@ -6,6 +6,7 @@ require 'fileutils'
 include HelperClasses
 include HelperClasses::DPuts
 @file_update = '/tmp/gestion.update'
+@file_switch_versions = '/tmp/gestion.switch_versions'
 @html_txt = []
 @html_dir = '/srv/http/local'
 @pacman_lock = '/var/lib/pacman/db.lck'
@@ -14,31 +15,41 @@ DEBUG_LVL = 2
 
 def main
   begin
-    dputs_func
-    if !File.exists? @file_update
-      update_html("Didn't find #{@file_update}", '0')
-      exit
+    #dputs_func
+    if !File.exists? @file_switch_versions
+      if !File.exists? @file_update
+        update_html("Didn't find #{@file_update}", '0')
+        exit
+      end
+      file = IO.read(@file_update)
+      update_html("Updating using file #{file}")
+      update_html "Calling pacman to update #{file}"
+      update = Thread.new {
+        System.run_str '/usr/bin/killall -9 pacman'
+        puts @pacman_lock
+        File.exists?(@pacman_lock) and
+            FileUtils.rm(@pacman_lock)
+        puts System.run_str("/usr/bin/pacman --noconfirm --force -U #{file} > "+
+                                '/tmp/gestion.update')
+      }
+      while update.alive?
+        dputs(3) { 'Update is alive' }
+        reverse_update = IO.read('/tmp/gestion.update').split("\n").reverse.join("\n")
+        update_html("<pre>#{reverse_update}</pre>", true)
+        sleep 4
+      end
+      dputs(3) { 'Update should be done' }
+      FileUtils.rm @file_update
+    else
+      while File.exists? @file_update
+        sleep 1
+      end
+      Service.stop('gestion')
     end
-    file = IO.read(@file_update)
-    update_html("Updating using file #{file}")
-    update_html "Calling pacman to update #{file}"
-    update = Thread.new {
-      System.run_str '/usr/bin/killall -9 pacman'
-      puts @pacman_lock
-      File.exists?(@pacman_lock) and
-          FileUtils.rm(@pacman_lock)
-      puts System.run_str("/usr/bin/pacman --noconfirm --force -U #{file} > "+
-                              '/tmp/gestion.update')
-    }
-    while update.alive?
-      dputs(3) { 'Update is alive' }
-      update_html("<pre>#{IO.read('/tmp/gestion.update')}</pre>", true)
-      sleep 4
-    end
-    dputs(3) { 'Update should be done' }
     update_html "<pre>#{IO.read('/tmp/gestion.update')}</pre>"
     update_html 'Starting Gestion'
-    FileUtils.rm @file_update
+    Service.reload
+    Service.start('gestion')
     i = 0
     uri = URI('http://localhost:3302')
     loop do

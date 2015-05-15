@@ -3,6 +3,13 @@
 WORKING:
 
 BUGS:
+        - updating from 1.9.8 to 1.9.9 fails
+            - because bundler is not installed yet
+            - it's a no-Gemfile-a-la-linus version... -> copy Gemfile.dev to Gemfile
+            - in migration, copy only vpn-profeda openvpns
+        - chat
+            - why is it ineiti@met@met?
+            - time for received messages is all at now
         - ConfigBase::send_config is called before migrate_*
         - Admin::Import::Courses - doesn't download grades and exams
         - Monitor::Traffic - all data is lost when RTC is wrong!
