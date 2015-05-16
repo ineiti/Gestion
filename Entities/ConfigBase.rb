@@ -116,7 +116,7 @@ class ConfigBases < Entities
     c.connection_cmds_down = "/usr/local/bin/dnsmasq-catchall.sh"
     c.connection_services_up = "ntpd fetchmail"
     c.connection_services_down = "fetchmail"
-    c.connection_vpns = if (vpns = Dir.glob('/etc/openvpn/*conf')).length > 0
+    c.connection_vpns = if (vpns = Dir.glob('/etc/openvpn/vpn-profeda*conf')).length > 0
                           vpns.collect { |v| File.basename v, '.conf' }.join(' ')
                         else
                           nil
