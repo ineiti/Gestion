@@ -1,0 +1,51 @@
+#!/bin/bash
+
+cat > index.ldif <<EOF
+dn: olcDatabase={1}hdb,cn=config
+changetype: modify
+add: olcDbIndex
+olcDbIndex: cn pres,sub,eq
+-
+add: olcDbIndex
+olcDbIndex: sn pres,sub,eq
+-
+add: olcDbIndex
+olcDbIndex: uid pres,sub,eq
+-
+add: olcDbIndex
+olcDbIndex: displayName pres,sub,eq
+-
+add: olcDbIndex
+olcDbIndex: default sub
+-
+add: olcDbIndex
+olcDbIndex: uidNumber eq
+-
+add: olcDbIndex
+olcDbIndex: gidNumber eq
+-
+add: olcDbIndex
+olcDbIndex: mail,givenName eq,subinitial
+-
+add: olcDbIndex
+olcDbIndex: dc eq
+-
+add: olcDbIndex
+olcDbIndex: uniqueMember eq
+-
+EOF
+cat > index.ldif <<EOF
+dn: olcDatabase={1}hdb,cn=config
+changetype: modify
+add: olcDbIndex
+olcDbIndex: memberUid eq
+EOF
+
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f index.ldif
+rm index.ldif
+/etc/init.d/slapd stop
+slapindex
+chown -R openldap:openldap /var/lib/ldap
+/etc/init.d/slapd start
+
+

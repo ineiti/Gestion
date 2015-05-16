@@ -1,0 +1,92 @@
+#!/bin/bash
+#aptitude install slapd ldap-utils pwgen samba-doc
+
+if [ "$1" ]; then
+  HOST=$1
+else
+  read -p "Name of host [profeda]: " HOST
+  HOST=${HOST:-profeda}
+fi
+if [ "$2" ]; then
+  PASSWD=$2
+else
+  pass=$( pwgen -1 )
+  read -p "Password [$pass]: " PASSWD
+  PASSWD=${PASSWD:-$pass}
+fi
+
+TLD=wifi
+
+echo
+echo "Creating the ldap for host $HOST.$TLD with password '$PASSWD'"
+echo "Press <ENTER> to confirm"
+read
+
+echo Preparing samba.ldif
+zcat /usr/share/doc/samba-doc/examples/LDAP/samba.schema.gz > /etc/ldap/schema/samba.schema
+cat > /tmp/samba.conf <<EOF
+include          /etc/ldap/schema/core.schema
+include          /etc/ldap/schema/cosine.schema
+include          /etc/ldap/schema/nis.schema
+include          /etc/ldap/schema/inetorgperson.schema
+include          /etc/ldap/schema/samba.schema
+EOF
+mkdir -p /tmp/slapd.d
+slaptest -f /tmp/samba.conf -F /tmp/slapd.d/
+cp /tmp/slapd.d/cn=config/cn=schema/cn=\{4\}samba.ldif /etc/ldap/schema/samba.ldif
+rm -rf /tmp/samba.conf /tmp/slapd.d
+
+for a in cosine nis inetorgperson samba; do
+  if ls /etc/ldap/slapd.d/cn\=config/cn\=schema/*$a.ldif > /dev/null 2>&1; then
+    echo $a does already exist
+  else
+    echo Installing schema $a
+    sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/$a.ldif
+  fi
+done
+
+exit
+echo Adding rights for admin $HOST $TLD
+cat > backend.ldif <<EOF
+dn: olcDatabase={2}hdb,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcHdbConfig
+olcDatabase: {2}hdb
+olcSuffix: dc=$HOST,dc=$TLD
+olcDbDirectory: /var/lib/ldap
+olcRootDN: cn=admin,dc=$HOST,dc=$TLD
+olcRootPW: $PASSWD
+olcDbIndex: cn,sn,uid pres,eq,approx,sub
+olcDbIndex: objectClass eq
+olcAccess: to attrs=userPassword
+  by self write
+  by anonymous auth
+  by dn.base="cn=admin,dc=$HOST,dc=$TLD" write
+  by * none
+olcAccess: to *
+  by self write
+  by dn.base="cn=admin,dc=$HOST,dc=$TLD" write
+  by * read
+EOF
+
+#sudo ldapadd -Y EXTERNAL -H ldapi:/// -f backend.ldif
+rm backend.ldif
+
+echo And populating database
+
+cat > init.ldif <<EOF
+dn: ou=Users,dc=$HOST,dc=$TLD
+objectClass: organizationalUnit
+ou: Users
+
+dn: ou=Groups,dc=$HOST,dc=$TLD
+objectClass: organizationalUnit
+ou: Groups
+EOF
+
+sudo ldapadd -x -D cn=admin,dc=$HOST,dc=$TLD -w $PASSWD -f init.ldif
+rm init.ldif
+
+echo Finally making the indexes a bit faster
+
+add_indexes

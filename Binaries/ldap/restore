@@ -1,0 +1,7 @@
+#!/bin/bash
+
+/etc/init.d/slapd stop
+rm /var/lib/ldap/*
+egrep -v "(samba|displayName|MaN|structuralObjectClass|^ )" ldap.backup | slapadd -c
+chown -R openldap.openldap /var/lib/ldap
+/etc/init.d/slapd start
