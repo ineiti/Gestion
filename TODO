@@ -3,10 +3,6 @@
 WORKING:
 
 BUGS:
-        - updating from 1.9.8 to 1.9.9 fails
-            - because bundler is not installed yet
-            - it's a no-Gemfile-a-la-linus version... -> copy Gemfile.dev to Gemfile
-            - in migration, copy only vpn-profeda openvpns
         - chat
             - why is it ineiti@met@met?
             - time for received messages is all at now
@@ -276,6 +272,10 @@ To check:
 
 
 ** FIXED **:
+        - B 150516: updating from 1.9.8 to 1.9.9 fails
+            - because bundler is not installed yet
+            - it's a no-Gemfile-a-la-linus version... -> copy Gemfile.dev to Gemfile
+            - in migration, copy only vpn-profeda openvpns
         - F 150514: Put things into gems
         - B 150512: Network::Operators::Tawali - if internet_left is set right away,
             mobilecontrol never picks that up
