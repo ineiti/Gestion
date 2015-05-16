@@ -87,7 +87,7 @@ end
 
 def update_html(msg, noadd = false, refresh: '5')
   return unless Dir.exists? @html_dir
-  p msg
+  p msg unless noadd
   @html_txt.push msg
   IO.write("#{@html_file}.tmp", "
 <html>
