@@ -76,8 +76,8 @@ def main
         update_html("Count: #{i} - gestion not yet up and running", true)
       end
     end
-    update_html('Hope the update went well - <a href="http://admin.profeda.org">' +
-                    'Login</a>',
+    update_html('Hope the update went well -
+                 <a href="http://admin.profeda.org" target="other">Login</a>',
                 refresh: '86400',
                 script: "setTimeout(function(){
                            window.open('http://admin.profeda.org', '_blank');

@@ -1,6 +1,12 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
-DEBUG_LVL = 2
+
+if ARGV == %w(-p)
+  DEBUG_LVL = 0
+else
+  DEBUG_LVL = 2
+end
+
 require 'bundler/setup'
 require 'helper_classes'
 include HelperClasses
@@ -33,16 +39,9 @@ rescue Exception => e
   puts "#{e.inspect}"
   puts "#{e.to_s}"
   puts e.backtrace
-
-  puts "Couldn't start QooxView - perhaps missing libraries?"
-  print 'Trying to run the installer? [Y/n] '
-  if gets.chomp.downcase != 'n'
-    puts 'Running installer'
-    exec './Gestion --install -p'
-  end
   exit
 end
-
+puts 'beginning'
 begin
   # Our default-permission is to only login!
   Permission.add('default', ',Welcome,SelfShow')
