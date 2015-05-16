@@ -57,7 +57,6 @@ FEATURES:
         - Monitor::Ping
             - the idea of logrotate is very clumsy. Store everything in a file in
                 /var/log/monitor/ping_yymmdd.log and delete oldest files
-        - Update: Should open gestion in new window
         - update: search on profeda/github for latest version
         - captive_dev should depend on the actual device used
         - SerialModem: needs to be ported as a class
@@ -272,6 +271,7 @@ To check:
 
 
 ** FIXED **:
+        - F 150516: Update: Should open gestion in new window
         - B 150516: updating from 1.9.8 to 1.9.9 fails
             - because bundler is not installed yet
             - it's a no-Gemfile-a-la-linus version... -> copy Gemfile.dev to Gemfile
