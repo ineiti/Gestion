@@ -76,8 +76,12 @@ def main
         update_html("Count: #{i} - gestion not yet up and running", true)
       end
     end
-    update_html('Hope the update went well - goodbye',
-                refresh: '5; URL=http://admin.profeda.org')
+    update_html('Hope the update went well - <a href="http://admin.profeda.org">' +
+                    'Login</a>',
+                refresh: '86400',
+                script: "setTimeout(function(){
+                           window.open('http://admin.profeda.org', '_blank');
+                         }, 5000 );")
   rescue StandardError => e
     update_html("Error: #{e.to_s} - #{e.inspect}")
     update_html("Error: #{caller.inspect}")
@@ -85,7 +89,7 @@ def main
   System.run_str "cat #{@html_file} | mail -S 'update gestion on $(hostname)' root@localhost"
 end
 
-def update_html(msg, noadd = false, refresh: '5')
+def update_html(msg, noadd = false, refresh: '5', script: '')
   return unless Dir.exists? @html_dir
   p msg unless noadd
   @html_txt.push msg
@@ -121,17 +125,18 @@ def update_html(msg, noadd = false, refresh: '5')
       }
 
       a:link {
-          text-decoration: none;
-          color: #000000;
+          text-decoration: underline;
+          color: #6666AA;
       }
 
       a:visited {
-          text-decoration: none;
-          color: #000000;
+          text-decoration: underline;
+          color: #6666AA;
       }
 
       a:hover {
           text-decoration: underline;
+          color: #66AA66;
       }
 
       a:active {
@@ -160,6 +165,9 @@ def update_html(msg, noadd = false, refresh: '5')
 #{@html_txt.collect { |t| "<li>#{t}</li>" }.join("\n")}
 </ul>
 </div>
+<script type='text/javascript'>
+#{script}
+</script>
 </body>
 </html>
 ")
