@@ -6,6 +6,7 @@ BUGS:
         - chat
             - why is it ineiti@met@met?
             - time for received messages is all at now
+            - server crashes when showing discussion...
         - ConfigBase::send_config is called before migrate_*
         - Admin::Import::Courses - doesn't download grades and exams
         - Monitor::Traffic - all data is lost when RTC is wrong!
@@ -271,6 +272,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150518: new logging of new service-files - how to recover the error-messages?
+            - put all ConfigBase.dputs-variables into dputs-module
         - F 150516: Update: Should open gestion in new window
         - B 150516: updating from 1.9.8 to 1.9.9 fails
             - because bundler is not installed yet

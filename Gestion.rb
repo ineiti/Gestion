@@ -41,7 +41,7 @@ rescue Exception => e
   puts e.backtrace
   exit
 end
-puts 'beginning'
+
 begin
   # Our default-permission is to only login!
   Permission.add('default', ',Welcome,SelfShow')

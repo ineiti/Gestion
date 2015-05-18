@@ -5,6 +5,8 @@ After=network.target
 
 [Service]
 ExecStart=/usr/bin/sudo -i /opt/gestion/Gestion
+ExecStop=/usr/bin/pkill -15 -f "ruby ./Gestion.rb"
+ExecStop=/usr/bin/sleep 10
 
 [Install]
 WantedBy=multi-user.target

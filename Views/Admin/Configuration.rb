@@ -8,6 +8,7 @@ class AdminConfiguration < View
       gui_hbox :nogroup do
         gui_vbox :nogroup do
           show_str :dputs_logfile
+          show_str :dputs_logall
           show_block :vars_wide
           show_field :template_dir
           show_field :diploma_dir

@@ -100,6 +100,7 @@ class ConfigBases < Entities
                                   :Entities, :Courses, :presence_sheet).to_a
     c.presence_sheet_small = get_config('presence_sheet_small.ods',
                                         :Entities, :Courses, :presence_sheet_small).to_a
+    c.dputs_logall = '/var/log/gestion/gestion.log'
     c.dputs_logfile = '/var/log/gestion/events.log'
     c.dputs_show_time = %w(min)
     c.dputs_silent = %w(false)
@@ -113,9 +114,9 @@ class ConfigBases < Entities
     c.persons_adduser_cmd = get_config('', :Persons, :adduser_cmd)
     c.persons_addeduser_cmd = get_config('', :Persons, :cmd_after_new)
     c.connection_cmds_up = "postqueue -f\n/usr/local/bin/dnsmasq-internet.sh"
-    c.connection_cmds_down = "/usr/local/bin/dnsmasq-catchall.sh"
-    c.connection_services_up = "ntpd fetchmail"
-    c.connection_services_down = "fetchmail"
+    c.connection_cmds_down = '/usr/local/bin/dnsmasq-catchall.sh'
+    c.connection_services_up = 'ntpd fetchmail'
+    c.connection_services_down = 'fetchmail'
     c.connection_vpns = if (vpns = Dir.glob('/etc/openvpn/vpn-profeda*conf')).length > 0
                           vpns.collect { |v| File.basename v, '.conf' }.join(' ')
                         else
@@ -173,10 +174,6 @@ class ConfigBases < Entities
 end
 
 class ConfigBase < Entity
-  def setup_defaults
-    send_config
-  end
-
   def send_config
     save_block_to_object :captive, Network::Captive
     Network::Captive.clean_config
