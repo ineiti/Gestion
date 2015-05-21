@@ -4,7 +4,7 @@ class NetworkRestriction < View
   def layout
     @update = true
     @functions_need = [:internet]
-    @visible = false
+    @visible = Persons.center && Persons.center.login_name == 'man'
 
     gui_vbox do
       show_html :state
