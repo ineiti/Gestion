@@ -73,9 +73,14 @@ class ChatMsgs < Entities
     end
   end
 
+  def is_remote?
+    ConfigBase.has_function?(:remote_chat) &&
+        ConfigBase.server_url.to_s.length > 0 &&
+        (!ConfigBase.has_function(:course_server))
+  end
+
   def new_msg_send(person, msg)
-    if ConfigBase.has_function?(:remote_chat)&&
-        ConfigBase.server_url.to_s.length > 0
+    if is_remote?
       log_msg :ChatMsgs, "Sending msg from #{person} to server"
       arg = center_hash.merge(person: person, msg: msg)
       # As we'll get the new messages, no need to fetch them again
@@ -93,6 +98,7 @@ class ChatMsgs < Entities
   # new messages.
   # That way we save precious bandwith
   def wait_counter_add
+    is_remote? or return
     @wait_counter += 1
     if @wait_counter >= @wait_max
       add_remote_msg(ICC.get(:ChatMsgs, :msg_pull, args: center_hash))
