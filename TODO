@@ -3,8 +3,10 @@
 WORKING:
 
 BUGS:
-        - chat
-            - why is it ineiti@met@met?
+        - Shouldn't get printers for Windows
+        x can't put group base-devel as dependency in gestion-git/PKGBUILD
+        x chat
+            x why is it ineiti@met@met?
             x time for received messages is all at now
             x server crashes when showing discussion...
         - ConfigBase::send_config is called before migrate_*
