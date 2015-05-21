@@ -111,6 +111,3 @@ DEPENDENCIES
   network!
   qooxview!
   serial_modem!
-
-BUNDLED WITH
-   1.10.0.rc

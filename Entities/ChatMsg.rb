@@ -52,15 +52,6 @@ class ChatMsgs < Entities
     {center: {login: center.login_name, pass: center.password_plain}}
   end
 
-  def new_msg(person, msg, center = nil)
-    create(time: Time.now, msg: msg, center: center,
-           login: center ? "#{person}@#{center.login_name}" : person)
-    log_msg :ChatMsgs, "#{person} says - #{msg}"
-    if @data.length > @max_msgs
-      get_data_instance(@data.keys.first).delete
-    end
-  end
-
   def add_remote_msg(ret)
     dputs(3) { "Got reply #{ret.inspect}" }
     if ret._code =~ /^error/i
@@ -68,7 +59,7 @@ class ChatMsgs < Entities
     else
       ret._msg.each { |m|
         dputs(2) { "Got message #{m.inspect}" }
-        new_msg("#{m._login}@#{m._center}", m._msg)
+        new_msg("#{m._login}@#{m._center}", m._msg, nil, m._time)
       }
     end
   end
@@ -77,6 +68,15 @@ class ChatMsgs < Entities
     ConfigBase.has_function?(:remote_chat) &&
         ConfigBase.server_url.to_s.length > 0 &&
         (!ConfigBase.has_function(:course_server))
+  end
+
+  def new_msg(person, msg, center = nil, time = Time.now)
+    create(time: time, msg: msg, center: center,
+           login: center ? "#{person}@#{center.login_name}" : person)
+    log_msg :ChatMsgs, "#{person} says - #{msg}"
+    if @data.length > @max_msgs
+      get_data_instance(@data.keys.first).delete
+    end
   end
 
   def new_msg_send(person, msg)
