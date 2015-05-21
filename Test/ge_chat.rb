@@ -48,7 +48,7 @@ class TC_Chat < Test::Unit::TestCase
 
     @center1.permissions = %w(center)
     ChatMsgs.icc_msg_push(@clogin1.merge(person: 'foo', msg: 'hi there'))
-    assert ChatMsgs.show_list =~ / - foo: hi there$/
+    assert_match( / - foo: hi there$/, ChatMsgs.show_list)
   end
 
   def chat_format(r)
@@ -91,17 +91,10 @@ class TC_Chat < Test::Unit::TestCase
     {center: {login: center.login_name, pass: center.password_plain}}
   end
 
-  def test_thread
-    with_server do
-      ChatMsgs.pull_server_start(0.5)
-      sleep 1
-      assert_equal 0, ChatMsgs.search_all.length
-      ChatMsgs.new_msg_send('foo', 'hello1')
-
-      sleep 1
-      assert_equal 2, ChatMsgs.search_all.length
-
-      ChatMsgs.pull_server_kill
-    end
+  def test_new_msg_send
+    ChatMsgs.new_msg_send('foo', 'hello')
+    assert_equal( {:msg=> 'hello', :center=>[nil], :login=> 'foo'},
+                  chat_format(ChatMsgs.search_all.first.to_hash))
   end
+
 end

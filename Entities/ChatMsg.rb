@@ -41,7 +41,9 @@ class ChatMsgs < Entities
     @static._client_times ||= {}
     last_time = @static._client_times[center.login_name] || Time.new(2000, 1, 1)
     @static._client_times[center.login_name] = Time.now
-    search_all_.select { |msg| msg.time > last_time && msg.center != center }.collect { |msg|
+    search_all_.
+        select { |msg| msg.time > last_time && msg.center != center }.
+        collect { |msg|
       center = msg.center ? msg.center.login_name : Persons.master_center_login_name
       msg.to_hash.merge(center: center)
     }
@@ -72,8 +74,9 @@ class ChatMsgs < Entities
 
   def new_msg(person, msg, center = nil, time = Time.now)
     create(time: time, msg: msg, center: center,
-           login: center ? "#{person}@#{center.login_name}" : person)
-    log_msg :ChatMsgs, "#{person} says - #{msg}"
+           login: person)
+    log_msg :ChatMsgs, "#{person} from #{center ? center.login_name : 'here'} " +
+                         "says - #{msg}"
     if @data.length > @max_msgs
       get_data_instance(@data.keys.first).delete
     end

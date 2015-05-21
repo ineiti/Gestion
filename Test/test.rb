@@ -35,6 +35,8 @@ tests = Dir.glob('ge_*.rb')
 #tests = %w( activity )
 tests = %w( chat )
 #tests = %w( configbase )
+
+$LOAD_PATH.push '.'
 tests.each { |t|
   begin
     require "ge_#{t}"
