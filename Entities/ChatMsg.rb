@@ -19,7 +19,8 @@ class ChatMsgs < Entities
   #
   # It returns the results from icc_msg_pull
   def icc_msg_push(tr)
-    #return 'Error: no course_server' unless ConfigBase.functions.index(:course_server)
+    return 'Error: no course_server' unless ConfigBase.has_function?(:course_server)
+    return unless tr && tr._center
     center = Persons.check_login(tr._center._login, tr._center._pass)
     if center && center.has_permission?(:center)
       new_msg(tr._person, tr._msg, center)
@@ -33,7 +34,8 @@ class ChatMsgs < Entities
   # tr holds the following keys:
   # center: hash with {login, pass} keys
   def icc_msg_pull(tr)
-    #return 'Error: not a server here' unless ConfigBase.has_function?(:course_server)
+    return 'Error: not a server here' unless ConfigBase.has_function?(:course_server)
+    return unless tr && tr._center
     center = Persons.check_login(tr._center._login, tr._center._pass)
     if !center || !center.has_permission?(:center)
       return "Error: center #{center.inspect} has wrong password or is not a center"
@@ -69,7 +71,7 @@ class ChatMsgs < Entities
   def is_remote?
     ConfigBase.has_function?(:remote_chat) &&
         ConfigBase.server_url.to_s.length > 0 &&
-        (!ConfigBase.has_function(:course_server))
+        (!ConfigBase.has_function?(:course_server))
   end
 
   def new_msg(person, msg, center = nil, time = Time.now)
@@ -115,7 +117,10 @@ class ChatMsgs < Entities
 
   def show_list(max = 100)
     search_all_.reverse[0...max].collect { |cm|
-      "#{cm.time.strftime('%H:%M')} - #{cm.login}: #{cm.msg}"
+      t = cm.time.class == Time ? cm.time : Time.parse(cm.time)
+      name = (ConfigBase.has_function?(:course_server) && cm.center) ?
+          "#{cm.login}@#{cm.center.login_name}" : "#{cm.login}"
+      "#{t.strftime('%H:%M')} - #{name}: #{cm.msg}"
     }.join("\n")
   end
 
