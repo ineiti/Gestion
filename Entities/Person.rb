@@ -625,7 +625,7 @@ class Person < Entity
 
   def update_account_cash
     return unless ConfigBase.has_function? :accounting
-    if can_view :FlagAccounting and login_name != 'admin'
+    if can_view :FlagAccounting && login_name != 'admin'
       acc = (first_name || login_name).capitalize
       dputs(3) { "Getting cash account #{acc}" }
       return unless ConfigBase.account_cash
