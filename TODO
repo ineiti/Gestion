@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - parseconfig-gem doesn't recognize comments - where did that version come from?
         - Shouldn't get printers for Windows
         - ConfigBase::send_config is called before migrate_*
         - Admin::Import::Courses - doesn't download grades and exams
@@ -40,6 +41,8 @@ For 2.0:
 Security:
 
 UI:
+        - saving of admin::functions is very slow when having to update lots of
+          users with their accounts...
         - Replace :empty_nonlists with :empty and :empty_update
         - Person::add should focus on name-field -> trouble in QooxView::Frontend
         - add-button in different views should always pop up a window with
