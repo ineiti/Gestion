@@ -3,13 +3,9 @@
 WORKING:
 
 BUGS:
-15/04/21,15:11:09+04::192:: ::Souscription reussie:GPRS 3030. 10240MB valable 30 jours. Cout 50000F .
--> new internet is not recognized
-22:05 - *123*5091987046410#: Vous avez recharge 10000.00 F. Kattir 1500 ! 100Mb a 1500F valide 7jrs. SMS au 1500Votre solde est 50484.00 F.
--> new credit is not recognized
-        - View::Internet::Mobile - send either USSD or Credit when pressing 'enter'
         - parseconfig-gem doesn't recognize comments - where did that version come from?
         - Shouldn't get printers for Windows
+
         - ConfigBase::send_config is called before migrate_*
         - Admin::Import::Courses - doesn't download grades and exams
         - Monitor::Traffic - all data is lost when RTC is wrong!
@@ -46,6 +42,10 @@ For 2.0:
 Security:
 
 UI:
+        - Cours::Grade::sync
+            - should only go to 'OK' if files are transferred:
+                - transfer exams before transferring grades
+            - table: 'status'-column should show 'do_sync' instead of 'sync'
         - saving of admin::functions is very slow when having to update lots of
           users with their accounts...
         - Replace :empty_nonlists with :empty and :empty_update
@@ -277,6 +277,9 @@ To check:
 
 
 ** FIXED **:
+        - F 150526: View::Internet::Mobile - send either USSD or Credit when pressing 'enter'
+        - B 150526: *123*5091987046410#: Vous .* Votre solde est 50484.00 F.
+            -> new credit is not recognized
         - B 150526: Network::SerialModem - writing of commands while SMS are outputted
         - B 150522: can't put group base-devel as dependency in gestion-git/PKGBUILD
         - B 150522: chat

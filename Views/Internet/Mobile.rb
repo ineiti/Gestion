@@ -176,8 +176,12 @@ class InternetMobile < View
   end
 
   def rpc_button_send_ussd(session, data)
-    $MobileControl.device.ussd_send(data._ussd)
-    rpc_update(session)
+    if data._ussd.to_s.delete(' ').length == 13
+      rpc_button_add_credit(session, data)
+    else
+      $MobileControl.device.ussd_send(data._ussd)
+      rpc_update(session)
+    end
   end
 
   def rpc_button_add_credit(session, data)
