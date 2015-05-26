@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - SerialModem: accept "Cmd *: *status"
         - parseconfig-gem doesn't recognize comments - where did that version come from?
         - Shouldn't get printers for Windows
 
