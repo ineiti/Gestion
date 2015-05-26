@@ -1184,37 +1184,6 @@ base_gestion
     end
     @sync_state = sync_s += 'OK</li>'
 
-    dputs(4) { 'Grades' }
-    if (grades = Grades.matches_by_course(self.course_id)).length > 0
-      dputs(4) { 'Grades - go' }
-      @sync_state = sync_s += '<li>Transferring grades: '
-      ret = sync_transfer(:grades, grades.select { |g|
-                                   g.course and g.student
-                                 }.collect { |g|
-                                   dputs(4) { "Found grade with #{g.course.inspect} and #{g.student.inspect}" }
-                                   g.to_hash(true).merge(:course => g.course.name,
-                                                         :person => g.student.login_name)
-                                 })
-      if ret._code == 'Error'
-        @sync_state += "Error: #{ret._msg}"
-        return false
-      end
-      grades = ret._msg
-      #grades = JSON.parse(ret.sub(/^OK: /, ''))
-      dputs(3) { "Return is #{grades.inspect}" }
-      grades.each { |g|
-        course_name, student, random = g
-        course = Courses.match_by_name(course_name)
-        if grade = Grades.match_by_course_person(course, student)
-          dputs(4) { "Setting grade-random of #{grade.grade_id} to #{random}" }
-          grade.random = random
-        else
-          dputs(0) { "Error: Can't find grade for #{course}-#{student}!" }
-        end
-      }
-      @sync_state = sync_s += 'OK</li>'
-    end
-
     dputs(4) { 'Exams' }
     remote_exams = {}
     if true
@@ -1246,6 +1215,37 @@ base_gestion
       end
     }
     @sync_state = sync_s += '<li>Transferring exams: OK</li>'
+
+    dputs(4) { 'Grades' }
+    if (grades = Grades.matches_by_course(self.course_id)).length > 0
+      dputs(4) { 'Grades - go' }
+      @sync_state = sync_s += '<li>Transferring grades: '
+      ret = sync_transfer(:grades, grades.select { |g|
+                                   g.course and g.student
+                                 }.collect { |g|
+                                   dputs(4) { "Found grade with #{g.course.inspect} and #{g.student.inspect}" }
+                                   g.to_hash(true).merge(:course => g.course.name,
+                                                         :person => g.student.login_name)
+                                 })
+      if ret._code == 'Error'
+        @sync_state += "Error: #{ret._msg}"
+        return false
+      end
+      grades = ret._msg
+      #grades = JSON.parse(ret.sub(/^OK: /, ''))
+      dputs(3) { "Return is #{grades.inspect}" }
+      grades.each { |g|
+        course_name, student, random = g
+        course = Courses.match_by_name(course_name)
+        if grade = Grades.match_by_course_person(course, student)
+          dputs(4) { "Setting grade-random of #{grade.grade_id} to #{random}" }
+          grade.random = random
+        else
+          dputs(0) { "Error: Can't find grade for #{course}-#{student}!" }
+        end
+      }
+      @sync_state = sync_s += 'OK</li>'
+    end
 
     @sync_state = sync_s += 'It is finished!'
     dputs(3) { @sync_state }
