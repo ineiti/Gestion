@@ -773,7 +773,7 @@ class Person < Entity
   def password=(pass)
     (@pre_init || @loading) and return
 
-    p = pass.chomp
+    p = pass.to_s.chomp
     if @proxy.has_storage? :LDAP
       dputs(2) { "Changing password for #{self.login_name}: #{pass}" }
       p = System.run_str("slappasswd -s #{pass}").chomp
