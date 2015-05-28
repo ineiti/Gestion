@@ -16,7 +16,7 @@ class InternetMobile < View
       @umts_netctl = '/tmp/umts'
     end
     i=0
-    @umts_modes = %w(3Gpref 3Gonly GPRSpref GPRSonly).map { |m| [i+=1, m] }
+    @umts_modes = %w(None 3Gpref 3Gonly GPRSpref GPRSonly).map { |m| [i+=1, m] }
 
     gui_hboxg do
       gui_vbox :nogroup do

@@ -30,7 +30,7 @@ class ComptaTransfer < View
   def rpc_button_do_transfer(session, data)
     dputs(3) { "data is #{data.inspect} with owner #{session.owner.full_name}" }
     if (other = data._persons).class == Person
-      dputs(3) { "Other is #{other.inspect}, id is #{data["person_list"].to_s.inspect}" }
+      dputs(3) { "Other is #{other.inspect}, id is #{data._person_list.to_s.inspect}" }
       amount = (other.account_due.total.to_f * 1000).to_i
       log_msg :comptatransfer, "#{session.owner.login_name} gets #{amount} from " +
                                  "#{other.login_name}"

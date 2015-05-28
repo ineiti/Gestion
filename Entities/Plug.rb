@@ -20,9 +20,9 @@ class Plugs < Entities
 
   def update(op, dev = nil)
     dputs(2){"Updating with operation #{op} and device #{dev}"}
-    if op =~ /add/ && dev
+    #if op =~ /add/ && dev && dev.defined?()
       #dev.serial_sms_new.push(Proc.new { |sms| new_sms(sms) })
-    end
+    #end
   end
 
   def new_sms(sms)

@@ -3,8 +3,9 @@
 WORKING:
 
 BUGS:
-        - SerialModem: accept "Cmd *: *status"
         - parseconfig-gem doesn't recognize comments - where did that version come from?
+          - https://github.com/antw/iniparse
+          - https://rubygems.org/gems/inifile
         - Shouldn't get printers for Windows
 
         - ConfigBase::send_config is called before migrate_*
@@ -278,6 +279,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150528: Yet another bug when initializing usb-modem
+        - B 150526: SerialModem: accept "Cmd *: *status"
         - F 150526: View::Internet::Mobile - send either USSD or Credit when pressing 'enter'
         - B 150526: *123*5091987046410#: Vous .* Votre solde est 50484.00 F.
             -> new credit is not recognized
