@@ -3,6 +3,28 @@
 WORKING:
 
 BUGS:
+:2:operator`internet_total'*** Total internet 4699467000
+:0:serial_modem`rescueXXXXXXXX #<ThreadError: deadlock; recursive locking>
+:0:serial_modem`rescueXXXXXXXX deadlock; recursive locking
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:123:in `lock'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:123:in `modem_send'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:172:in `ussd_send_now'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:207:in `ussd_store_result'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:217:in `ussd_received'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:79:in `read_reply'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:135:in `modem_send'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:142:in `block (2 levels) in modem_send_array'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:141:in `each'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:141:in `block in modem_send_array'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:140:in `synchronize'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:140:in `modem_send_array'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:244:in `sms_scan'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:376:in `block (2 levels) in start_serial_thread'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:357:in `loop'
+:0:serial_modem`blockXXXXXXXXX /opt/gestion/vendor/cache/SerialModem/lib/serial_modem.rb:357:in `block in start_serial_thread'
+:1:dputs`log_msg'xxxxxxxxxxxxx Info from SerialModem: Re-sending *128# for 3
+
+        - SerialModem: accept all variations of "cmd:" "cmd :" "cmd: " "cmd : "
         - parseconfig-gem doesn't recognize comments - where did that version come from?
           - https://github.com/antw/iniparse
           - https://rubygems.org/gems/inifile
@@ -279,6 +301,9 @@ To check:
 
 
 ** FIXED **:
+        - B 150602: Network::Operators::Airtel.new_ussd
+            - use 'added' instead of 'add'
+            - add new replies from Airtel
         - B 150528: Yet another bug when initializing usb-modem
         - B 150526: SerialModem: accept "Cmd *: *status"
         - F 150526: View::Internet::Mobile - send either USSD or Credit when pressing 'enter'
