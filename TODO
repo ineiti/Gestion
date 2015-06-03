@@ -3,6 +3,29 @@
 WORKING:
 
 BUGS:
+        - Courses::Students.save - doesn't update list
+
+        :0:system`rescueXXXXXXXXXXXXXX Tue 15.06.02-21:51:33 - Couldn't take internet-money
+        :0:system`rescueXXXXXXXXXXXXXX #<TypeError: nil can't be coerced into Fixnum>
+        :0:system`rescueXXXXXXXXXXXXXX nil can't be coerced into Fixnum
+        :0:system`blockXXXXXXXXXXXXXXX /opt/gestion/vendor/cache/Network/lib/network/monitor/traffic_user.rb:81:in `+'
+        :0:system`blockXXXXXXXXXXXXXXX /opt/gestion/vendor/cache/Network/lib/network/monitor/traffic_user.rb:81:in `block (2 levels) in update_host'
+        :0:system`blockXXXXXXXXXXXXXXX /opt/gestion/vendor/cache/Network/lib/network/monitor/traffic_user.rb:81:in `collect'
+        :0:system`blockXXXXXXXXXXXXXXX /opt/gestion/vendor/cache/Network/lib/network/monitor/traffic_user.rb:81:in `block in update_host'
+        :0:system`blockXXXXXXXXXXXXXXX /opt/gestion/vendor/cache/Network/lib/network/monitor/traffic_user.rb:56:in `each'
+        :0:system`blockXXXXXXXXXXXXXXX /opt/gestion/vendor/cache/Network/lib/network/monitor/traffic_user.rb:56:in `update_host'
+        :0:system`blockXXXXXXXXXXXXXXX /opt/gestion/vendor/cache/Network/lib/network/monitor/traffic_user.rb:107:in `block in update'
+        :0:system`blockXXXXXXXXXXXXXXX /opt/gestion/vendor/cache/Network/lib/network/monitor/traffic_user.rb:104:in `each'
+        :0:system`blockXXXXXXXXXXXXXXX /opt/gestion/vendor/cache/Network/lib/network/monitor/traffic_user.rb:104:in `update'
+        :0:system`blockXXXXXXXXXXXXXXX /opt/gestion/Entities/Internet.rb:244:in `update_traffic'
+        :0:system`blockXXXXXXXXXXXXXXX ./Gestion.rb:157:in `block (4 levels) in <main>'
+        :0:system`blockXXXXXXXXXXXXXXX ./Gestion.rb:155:in `each'
+        :0:system`blockXXXXXXXXXXXXXXX ./Gestion.rb:155:in `block (3 levels) in <main>'
+        :0:system`blockXXXXXXXXXXXXXXX /opt/gestion/vendor/cache/HelperClasses/lib/helper_classes/system.rb:27:in `rescue_all'
+        :0:system`blockXXXXXXXXXXXXXXX ./Gestion.rb:148:in `block (2 levels) in <main>'
+        :0:system`blockXXXXXXXXXXXXXXX ./Gestion.rb:147:in `loop'
+        :0:system`blockXXXXXXXXXXXXXXX ./Gestion.rb:147:in `block in <main>'
+
 :2:operator`internet_total'*** Total internet 4699467000
 :0:serial_modem`rescueXXXXXXXX #<ThreadError: deadlock; recursive locking>
 :0:serial_modem`rescueXXXXXXXX deadlock; recursive locking
