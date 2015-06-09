@@ -90,7 +90,7 @@ class ChatMsgs < Entities
       arg = center_hash.merge(person: person, msg: msg)
       # As we'll get the new messages, no need to fetch them again
       wait_counter_reset
-      $MobileControl.is_connected and
+      (!$MobileControl || $MobileControl.is_connected) and
           add_remote_msg(ICC.get(:ChatMsgs, :msg_push, args: arg))
     end
     new_msg(person, msg)
@@ -107,7 +107,7 @@ class ChatMsgs < Entities
     is_remote? or return
     @wait_counter += 1
     if @wait_counter >= @wait_max &&
-        $MobileControl.is_connected
+        (!$MobileControl || $MobileControl.is_connected)
       add_remote_msg(ICC.get(:ChatMsgs, :msg_pull, args: center_hash))
       wait_counter_reset
     end
