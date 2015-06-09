@@ -146,6 +146,7 @@ class CourseModify < View
   end
 
   def rpc_button_print_student_steps(session, data)
+    dputs_func
     ret = reply(:callback_button, :print_student_steps)
     var = session.s_data[:print_student]
     dputs(3) { "Doing with data #{var.inspect} step is #{var._step.inspect}" }
@@ -206,6 +207,7 @@ class CourseModify < View
   end
 
   def rpc_button_print_student(session, data)
+    dputs_func
     rep = []
     ret = rpc_print(session, :print_student, data)
     dputs(3) { "#{data['students'].inspect}" }

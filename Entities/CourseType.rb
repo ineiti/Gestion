@@ -120,6 +120,7 @@ end
 class CourseType < Entity
   def setup_instance
     self.diploma_lang ||= ['fr']
+    self.files_nbr ||= 0
   end
 
   def get_unique
