@@ -3,8 +3,6 @@
 WORKING:
 
 BUGS:
-    - Course::Modify - can't print student-cards anymore
-    - Course::Diploma - round mean in Course.update_student_diploma
 
     :1:icc`rescuexxxxxxxxxxxxxxxxx Timeout occured
     :0:Course`rescueXXXXXXXXXXXXXX Error in thread: Network is unreachable - connect(2) for "icc.profeda.org" port 80
@@ -371,6 +369,11 @@ To check:
 
 
 ** FIXED **:
+        - B 150609: Course::Modify - can't print student-cards anymore
+        - B 150609: Only copy 'order' from config.yaml to Views
+        - B 150609: undo double-entries in templates-list
+        - B 150609: quench adduser and smbpasswd in config.yaml
+        - B 150609: Course::Diploma - round mean in Course.update_student_diploma
         - B 150609: Cash::Report - Compta-report is not done anymore - problem with table-method of prawn
             - should use version 1.0.0
         - B 150602: Network::Operators::Airtel.new_ussd

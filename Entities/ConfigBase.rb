@@ -100,6 +100,9 @@ class ConfigBases < Entities
                                   :Entities, :Courses, :presence_sheet).to_a
     c.presence_sheet_small = get_config('presence_sheet_small.ods',
                                         :Entities, :Courses, :presence_sheet_small).to_a
+    c.card_student = get_config('student_card.odg', :Entities, :Persons, :student_card)
+    c.persons_adduser_cmd = get_config('', :Entities, :Persons, :adduser_cmd)
+    c.persons_addeduser_cmd = get_config('', :Entities, :Persons, :cmd_after_new)
     c.dputs_logall = '/var/log/gestion/gestion.log'
     c.dputs_logfile = '/var/log/gestion/events.log'
     c.dputs_show_time = %w(min)
@@ -111,8 +114,6 @@ class ConfigBases < Entities
     c.openprint_simul = %w(false)
     c.openprint_search = get_config('.*', :OpenPrint, :search_remote)
     c.upload_files = get_config('/tmp', :UploadFiles, :path)
-    c.persons_adduser_cmd = get_config('', :Persons, :adduser_cmd)
-    c.persons_addeduser_cmd = get_config('', :Persons, :cmd_after_new)
     c.connection_cmds_up = "postqueue -f\n/usr/local/bin/dnsmasq-internet.sh"
     c.connection_cmds_down = '/usr/local/bin/dnsmasq-catchall.sh'
     c.connection_services_up = 'ntpd fetchmail'
@@ -243,8 +244,7 @@ class ConfigBase < Entity
   end
 
   def templates
-    (Dir.glob("#{template_dir}/*.od?") +
-        Dir.glob("#{template_dir}/*.od?")).
+    Dir.glob("#{template_dir}/*.od?").
         collect { |f| f.sub(/^.*\//, '') }.
         sort
   end

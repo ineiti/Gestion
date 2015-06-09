@@ -146,7 +146,7 @@ class CourseModify < View
   end
 
   def rpc_button_print_student_steps(session, data)
-    dputs_func
+    #dputs_func
     ret = reply(:callback_button, :print_student_steps)
     var = session.s_data[:print_student]
     dputs(3) { "Doing with data #{var.inspect} step is #{var._step.inspect}" }
@@ -155,12 +155,13 @@ class CourseModify < View
         dputs(3) { 'Showing prepare-window' }
         ret += reply(:window_show, :printing) +
             reply(:update, :msg_print => 'Preparing students: <br><br>' +
-                var._students.each_slice(5).collect { |s| s.join(', ') }.join(',<br>')) +
+                             var._students.each_slice(5).collect { |s| s.join(', ') }.join(',<br>')) +
             reply(:hide, :print_next)
       when 2
-        dputs(3) { 'Printing pdfs' }
+        dputs(3) { "Printing pdfs for #{var._students.inspect}" }
         files = var._students.collect { |s|
-          Persons.match_by_login_name(s).print(var._students.length)
+          dputs(2) { "Printing for #{s}" }
+          Persons.match_by_login_name(s).print(:student)
         }
         var._pages = OpenPrint.pdf_nup_duplex(files, 'student_cards')
         cmd = cmd_printer(session, :print_student)
@@ -168,14 +169,14 @@ class CourseModify < View
         if not cmd
           ret = reply(:window_show, :printing) +
               reply(:update, :msg_print => 'Click on one of the links:<ul>' +
-                  var._pages.collect { |r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
-                  '</ul>')
+                               var._pages.collect { |r| "<li><a target='other' href=\"#{r}\">#{r}</a></li>" }.join('') +
+                               '</ul>')
           var._step = 9
         elsif var._pages.length > 0
           ret = reply(:window_show, :printing) +
               reply(:update, :msg_print => 'Impression de la page face en cours pour<ul>' +
-                  "<li>#{var._students.join('</li><li>')}</li></ul>" +
-                  "<br>Cliquez sur 'suivant' pour imprimer les pages arrières") +
+                               "<li>#{var._students.join('</li><li>')}</li></ul>" +
+                               "<br>Cliquez sur 'suivant' pour imprimer les pages arrières") +
               reply(:unhide, :print_next)
           cmd += " #{var._pages[0]}"
           dputs(3) { "Printing-cmd is #{cmd.inspect}" }
@@ -188,7 +189,7 @@ class CourseModify < View
         dputs(3) { "Command is #{cmd} with pages #{var._pages.inspect}" }
         ret = reply(:window_show, :printing) +
             reply(:update, :msg_print => 'Impression de la page face arrière en cours<ul>' +
-                "<li>#{var._students.join('</li><li>')}</li></ul>") +
+                             "<li>#{var._students.join('</li><li>')}</li></ul>") +
             reply(:hide, :print_next)
         cmd += " -o outputorder=reverse #{var._pages[1]}"
         dputs(3) { "Printing-cmd is #{cmd.inspect}" }
@@ -207,7 +208,7 @@ class CourseModify < View
   end
 
   def rpc_button_print_student(session, data)
-    dputs_func
+    #dputs_func
     rep = []
     ret = rpc_print(session, :print_student, data)
     dputs(3) { "#{data['students'].inspect}" }
@@ -248,7 +249,7 @@ class CourseModify < View
 
           ret + reply(:window_show, :missing_data) +
               reply(:update, :missing => 'One of the following is missing:<ul>' +
-                  "#{str}</ul>")
+                               "#{str}</ul>")
         else
           ret + reply(:window_show, :missing_data) +
               reply(:update, :missing => "Click on the link: <a target='other' href=\"#{rep}\">PDF</a>")
@@ -411,7 +412,7 @@ class CourseModify < View
       reply(:window_show, :win_edit_name) +
           reply(:empty, :wen_ctype) +
           reply(:update, :wen_ctype => CourseTypes.listp_name +
-              [course.ctype.coursetype_id],
+                           [course.ctype.coursetype_id],
                 :wen_name => course.name)
     end
   end
@@ -434,13 +435,13 @@ class CourseModify < View
     data._wen_name.sub!(/#{course.ctype.name}_/, "#{data._wen_ctype.name}_")
     dputs(3) { "data._wen_name is now #{data._wen_name}" }
     course.ctype = data._wen_ctype
-    course.rename( data._wen_name )
+    course.rename(data._wen_name)
     if data._wen_overwrite.first == 'yes'
       course.data_set_hash(data._wen_ctype.to_hash.except(:name), true)
     end
     reply(:window_hide) +
         reply(:parent, reply(:empty_nonlists, [:courses]) +
-            reply(:update, :courses => Entities.Courses.list_courses(session) +
-                data._courses))
+                         reply(:update, :courses => Entities.Courses.list_courses(session) +
+                                          data._courses))
   end
 end

@@ -22,6 +22,14 @@ Views:
 #  CourseTabs:
 #    order: 0
 
+# These can come in handy for a backup-system where data of an online system
+# are tested
+Entities:
+  Share:
+#    simulation: true
+  Persons:
+#    user_simulation: true
+
 LDAPConfig:
 #  array: host, base, root, group_users, password
 #  ldapscripts: /etc/ldapscripts/ldapscripts.conf

@@ -47,22 +47,13 @@ class Activity < Entity
   attr_accessor :print_card
 
   def setup_instance
-    ddir = Courses.dir_diplomas
-    adir = "#{ddir}/Activities"
-    if !File.exist? adir
-      FileUtils::mkdir(adir)
-    end
-    @print_card = OpenPrint.new(card_filename, adir)
+    @print_card = OpenPrint.new("#{ConfigBase.template_dir}/#{card_filename.first}" )
   end
 
   def start_end(s, d = Date.today)
     ActivityPayments.search_by_person_paid(s).select { |ap|
       ap.date_start <= d and d <= ap.date_end and ap.activity == self
     }.collect { |ap| [ap.date_start, ap.date_end] }.pop || [nil, nil]
-  end
-
-  def card_filename
-    "#{get_config('.', :Entities, :Courses, :dir_diplomas)}/#{self._card_filename.first}"
   end
 
   def cost_mov

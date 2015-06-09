@@ -20,7 +20,10 @@ class Shares < Entities
   end
 
   def save_config(domain)
-    a = System.run_str('cat Files/smb.conf')
+    return unless Shares.is_active?
+
+    dp 'saving samba-config'
+    a = IO.read('Files/smb.conf')
     a.gsub!(/WORKGROUP/, domain)
     a.gsub!(/SERVER/, "Profeda-server on #{domain}")
     a += "\n"
@@ -68,14 +71,17 @@ class Shares < Entities
       #a += "  create mask = 741\n  map archive = yes\n  map system = yes\n" +
       #  "  map hidden = yes\n"
     }
-    if ConfigBase.samba_simul == %w(false)
-      file_smb = "#{ConfigBase.samba_config}/smb.conf"
-      File.open(file_smb, 'w') { |f|
-        f.write(a)
-      }
+    file_smb = "#{ConfigBase.samba_config}/smb.conf"
+    File.open(file_smb, 'w') { |f|
+      f.write(a)
+    }
 
-      Service.restart('samba')
-    end
+    Service.restart('samba')
+  end
+
+  def self.is_active?
+    ConfigBase.samba_simul == %w(false) &&
+        !get_config(false, :Entities, :Share, :simulation)
   end
 end
 

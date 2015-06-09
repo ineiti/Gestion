@@ -24,7 +24,7 @@ end
 
 
 class Persons < Entities
-  attr_accessor :print_card_student, :print_card_responsible, :admin_users, :resps
+  attr_accessor :print_card_student, :print_card_responsible, :resps
   self.needs :Courses
 
   def setup_data
@@ -78,10 +78,14 @@ class Persons < Entities
     value_str :password_plain
     value_int_LDAP :person_id, :ldap_name => 'uidnumber'
 
-    @admin_users = ConfigBase.persons_add_del_users == %w(true)
     @resps = []
     ConfigBases.add_observer(self, :update_config)
     update_config(nil, nil, nil)
+  end
+
+  def self.admin_users
+    ConfigBase.persons_add_del_users == %w(true) &&
+        !get_config(false, :Entities, :Persons, :user_simulation)
   end
 
   def update_config(action, value, old)
@@ -714,10 +718,12 @@ class Person < Entity
     if ConfigBase.has_function?(:share) and (groups and groups.index('share'))
       add_user_account
       p = pass.chomp
-      log_msg :person, "Changing password in Samba to #{p.inspect}"
-      pwd_change = "/bin/echo -e '#{p}\\n#{p}' | smbpasswd -s -a #{self.login_name} "
-      dputs(3) { pwd_change.inspect }
-      System.run_str pwd_change
+      if Persons.admin_users
+        log_msg :person, "Changing password in Samba to #{p.inspect}"
+        pwd_change = "/bin/echo -e '#{p}\\n#{p}' | smbpasswd -s -a #{self.login_name} "
+        dputs(3) { pwd_change.inspect }
+        System.run_str pwd_change
+      end
     end
   end
 
@@ -998,7 +1004,7 @@ class Person < Entity
       System.run_bool("if which deluser; then deluser #{self.login_name}; else
           userdel #{self.login_name}; fi")
     end
-    if ConfigBase.has_function?(:share)
+    if ConfigBase.has_function?(:share) && Persons.admin_users
       System.run_bool("smbpasswd -x #{self.login_name}")
     end
     super
