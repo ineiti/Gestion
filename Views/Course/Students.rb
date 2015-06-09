@@ -9,7 +9,6 @@ class CourseStudents < View
     @update = true
     @order = 30
 
-    #    gui_vboxgl do
     gui_hboxg do
       gui_vboxg :nogroup do
         show_list_single :students, :width => 300, :callback => true, :flexheight => 1
@@ -40,7 +39,7 @@ class CourseStudents < View
     end
   end
 
-  def rpc_list_choice(session, name, data)
+  def rpc_list_choice(session, name, data, select = nil)
     dputs(3) { "rpc_list_choice with #{name} - #{data.inspect}" }
     ret = []
     course_id = data._courses[0]
@@ -53,8 +52,16 @@ class CourseStudents < View
               reply(:empty_nonlists, :students) +
               update_form_data(course) +
               reply(:update, {:courses => [course_id]})
-          if course.students.size > 0 && course.list_students.size > 0
-            first = course.list_students[0][0]
+          ls = course.list_students
+          if course.students.size > 0 && ls.size > 0
+            first = if select
+                      # Fetch the next element, first one if it was the last one
+                      ls[((0...ls.length).find{ |i|
+                           ls[i][0] == select
+                         }.to_i + 1) % ls.length][0]
+                    else
+                      course.list_students[0][0]
+                    end
             ret += reply(:update, {:students => [first]})
           end
 
@@ -79,7 +86,7 @@ class CourseStudents < View
                                     :family_name => data._family_name,
                                     :gender => data._gender})
       end
-      update_student(data)
+      rpc_list_choice(session, 'courses', data, p_name)
     end
   end
 end

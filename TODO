@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+
 :1:dputs`log_msg'xxxxxxxxxxxxx Info from SerialModem: resetting modem
 :1:serial_modem`reload_option' Trying to reload modem-driver - killing and reloading
 :1:dputs`log_msg'xxxxxxxxxxxxx Info from Device: Initialized device {:bus=>"usb", :path=>"/sys//devices/soc0/soc.1/2100000.aips-bus/2184000.usb/ci_hdrc.
@@ -41,7 +42,6 @@ BUGS:
    *** It is now: 2015-06-03 18:05:01
 :1:dputs`log_msg'xxxxxxxxxxxxx Info from SerialModem: Re-sending *128# for 1
 
-        - Courses::Students.save - doesn't update list
 
         :0:system`rescueXXXXXXXXXXXXXX Tue 15.06.02-21:51:33 - Couldn't take internet-money
         :0:system`rescueXXXXXXXXXXXXXX #<TypeError: nil can't be coerced into Fixnum>
@@ -362,6 +362,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150609: Courses::Students.save - doesn't update list
         - B 150609: ChatMsg: don't use ICC when no connection
         - B 150609: Course::Modify - can't print student-cards anymore
         - B 150609: Only copy 'order' from config.yaml to Views
