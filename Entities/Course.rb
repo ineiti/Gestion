@@ -797,7 +797,7 @@ base_gestion
              [/-CENTER_PLACE-/, c.town || ''],
              [/-CENTER_PHONE-/, c.phone || ''],
              [/-CENTER_EMAIL-/, c.email || ''],
-             [/-MEAN-/, grade.mean.to_s]])
+             [/-MEAN-/, sprintf('%2.2f', grade.mean)]])
 
         dputs(3) { "ctype is #{ctype.inspect}" }
         if ctype.diploma_type.first =~ /report/
@@ -807,7 +807,7 @@ base_gestion
             dputs(3) { "test_p is #{test_p.inspect}" }
             if grade.means.count == ctype.tests_arr.count
               tests = ctype.tests_arr.zip(grade.means).collect { |t, m|
-                t + test_p[0] + sprintf('%2.2f', m)
+                t + test_p[0] + sprintf('%2.1f', m)
               }.join(test_p[1])
               doc.gsub!(/-TEST1-.*-MEAN2-/, tests)
             else
