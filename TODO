@@ -3,13 +3,6 @@
 WORKING:
 
 BUGS:
-
-    :1:icc`rescuexxxxxxxxxxxxxxxxx Timeout occured
-    :0:Course`rescueXXXXXXXXXXXXXX Error in thread: Network is unreachable - connect(2) for "icc.profeda.org" port 80
-    :0:Course`rescueXXXXXXXXXXXXXX #<Errno::ENETUNREACH: Network is unreachable - connect(2) for "icc.profeda.org" port 80>
-    :0:Course`rescueXXXXXXXXXXXXXX Network is unreachable - connect(2) for "icc.profeda.org" port 80
-    :1:dputs`log_msg'xxxxxxxxxxxxx Info from Captive: ips_idle for 192.168.62.146 is now {"192.168.62.146"=>-4}
-
 :1:dputs`log_msg'xxxxxxxxxxxxx Info from SerialModem: resetting modem
 :1:serial_modem`reload_option' Trying to reload modem-driver - killing and reloading
 :1:dputs`log_msg'xxxxxxxxxxxxx Info from Device: Initialized device {:bus=>"usb", :path=>"/sys//devices/soc0/soc.1/2100000.aips-bus/2184000.usb/ci_hdrc.
@@ -369,6 +362,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150609: ChatMsg: don't use ICC when no connection
         - B 150609: Course::Modify - can't print student-cards anymore
         - B 150609: Only copy 'order' from config.yaml to Views
         - B 150609: undo double-entries in templates-list
