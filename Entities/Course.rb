@@ -807,7 +807,7 @@ base_gestion
             dputs(3) { "test_p is #{test_p.inspect}" }
             if grade.means.count == ctype.tests_arr.count
               tests = ctype.tests_arr.zip(grade.means).collect { |t, m|
-                t + test_p[0] + m.to_s
+                t + test_p[0] + sprintf('%2.2f', m)
               }.join(test_p[1])
               doc.gsub!(/-TEST1-.*-MEAN2-/, tests)
             else
