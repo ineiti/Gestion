@@ -5,9 +5,10 @@ class CourseTabs < View
     @functions_need = [:courses]
 
     gui_vbox :nogroup do
+      show_str :search_txt
       show_list_single :courses, :flexheight => 1, :callback => true,
                        :width => 100
-      show_button :delete, :add, :import
+      show_button :search, :delete, :add, :import
     end
 
     gui_window :error do
@@ -77,7 +78,7 @@ class CourseTabs < View
       if not session.can_view('FlagAdminCourse')
         rep += reply(:hide, :delete) + reply(:hide, :add)
       end
-      rep + reply(:hide, :import)
+      rep + reply(:hide, :import) + reply(:focus, :search_txt)
     end
   end
 
@@ -187,6 +188,17 @@ class CourseTabs < View
     reply(:window_hide)
   end
 
+  def rpc_button_search(session, data)
+    txt = data._search_txt
+    return unless txt.to_s.length >= 2
+    courses = Courses.search_all_.select{|c|
+      c.name + (c.ctype ? c.ctype.name : '') + c.students.to_s +
+          [c.teacher, c.responsible].collect{|p| p && p.full_login}.join =~ /#{txt}/i
+    }
+    reply(:empty_nonlists, [:courses]) +
+        reply(:update, :courses => Courses.sort_courses(courses))
+  end
+
   def rpc_list_choice(session, name, args)
     dputs(3) { "New choice #{name} - #{args.inspect}" }
 
@@ -200,6 +212,7 @@ class CourseTabs < View
 
   def rpc_update_view(session, args = nil)
     super(session, args) +
-        reply(:fade_in, 'parent,windows')
+        reply(:fade_in, 'parent,windows') +
+        reply(:focus, :search_txt)
   end
 end

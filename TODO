@@ -3,6 +3,8 @@
 WORKING:
 
 BUGS:
+        - Course::Modify - if a teacher looses the 'teacher'-tag, he won't show up anymore
+         in the list...
         - parseconfig-gem doesn't recognize comments - where did that version come from?
           - https://github.com/antw/iniparse
           - https://rubygems.org/gems/inifile
