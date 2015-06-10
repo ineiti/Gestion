@@ -7,7 +7,7 @@ class CourseStats < View
 
     #@visible = false
 
-    gui_vbox do
+    gui_vboxg do
       gui_hboxg :nogroup do
         gui_vbox :nogroup do
           show_block :accounting
@@ -46,10 +46,14 @@ class CourseStats < View
       course = Courses.match_by_course_id(course_id)
       list = course.students.collect { |s| Persons.match_by_login_name(s) }.compact.
           collect { |s| [s.phone.to_s, s.email.to_s] }.transpose
-      phones = list[0].select { |l| l.to_s.length > 0 }.
-          collect { |l| l.split('/').join("\n") }.join("\n")
-      emails = list[1].select { |l| l.to_s.length > 0 && !(l[1] =~ /@ndjair.net/) }.
-          join("\n")
+      if list.length > 0
+        phones = list[0].select { |l| l.to_s.length > 0 }.
+            collect { |l| l.split('/').join("\n") }.join("\n")
+        emails = list[1].select { |l| l.to_s.length > 0 && !(l[1] =~ /@ndjair.net/) }.
+            join("\n")
+      else
+        phones = emails = ''
+      end
       reply(:empty_nonlists) +
           reply(:update, :entries => [0]) +
           update_form_data(course) +
