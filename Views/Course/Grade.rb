@@ -115,7 +115,7 @@ class CourseGrade < View
                                        ['--', nil]
                                      end
                       [s, [person.full_name, mean, course.exam_files(person).length,
-                           random ? 'OK' : 'sync']]
+                           random ? 'OK' : 'do_sync']]
                     end
                   }.compact.sort_by { |a, b| b[0] })
   end
