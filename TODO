@@ -3,8 +3,6 @@
 WORKING:
 
 BUGS:
-        - Course::Modify - if a teacher looses the 'teacher'-tag, he won't show up anymore
-         in the list...
         - parseconfig-gem doesn't recognize comments - where did that version come from?
           - https://github.com/antw/iniparse
           - https://rubygems.org/gems/inifile
@@ -276,6 +274,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150610: Course::Modify - if a teacher looses the 'teacher'-tag, he won't show up anymore
+         in the list...
         - B 150610: Monitor::Traffic - all data is lost when RTC is wrong!
         - F 150609: Cours::Grade::sync - table: 'status'-column should show 'do_sync' instead of 'sync'
         - B 150609: Shouldn't get printers for Windows

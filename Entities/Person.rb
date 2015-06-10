@@ -79,6 +79,7 @@ class Persons < Entities
     value_int_LDAP :person_id, :ldap_name => 'uidnumber'
 
     @resps = []
+    @resps_course = []
     ConfigBases.add_observer(self, :update_config)
     update_config(nil, nil, nil)
   end
@@ -421,14 +422,19 @@ class Persons < Entities
 
   def responsibles(force_update = false)
     #dputs_func
-    if force_update or @resps.size == 0
-      dputs(3) { "Making responsible-cache with #{@data.size} entities" }
+    if force_update || @resps.size == 0
+      ddputs(3) { "Making responsible-cache with #{@data.size} entities" }
       @resps = Persons.responsibles_raw
       @resps = Persons.responsibles_sort(@resps)
     else
       dputs(3) { 'Lazily using responsible-cache' }
     end
-    @resps
+    if force_update || @resps_course.size == 0
+      @resps_course = Courses.search_all_.collect { |c| [c.teacher, c.responsible, c.assistant] }.
+          flatten.compact.uniq
+      @resps_course = Persons.responsibles_sort(@resps_course)
+    end
+    (@resps + @resps_course).uniq.sort_by { |p| p[1] }
   end
 
   def responsibles_add(p)
