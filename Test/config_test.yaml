@@ -13,16 +13,12 @@ StorageHandler:
   Replace:
       LDAP: CSV
 
-DiplomaDir: Diplomas
-
 LibNet:
   simulation: true
 
 Entities:
   Persons:
-    admin_users: false
-#  LogActions:
-#    logging: false
+    user_simulation: true
 
 Accounting:
   lending: Root::Lending

@@ -13,15 +13,15 @@ class TC_Activity < Test::Unit::TestCase
 
     @library = Activities.create(name: 'library', cost: 3_000,
                                  payment_period: %w(yearly), start_type: %w(period_overlap),
-                                 card_filename: %w( Diplomas/library_card.odg ),
+                                 card_filename: %w( library_card.odg ),
                                  tags: [:library])
     @internet = Activities.create(name: 'internet', cost: 10_000,
                                   payment_period: %w(monthly), start_type: %w(payment),
-                                  card_filename: %w( Diplomas/library_card.odg),
+                                  card_filename: %w( library_card.odg),
                                   tags: [:internet])
     @library_plus = Activities.create(name: 'library_internet', cost: 20_000,
                                       payment_period: %w(monthly), start_type: %w(payment),
-                                      card_filename: %w( Diplomas/library_card.odg),
+                                      card_filename: %w( library_card.odg),
                                       tags: [:internet, :library])
 
     @admin = Persons.create(login_name: 'admin', permissions: %w(admin))

@@ -93,6 +93,7 @@ class ConfigBases < Entities
 
   def migration_9(c)
     c.diploma_dir = get_config('Diplomas', :Entities, :Courses, :dir_diplomas)
+    c.template_dir = get_config('Diplomas', :Entities, :Courses, :dir_diplomas)
     c.exam_dir = get_config('Exams', :Entities, :Courses, :dir_exas)
     # Old installation had default directory of 'Exas'
     File.exists?('Exas') && c.exam_dir != 'Exas' and FileUtils.mv('Exas', c.exam_dir)

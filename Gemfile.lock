@@ -46,15 +46,12 @@ PATH
       multi_json (= 1.0.3)
       net-ldap (= 0.5.1)
       parseconfig (= 0.5.2)
-      pdf-core (= 0.2.2)
-      prawn (= 1.0.0)
       rqrcode (= 0.4.2)
       rqrcode-with-patches (= 0.5.4)
       rubyzip (= 1.1.7)
       serialport (= 1.3.1)
       sqlite3 (= 1.3.10)
       text (= 1.2.3)
-      ttfunk (= 1.1.1)
 
 PATH
   remote: ../SerialModem
@@ -112,5 +109,8 @@ DEPENDENCIES
   helper_classes!
   hilink_modem!
   network!
+  pdf-core (= 0.2.2)
+  prawn (= 1.0.0)
   qooxview!
   serial_modem!
+  ttfunk (= 1.1.1)

@@ -364,10 +364,10 @@ class TC_Person < Test::Unit::TestCase
                      family_name: 'search')
     }
 
-    Timing.measure(lvl) { assert_equal 20, Persons.search_in('test_search').length }
-    Timing.measure(lvl) { assert_equal 20, Persons.search_in('test').length }
-    Timing.measure(lvl) { assert_equal 20, Persons.search_in('search').length }
+    Timing.measure('search 1', lvl) { assert_equal 20, Persons.search_in('test_search').length }
+    Timing.measure('search 2', lvl) { assert_equal 20, Persons.search_in('test').length }
+    Timing.measure('search 3', lvl) { assert_equal 20, Persons.search_in('search').length }
 
-    Timing.measure(lvl) { assert_equal 400, Persons.search_in('test_search', max: 400).length }
+    Timing.measure('search all', lvl) { assert_equal 400, Persons.search_in('test_search', max: 400).length }
   end
 end

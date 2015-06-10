@@ -1,4 +1,5 @@
 require 'test/unit'
+require_relative '../Paths/Info.rb'
 
 class TC_info < Test::Unit::TestCase
   def setup

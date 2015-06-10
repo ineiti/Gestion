@@ -85,7 +85,7 @@ class TC_Chat < Test::Unit::TestCase
     assert ChatMsgs.show_list
 
     ChatMsgs.icc_msg_push(@clogin1.merge({person: 'foo', msg: 'hello1'}))
-    dp ChatMsgs.search_all_.first.time = ChatMsgs.search_all_.first.time.inspect
+    ChatMsgs.search_all_.first.time = ChatMsgs.search_all_.first.time.inspect
     assert_equal({msg: 'hello1', center: 'center1', login: 'foo'},
                  chat_format(ChatMsgs.icc_msg_pull(@clogin2).first))
     assert_equal [], ChatMsgs.icc_msg_pull(@clogin2)

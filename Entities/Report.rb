@@ -80,7 +80,7 @@ class Report < Entity
                          dputs(2) { "#{memo}, #{obj.inspect}" }
                          memo = memo.zip(obj.last.last).map { |a, b| a + b }
                        }],
-               ['Running', running[0..-2].reduce([]){ |m,o| m + [(m.last || 0) + o] }]]]
+               ['Running', running[0..-2].reduce([]) { |m, o| m + [(m.last || 0) + o] }]]]
     else
       list
     end

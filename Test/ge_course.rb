@@ -276,8 +276,8 @@ class TC_Course < Test::Unit::TestCase
     }
     @maint_2.prepare_diplomas
 
-    while Dir.glob("#{@maint_2.dir_diplomas}/*").count < 3 do
-      dputs(1) { 'Waiting for diplomas' }
+    while (files = Dir.glob("#{@maint_2.dir_diplomas}/*{png,zip}")).count != 2 do
+      dputs(1) { "Waiting for diplomas: #{files.inspect}" }
       sleep 1
     end
   end
@@ -303,7 +303,7 @@ class TC_Course < Test::Unit::TestCase
     }
     @maint_2.prepare_diplomas
 
-    while Dir.glob("#{@maint_2.dir_diplomas}/*").count < 3 do
+    while Dir.glob("#{@maint_2.dir_diplomas}/*{png,zip}").count != 2 do
       dputs(1) { 'Waiting for diplomas' }
       sleep 1
     end
@@ -428,12 +428,11 @@ class TC_Course < Test::Unit::TestCase
 
     @it_101_t.diploma_type = %w( accredited )
     dputs(1) { "it_101 is #{@it_101.class}" }
-    @it_101.students_add 'secretaire'
     @grade0 = Grades.save_data({:student => @secretaire,
                                 :course => @it_101, :mean => 11, :means => [11]})
-    @it_101.prepare_diplomas(false)
+    @it_101.prepare_diplomas(true)
 
-    while (files = Dir.glob("#{@it_101.dir_diplomas}/*")).count < 3 do
+    while (files = Dir.glob("#{@it_101.dir_diplomas}/*{png,zip}")).count != 2 do
       dputs(1) { "Waiting for diplomas - #{files.inspect}" }
       sleep 1
     end
@@ -480,7 +479,7 @@ class TC_Course < Test::Unit::TestCase
     }
     @maint_2.prepare_diplomas
 
-    while (files = Dir.glob("#{@maint_2.dir_diplomas}/*")).count < 3 do
+    while (files = Dir.glob("#{@maint_2.dir_diplomas}/*{png,zip}")).count != 2 do
       dputs(1) { "Waiting for diplomas - #{files.inspect}" }
       sleep 1
     end
@@ -1020,6 +1019,7 @@ class TC_Course < Test::Unit::TestCase
   def test_move_student
     ConfigBase.captive_dev = false
     ConfigBase.add_function(:accounting_courses)
+    @accountant.update_accounts
     @course_acc = Courses.create_ctype(@maint_t, '1312')
     @course_acc.students = %w(surf surf2)
 

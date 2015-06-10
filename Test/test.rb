@@ -33,7 +33,7 @@ QooxView.init("#{dir}/Entities", "#{dir}/Views")
 
 tests = Dir.glob('ge_*.rb')
 #tests = %w( activity )
-tests = %w( chat )
+#tests = %w( internet )
 #tests = %w( configbase )
 
 $LOAD_PATH.push '.'
