@@ -54,7 +54,7 @@ class CourseStats < View
           reply(:update, :entries => [0]) +
           update_form_data(course) +
           reply_visible(course.entries.class != Account, :create_account) +
-          reply(:update, :contacts => "Phones:\n#{phones}\n\n" +
+          reply(:update, :contacts => "Phones:\n#{phones}\n" +
                            "Emails:\n#{emails}")
     end
   end
