@@ -3,7 +3,6 @@
 WORKING:
 
 BUGS:
-        - MobileControl sends out e-mail before NTP is synched - annoying
         - Network::Monitor::traffic_user
             - why does an element of Network::Captive show up?
         - ConfigBase::send_config is called before migrate_*
@@ -271,6 +270,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150620: MobileControl sends out e-mail before NTP is synched - annoying
         - B 150611: parseconfig-gem doesn't recognize comments - where did that version come from?
           - replace with https://github.com/antw/iniparse
         - B 150610: Course::Modify - if a teacher looses the 'teacher'-tag, he won't show up anymore
