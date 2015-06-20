@@ -3,6 +3,7 @@ class SpecialVNC < View
     @order = 100
     @auto_update = 5
     @update = true
+    @functions_need = [:special_vnc]
 
     gui_vbox do
       show_str :ip

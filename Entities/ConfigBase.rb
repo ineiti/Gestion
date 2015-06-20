@@ -75,7 +75,7 @@ class ConfigBases < Entities
     internet_cyber
     internet_mobile internet_mobile_autocharge
     inventory accounting quiz accounting_courses accounting_old
-    plug_admin special remote_chat
+    plug_admin special special_vnc remote_chat
     cashbox email usage_report activities library ).sort.to_sym
     @@functions_base = {:network => [:internet, :share, :internet_only, :email,
                                      :internet_mobile, :network_pro],
@@ -86,6 +86,7 @@ class ConfigBases < Entities
                         :accounting => [:accounting_courses, :cashbox],
                         :cashbox => [:accounting_courses, :internet_cyber],
                         :activities => [:library],
+                        :special => [:plug_admin, :special_vnc],
                         :internet_mobile => [:internet_mobile_autocharge]
     }
     @@functions_conflict = [[:course_server, :course_client]]

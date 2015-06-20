@@ -19,10 +19,10 @@ class Plugs < Entities
   end
 
   def update(op, dev = nil)
-    dputs(2){"Updating with operation #{op} and device #{dev}"}
-    #if op =~ /add/ && dev && dev.defined?()
-      #dev.serial_sms_new.push(Proc.new { |sms| new_sms(sms) })
-    #end
+    dputs(2) { "Updating with operation #{op} and device #{dev}" }
+    if op =~ /add/ && dev && dev.instance_variable_defined?(:@serial_sms_new)
+      dev.serial_sms_new.push(Proc.new { |sms| new_sms(sms) })
+    end
   end
 
   def new_sms(sms)
@@ -31,12 +31,17 @@ class Plugs < Entities
     search_all_.each { |p|
       # Match for incomplete, but existing telephone number. Make sure that
       # +235999999 matches 999999, in both ways
-      p1 = p.telephone.to_s.gsub(/[^0-9+]/, '')
-      p2 = sms._number.gsub(/[^0-9+]/, '')
+      p1 = p.telephone.to_s.gsub(/[^0-9]/, '')
+      p2 = sms._number.gsub(/[^0-9]/, '')
+      dputs(3) { "Phone-numbers are _#{p1}_ and _#{p2}_" }
       if p1.length > 0 && (p1 =~ /#{p2}$/ || p2 =~ /#{p1}$/)
         p.new_sms(sms)
       end
     }
+  end
+
+  def listp_center
+    Plugs.search_all_.collect{|p| [p.plug_id, p.center_name]}
   end
 end
 
@@ -46,7 +51,7 @@ class Plug < Entity
         !$MobileControl.operator_missing?
     msg = "cmd: #{cmds.join('::')}"
     add_stat(msg, :sms, :send)
-    $MobileControl.operator.sms_send(telephone.to_s, msg)
+    $MobileControl.device.sms_send(telephone.to_s, msg)
   end
 
   def send_credit(amount)

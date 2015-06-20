@@ -21,7 +21,8 @@ class SpecialPlug < View
         show_int_ro :operator
         show_int_ro :credit_left
         show_int :recharge_credit
-        show_button :recharge
+        show_str :cmd_str
+        show_button :recharge, :charge, :cmd
       end
     end
   end
@@ -37,7 +38,19 @@ class SpecialPlug < View
           credit_left: cl)
   end
 
+  def plugs(data)
+    Plugs.match_by_plug_id(data._plugs.first)
+  end
+
   def rpc_button_recharge(session, data)
     dp data._plugs
+  end
+
+  def rpc_button_charge(session, data )
+    plugs(data).send_cmd_sms(:charge)
+  end
+
+  def rpc_button_cmd(session, data)
+    plugs(data).send_cmd_sms(data._cmd_str.split(/,\s*/))
   end
 end
