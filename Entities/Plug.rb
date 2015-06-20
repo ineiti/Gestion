@@ -19,6 +19,7 @@ class Plugs < Entities
   end
 
   def update(op, dev = nil)
+    return unless ConfigBase.has_function?(:plug_admin)
     dputs(2) { "Updating with operation #{op} and device #{dev}" }
     if op =~ /add/ && dev && dev.instance_variable_defined?(:@serial_sms_new)
       dev.serial_sms_new.push(Proc.new { |sms| new_sms(sms) })
