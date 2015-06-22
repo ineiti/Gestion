@@ -65,7 +65,8 @@ class Shares < Entities
             end
           }
           a += "  read list = #{read.join(',')}\n  write list = #{write.join(',')}\n" +
-              "  valid users = #{ (read + write + valid_users).uniq.join(',')}\n"
+              "  valid users = #{ (read + write + valid_users).uniq.join(',')}\n" +
+              "  directory mask = 0775\n  create mask = 0664\n"
       end
       #a += "  hide files = /~$*/*.tmp/\n   blocking locks = no\n"
       #a += "  create mask = 741\n  map archive = yes\n  map system = yes\n" +

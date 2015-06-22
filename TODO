@@ -270,6 +270,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150622: samba-config: can't write into directory
         - B 150620: MobileControl sends out e-mail before NTP is synched - annoying
         - B 150611: parseconfig-gem doesn't recognize comments - where did that version come from?
           - replace with https://github.com/antw/iniparse
