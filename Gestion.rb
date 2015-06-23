@@ -65,7 +65,7 @@ begin
                                    'FlagPersonAdd,CashboxService,InternetMobile', '')
   Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,' +
                                'PersonAdmin,PersonCourse,InternetConnection,CourseStats,Report.*,' +
-                               'Template.*',
+                               'Template.*,Internet.*',
                  'secretary,cybermanager,teacher')
   Permission.add('center', 'CourseModify,FlagAdminCourse,CourseGrade,' +
                              'FlagPersonAdd,FlagPersonDelete,PersonModify,CourseDiploma,' +

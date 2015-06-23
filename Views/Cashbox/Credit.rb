@@ -43,6 +43,7 @@ class CashboxCredit < View
     person = if data._full_name.to_s.length > 0
                Persons.create(complete_name: data._full_name)
              end
+    person.permissions = %w(default internet)
     ret + (person ? rpc_button_search_person(session, search: person.login_name) : [])
   end
 

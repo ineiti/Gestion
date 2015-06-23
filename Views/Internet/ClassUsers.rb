@@ -42,7 +42,8 @@ class InternetClassUsers < View
     return unless t = Network::Captive.traffic
     list = t.traffic.collect { |h, _k|
       [h, t.get_day(h, 1).inject(:+)]
-    }.sort_by { |t| t[1] }.reverse[0..10].collect { |t|
+    }.sort_by { |t| t[1] }.reverse[0..10].
+        select{|t| Persons.match_by_login_name(t[0])}.collect { |t|
       p = Persons.match_by_login_name t[0]
       p.to_list_id(session.owner)
     }

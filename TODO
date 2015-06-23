@@ -3,6 +3,13 @@
 WORKING:
 
 BUGS:
+        - Cashbox::Credit - when adding student, doesn't add 'internet'-flag
+:1:dputs`log_msg'xxxxxxxxxxxxx Info from SerialModem: New SMS: {:flag=>"REC READ", :number=>"+23599836457", :unknown=>"", :date=>"15/06/23,10:02:55+04", :msg=>
+                                "Cmd :charge \n+CMGL: 1,\"REC UNREAD\",\"192\",,\"15/06/23,10:03:29+04\"\nSouscription reussie:Internet Kattir 2424. 256MB valable
+                                30 jours.Cout  2500F ", :id=>"0"}
+:1:dputs`log_msg'xxxxxxxxxxxxx Info from SerialModem: New SMS: {:flag=>"REC READ", :number=>"192", :unknown=>"", :date=>"15/06/23,10:03:29+04", :msg=>
+                                "Souscription reussie:Internet Kattir 2424. 256MB valable 30 jours.Cout  2500F ", :id=>"1"}
+
         - Network::Monitor::traffic_user
             - why does an element of Network::Captive show up?
         - ConfigBase::send_config is called before migrate_*

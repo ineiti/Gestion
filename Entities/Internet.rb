@@ -69,20 +69,11 @@ module Internet
   def setup
     #dputs_func
     @traffic_save = Statics.get(:GestionTraffic)
-    if (cd = ConfigBase.captive_dev).to_s.length > 0 &&
-        cd != 'false' && ConfigBase.has_function?(:internet_captive)
+    if ConfigBase.has_function?(:internet_captive)
       @device = nil
-      Device.add_observer(self)
 
-      if ConfigBase.captive_dev != 'simul'
-        dev = Device.search_dev({uevent: {interface: ConfigBase.captive_dev}})
-        if dev.length == 0
-          log_msg :Internet, "Couldn't find #{ConfigBase.captive_dev}"
-          Device.list
-          return
-        end
-        update('add', dev.first)
-      end
+      Device.add_observer(self)
+      update('add', Network::Device.search_dev({uevent: {driver: 'option'}}).first)
     end
     dputs(4) { "@traffic is #{@traffic}" }
   end
@@ -100,14 +91,14 @@ module Internet
         end
       when /add/
         d = dev.dev
-        if !@device && d._uevent && d._uevent._interface == ConfigBase.captive_dev
+        if dev.dev._uevent and dev.dev._uevent._driver == 'option'
           @device = dev
           @device.add_observer(self)
           @operator = @device.operator
           @operator and Captive.setup(@device, @traffic_save.data_str)
-          log_msg :Internet, "Got new device #{@device} - #{ConfigBase.captive_dev}"
+          log_msg :Internet, "Got new device #{@device}"
         else
-          log_msg :Internet, "New device #{dev} that doesn't match #{ConfigBase.captive_dev}"
+          log_msg :Internet, "New device #{dev} that doesn't match option"
         end
       when /operator/
         @operator = @device.operator
