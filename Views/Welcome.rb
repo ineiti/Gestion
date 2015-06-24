@@ -24,9 +24,6 @@ class Welcome < View
       return reply(:session_id, person.session_id) +
           View.rpc_list(session)
     else
-      if (version_local = ConfigBase.version_local) != ''
-        version_local = "-#{version_local}"
-      end
       if session.web_req && ref = session.web_req.header._referer
         user, pass = ref.first.match(/user=(.*)&pass=(.*)/).to_a[1..2]
         if user && pass
@@ -45,7 +42,7 @@ class Welcome < View
         end
       }
       super +
-          reply(:update, :version => VERSION_GESTION + version_local) +
+          reply(:update, :version => VERSION_GESTION) +
           reply(:update, :links => ConfigBase.welcome_text) +
           reply_visible(ConfigBase.has_function?(:internet_captive), :direct_connect)
     end

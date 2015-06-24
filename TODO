@@ -270,6 +270,7 @@ To check:
 
 
 ** FIXED **:
+        - F 150624: Added pkgrel to VERSION-info in Gestion
         - B 150624: doesn't recognize two sms at the same time:
         - B 150623: Cashbox::Credit - when adding student, doesn't add 'internet'-flag
         - B 150622: samba-config: can't write into directory
