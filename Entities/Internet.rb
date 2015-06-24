@@ -69,13 +69,13 @@ module Internet
   def setup
     #dputs_func
     @traffic_save = Statics.get(:GestionTraffic)
+    ddputs(4) { "@traffic is #{@traffic_save.data_str}" }
     if ConfigBase.has_function?(:internet_captive)
       @device = nil
 
       Device.add_observer(self)
       update('add', Network::Device.search_dev({uevent: {driver: 'option'}}).first)
     end
-    dputs(4) { "@traffic is #{@traffic}" }
   end
 
   # Whenever a new device or a new operator is detected, this function
@@ -90,8 +90,7 @@ module Internet
           Captive.accept_all
         end
       when /add/
-        d = dev.dev
-        if dev.dev._uevent and dev.dev._uevent._driver == 'option'
+        if dev && dev.dev._uevent && dev.dev._uevent._driver == 'option'
           @device = dev
           @device.add_observer(self)
           @operator = @device.operator
