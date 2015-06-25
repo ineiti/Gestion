@@ -307,7 +307,7 @@ class Courses < Entities
         "#{tr._user}_#{course._assistant}")
     course._students = course._students.collect { |s| "#{tr._user}_#{s}" }
     course._ctype = CourseTypes.match_by_name(course._ctype)
-    return "Error: couldn't make course of type #{course.ctype}" unless course._ctype
+    return "Error: couldn't make course of type #{course._ctype}" unless course._ctype
     course._center = Persons.match_by_login_name(tr._user)
     course._room = Rooms.find_by_name('')
     dputs(3) { "Course is now #{course.inspect}" }
