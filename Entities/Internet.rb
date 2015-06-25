@@ -69,7 +69,7 @@ module Internet
   def setup
     #dputs_func
     @traffic_save = Statics.get(:GestionTraffic)
-    ddputs(4) { "@traffic is #{@traffic_save.data_str}" }
+    dputs(4) { "@traffic is #{@traffic_save.data_str}" }
     if ConfigBase.has_function?(:internet_captive)
       @device = nil
 
