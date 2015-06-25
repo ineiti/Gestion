@@ -74,7 +74,13 @@ module Internet
       @device = nil
 
       Device.add_observer(self)
-      update('add', Network::Device.search_dev({uevent: {driver: 'option'}}).first)
+      dev, op = if ConfigBase.captive_dev.to_s.length > 0
+                  [Network::Device.search_dev({uevent: {interface: ConfigBase.captive_dev}}).first,
+                   'add_captive']
+                else
+                  [Network::Device.search_dev({uevent: {driver: 'option'}}).first, 'add']
+                end
+      dev and update(op, dev)
     end
   end
 
@@ -90,7 +96,8 @@ module Internet
           Captive.accept_all
         end
       when /add/
-        if dev && dev.dev._uevent && dev.dev._uevent._driver == 'option'
+        if dev && dev.dev._uevent && dev.dev._uevent._driver == 'option' ||
+            operation == 'add_captive'
           @device = dev
           @device.add_observer(self)
           @operator = @device.operator
@@ -184,10 +191,10 @@ module Internet
     #dputs_func
     case ConfigBase.allow_free
       when /all/
-        dputs(3){"User #{user} is free because ALL are free"}
+        dputs(3) { "User #{user} is free because ALL are free" }
         return true
       when /false/
-        dputs(3){"User #{user} is NOT free because NONE are free"}
+        dputs(3) { "User #{user} is NOT free because NONE are free" }
         return false
     end
     if user.class != Person
@@ -210,17 +217,17 @@ module Internet
 
       if ConfigBase.has_function?(:internet_free_course) &&
           self.active_course_for(user)
-        dputs(3){"User #{login} is free for a course"}
+        dputs(3) { "User #{login} is free for a course" }
         return true
       end
 
       if (ip = InternetPersons.match_by_person(user)) && ip.iclass
-        dputs(3){"User #{login} has internetpersons #{ip.in_limits?}"}
+        dputs(3) { "User #{login} has internetpersons #{ip.in_limits?}" }
         return ip.in_limits?
       end
 
       if ic = ConfigBase.iclass_default
-        dputs(3){"User #{login} falls into default : #{ic.in_limits?(login)}"}
+        dputs(3) { "User #{login} falls into default : #{ic.in_limits?(login)}" }
         return ic.in_limits?(login)
       end
     end

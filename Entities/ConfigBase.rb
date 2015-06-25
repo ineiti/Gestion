@@ -116,6 +116,7 @@ class ConfigBases < Entities
     c.openprint_simul = %w(false)
     c.openprint_search = get_config('.*', :OpenPrint, :search_remote)
     c.upload_files = get_config('/tmp', :UploadFiles, :path)
+    c.captive_dev = ''
     c.connection_cmds_up = "postqueue -f\n/usr/local/bin/dnsmasq-internet.sh"
     c.connection_cmds_down = '/usr/local/bin/dnsmasq-catchall.sh'
     c.connection_services_up = 'ntpd fetchmail'

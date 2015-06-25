@@ -11,6 +11,7 @@ class InternetConfig < View
         gui_vbox :nogroup do
           show_block :operator
           show_block :internet
+          show_block :captive_conn
         end
         gui_vbox :nogroup do
           show_block :mobilecontrol
