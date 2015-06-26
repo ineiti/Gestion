@@ -163,15 +163,12 @@ class InternetMobile < View
   end
 
   def rpc_button_connect(session, data)
-    if $MobileControl.operator.internet_left.to_i <= 1_000_000
-      $MobileControl.operator.internet_total( 100_000_000 )
-    end
-    $MobileControl.state_goal = Device::CONNECTED
+    $MobileControl.connect(true)
     rpc_update(session)
   end
 
   def rpc_button_disconnect(session, data)
-    $MobileControl.state_goal = Device::DISCONNECTED
+    $MobileControl.disconnect
     rpc_update(session)
   end
 
