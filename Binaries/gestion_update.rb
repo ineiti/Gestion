@@ -86,7 +86,7 @@ def main
     update_html("Error: #{e.to_s} - #{e.inspect}")
     update_html("Error: #{caller.inspect}")
   end
-  System.run_str "cat #{@html_file} | mail -S 'update gestion on $(hostname)' root@localhost"
+  System.run_str "cat #{@html_file} | mail -s 'update gestion on $(hostname)' root@localhost"
 end
 
 def update_html(msg, noadd = false, refresh: '5', script: '')
