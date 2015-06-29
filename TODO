@@ -3,6 +3,25 @@
 WORKING:
 
 BUGS:
+serial_modem.rb:134:in `lock'
+serial_modem.rb:134:in `modem_send'
+serial_modem.rb:183:in `ussd_send_now'
+serial_modem.rb:218:in `ussd_store_result'
+serial_modem.rb:228:in `ussd_received'
+serial_modem.rb:100:in `interpret_serial_reply'
+serial_modem.rb:57:in `read_reply'
+serial_modem.rb:146:in `modem_send'
+serial_modem.rb:153:in `block (2 levels) in modem_send_array'
+serial_modem.rb:152:in `each'
+serial_modem.rb:152:in `block in modem_send_array'
+serial_modem.rb:151:in `synchronize'
+serial_modem.rb:151:in `modem_send_array'
+serial_modem.rb:255:in `sms_scan'
+serial_modem.rb:386:in `block in start_serial_thread'
+:1:dputs`log_msg'xxxxxxxxxxxxx Info from SerialModem: Re-sending *128# for 1
+:2:operator`internet_total'*** Total internet 8828257000
+
+        - update-email: put something in subject
         - Course::Diplomas - 4 on 1 doesn't work anymore
         - Network::Monitor::traffic_user
             - why does an element of Network::Captive show up?
