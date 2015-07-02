@@ -3,7 +3,6 @@
 WORKING:
 
 BUGS:
-        - accounting: can't check center-database anymore
         - Course::Diplomas - 4 on 1 doesn't work anymore
         - Network::Monitor::traffic_user
             - why does an element of Network::Captive show up?
