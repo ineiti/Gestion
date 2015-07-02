@@ -22,7 +22,6 @@ class Shares < Entities
   def save_config(domain)
     return unless Shares.is_active?
 
-    dp 'saving samba-config'
     a = IO.read('Files/smb.conf')
     a.gsub!(/WORKGROUP/, domain)
     a.gsub!(/SERVER/, "Profeda-server on #{domain}")
