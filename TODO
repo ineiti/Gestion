@@ -3,11 +3,11 @@
 WORKING:
 
 BUGS:
+        - Admin::Import::Courses - doesn't download grades and exams
         - Course::Diplomas - 4 on 1 doesn't work anymore
         - Network::Monitor::traffic_user
             - why does an element of Network::Captive show up?
         - ConfigBase::send_config is called before migrate_*
-        - Admin::Import::Courses - doesn't download grades and exams
         - Check Report::executive
         - Documentation, documentation
 

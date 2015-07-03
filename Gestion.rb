@@ -61,7 +61,7 @@ begin
   Permission.add('accounting', 'ComptaTransfer,FlagAccounting,' +
                                  'ComptaReport,ComptaShow,ComptaEdit.*,Cashbox.*,Report.*,' +
                                  'ComptaCheck', 'secretary')
-  Permission.add('maintenance', 'Inventory.*,AdminBackup,AdminPower', 'default')
+  Permission.add('maintenance', 'Inventory.*,AdminBackup,AdminPower,AdminFiles.*', 'default')
   Permission.add('cybermanager', 'CashboxCredit,FlagAddInternet,' +
                                    'FlagPersonAdd,CashboxService,InternetMobile', '')
   Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,' +
