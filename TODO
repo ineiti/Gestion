@@ -271,6 +271,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150703: ComptaEditMovements.new/modify: strip non-numeric characters in amount
         - B 150629: update-email: put something in subject
         - B 150625: Entities::Internet - doesn't work with eth-gateway
         - F 150624: Added pkgrel to VERSION-info in Gestion

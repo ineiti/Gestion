@@ -29,7 +29,8 @@ class ComptaEditMovements < View
   def rpc_button_new_mov(session, data)
     if (acc_src = data._account_src).class == Account &&
         (acc_dst = data._account_dst).class == Account
-      Movements.create(data._desc, Date.from_web(data._date), data._value.to_i / 1000.0,
+      value = data._value.delete(/[^0-9\.,]/).gsub(/,/, '.')
+      Movements.create(data._desc, Date.from_web(data._date), value / 1000.0,
                        acc_src, acc_dst)
       reply(:window_hide) +
           update_list(data._account_archive, data._account_src)
@@ -38,8 +39,9 @@ class ComptaEditMovements < View
 
   def rpc_button_save(session, data)
     if (mov = Movements.match_by_id(data._movement_list.first)).class == Movement
+      value = data._value.delete(/[^0-9\.,]/).gsub(/,/, '.')
       mov.desc, mov.value, mov.date =
-          data._desc, data._value.to_i / 1000.0, Date.from_web(data._date)
+          data._desc, value / 1000.0, Date.from_web(data._date)
 
       old = mov.get_other_account(data._account_src)
       dputs(3){"Old account: #{old.get_path} - new account: #{data._account_dst.get_path}"}
