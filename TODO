@@ -40,6 +40,12 @@ UI:
               TemplateCourse, NetworkShare, ...
 
 FEATURES:
+        - Accounting:
+            - Better account-choser
+            - resize table to box-size
+            - Movements: move/delete/*(-1) multiple movements at once
+            - Edit movements directly in table
+            - Accounts: edit save/+1/-1
         - Add control-panel for distributed Cuboxes
             - Distributed Cuboxes search and execute automatically a command
             - send reports home
