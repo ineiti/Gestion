@@ -16,7 +16,7 @@ class AdminFilesSave < View
   end
 
   def list_dirs
-    Dir.glob("#{@files_dir}/*/*").collect{|d| d.gsub(/^#{@files_dir}\//, '')}
+    Dir.glob("#{@files_dir}/*/*").collect{|d| d.gsub(/^#{@files_dir}\//, '')}.sort
   end
 
   def rpc_list_choice_dirs(session, data )
