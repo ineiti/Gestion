@@ -110,7 +110,7 @@ Require valid-user
             when /rw|ro/
               dputs(4) { "Really adding #{k} to #{passfile}" }
               user = Persons.find_by_login_name(k)
-              System.run_bool("htpasswd -bnd #{user.login_name} '#{user.password_plain }' >> #{passfile}")
+              System.run_str("/usr/bin/htpasswd -bnd #{user.login_name} '#{user.password_plain }' >> #{passfile}")
           end
         }
       end

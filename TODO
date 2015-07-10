@@ -3,6 +3,9 @@
 WORKING:
 
 BUGS:
+        - hide get/push files on configuration
+15/07/08,08:27:47+04::192:: ::Vous avez recharge 500.00 CFA.  Votre solde est 2556.00 CFA.KATTIR OUSBOU !60min,60MB et 60SMS a 2500F valides 7jrs.Tapez *1*2500#  pour souscrire.
+        - System.run_bool('htpasswd') doesn't work, while System.run_str does!??
         - Admin::Import::Courses - doesn't download grades and exams
         - Course::Diplomas - 4 on 1 doesn't work anymore
         - Network::Monitor::traffic_user
