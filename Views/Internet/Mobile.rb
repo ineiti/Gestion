@@ -206,6 +206,7 @@ class InternetMobile < View
   end
 
   def rpc_button_reload(session, data)
+    $MobileControl.update_left
     rpc_update(session)
   end
 
