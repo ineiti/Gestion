@@ -3,7 +3,6 @@
 WORKING:
 
 BUGS:
-15/07/08,08:27:47+04::192:: ::Vous avez recharge 500.00 CFA.  Votre solde est 2556.00 CFA.KATTIR OUSBOU !60min,60MB et 60SMS a 2500F valides 7jrs.Tapez *1*2500#  pour souscrire.
         - System.run_bool('htpasswd') doesn't work, while System.run_str does!??
         - Admin::Import::Courses - doesn't download grades and exams
         - Course::Diplomas - 4 on 1 doesn't work anymore
@@ -279,6 +278,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150710: Tigo-message: 15/07/08,08:27:47+04::192:: ::Vous avez recharge 500.00 CFA.  Votre solde est 2556.00 CFA.KATTIR OUSBOU !60min,60MB et 60SMS a 2500F valides 7jrs.Tapez *1*2500#  pour souscrire.
         - F 150710: hide get/push files on configuration
         - B 150703: ComptaEditMovements.new/modify: strip non-numeric characters in amount
         - B 150629: update-email: put something in subject
