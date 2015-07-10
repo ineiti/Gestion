@@ -1,6 +1,7 @@
 class AdminFilesLoad < View
   def layout
     @order = 60
+    @functions_need = [:files_manage]
 
     gui_vbox do
       show_upload :update, :callback => true

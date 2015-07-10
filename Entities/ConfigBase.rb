@@ -70,6 +70,7 @@ class ConfigBases < Entities
 
     @@functions = %w( network share network_pro
     courses course_server course_client
+    files_manage
     internet internet_simple internet_captive
     internet_free_course internet_free_staff
     internet_cyber

@@ -3,6 +3,8 @@ class AdminFilesSave < View
 
   def layout
     @order = 50
+    @functions_need = [:files_manage]
+
     @files_dir = '/opt/Files'
     gui_vboxg do
       show_list_single :dirs, 'View.AdminFilesSave.list_dirs',
