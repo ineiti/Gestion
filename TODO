@@ -41,6 +41,9 @@ UI:
               TemplateCourse, NetworkShare, ...
 
 FEATURES:
+        - View::Internet::Mobile - automatically add a 'recharge'-entry when new
+          internet is added. Problem: when no connection, clock is off, so it first
+          needs to store the recharge-request, but only add it once the clock is back
         - Accounting:
             - Better account-choser
             - resize table to box-size

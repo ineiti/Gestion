@@ -32,6 +32,7 @@ end
 begin
   require 'qooxview'
   require 'africompta/acqooxview'
+  load_config
   ACQooxView.load_entities(false)
   %w( Modules Paths ).each { |dir|
     Dir.glob("#{dir}/*").each { |d| require d }
