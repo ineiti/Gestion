@@ -23,17 +23,16 @@ VERSION_GESTION='1.9.10' +
 require 'fileutils'
 
 GESTION_DIR=File.dirname(__FILE__)
-CONFIG_FILE='config.yaml'
-if not FileTest.exists? CONFIG_FILE
+$config_file='config.yaml'
+if not FileTest.exists? $config_file
   puts "Config-file doesn't exist, copying a standard one"
   FileUtils.cp 'config.yaml.default', 'config.yaml'
 end
 
 begin
   require 'qooxview'
-  require 'africompta/acqooxview'
-  load_config
-  ACQooxView.load_entities(false)
+  require 'africompta'
+  #ACQooxView.load_entities(false)
   %w( Modules Paths ).each { |dir|
     Dir.glob("#{dir}/*").each { |d| require d }
   }

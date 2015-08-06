@@ -11,7 +11,7 @@ in the courses.
 =end
 
 DEBUG_LVL=1
-CONFIG_FILE='config.yaml'
+$config_file='config.yaml'
 
 require 'QooxView'
 require 'ACQooxView'

@@ -2,6 +2,7 @@ PATH
   remote: ../AfriCompta
   specs:
     africompta (1.9.10)
+      prawn (= 1.0.0)
       qooxview (= 1.9.10)
 
 PATH
