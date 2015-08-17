@@ -3,6 +3,10 @@
 WORKING:
 
 BUGS:
+        - Network::Tigo - doesn't recognize 15/08/17,10:36:03+04::192:: ::Votre solde est de 200.00 CFA,  Expiration 14/07/2016. SMS au 9005  pour 10MB valides 2jrs.250F seront pris a la prochaine recharge  50.00
+
+        - Gestion::Cours::Modify - when changing name and Exam-dir is the same,
+            it fails to rename the name to itself
         - AfriCompta-po is independant of Gestion-po -> merge all po's
         - System.run_bool('htpasswd') doesn't work, while System.run_str does!??
         - Admin::Import::Courses - doesn't download grades and exams

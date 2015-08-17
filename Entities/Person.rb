@@ -721,10 +721,10 @@ class Person < Entity
   end
 
   def update_smb_passwd(pass = password_plain)
-    if ConfigBase.has_function?(:share) and (groups and groups.index('share'))
+    if ConfigBase.has_function?(:share) && (groups && groups.index('share'))
       add_user_account
-      p = pass.chomp
-      if Persons.admin_users
+      if Persons.admin_users && pass
+        p = pass.chomp
         log_msg :person, "Changing password in Samba to #{p.inspect}"
         pwd_change = "/bin/echo -e '#{p}\\n#{p}' | smbpasswd -s -a #{self.login_name} "
         dputs(3) { pwd_change.inspect }
