@@ -1548,6 +1548,10 @@ base_gestion
   end
 
   def rename(new_name)
+    if new_name == name
+      log_msg :Courses, "Renaming #{name} with #{new_name} is useless"
+      return
+    end
     log_msg :Courses, "Renaming #{name} to #{new_name}"
     dir = "#{@proxy.dir_exams}/#{name}"
     if File.exists?(dir)

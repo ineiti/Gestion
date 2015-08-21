@@ -3,8 +3,6 @@
 WORKING:
 
 BUGS:
-        - Gestion::Cours::Modify - when changing name and Exam-dir is the same,
-            it fails to rename the name to itself
         - AfriCompta-po is independant of Gestion-po -> merge all po's
         - System.run_bool('htpasswd') doesn't work, while System.run_str does!??
         - Admin::Import::Courses - doesn't download grades and exams
@@ -284,6 +282,8 @@ To check:
 
 
 ** FIXED **:
+        - B 150718: Gestion::Cours::Modify - when changing name and Exam-dir is the same,
+            it fails to rename the name to itself
         - B 150718: Network::Tigo - doesn't recognize 15/08/17,10:36:03+04::192:: ::Votre solde est de 200.00 CFA,  Expiration 14/07/2016. SMS au 9005  pour 10MB valides 2jrs.250F seront pris a la prochaine recharge  50.00
         - F 150710: Internet::Mobile.update fetches credit and internet-left
         - B 150710: Tigo-message: 15/07/08,08:27:47+04::192:: ::Vous avez recharge 500.00 CFA.  Votre solde est 2556.00 CFA.KATTIR OUSBOU !60min,60MB et 60SMS a 2500F valides 7jrs.Tapez *1*2500#  pour souscrire.
