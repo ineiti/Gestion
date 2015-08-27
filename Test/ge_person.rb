@@ -31,7 +31,7 @@ class TC_Person < Test::Unit::TestCase
     FileUtils.cp('db.testGestion', 'data/compta.db')
     SQLite.dbs_open_load_migrate
 
-    ConfigBases.init
+    ConfigBases.init_load
 
     @admin = Entities.Persons.create(:login_name => 'admin', :password => 'super123',
                                      :permissions => ['admin'], :account_name_due => 'Linus')
@@ -317,7 +317,7 @@ class TC_Person < Test::Unit::TestCase
     lending = Accounts.create('Linus', 'Too lazy', Accounts.match_by_name('Lending'))
     paid = Accounts.create('Paid', '', lending)
     cash = Accounts.create('Linus', 'Too lazy', Accounts.match_by_name('Cash'))
-    ConfigBases.init
+    ConfigBases.init_load
 
     FileUtils.mkdir_p 'data2'
     IO.write 'data2/Persons.csv',

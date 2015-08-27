@@ -32,6 +32,7 @@ class InternetMobile < View
           show_list_drop :umts_connection, 'View.InternetMobile.umts_connection',
                          :callback => true
           show_button :connect, :disconnect, :reload
+          show_split_button :recharge, []
         end
         gui_vbox :nogroup do
           show_str :sms_number
@@ -41,7 +42,6 @@ class InternetMobile < View
         gui_vbox :nogroup do
           show_str :ussd
           show_button :send_ussd, :add_credit
-          show_split_button :recharge, []
         end
       end
       gui_vboxg :nogroup do

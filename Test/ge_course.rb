@@ -19,7 +19,7 @@ class TC_Course < Test::Unit::TestCase
     ConfigBase.server_url = 'http://localhost:3302/icc'
     ConfigBase.block_size = 8192
     ConfigBase.label_url = 'http://localhost:3302/label'
-    ConfigBases.init
+    ConfigBases.init_load
 
     @admin = Entities.Persons.create(:login_name => 'admin', :password => 'super123',
                                      :permissions => %w(default teacher), :first_name => 'Admin', :family_name => 'The')
@@ -121,7 +121,7 @@ class TC_Course < Test::Unit::TestCase
     Entities.save_all
     Entities.delete_all_data(true)
     Entities.load_all
-    ConfigBases.init
+    ConfigBases.init_load
     #dp Courses.search_all_.inspect
     courses_admin2 = Courses.search_by_students('^admin2$')
     assert_equal 1, courses_admin2.length
@@ -329,7 +329,7 @@ class TC_Course < Test::Unit::TestCase
     SQLite.dbs_close_all
     FileUtils.cp('db.testGestion', 'data/compta.db')
     SQLite.dbs_open_load_migrate
-    ConfigBases.init
+    ConfigBases.init_load
 
     @admin = Entities.Persons.create(:login_name => 'admin', :password => 'super123',
                                      :permissions => %w(default teacher), :first_name => 'Admin', :family_name => 'The')

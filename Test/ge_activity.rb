@@ -9,7 +9,7 @@ class TC_Activity < Test::Unit::TestCase
     FileUtils.cp('db.testGestion', 'data/compta.db')
     SQLite.dbs_open_load_migrate
     ConfigBase.store({functions:%w(accounting library)})
-    ConfigBases.init
+    ConfigBases.init_load
 
     @library = Activities.create(name: 'library', cost: 3_000,
                                  payment_period: %w(yearly), start_type: %w(period_overlap),
