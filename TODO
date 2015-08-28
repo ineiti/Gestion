@@ -3,7 +3,6 @@
 WORKING:
 
 BUGS:
-        - AfriCompta::accounts don't get merged when deleted
         - AfriCompta::ComptaEditMovements doesn't update account_src-list
           when a different account_archive is chosen
         - SerialModem: when startup in failed mode (ttyUSB2 is not here, but
@@ -287,6 +286,7 @@ To check:
 
 
 ** FIXED **:
+        - B 150827: AfriCompta::accounts don't get merged when deleted
         - B 150827: If Entities.init is called, migration-number has to be updated
         - F 150827: Entity: add init-method for new entities. If it is present,
             don't call migration_* for new entities, else do.
