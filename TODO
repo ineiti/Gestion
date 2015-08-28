@@ -3,6 +3,9 @@
 WORKING:
 
 BUGS:
+        - AfriCompta::accounts don't get merged when deleted
+        - AfriCompta::ComptaEditMovements doesn't update account_src-list
+          when a different account_archive is chosen
         - SerialModem: when startup in failed mode (ttyUSB2 is not here, but
             ttyUSB3 is), it should restart the modem
         - AfriCompta-po is independant of Gestion-po -> merge all po's
