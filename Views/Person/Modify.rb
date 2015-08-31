@@ -78,7 +78,6 @@ class PersonModify < View
             rep += reply(:window_show, :printing) +
                 reply(:unhide, :next_page) +
                 reply(:update, :msg_print => 'Printing front page')
-            dp files
             System.run_bool("#{lpr} #{files[0]}")
             session.s_data._person_page = files
           else
