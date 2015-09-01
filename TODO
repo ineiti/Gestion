@@ -3,8 +3,6 @@
 WORKING:
 
 BUGS:
-        - AfriCompta::ComptaEditMovements doesn't update account_src-list
-          when a different account_archive is chosen
         - SerialModem: when startup in failed mode (ttyUSB2 is not here, but
             ttyUSB3 is), it should restart the modem
         - AfriCompta-po is independant of Gestion-po -> merge all po's
@@ -286,6 +284,9 @@ To check:
 
 
 ** FIXED **:
+        - B 150901: AfriCompta::ComptaEditMovements doesn't update account_src-list
+            when a different account_archive is chosen
+        - F 150901: create mac-app-package
         - B 150827: AfriCompta::accounts don't get merged when deleted
         - B 150827: If Entities.init is called, migration-number has to be updated
         - F 150827: Entity: add init-method for new entities. If it is present,
