@@ -10,7 +10,6 @@ BUGS:
         - Network::Monitor::traffic_user
             - why does an element of Network::Captive show up?
         - ConfigBase::send_config is called before migrate_*
-        - Check Report::executive
         - Documentation, documentation
 
         - profeda.org: can't edit student in course abc_PC-1_1500
@@ -50,7 +49,6 @@ FEATURES:
             - resize table to box-size
             - Movements: move/delete/*(-1) multiple movements at once
             - Edit movements directly in table
-            - Accounts: edit save/+1/-1
         - Add control-panel for distributed Cuboxes
             - Distributed Cuboxes search and execute automatically a command
             - send reports home
@@ -282,6 +280,7 @@ To check:
 
 
 ** FIXED **:
+        - F 150902: Accounts: edit save/+1/-1
         - B 150901: SerialModem: when startup in failed mode (ttyUSB2 is not here, but
             ttyUSB3 is), it should restart the modem
         - B 150901: AfriCompta::ComptaEditMovements doesn't update account_src-list
