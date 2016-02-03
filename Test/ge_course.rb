@@ -385,7 +385,7 @@ class TC_Course < Test::Unit::TestCase
     center = @center.login_name
     @maint_2.students = %w( admin surf secretaire )
     @maint_2.center = @center
-    @maint_t.diploma_type = [:files]
+    @maint_t.diploma_type = [:'files']
 
     FileUtils.rm_rf 'Exams'
     FileUtils.mkdir 'Exams'

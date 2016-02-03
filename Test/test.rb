@@ -5,12 +5,12 @@ require 'fileutils'
 FileUtils.rm_rf Dir.glob('data*')
 
 $config_file='config_test.yaml'
-DEBUG_LVL=0
+DEBUG_LVL=1
 
 require 'qooxview'
 require 'network'
-require 'africompta/acqooxview'
-ACQooxView.load_entities
+require 'africompta'
+#ACQooxView.load_entities
 
 def permissions_init
   Permission.clear
@@ -32,7 +32,7 @@ dir = File.expand_path('..', __dir__)
 QooxView.init("#{dir}/Entities", "#{dir}/Views")
 
 tests = Dir.glob('ge_*.rb')
-#tests = %w( activity )
+tests = %w( dfiles )
 #tests = %w( internet )
 #tests = %w( configbase )
 
