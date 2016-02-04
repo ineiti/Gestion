@@ -31,10 +31,6 @@ class DFiles < Entities
     @url_html = 'http://files.ndjair.net/'
   end
 
-  def do_load
-    load(false)
-  end
-
   # searches for all descriptions in @dir_desc
   def load(has_static = true)
     delete_all(true)
@@ -125,6 +121,7 @@ class DFiles < Entities
     unless Dir.exists? @dir_files
       FileUtils.mkpath @dir_files
     end
+    # First look what should be here
     files_wanted = @data.collect { |k, v| v[:save_file] }
     files_here = Dir.glob("#{@dir_files}/*").collect { |f| File.basename(f) }
     files_delete = files_here - files_wanted
@@ -132,16 +129,35 @@ class DFiles < Entities
     files_delete.each { |f|
       FileUtils.rm("#{@dir_files}/#{f}")
     }
+
+    # Check what is available
     files_copy.each { |f|
       newfile = "#{update_dir}/#{f}"
-      if File.exists? newfile
-        FileUtils.cp(newfile, @dir_files)
-      else
+      dp newfile
+      unless File.exists? newfile
         dputs(1) { "Didn't find #{newfile} - deleting dfile" }
         DFiles.find_by_save_file(File.basename(newfile)).delete
+        files_wanted.delete(f)
       end
     }
-    load
+    # Update in case some of the wanted files got deleted
+    files_copy = files_wanted - files_here
+
+    # Prioritize the files
+    if DFilesConfig.limit_size > 0
+      total_size = get_size(update_dir, files_wanted) + get_size(@dir_files, files_here)
+      while total_size > DFilesConfig.limit_size * 2^30
+        # We have too many files and need to prune some entries
+
+      end
+    end
+
+    # And copy
+    files_copy.each { |f|
+      newfile = "#{update_dir}/#{f}"
+      FileUtils.cp(newfile, @dir_files)
+    }
+    save
   end
 
   # creates html-files for downloading the files
@@ -162,4 +178,50 @@ class DFile < Entity
   def print
     p self
   end
+end
+
+# Singleton entity which holds the configuration
+class DFileConfigs < Entities
+  def setup_data
+    # 0 for no limit, else limit in GBytes
+    value_int :limit_size
+    # at what time of the day the system should update
+    # -1 = no auto_update
+    value_int :auto_update
+  end
+
+  def migration_1(d)
+    d.limit_size = 10
+    d.auto_update = -1
+  end
+
+  def self.singleton
+    first or
+        self.create
+  end
+end
+
+class DFileConfig < Entity
+  def self.method_missing(m, *args)
+    dputs(4) { "#{m} - #{args.inspect} - #{DFileConfigs.singleton.inspect}" }
+    if args.length > 0
+      DFileConfigs.singleton.send(m, *args)
+    else
+      DFileConfigs.singleton.send(m)
+    end
+  end
+
+  def self.respond_to?(cmd)
+    DFileConfigs.singleton.respond_to?(cmd)
+  end
+end
+
+class DFilePriorities < Entities
+  def setup_data
+    value_int priority
+    value_str tags
+  end
+end
+
+class DFilePriority < Entity
 end

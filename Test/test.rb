@@ -5,7 +5,7 @@ require 'fileutils'
 FileUtils.rm_rf Dir.glob('data*')
 
 $config_file='config_test.yaml'
-DEBUG_LVL=1
+DEBUG_LVL=0
 
 require 'qooxview'
 require 'network'

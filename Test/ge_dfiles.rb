@@ -11,12 +11,13 @@ class TC_DFiles < Test::Unit::TestCase
     @dirs.each{|dir| Dir.mkdir dir}
     %w(files descs).each{|dir|
       FileUtils.cp(Dir.glob("dfiles/#{dir}/*"), dir)
+      FileUtils.cp(Dir.glob("dfiles/#{dir}/*"), "#{dir}.save")
     }
-    DFiles.do_load
+    DFiles.load
   end
 
   def teardown
-    @dirs.each{|dir| FileUtils.rm_rf dir}
+    #@dirs.each{|dir| FileUtils.rm_rf dir}
   end
 
   def test_load
@@ -42,6 +43,6 @@ class TC_DFiles < Test::Unit::TestCase
     DFiles.update_files_from_dir(Dir.pwd + '/files.save')
     assert !File.exists?(testfile)
     assert File.exists?(DFiles.dir_files + '/avg-160203.exe')
-    assert_equal 1, File.search_all_.size
+    assert_equal 1, DFiles.search_all_.size
   end
 end
