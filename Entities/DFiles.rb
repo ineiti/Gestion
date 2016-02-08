@@ -24,6 +24,7 @@ class DFiles < Entities
     value_str :category
     # tags are additional fields
     value_str :tags
+    value_int :size
 
     @dir_base = '/opt/Files'
     @dir_files = @dir_base + '/files'
@@ -52,7 +53,7 @@ class DFiles < Entities
               desc_short: lines[3],
               os: lines[5],
               category: lines[6],
-              tags: lines[7]
+              tags: lines[5..7].join(' ').downcase,
           }
           if file[:url_file][0] == ':'
             su = file[:url_file].match(/^:([^:]*):(.*)$/)
@@ -102,9 +103,9 @@ class DFiles < Entities
   # be mounted before)
   def update_desc_from_dir(update_dir)
     return unless Dir.exists?(update_dir)
-    Dir.glob("#{update_dir}/*.desc").each { |f|
+    Dir.glob(File.join(update_dir, '*.desc')).each { |f|
       name = File.basename(f)
-      local_name = "#{@dir_desc}/#{name}"
+      local_name = File.join(@dir_desc,name)
       if File.size(f) == 0
         # This is a file that has to be removed
         File.rm(local_name)
@@ -121,43 +122,74 @@ class DFiles < Entities
     unless Dir.exists? @dir_files
       FileUtils.mkpath @dir_files
     end
-    # First look what should be here
-    files_wanted = @data.collect { |k, v| v[:save_file] }
-    files_here = Dir.glob("#{@dir_files}/*").collect { |f| File.basename(f) }
+    # Update all sizes, delete if file is missing
+    search_all_.each { |df|
+      df.size = 0
+      [@dir_files, update_dir].each { |d|
+        file = File.join(d, df.save_file)
+        if File.exists?(file)
+          df.size = File.size(file)
+        end
+      }
+      if df.size == 0
+        df.delete
+      end
+    }
+
+    files_wanted = get_limited_files(get_most_wanted, DFileConfig.limit_size * 2**30)
+    files_here = Dir.glob(File.join(@dir_files, '/*')).
+        collect { |f| File.basename(f) }
     files_delete = files_here - files_wanted
     files_copy = files_wanted - files_here
+
+    # Delete not used files
     files_delete.each { |f|
-      FileUtils.rm("#{@dir_files}/#{f}")
+      file = File.join(@dir_files, f )
+      ddputs(3) { "Deleting file #{file}" }
+      FileUtils.rm(file)
     }
 
-    # Check what is available
+    # Copy new files
     files_copy.each { |f|
-      newfile = "#{update_dir}/#{f}"
-      dp newfile
-      unless File.exists? newfile
-        dputs(1) { "Didn't find #{newfile} - deleting dfile" }
-        DFiles.find_by_save_file(File.basename(newfile)).delete
-        files_wanted.delete(f)
-      end
-    }
-    # Update in case some of the wanted files got deleted
-    files_copy = files_wanted - files_here
-
-    # Prioritize the files
-    if DFilesConfig.limit_size > 0
-      total_size = get_size(update_dir, files_wanted) + get_size(@dir_files, files_here)
-      while total_size > DFilesConfig.limit_size * 2^30
-        # We have too many files and need to prune some entries
-
-      end
-    end
-
-    # And copy
-    files_copy.each { |f|
-      newfile = "#{update_dir}/#{f}"
-      FileUtils.cp(newfile, @dir_files)
+      file = File.join(update_dir, f)
+      ddputs(3) { "Copying file #{file}" }
+      FileUtils.cp(file, @dir_files)
     }
     save
+  end
+
+  # Uses DFilePriorities to decide which files are most important
+  def get_most_wanted
+
+  end
+
+  # Returns the first files so that the total is not above the
+  # size_limit
+  def get_limited_files(files, size_limit)
+    if size_limit > 0
+      total_size = files.inject(0){|tot, f| tot += f.size}
+      # Prioritize the files
+      while total_size > size_limit
+        # We have too many files and need to prune some entries
+        files.last.delete
+      end
+    end
+    files
+  end
+
+  # Takes an array of hash of (filepath, descpath) and deletes all entries
+  # that make the sum bigger than maxsize
+  def files_prioritize(files, maxsize)
+    files.each { |f| f[:size] = File.size(f) }
+    while files.inject(0) { |tot, f| f[:size] } > maxsize
+      files.delete(files.last)
+    end
+  end
+
+  def get_size(dir, files)
+    files.inject(0) { |tot, file|
+      tot += File.size(dir + "/#{file}")
+    }
   end
 
   # creates html-files for downloading the files
@@ -197,7 +229,7 @@ class DFileConfigs < Entities
 
   def self.singleton
     first or
-        self.create
+        self.create({limit_size: 10, auto_update: -1})
   end
 end
 
@@ -218,10 +250,11 @@ end
 
 class DFilePriorities < Entities
   def setup_data
-    value_int priority
-    value_str tags
+    value_int :priority
+    value_str :tags
   end
 end
 
 class DFilePriority < Entity
+
 end

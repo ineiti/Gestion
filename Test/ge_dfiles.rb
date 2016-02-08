@@ -45,4 +45,8 @@ class TC_DFiles < Test::Unit::TestCase
     assert File.exists?(DFiles.dir_files + '/avg-160203.exe')
     assert_equal 1, DFiles.search_all_.size
   end
+
+  def test_files_prioritze
+    DFiles.files_prioritize
+  end
 end
