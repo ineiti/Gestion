@@ -258,3 +258,54 @@ end
 class DFilePriority < Entity
 
 end
+
+=begin
+files.ndjair.net
+
+- copy from profeda.org to markas-al-nour.org
+- only serve completed copies
+- copy Antivirus first, then other things
+
+- copy from profeda.org to external hard-disk
+
+- copy from external hard-disk to cubox
+- only copy up to N GB of files
+- separated into categories
+- every category has it’s preference
+
+- present as web-page
+- first use dokuwiki
+- then use static pages
+
+-> move all .file in one directory
+-> move all files in another directory
+-> use hard links to re-create the ./update-files-structure
+-> update .file-directory using rsync
+-> update binary directory according to .file, priority
+
+- priority
+- each line contains the tags/directories and a priority
+- first lines have highest priority, last lines are pruned first if too much space
+- what is more important: a priority of 1 at the end or a priority of 9 at the beginning?
+- 1-5 are pruned in order of importance
+- 6-9 are more important at the beginning
+- 1 at the end
+SPACE=10G
+windows 1
+windows antivirus 2
+medias 9
+
+- .file
+add a priority-field: 1 is most important, 9 is least important, for each category
+
+                                                                   - decision which files to include
+                                                                   1. make list of all files with sizes according to ‘priority’
+                                                                   2. if total > SPACE
+                                                                   2.1. starting from the last line in ‘priority’, remove 9 through 6, repeat up the list until SPACE is met
+                                                                   2.2 if total > SPACE
+                                                                   2.2.1 prune ‘priority’ 5 to 1, one priority at the time, from end to beginning, starting with biggest files first
+
+-> make list and delete from end till space-requirement is met:
+                                                               - from priority 1 to priority 5 for all lines, collect files, starting with smallest
+- from first to last line in list do priorities 6 to 9 from smallest to tallest
+=end
