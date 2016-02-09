@@ -8,8 +8,8 @@ class DFiles < Entities
 
   def setup_data
     value_int :dfile_id
+    value_str :name
     value_str :desc_file
-    value_int :priority
     # url_file holds the url to the file. It can be preceded
     # by a name held between two ":", which will be the
     # save_file-name. Else the save_file-name is the 'basename' of the
@@ -17,14 +17,17 @@ class DFiles < Entities
     value_str :url_file
     value_str :save_file
     value_str :url_page
-    value_str :desc_short
-    value_text :desc_long
+    value_str :desc
     # os and category are used to build the dokuwiki-pages
     value_str :os
     value_str :category
     # tags are additional fields
     value_str :tags
     value_int :file_size
+
+    # Only used once a DFile is found - will not be stored, but represents
+    # the priority that will be used for pruning.
+    value_int :priority
 
     set_dir_base('/opt/Files')
   end
@@ -52,13 +55,15 @@ class DFiles < Entities
           file = {
               dfile_id: file_id,
               desc_file: name,
-              priority: name.match(/^./)[0],
+              name: name.sub(/.desc$/, ''),
               url_file: lines[0],
               url_page: lines[1],
-              desc_short: lines[3],
+              desc: lines[3],
               os: lines[5],
               category: lines[6],
-              tags: lines[5..7].join(' ').downcase,
+              tags: lines[5..-1].collect { |t|
+                t.split(' ')
+              }
           }
           if file[:url_file][0] == ':'
             su = file[:url_file].match(/^:([^:]*):(.*)$/)
@@ -97,11 +102,9 @@ class DFiles < Entities
         end
 
         f.puts(v[:url_file], v[:url_page], '',
-               v[:desc_short], '',
-               v[:os], v[:category], v[:tags])
-        if v[:desc_long] != ''
-          f.puts(v[:desc_long])
-        end
+               v[:desc], '',
+               v[:os], v[:category])
+        v[:tags].each { |t| f.puts(t.join(' ')) }
       }
     }
   end
@@ -177,14 +180,15 @@ class DFiles < Entities
   # Returns the first files so that the total is not above the
   # size_limit
   def get_limited_files(files, size_limit)
+    ret = files.dup
     if size_limit > 0
       # Prioritize the files
-      while files.inject(0) { |tot, f| tot + f.file_size } > size_limit
+      while ret.inject(0) { |tot, f| tot + f.file_size } > size_limit
         # We have too many files and need to prune some entries
-        files.delete(files.last)
+        ret.delete(ret.last)
       end
     end
-    files
+    ret
   end
 
   def get_size(dir, files)
@@ -210,6 +214,12 @@ end
 class DFile < Entity
   def print
     p self
+  end
+
+  def get_tag_prio(tag)
+    p, _ = tags.find { |_, t|
+      t == tag }
+    return p ? p.to_i : nil
   end
 end
 
@@ -265,8 +275,8 @@ class DFilePriorities < Entities
             #comment
           when /[0-9]/
             # We have a priority
-            priority, tags = l.split(' ', 2)
-            DFilePriorities.create({priority: priority, tags_str: tags})
+            priority, tags = l.chomp.split(' ', 2)
+            DFilePriorities.create({priority: priority.to_i, tags_str: tags})
           else
             # Should be the space
             DFileConfig.limit_size = l.sub(/.*=/, '').to_i
@@ -286,25 +296,19 @@ class DFilePriorities < Entities
     # First add all matching tags for every priority of 1-5
     (1..5).to_a.each { |p|
       search_all_.each { |fp|
-        if p <= fp.priority.to_i
-          fp.get_files.each { |df|
-            if df.priority.to_i == p
-              files.push(df)
-            end
-          }
+        if p == fp.priority
+          dputs(4) { "Adding files #{fp.get_files} for prio #{p}" }
+          files.push(*fp.get_files)
         end
       }
     }
 
     # Then add all other priorities for every line in DFilePriorities
     search_all_.each { |fp|
-      (6..9).to_a.each { |p|
-        fp.get_files.each { |df|
-          if df.priority.to_i == p
-            files.push(df)
-          end
-        }
-      }
+      if fp.priority >= 6
+        dputs(4) { "Adding files #{fp.get_files} for #{fp.inspect}" }
+        files.push(*fp.get_files)
+      end
     }
 
     files.uniq
@@ -314,7 +318,26 @@ end
 
 class DFilePriority < Entity
   def get_files
-    DFiles.search_by_all(:tags, tags)
+    #dputs_func
+    # Search for all tags, then filter according to priorities
+    dputs(4) { "Searching tags #{tags.to_s} in #{self.inspect}" }
+    DFiles.search_by_all(:tags, tags).select { |df|
+      dputs(4) { "Searching DFile #{df.inspect}" }
+      prio_min = 10
+      df.tags.each { |prio, tag|
+        if tags.index(tag)
+          prio_min = [prio_min, prio.to_i].min
+        end
+      }
+
+      # This will return nil if the priority is not matched,
+      # else the priority found, which will be evaluated by
+      # the select above to be true.
+      if prio_min <= priority.to_i
+        dputs(3) { "Found tags #{tags} with priority #{prio_min}" }
+        df.priority = prio_min
+      end
+    }
   end
 
   def tags
@@ -349,10 +372,13 @@ files.ndjair.net
 - priority
 - each line contains the tags/directories and a priority
 - first lines have highest priority, last lines are pruned first if too much space
-- what is more important: a priority of 1 at the end or a priority of 9 at the beginning?
 - 1-5 are pruned in order of importance
 - 6-9 are more important at the beginning
-- 1 at the end
+- 1 is pruned last
+- if more than one tag is given, the lowest priority in the description is taken for
+comparison. So a "3 windows\n1 antivirus"-description would not fit the 1st line, but
+it would fit the 2nd line as priority of 1
+
 SPACE=10G
 1 windows
 2 windows antivirus
