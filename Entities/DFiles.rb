@@ -4,7 +4,7 @@
 # - update the file-tree
 
 class DFiles < Entities
-  attr_accessor :dir_base, :dir_files, :dir_desc, :url_html
+  attr_accessor :dir_base, :dir_files, :dir_descs, :url_html
 
   def setup_data
     value_int :dfile_id
@@ -24,22 +24,27 @@ class DFiles < Entities
     value_str :category
     # tags are additional fields
     value_str :tags
-    value_int :size
+    value_int :file_size
 
-    @dir_base = '/opt/Files'
+    set_dir_base('/opt/Files')
+  end
+
+  def set_dir_base(dir)
+    @dir_base = dir
     @dir_files = @dir_base + '/files'
-    @dir_desc = @dir_base + '/desc'
+    @dir_descs = @dir_base + '/descs'
     @url_html = 'http://files.ndjair.net/'
   end
 
-  # searches for all descriptions in @dir_desc
+  # searches for all descriptions in @dir_descs
   def load(has_static = true)
+    #dputs_func
     delete_all(true)
-    dputs(2) { "Loading descs from #{@dir_desc}" }
-    if Dir.exists?(@dir_desc)
+    dputs(2) { "Loading descs from #{@dir_descs}" }
+    if Dir.exists?(@dir_descs)
       dputs(4) { 'Directory exists' }
       file_id = 1
-      Dir.glob("#{@dir_desc}/*.desc").each { |f|
+      Dir.glob("#{@dir_descs}/*.desc").each { |f|
         dputs(4) { "Working on file #{f}" }
         name = File.basename(f)
         lines = IO.readlines(f).collect { |l| l.chomp }
@@ -63,6 +68,8 @@ class DFiles < Entities
             file[:save_file] = File.basename(file[:url_file])
           end
           dputs(3) { "Saving description #{file}" }
+          file_path = File.join(@dir_files, file[:save_file])
+          file[:file_size] = File.exists?(file_path) ? File.size(file_path) : 0
           @data[file_id] = file
           file_id += 1
         else
@@ -70,21 +77,21 @@ class DFiles < Entities
         end
       }
     else
-      dputs(2) { "Didn't find directory #{@dir_desc}" }
+      dputs(2) { "Didn't find directory #{@dir_descs}" }
     end
+    dputs(3) { @data.inspect }
   end
 
-  # saves back the descriptions to @dir_desc
+  # saves back the descriptions to @dir_descs
   def save()
     return unless @changed
-    if Dir.exists?(@dir_desc)
-      FileUtils.rm(Dir.glob("#{@dir_desc}/*.desc"))
+    if Dir.exists?(@dir_descs)
+      FileUtils.rm(Dir.glob("#{@dir_descs}/*.desc"))
     else
-      FileUtils.mkpath(@dir_desc)
+      FileUtils.mkpath(@dir_descs)
     end
-    p @data
     @data.each { |k, v|
-      File.open("#{@dir_desc}/#{v[:desc_file]}", 'w') { |f|
+      File.open("#{@dir_descs}/#{v[:desc_file]}", 'w') { |f|
         if (file = v[:save_file]) != File.basename(v[:url_file])
           v[:url_file] = ":#{file}:#{v[:url_file]}"
         end
@@ -105,12 +112,13 @@ class DFiles < Entities
     return unless Dir.exists?(update_dir)
     Dir.glob(File.join(update_dir, '*.desc')).each { |f|
       name = File.basename(f)
-      local_name = File.join(@dir_desc,name)
+      local_name = File.join(@dir_descs, name)
       if File.size(f) == 0
         # This is a file that has to be removed
         File.rm(local_name)
       else
-        File.cp(f, local_name)
+        dputs(3) { "Copying #{f} to #{local_name}" }
+        FileUtils.cp(f, local_name)
       end
     }
     load
@@ -118,72 +126,65 @@ class DFiles < Entities
 
   # copies the files from a directory to @dir_files
   def update_files_from_dir(update_dir)
-    load()
+    #dputs_func
+    load
     unless Dir.exists? @dir_files
       FileUtils.mkpath @dir_files
     end
     # Update all sizes, delete if file is missing
     search_all_.each { |df|
-      df.size = 0
+      df.file_size = 0
       [@dir_files, update_dir].each { |d|
         file = File.join(d, df.save_file)
         if File.exists?(file)
-          df.size = File.size(file)
+          df.file_size = File.size(file)
+          dputs(3) { "Found file #{file} with size #{df.file_size}" }
+        else
+          df.file_size = 0
         end
       }
-      if df.size == 0
+      if df.file_size == 0
         df.delete
       end
     }
 
-    files_wanted = get_limited_files(get_most_wanted, DFileConfig.limit_size * 2**30)
+    files_wanted = get_limited_files(DFilePriorities.get_most_wanted,
+                                     DFileConfig.limit_size * 2**30).
+        collect { |f| f.save_file }
     files_here = Dir.glob(File.join(@dir_files, '/*')).
         collect { |f| File.basename(f) }
     files_delete = files_here - files_wanted
     files_copy = files_wanted - files_here
+    dputs(3) { "Files to delete are: #{files_delete}" }
+    dputs(3) { "Files to copy are: #{files_delete}" }
 
     # Delete not used files
     files_delete.each { |f|
-      file = File.join(@dir_files, f )
-      ddputs(3) { "Deleting file #{file}" }
+      file = File.join(@dir_files, f)
+      dputs(3) { "Deleting file #{file}" }
       FileUtils.rm(file)
     }
 
     # Copy new files
     files_copy.each { |f|
       file = File.join(update_dir, f)
-      ddputs(3) { "Copying file #{file}" }
+      dputs(3) { "Copying file #{file}" }
       FileUtils.cp(file, @dir_files)
     }
     save
-  end
-
-  # Uses DFilePriorities to decide which files are most important
-  def get_most_wanted
-
   end
 
   # Returns the first files so that the total is not above the
   # size_limit
   def get_limited_files(files, size_limit)
     if size_limit > 0
-      total_size = files.inject(0){|tot, f| tot += f.size}
       # Prioritize the files
-      while total_size > size_limit
+      while files.inject(0) { |tot, f| tot + f.file_size } > size_limit
         # We have too many files and need to prune some entries
-        files.last.delete
+        files.delete(files.last)
       end
     end
     files
-  end
-
-  # Takes an array of hash of (filepath, descpath) and deletes all entries
-  # that make the sum bigger than maxsize
-  def files_prioritize(files, maxsize)
-    files.each { |f| f[:size] = File.size(f) }
-    while files.inject(0) { |tot, f| f[:size] } > maxsize
-      files.delete(files.last)
-    end
   end
 
   def get_size(dir, files)
@@ -251,12 +252,74 @@ end
 class DFilePriorities < Entities
   def setup_data
     value_int :priority
-    value_str :tags
+    value_str :tags_str
+  end
+
+  def load(has_static = true)
+    delete_all
+    config = File.join(DFiles.dir_base, 'priorities')
+    if File.exists?(config)
+      IO.readlines(config).each { |l|
+        case l[0]
+          when '#'
+            #comment
+          when /[0-9]/
+            # We have a priority
+            priority, tags = l.split(' ', 2)
+            DFilePriorities.create({priority: priority, tags_str: tags})
+          else
+            # Should be the space
+            DFileConfig.limit_size = l.sub(/.*=/, '').to_i
+        end
+      }
+    end
+  end
+
+  def save
+
+  end
+
+  # Uses DFilePriorities to decide which files are most important
+  def get_most_wanted
+    files = []
+
+    # First add all matching tags for every priority of 1-5
+    (1..5).to_a.each { |p|
+      search_all_.each { |fp|
+        if p <= fp.priority.to_i
+          fp.get_files.each { |df|
+            if df.priority.to_i == p
+              files.push(df)
+            end
+          }
+        end
+      }
+    }
+
+    # Then add all other priorities for every line in DFilePriorities
+    search_all_.each { |fp|
+      (6..9).to_a.each { |p|
+        fp.get_files.each { |df|
+          if df.priority.to_i == p
+            files.push(df)
+          end
+        }
+      }
+    }
+
+    files.uniq
   end
 end
 
-class DFilePriority < Entity
 
+class DFilePriority < Entity
+  def get_files
+    DFiles.search_by_all(:tags, tags)
+  end
+
+  def tags
+    tags_str.split(' ')
+  end
 end
 
 =begin
@@ -291,21 +354,21 @@ files.ndjair.net
 - 6-9 are more important at the beginning
 - 1 at the end
 SPACE=10G
-windows 1
-windows antivirus 2
-medias 9
+1 windows
+2 windows antivirus
+9 medias
 
 - .file
 add a priority-field: 1 is most important, 9 is least important, for each category
 
-                                                                   - decision which files to include
-                                                                   1. make list of all files with sizes according to ‘priority’
-                                                                   2. if total > SPACE
-                                                                   2.1. starting from the last line in ‘priority’, remove 9 through 6, repeat up the list until SPACE is met
-                                                                   2.2 if total > SPACE
-                                                                   2.2.1 prune ‘priority’ 5 to 1, one priority at the time, from end to beginning, starting with biggest files first
+- decision which files to include
+  1. make list of all files with sizes according to ‘priority’
+  2. if total > SPACE
+  2.1. starting from the last line in ‘priority’, remove 9 through 6, repeat up the list until SPACE is met
+  2.2 if total > SPACE
+  2.2.1 prune ‘priority’ 5 to 1, one priority at the time, from end to beginning, starting with biggest files first
 
 -> make list and delete from end till space-requirement is met:
-                                                               - from priority 1 to priority 5 for all lines, collect files, starting with smallest
-- from first to last line in list do priorities 6 to 9 from smallest to tallest
+  - from priority 1 to priority 5 for all lines, collect files, starting with smallest
+  - from first to last line in list do priorities 6 to 9 from smallest to tallest
 =end
