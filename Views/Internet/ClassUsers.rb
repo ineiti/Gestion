@@ -73,6 +73,9 @@ class InternetClassUsers < View
     ip = InternetPersons.match_by_person(data._persons.person_id) ||
         InternetPersons.create(person: data._persons)
     ip.data_set_hash(data)
+    if data._start.to_s == ''
+      ip.start = nil
+    end
   end
 
 end

@@ -142,6 +142,7 @@ class CourseTabs < View
       dputs(2) { "Deleting entry #{course}" }
       log_msg :Course, "User #{session.owner.login_name} deletes course #{course.name}"
       course.delete
+      course.changed = true
     end
 
     reply(:empty_nonlists, [:courses]) +

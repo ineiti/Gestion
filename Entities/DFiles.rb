@@ -34,8 +34,9 @@ class DFiles < Entities
 
   def set_dir_base(dir)
     @dir_base = dir
-    @dir_files = @dir_base + '/files'
-    @dir_descs = @dir_base + '/descs'
+    @dir_files = File.join(@dir_base, 'files')
+    @dir_descs = File.join(@dir_base, 'descs')
+    @dir_html = File.join(@dir_base, 'html')
     @url_html = 'http://files.ndjair.net/'
   end
 
@@ -197,9 +198,74 @@ class DFiles < Entities
     }
   end
 
+  # get_tags returns all tags with the most common tags at the beginning
+  def get_tags(tag)
+    # Get a list of all tags wihtout the priority
+    tags = search_by_tags(tag).collect { |df| df.tags.collect { |_, t| t } }.flatten.sort
+    # Count how many times each tag appears and sort inversely
+    tags_count = tags.uniq.collect { |t| [tags.count(t), t] }.sort { |a, b| b[0] <=> a[0] }
+    # Remove the counter
+    tags_count.collect { |_, t| t }
+  end
+
   # creates html-files for downloading the files
   def update_html
+    used_tags = %w(windows mac linux android media).select { |tag|
+      get_tags(tag).size > 0 }
 
+    # First create index.html
+    save_html('index.html',
+              "<ul>\n" +
+                  used_tags.collect { |tag|
+                    "<li><a href='#{@url_html}/html/#{tag}_all.html'>#{tag.capitalize}</a>"
+                  }.join("\n") +
+                  "</ul>\n")
+
+    unless File.exists?(@dir_html)
+      FileUtils.mkdir(@dir_html)
+    end
+    # Add each main tag that exists
+    used_tags.each { |tag|
+      save_html(File.join('html', "#{tag}_all.html"),
+                "<h1>#{tag.capitalize}</h1>\n" +
+                    html_tag_links(tag) +
+                    "<h3><a href='../index.html'>Home</a></h3>" +
+                    html_tag_files(tag)
+      )
+      # Add tag-files
+      (get_tags(tag) - [tag]).each { |t|
+        save_html(File.join('html', "#{tag}_#{t}.html"),
+                  "<h1><a href='#{tag}_all.html'>#{tag.capitalize}</a></h1>\n" +
+                  "<h2 class='subtitle'>#{t.capitalize}</h2>" +
+                      html_tag_links(tag) +
+                      "<h4 class='back'><a href='../index.html'>Home</a></h4>" +
+                      html_tag_files([tag, t]))
+      }
+    }
+  end
+
+  def save_html(file, text)
+    html = IO.read(File.join(@dir_base, 'index_pre.html')) +
+        text +
+        IO.read(File.join(@dir_base, 'index_post.html'))
+    IO.write(File.join(@dir_base, file), html)
+  end
+
+  def html_tag_links(tag)
+    "<h3>" + ([:all] + get_tags(tag) - [tag]).collect { |t|
+      "<a href='#{tag}_#{t}.html'>#{t.capitalize}</a>"
+    }.join(" - ") + '</h3>'
+  end
+
+  def html_tag_files(tags)
+    "<div class='files'><ul>\n" +
+        DFiles.search_by_all(:tags, tags.to_a).collect { |df|
+          "<li><a href='../files/#{df.save_file}'>" +
+              "#{df.name}</a> - #{df.desc} - " +
+              "<a href='#{df.url_page}'>#{df.url_page}</a>" +
+              "</li>"
+        }.join("\n") +
+        "</ul></div>"
   end
 
   # Returns a hash of the file-content

@@ -16,6 +16,11 @@ class TC_DFiles < Test::Unit::TestCase
         FileUtils.cp(Dir.glob("dfiles/#{dir}/*"), savedir)
       }
     }
+    Dir.glob('dfiles/*').each { |f|
+      unless File.directory?(f)
+        FileUtils.cp(f, 'dfiles.test')
+      end
+    }
     FileUtils.cp('dfiles/priorities', 'dfiles.test')
     DFiles.load
     DFilePriorities.load
@@ -93,6 +98,7 @@ class TC_DFiles < Test::Unit::TestCase
     assert_equal 3, files.size
   end
 
+
   def test_search_by_all
     files = DFiles.search_by_all(:tags, 'windows antivirus'.split)
     assert_equal 2, files.size
@@ -100,7 +106,16 @@ class TC_DFiles < Test::Unit::TestCase
     assert_equal 1, files.size
   end
 
-  def test_load_priorities
+  def test_get_tags
+    tag_test = [['windows', 7], ['iso', 6], ['linux', 2]]
+    tag_test.each { |tag, count|
+      tags = DFiles.get_tags(tag)
+      assert_equal count, tags.size
+    }
+  end
 
+  def test_update_html
+    DFiles.url_html = '.'
+    DFiles.update_html
   end
 end

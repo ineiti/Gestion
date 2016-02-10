@@ -58,11 +58,11 @@ class InternetPerson < Entity
 end
 
 module Internet
-  attr_accessor :operator, :device
+  attr_accessor :device
   extend self
   include Network
 
-  @operator = nil
+  @operator_local = nil
 
   # Gets all devices and adds an observer for new devices. Also sets up
   # traffic-tables for users, loading if some already exist
@@ -103,16 +103,16 @@ module Internet
             operation == 'add_captive'
           @device = dev
           @device.add_observer(self)
-          @operator = @device.operator
-          @operator and Captive.setup(@device, @traffic_save.data_str)
+          @operator_local = @device.operator
+          @operator_local and Captive.setup(@device, @traffic_save.data_str)
           log_msg :Internet, "Got new device #{@device}"
         else
           log_msg :Internet, "New device #{dev} that doesn't match option"
         end
       when /operator/
-        @operator = @device.operator
+        @operator_local = @device.operator
         Captive.setup(@device, @traffic_save.data_str)
-        log_msg :Internet, "Got new operator #{@operator}"
+        log_msg :Internet, "Got new operator #{@operator_local}"
     end
   end
 
@@ -120,16 +120,16 @@ module Internet
   # users. If there is not enough money left, it kicks the user.
   def take_money
     #dputs_func
-    return unless @operator
+    return unless @operator_local
 
     Captive.cleanup
     Captive.users_connected.each { |u|
       HelperClasses::System.rescue_all do
         dputs(3) { "User is #{u}" }
-        cost = @operator.user_cost_now.to_i
+        cost = @operator_local.user_cost_now.to_i
 
-        dputs(3) { "ISP is #{@operator.name} and conn_type is "+
-            "#{@operator.connection_type}" }
+        dputs(3) { "ISP is #{@operator_local.name} and conn_type is "+
+            "#{@operator_local.connection_type}" }
         user = Persons.match_by_login_name(u)
         if user
           dputs(3) { "Found user #{u}: #{user.full_name}" }
@@ -245,9 +245,14 @@ module Internet
     @traffic_save.data_str = Captive.traffic.to_json
   end
 
+  def operator
+    return nil unless $MobileControl
+    $MobileControl.operator
+  end
+
   # Let's a user connect and adds its IP to the traffic-table
   def user_connect(name, ip)
-    return unless @operator
+    return unless @operator_local
 
     # Free users have different auto-disconnect time than non-free users
     Captive.user_connect name, ip, (self.free(name) ? 'yes' : 'no')
@@ -255,7 +260,7 @@ module Internet
 
   # Disconnects the user and removes it's IP from the traffic-table
   def user_disconnect(name)
-    return unless @operator
+    return unless @operator_local
 
     Captive.user_disconnect_name name
   end

@@ -38,7 +38,7 @@ class CourseGrade < View
       end
       gui_window :transfer do
         show_html :txt
-        show_upload :'files'
+        show_upload :files
         show_button :close
       end
 
