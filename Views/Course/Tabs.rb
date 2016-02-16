@@ -179,7 +179,8 @@ class CourseTabs < View
         if ConfigBase.has_function?(:course_server) &&
             session._owner.has_role(:admin)
           reply(:show, :new_center_course) +
-              reply(:empty_update, :new_center_course => Persons.centers)
+              reply(:empty_update, :new_center_course => Persons.centers.
+                                     collect{|c| c.to_list_id})
         else
           reply(:hide, :new_center_course)
         end

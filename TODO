@@ -280,6 +280,7 @@ To check:
 
 
 ** FIXED **:
+        - B 160212: gestion.profeda.org: when adding course as admin, center is only [object]
         - F 150902: Accounts: edit save/+1/-1
         - B 150901: SerialModem: when startup in failed mode (ttyUSB2 is not here, but
             ttyUSB3 is), it should restart the modem

@@ -247,7 +247,7 @@ class Persons < Entities
     person.password = person.password_plain
 
     if (cmd = ConfigBase.persons_addeduser_cmd).to_s.length > 0
-      dputs(2) { "Going to call #{cmd}" }
+      dputs(2) { "Going to call #{cmd} #{person.login_name} #{person.password_plain}" }
       System.run_bool("#{cmd} #{person.login_name} #{person.password_plain}")
     end
 
