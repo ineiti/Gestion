@@ -3,7 +3,6 @@
 WORKING:
 
 BUGS:
-        -
         - AfriCompta-po is independant of Gestion-po -> merge all po's
         - System.run_bool('htpasswd') doesn't work, while System.run_str does!??
         - Admin::Import::Courses - doesn't download grades and exams
@@ -281,6 +280,7 @@ To check:
 
 
 ** FIXED **:
+        - B 160218: bundler-update-problem - poking around in the dark
         - B 160218: permission-check-error in Person::is_staff?
         - B 160212: gestion.profeda.org: when adding course as admin, center is only [object]
         - F 150902: Accounts: edit save/+1/-1

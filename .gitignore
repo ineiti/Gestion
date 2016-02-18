@@ -44,4 +44,5 @@ Diplomas.src/*/*
 .bundle
 vendor
 
+gestion.conf
 Gestion.pkgrel
