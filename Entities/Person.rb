@@ -1140,7 +1140,7 @@ class Person < Entity
   end
 
   def is_staff?
-    (permissions - %w(student internet)).length > 0
+    (permissions.to_a - %w(student internet)).length > 0
   end
 
   def show_password?(user = nil)

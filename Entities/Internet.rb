@@ -246,7 +246,9 @@ module Internet
   end
 
   def operator
-    return nil unless $MobileControl
+    # Wow - this is really ugly. Why do two different listeners (Internet and MobileControl)
+    # don't agree on who is the operator?
+    return @operator_local unless $MobileControl
     $MobileControl.operator
   end
 
