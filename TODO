@@ -3,6 +3,7 @@
 WORKING:
 
 BUGS:
+        - See everybody from an InternetClass
         - AfriCompta-po is independant of Gestion-po -> merge all po's
         - System.run_bool('htpasswd') doesn't work, while System.run_str does!??
         - Admin::Import::Courses - doesn't download grades and exams
