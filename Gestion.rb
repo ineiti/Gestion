@@ -148,7 +148,7 @@ else
       loop {
         rescue_all "Couldn't take internet-money" do
           # Simple debug-routine to make it faster to test
-          if false
+          if true
             dputs(0) { 'Internet-sleep is on 5!' }
             sleep 5
             Internet.update_traffic

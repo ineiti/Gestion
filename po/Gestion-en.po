@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-11-21 21:20+0100\n"
-"PO-Revision-Date: 2016-11-21 21:55+0100\n"
+"PO-Revision-Date: 2016-11-22 22:16+0100\n"
 "Last-Translator: Linus Gasser <ineiti@linusetviviane.ch>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -1251,7 +1251,7 @@ msgstr "Password"
 #: ../Views/Person/Center.rb:13
 #: ../Views/Person/Modify.rb:15
 msgid "person_id"
-msgstr "Persion_id"
+msgstr "Person id"
 
 #. Comes from file Entities/Plug.rb and line is     value_str :internal_id
 #.
