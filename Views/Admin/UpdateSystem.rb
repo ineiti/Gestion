@@ -1,4 +1,4 @@
-class AdminFilesLoad < View
+class AdminUpdateSystem < View
   def layout
     @order = 60
     @functions_need = [:files_manage]
