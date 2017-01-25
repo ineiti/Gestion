@@ -31,6 +31,40 @@ class FMDir < Entity
     parent and p.unshift(parent)
     File.join(FMDirs.dir_base, *p)
   end
+
+  # Returns all entries in that directory
+  def entries
+    return [] unless parent != ''
+    FMEntries.search_all_.select { |e|
+      dir = e._directory
+      dir._parent == parent && dir._name == name
+    }
+  end
+
+  def search_by_path(n, p)
+    FMDirs.filter_by(name: n, parent: p).first
+  end
+
+  # Searches for files that are not an entry yet, adds them
+  # and returns the array of new entries.
+  def update
+    ffiles = []
+    fentries = entries
+    Dir.glob(File.join(path, '*')).each { |f|
+      f = File.basename(f)
+      if f !~ /\.file$/
+        dputs(3) { "Found file #{f}" }
+        if fentries.select { |e|
+          dputs(3) { "Checking with #{e._name}" }
+          e._name == f
+        }.size == 0
+          dputs(3) { "Creating entry for #{f} with dir #{self.inspect}" }
+          ffiles.push FMEntries.create(name: f, url_file: "localhost://#{f}", directory: self, tags: [])
+        end
+      end
+    }
+    ffiles
+  end
 end
 
 class FMEntries < Entities
@@ -69,20 +103,28 @@ class FMEntries < Entities
   end
 
   def save
-    search_all.each{|e|
-      if e._changed
-        File.open(File.join(e._directory.path, e._name + '.file'), 'w'){|f|
-          f.write("#{e._url_file}\n#{e._url_page}\n\n#{e._description}\n\n"+
-          "#{e._directory._name}\n#{e._directory._parent}\n" +
-          "#{e._tags.join(' ')}")
-        }
-      end
+    FMEntries.search_all_.each { |e|
+      e.save_file
     }
   end
 
   def create(*args)
     e = super(*args)
     e._changed = true
+    e.save_file
     e
+  end
+end
+
+
+class FMEntry < Entity
+  def save_file
+    if changed
+      File.open(File.join(directory.path, name + '.file'), 'w') { |f|
+        f.write("#{url_file}\n#{url_page}\n\n#{description}\n\n"+
+                    "#{directory._name}\n#{directory._parent}\n" +
+                    "#{tags.join(' ')}")
+      }
+    end
   end
 end

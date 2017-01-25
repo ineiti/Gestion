@@ -15,11 +15,6 @@ class AdminFilesManage < View
     @order = 50
     @update = true
     @functions_need = [:files_manage]
-    @dirs_os_list = Entities.Statics.get(:AdminFMOS)
-    if @dirs_os_list.data_str.class != Array
-      @dirs_os_list = []
-    end
-    @dirs_os_choice = @dirs_os_list.first
 
     @files_dir = '/opt/Files'
     gui_hboxg do
@@ -36,12 +31,12 @@ class AdminFilesManage < View
       end
 
       gui_vbox :nogroup do
-        show_list_single :files, '[]', callback: true, flexheight: 1
-        show_button :file_add, :file_del
+        show_list_single :files_stored, '[]', callback: true, flexheight: 1
+        show_button :file_save, :file_del, :file_new
       end
 
       gui_vbox :nogroup do
-        show_str_ro :file_name
+        show_str_ro :file_name, width: 300
         show_str :file_url
         show_str :file_short
         show_str :file_desc
@@ -50,7 +45,7 @@ class AdminFilesManage < View
 
       gui_window :win_chose do
         show_list :win_list
-        show_button :win_add_os, :win_add_type
+        show_button :win_add_os, :win_add_type, :win_add_file
       end
     end
   end
@@ -62,43 +57,57 @@ class AdminFilesManage < View
 
   def rpc_button_dirs_os_add(session, data)
     reply(:window_show, :win_chose) +
-    reply_show_hide(:win_add_os, :win_add_type) +
+        reply_show_hide(:win_add_os, :win_add_type) +
         reply(:empty_update, win_list: list_dirs(@files_dir))
   end
 
   def rpc_button_dirs_type_add(session, data)
-    if @dirs_os_choice != ""
-      reply(:window_show, :win_chose) +
-          reply_show_hide(:win_add_type, :win_add_os) +
-          reply(:empty_update, win_list: list_dirs("#{@files_dir}/#{@dirs_os_choice}"))
-    end
+    dputs(0) { "Dirs_os: #{data}" }
+    return unless data._dirs_os.length > 0
+    dir = data._dirs_os.first
+    reply(:window_show, :win_chose) +
+        reply_show_hide(:win_add_type, :win_add_os) +
+        reply(:empty_update, win_list: list_dirs(File.join(@files_dir, dir)))
   end
 
   def rpc_button_win_add_os(session, data)
-    @dirs_os_list = (@dirs_os_list + data._win_list).uniq
+    data._win_list.each { |name|
+      FMDirs.create({name: name})
+    }
     reply(:window_hide) +
         rpc_update(nil)
   end
 
   def rpc_button_win_add_type(session, data)
-    @dirs_os_list = (@dirs_os_list + data._win_list).uniq
+    data._win_list.each { |name|
+      FMDirs.create({name: name, parent: data._dirs_os.first})
+    }
     reply(:window_hide) +
-        rpc_update(nil)
+        rpc_list_choice_dirs_os(session, data)
   end
 
   def rpc_update(session)
-    dputs(0) { "#{@dirs_os_list}" }
-    reply(:update, dirs_os: @dirs_os_list)
+    dputs(0) { "#{FMDirs.base_dirs}" }
+    reply(:update, dirs_os: FMDirs.base_dirs.map { |f| f._name })
   end
 
 
-  def rpc_list_choice_dirs(session, data)
-    return unless data._dirs.length > 0
-    dir = data._dirs.first
-    return unless File.exists?("#{@files_dir}/#{dir}")
-    name = Date.today.strftime('%y%m%d') + "-#{dir.gsub(/\//, '_')}-files.tgz"
-    System.run_str("tar czf /tmp/#{name} -C #{@files_dir} #{dir}")
-    reply(:window_show, :download_win) +
-        reply(:update, download_txt: "Click to download <a href='/tmp/#{name}'>#{name}</a>")
+  def rpc_list_choice_dirs_os(session, data)
+    dputs(0) { "#{data.inspect}, #{data._dirs_os.length}" }
+    return [] unless data._dirs_os.length > 0
+    dir = data._dirs_os.first
+    dirs = FMDirs.sub_dirs(dir).map { |f| f._name }
+    dputs(0){dirs.inspect}
+    reply(:empty_update, dirs_type: dirs)
+  end
+
+  def rpc_list_choice_dirs_type(session, data)
+    dputs(0){data.inspect}
+    return [] unless data._dirs_type.length > 0
+    dir = FMDirs.search_by_path(data._dirs_type.first, data._dirs_os.first)
+    dputs(0){dir.inspect}
+    entries = FMEntries.search_by_directory(dir)
+    files = Dir.glob(dir.path)
+    return entries
   end
 end

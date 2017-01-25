@@ -423,7 +423,7 @@ class Persons < Entities
   def responsibles(force_update = false)
     #dputs_func
     if force_update || @resps.size == 0
-      ddputs(3) { "Making responsible-cache with #{@data.size} entities" }
+      dputs(3) { "Making responsible-cache with #{@data.size} entities" }
       @resps = Persons.responsibles_raw
       @resps = Persons.responsibles_sort(@resps)
     else
