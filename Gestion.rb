@@ -18,7 +18,7 @@ Encoding.default_external = Encoding::UTF_8
 # Gestion - a frontend for different modules developed in Markas-al-Nour
 # N'Djaména, Tchad.
 
-VERSION_GESTION='1.9.11' +
+VERSION_GESTION='1.9.12' +
     (File.exists?('Gestion.pkgrel') ? '-' + IO.read('Gestion.pkgrel') : '')
 require 'fileutils'
 
