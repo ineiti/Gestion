@@ -108,6 +108,9 @@ class ActivityPayments < Entities
   end
 
   def self.pay(act, p_paid, p_cashed, d_today = Date.today)
+    if !p_cashed.account_due
+      dputs(0){"Couldn't make #{p_cashed} pay, as he doesn't have an account_due"}
+    end
     mov = Movements.create("#{p_paid.login_name} paid #{p_cashed.login_name} #{act.cost} "+
                                "for #{act.name}", Date.today, act.cost_mov,
                            p_cashed.account_due, ConfigBase.account_activities)

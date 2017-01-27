@@ -26,88 +26,151 @@ class AdminFilesManage < View
 
         gui_vbox :nogroup do
           show_list_single :dirs_type, callback: true, flexheight: 1
-          show_button :dirs_type_add, :dirs_type_del
+        end
+
+        gui_vbox :nogroup do
+          show_button :files_update
         end
       end
 
       gui_vbox :nogroup do
         show_list_single :files_stored, '[]', callback: true, flexheight: 1
-        show_button :file_save, :file_del, :file_new
+        show_button :file_save, :file_del
       end
 
       gui_vbox :nogroup do
-        show_str_ro :file_name, width: 300
-        show_str :file_url
-        show_str :file_short
-        show_str :file_desc
-        show_str :file_tags
+        show_str_ro :name, width: 300
+        show_str :url_file
+        show_str :url_page
+        show_str :description
+        show_str :tags
       end
 
       gui_window :win_chose do
         show_list :win_list
-        show_button :win_add_os, :win_add_type, :win_add_file
+        show_button :win_add_os
+      end
+
+      gui_window :win_update do
+        show_html :update_txt
+        show_button :update_ok
       end
     end
   end
 
   def list_dirs(base)
-    dputs(0) { "#{base} - #{Dir.glob("#{base}/*")}" }
     Dir.glob("#{base}/*").collect { |d| d.gsub(/^#{base}\//, '') }.sort
   end
 
   def rpc_button_dirs_os_add(session, data)
+    dirs = list_dirs(@files_dir)
+    FMDirs.base_dirs.each { |d|
+      dirs.delete(d._name)
+    }
     reply(:window_show, :win_chose) +
-        reply_show_hide(:win_add_os, :win_add_type) +
-        reply(:empty_update, win_list: list_dirs(@files_dir))
-  end
-
-  def rpc_button_dirs_type_add(session, data)
-    dputs(0) { "Dirs_os: #{data}" }
-    return unless data._dirs_os.length > 0
-    dir = data._dirs_os.first
-    reply(:window_show, :win_chose) +
-        reply_show_hide(:win_add_type, :win_add_os) +
-        reply(:empty_update, win_list: list_dirs(File.join(@files_dir, dir)))
+        reply(:empty_update, win_list: dirs)
   end
 
   def rpc_button_win_add_os(session, data)
     data._win_list.each { |name|
-      FMDirs.create({name: name})
+      if FMDirs.search_by_name(name).size == 0
+        FMDirs.create({name: name})
+      else
+        dputs(1) { "Os-dir #{name} already exists" }
+      end
     }
     reply(:window_hide) +
         rpc_update(nil)
   end
 
-  def rpc_button_win_add_type(session, data)
-    data._win_list.each { |name|
-      FMDirs.create({name: name, parent: data._dirs_os.first})
+  def rpc_button_files_update(session, data)
+    FMDirs.base_dirs.each { |d|
+      d.update_dirs
+      d.sub_dirs.each { |sub|
+        sub.update_files
+      }
     }
-    reply(:window_hide) +
-        rpc_list_choice_dirs_os(session, data)
+    Thread.start {
+      System.run_bool "#{FMDirs.dir_base}/update_files"
+    }
+    rpc_update(session) +
+        reply(:window_show, :win_update) +
+        reply(:update, update_txt: 'Update might take quite some time<br>'+
+                         'Check on <a href="http://local.profeda.org" target="other">local.profeda.org</a>')
+  end
+
+  def rpc_button_update_ok(session, data)
+    reply(:window_hide)
+  end
+
+  def rpc_button_file_save(session, data)
+    file = get_file(data)
+    return unless file
+    in_file { |f| file.data_set(f, data[f]) }
+    file._changed = true
+  end
+
+  def rpc_button_file_del(session, data)
+    file = get_file(data)
+    return unless file
+    file.delete
+    rpc_button_files_update(session, data)
   end
 
   def rpc_update(session)
-    dputs(0) { "#{FMDirs.base_dirs}" }
-    reply(:update, dirs_os: FMDirs.base_dirs.map { |f| f._name })
+    empty_fields(3) +
+        reply(:update, dirs_os: FMDirs.base_dirs.map { |f| f._name })
   end
 
 
   def rpc_list_choice_dirs_os(session, data)
-    dputs(0) { "#{data.inspect}, #{data._dirs_os.length}" }
     return [] unless data._dirs_os.length > 0
     dir = data._dirs_os.first
     dirs = FMDirs.sub_dirs(dir).map { |f| f._name }
-    dputs(0){dirs.inspect}
-    reply(:empty_update, dirs_type: dirs)
+    empty_fields(2) +
+        reply(:update, dirs_type: dirs)
   end
 
   def rpc_list_choice_dirs_type(session, data)
-    dputs(0){data.inspect}
     return [] unless data._dirs_type.length > 0
     dir = FMDirs.search_by_path(data._dirs_type.first, data._dirs_os.first)
-    dputs(0){dir.inspect}
     entries = FMEntries.search_by_directory(dir)
-    files = Dir.glob(dir.path)
-    return entries
+    empty_fields(1) +
+        reply(:update, files_stored: entries.map { |e| e._name })
+  end
+
+  def rpc_list_choice_files_stored(session, data)
+    file = get_file(data)
+    fields = {}
+    in_file { |f| fields[f] = file.data_get(f) }
+    empty_fields(0) +
+        reply(:update, fields)
+  end
+
+  def empty_fields(lvl)
+    rep = %w(name url_file url_page description tags)
+    if lvl > 0
+      rep.push :files_stored
+    end
+    if lvl > 1
+      rep.push :dirs_type
+    end
+    if lvl > 2
+      rep.push :dirs_os
+    end
+    reply(:empty, rep)
+  end
+
+  def get_file(data)
+    dir = FMDirs.search_by_path(data._dirs_type.first, data._dirs_os.first)
+    FMEntries.search_by_name(data._files_stored[0]).find { |e|
+      e._directory == dir
+    }
+  end
+
+  def in_file
+    %w(name url_file url_page description tags).each { |f|
+      yield f
+    }
   end
 end

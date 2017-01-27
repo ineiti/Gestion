@@ -64,9 +64,10 @@ begin
   Permission.add('maintenance', 'Inventory.*,AdminBackup,AdminPower,AdminFiles.*', 'default')
   Permission.add('cybermanager', 'CashboxCredit,FlagAddInternet,' +
                                    'FlagPersonAdd,CashboxService,InternetMobile', '')
+  Permission.add('manager', 'Template.*,Internet.*',
+                              'director')
   Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,' +
                                'PersonAdmin,PersonCourse,InternetConnection,CourseStats,Report.*,' +
-                               'Template.*,Internet.*',
                  'secretary,cybermanager,teacher')
   Permission.add('center', 'CourseModify,FlagAdminCourse,CourseGrade,' +
                              'FlagPersonAdd,FlagPersonDelete,PersonModify,CourseDiploma,' +
