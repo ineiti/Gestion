@@ -132,6 +132,19 @@ class TC_FilesManage < Test::Unit::TestCase
     assert_equal 8, FMDirs.search_all_.size
   end
 
+  def test_spaces
+    FileUtils.touch(File.join(@fmdirs[1].path, 'éducation française verbes.exe'))
+    FileUtils.touch(File.join(@fmdirs[1].path, 'éducation française mots.exe'))
+    f = @fmdirs[1].update_files
+    assert_equal 2, f.size
+    f.each{|fi|
+      assert fi.name !~ / /
+      assert fi.file_name !~ / /
+      assert fi.description.size > 0
+      assert File.exists?(File.join(@fmdirs[1].path, fi.file_name))
+    }
+  end
+
   def reload
     FMEntries.save
     FMDirs.save

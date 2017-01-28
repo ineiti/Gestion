@@ -38,13 +38,25 @@ class FMDirs < Entities
       search_by_name(n).first
     end
   end
+
+  def self.accents_replace(str)
+    str = str.downcase.gsub(/ /, '_')
+    accents = Hash[*%w( a àáâä e éèêë i ìíîï o òóôöœ u ùúûü c ç ss ß )]
+    dputs(2) { "String was #{str}" }
+    accents.each { |k, v|
+      str.gsub!(/[#{v}]/, k)
+    }
+    str.gsub!(/[^a-z0-9_\.-]/, '_')
+    dputs(2) { "String is #{str}" }
+    str
+  end
 end
 
 class FMDir < Entity
-  def path
+  def path(*f)
     p = [name]
     parent and p.unshift(parent)
-    File.join(FMDirs.dir_base, *p)
+    File.join(FMDirs.dir_base, *p, *f)
   end
 
   def sub_dirs
@@ -73,8 +85,18 @@ class FMDir < Entity
           dputs(3) { "Checking with #{e._name}" }
           e.file_name == f
         }.size == 0
-          dputs(3) { "Creating entry for #{f} with dir #{self.inspect}" }
-          ffiles.push FMEntries.create(name: f, url_file: "localhost://#{f}", directory: self, tags: [])
+          f_sanitized = FMDirs.accents_replace(f)
+          if f_sanitized != f
+            File.rename(path(f), path(f_sanitized))
+          end
+          dputs(3) { "Creating entry for #{f}/#{f_sanitized} with dir #{self.inspect}" }
+          desc = ''
+          if f.size > 16
+            desc = f
+            desc.sub(/\..*?$/, '')
+          end
+          ffiles.push FMEntries.create(name: f_sanitized, url_file: "localhost://#{f_sanitized}",
+                                       directory: self, tags: [], description: desc)
         end
       end
     }
