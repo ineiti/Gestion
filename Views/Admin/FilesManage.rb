@@ -84,6 +84,7 @@ class AdminFilesManage < View
   end
 
   def rpc_button_files_update(session, data)
+    dputs(0){'Updating files'}
     FMDirs.base_dirs.each { |d|
       d.update_dirs
       d.sub_dirs.each { |sub|
