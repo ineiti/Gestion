@@ -20,9 +20,11 @@ class TC_FilesManage < Test::Unit::TestCase
         subdir = File.join(dir, base, sub)
         @fmdirs.push FMDirs.create({name: sub, parent: base})
         FileUtils.mkdir subdir
-        File.open(File.join(subdir, "Test#{counter}.zip.file"), 'w') { |f|
-          f.write("Test#{counter}.zip\nhttp://base.com\n\n"+
-                      "Description #{counter}\n\n#{base}\n#{sub}\ntag1 tag2")
+        fname = "Test#{counter}.zip"
+        FileUtils.touch(File.join(subdir, fname))
+        File.open(File.join(subdir, fname + '.file'), 'w') { |f|
+          f.write("#{fname}\nhttp://base.com\n\n"+
+                      "Description #{counter}\n\n#{base}\n#{sub}\ntag1, tag2")
         }
         counter += 1
       }
@@ -143,6 +145,22 @@ class TC_FilesManage < Test::Unit::TestCase
       assert fi.description.size > 0
       assert File.exists?(File.join(@fmdirs[1].path, fi.file_name))
     }
+  end
+
+  def test_rename
+    @fmentries[0].rename('newname.zip')
+    reload
+    f = @fmentries[0]
+    assert_equal 'http://localhost/newname.zip', f._url_file
+    assert_equal 'newname.zip.file', f._name
+    assert File.exist?(f.full_path)
+    assert File.exist?(f._directory.path(f.file_name))
+  end
+
+  def test_subdirs
+    Dir.mkdir(@fmdirs[1].path('subdir'))
+    assert_equal [], @fmdirs[1].update_files
+    assert_equal 1, @fmdirs[1].entries.size
   end
 
   def reload

@@ -31,23 +31,23 @@ class FMDirs < Entities
     return search_by_parent(name)
   end
 
-  def search_by_path(n, p)
+  def search_by_path(n, p = nil)
     if p
-      filter_by(name: n, parent: p).first
+      filter_by(name: "^#{n}$", parent: "^#{p}$").first
     else
-      search_by_name(n).first
+      find_by_name("^#{n}$")
     end
   end
 
   def self.accents_replace(str)
     str = str.downcase.gsub(/ /, '_')
     accents = Hash[*%w( a àáâä e éèêë i ìíîï o òóôöœ u ùúûü c ç ss ß )]
-    dputs(2) { "String was #{str}" }
+    dputs(4) { "String was #{str}" }
     accents.each { |k, v|
       str.gsub!(/[#{v}]/, k)
     }
     str.gsub!(/[^a-z0-9_\.-]/, '_')
-    dputs(2) { "String is #{str}" }
+    dputs(4) { "String is #{str}" }
     str
   end
 end
@@ -75,14 +75,16 @@ class FMDir < Entity
   # Searches for files that are not an entry yet, adds them
   # and returns the array of new entries.
   def update_files
+    # dputs_func
     ffiles = []
     fentries = entries
     Dir.glob(File.join(path, '*')).each { |f|
+      next if File.directory? f
       f = File.basename(f)
       if f !~ /\.file$/
         dputs(3) { "Found file #{f}" }
         if fentries.select { |e|
-          dputs(3) { "Checking with #{e._name}" }
+          dputs(3) { "Checking with #{e._name} / #{e.file_name}" }
           e.file_name == f
         }.size == 0
           f_sanitized = FMDirs.accents_replace(f)
@@ -146,7 +148,7 @@ class FMEntries < Entities
               url_page: lines[1],
               description: lines[3],
               directory: sub,
-              tags: tags.split(' '),
+              tags: tags.split(',').map{|t| t.sub(' ', '')},
               changed: false,
           }
           file_id += 1
@@ -179,16 +181,17 @@ end
 
 
 class FMEntry < Entity
-  def save_file
-    if changed == true
+  def save_file(force = false)
+    if changed == true || force
       if !tags || tags == ''
         self._tags = []
       end
-      File.open(File.join(directory.path, name), 'w') { |f|
+      File.open(directory.path(name), 'w') { |f|
         f.write("#{url_file}\n#{url_page}\n\n#{description}\n\n"+
-                    "#{directory._name}\n#{directory._parent}\n" +
-                    "#{tags.join(' ')}")
+                    "#{directory._parent}\n#{directory._name}\n" +
+                    "#{tags.join(', ')}")
       }
+      self.changed = false
     end
   end
 
@@ -210,5 +213,14 @@ class FMEntry < Entity
     FileUtils.rm_f File.join(directory.path, file_name)
     FileUtils.rm_f File.join(directory.path, name)
     super
+  end
+
+  def rename(new_name)
+    nname = FMDirs.accents_replace(new_name)
+    File.rename(directory.path(file_name), directory.path(nname))
+    File.rename(full_path, directory.path(nname+'.file'))
+    self.name = nname + '.file'
+    self.url_file = "http://localhost/#{nname}"
+    save_file(true)
   end
 end
