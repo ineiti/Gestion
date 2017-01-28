@@ -222,8 +222,10 @@ class AdminServer < View
                     dputs(3) { "Grade is now #{grade}" }
                   end
                 }
+              else
                 ms.step = 10
                 ms.status = status_list(true, status: "Error while fetching grades #{m._msg}")
+                return
               end
             rescue StandardError => e
               ms.step = 10
