@@ -137,7 +137,7 @@ class AdminServer < View
 
   def rpc_button_import_courses(session, data)
     ms = MakeSteps.new(session, -1) { |session, data, step|
-      dputs_func
+      # dputs_func
       case step
         when 0
           ms.auto_update = -1
@@ -195,6 +195,36 @@ class AdminServer < View
                 dputs(3) { "Fetching student #{p}" }
                 get_person(p, ms)
               }
+              course = Courses.create(course)
+
+              # Fetch grades
+              m = ICC.get(:Courses, :grades_get, args: {course: course._name,
+                                                        center: Persons.center._login_name})
+              if m._code == 'OK'
+                m._msg.each { |g|
+                  student = Persons.find_by_login_name(g._student)
+                  if !student
+                    dputs(0) { "Got grade #{g} with unexisting student" }
+                  else
+                    grade = Grades.match_by_course_person(course, student)
+                    if grade
+                      dputs(3) { "Updating for #{g}" }
+                      grade.means = g._means
+                      grade.remark = g._remark
+                      grade.random = g._random
+                    else
+                      dputs(3) { "Making new grade with #{g}" }
+                      g.delete('grade_id')
+                      g._course = course
+                      g._student = student
+                      grade = Grades.create(g)
+                    end
+                    dputs(3) { "Grade is now #{grade}" }
+                  end
+                }
+                ms.step = 10
+                ms.status = status_list(true, status: "Error while fetching grades #{m._msg}")
+              end
             rescue StandardError => e
               ms.step = 10
               ms.auto_update = 0
@@ -202,7 +232,7 @@ class AdminServer < View
               return
             end
 
-            log_msg :AdminServer, "Created course #{Courses.create(course)}"
+            log_msg :AdminServer, "Created course #{course}"
           }
           ms.auto_update = 0
           ms.step = 10

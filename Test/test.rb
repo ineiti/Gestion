@@ -32,7 +32,8 @@ dir = File.expand_path('..', __dir__)
 QooxView.init("#{dir}/Entities", "#{dir}/Views")
 
 tests = Dir.glob('ge_*.rb')
-tests = %w( filesmanage )
+tests = %w( course )
+# tests = %w( filesmanage )
 #tests = %w( internet )
 #tests = %w( configbase )
 

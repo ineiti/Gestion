@@ -294,6 +294,42 @@ class Courses < Entities
     course =~ /^#{user}_/ ? course : "#{user}_#{course}"
   end
 
+  def icc_grades_get(tr)
+    # dputs_func
+    dputs(3) { "Data is #{tr.inspect}" }
+    course = Courses.match_by_name(tr._course)
+    return "Course #{tr._course} not found" unless course
+    dp course.inspect
+    course._students.collect{|s|
+      if grade = Grades.match_by_course_person(course, s)
+        g = grade.to_hash
+        g._student = grade.student.login_name.sub(/^#{tr._center}_/, '')
+        g
+      else
+        nil
+      end
+    }.select{|g| g}
+  end
+
+  def icc_courses(tr)
+    c = tr._center
+    return "Didn't find center #{c.inspect}}" unless center = Persons.find_by_login_name(c._login_name)
+    return "Passwords do not match for #{c.inspect}" unless center.password_plain == c._password_plain
+    courses = Courses.search_by_name("^#{center.login_name}_").collect { |c|
+      ret = c.to_hash
+      ret._students = c.students.collect { |s| no_center(s, center) }
+      ret._ctype = c.ctype.name
+      ret._teacher = no_center(c.teacher.login_name, center)
+      if c.assistant
+        ret._assistant = no_center(c.assistant.login_name, center)
+      end
+      ret._responsible = no_center(c.responsible.login_name, center)
+      ret
+    }
+    log_msg :ICC_courses, "Returning #{courses}"
+    return courses
+  end
+
   def icc_course(tr)
     course = tr._data.to_sym
     dputs(3) { "Course is #{course.inspect}" }
@@ -370,22 +406,6 @@ class Courses < Entities
 
   def no_center(str, center)
     str.sub(/^#{center.login_name}_/, '')
-  end
-
-  def icc_courses(tr)
-    c = tr._center
-    return "Didn't find center #{c.inspect}}" unless center = Persons.find_by_login_name(c._login_name)
-    return "Passwords do not match for #{c.inspect}" unless center.password_plain == c._password_plain
-    courses = Courses.search_by_name("^#{center.login_name}_").collect { |c|
-      ret = c.to_hash
-      ret._students = c.students.collect { |s| no_center(s, center) }
-      ret._ctype = c.ctype.name
-      ret._teacher = no_center(c.teacher.login_name, center)
-      ret._responsible = no_center(c.responsible.login_name, center)
-      ret
-    }
-    log_msg :ICC_courses, "Returning #{courses}"
-    return courses
   end
 
 end

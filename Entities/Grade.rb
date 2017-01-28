@@ -12,17 +12,18 @@ class Grades < Entities
   end
 
   def match_by_course_person(course, student)
+    # dputs_func
     if course.class != Course
       course = Courses.match_by_course_id(course)
     end
     if student.class != Person
       student = Persons.match_by_login_name(student)
     end
-    if course and student
+    if course && student
       dputs(4) { "Found #{course.name} - #{student.login_name}" }
       grades = Grades.matches_by_course(course.course_id)
       grades.each { |g|
-        dputs(4) { "Checking grade #{g}" }
+        dputs(4) { "Checking grade #{g.student}-#{g}-#{student}" }
         if g.student == student
           dputs(4) { "Found grade #{g} for #{student.login_name} in #{course.name}" }
           return g
