@@ -106,6 +106,10 @@ class TC_FilesManage < Test::Unit::TestCase
     assert_equal 'games', dirs[2]._name
   end
 
+  def test_update_speed
+
+  end
+
   def test_filename
     assert_equal 'Test1.zip', @fmentries[0].file_name
     @fmentries[0]._url_file = ':win.zip:http://localhost/test1.zip'

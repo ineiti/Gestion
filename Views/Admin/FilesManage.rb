@@ -133,7 +133,7 @@ class AdminFilesManage < View
     file = get_file(data)
     return unless file
     file.delete
-    rpc_button_files_update(session, data)
+    rpc_list_choice_dirs_type(session, data)
   end
 
   def rpc_button_file_rename(session, data)

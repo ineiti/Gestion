@@ -217,6 +217,7 @@ class AdminServer < View
                       g.delete('grade_id')
                       g._course = course
                       g._student = student
+                      g._center = nil
                       grade = Grades.create(g)
                     end
                     dputs(3) { "Grade is now #{grade}" }
