@@ -8,7 +8,7 @@ class Welcome < View
 
   # Overwrite the standard rpc_show to speed up testing...
   def rpc_show(session)
-    GC.start
+    # GC.start
     web_req = session.web_req
     client_ip = RPCQooxdooHandler.get_ip(web_req)
     person = if get_config(false, :autologin)
