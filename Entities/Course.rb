@@ -299,7 +299,6 @@ class Courses < Entities
     dputs(3) { "Data is #{tr.inspect}" }
     course = Courses.match_by_name(tr._course)
     return "Course #{tr._course} not found" unless course
-    dp course.inspect
     course._students.collect{|s|
       if grade = Grades.match_by_course_person(course, s)
         g = grade.to_hash
@@ -313,8 +312,8 @@ class Courses < Entities
 
   def icc_courses(tr)
     c = tr._center
-    return "Didn't find center #{c.inspect}}" unless center = Persons.find_by_login_name(c._login_name)
-    return "Passwords do not match for #{c.inspect}" unless center.password_plain == c._password_plain
+    return "Error: Didn't find center #{c.inspect}}" unless center = Persons.match_by_login_name(c._login_name)
+    return "Error: Passwords do not match for #{c.inspect}" unless center.password_plain == c._password_plain
     courses = Courses.search_by_name("^#{center.login_name}_").collect { |c|
       ret = c.to_hash
       ret._students = c.students.collect { |s| no_center(s, center) }
@@ -749,7 +748,7 @@ base_gestion
   end
 
   def update_student_diploma(file, student)
-    #dputs_func
+    # dputs_func
     grade, state = get_grade_args(student)
 
     #if grade and grade.to_s != "NP" and
@@ -758,6 +757,7 @@ base_gestion
     #    ( ( ctype.diploma_type[0] == "accredited" ) and grade.random )
     #  @make_pdfs_state[student.login_name] = [ grade.mean, "queued" ]
     if state != 'queued'
+      dputs(2) {"File #{file} is not queued, but #{state} - removing"}
       FileUtils.rm(file)
     else
       dputs(3) { "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }
@@ -852,7 +852,7 @@ base_gestion
   end
 
   def make_pdfs(convert)
-    #dputs_func
+    # dputs_func
     if @thread
       dputs(2) { 'Thread is here, killing' }
       begin

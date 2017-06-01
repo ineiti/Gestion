@@ -150,6 +150,7 @@ class Grade < Entity
   end
 
   def get_url_label
+    # dputs_func
     init_random
     dputs(4) { "Course is #{course.inspect}" }
     center_id = course.center ? course.center.login_name : 'pit'

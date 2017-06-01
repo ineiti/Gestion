@@ -2,7 +2,7 @@ PATH
   remote: ../AfriCompta
   specs:
     africompta (1.9.10)
-      qooxview (= 1.9.10)
+      qooxview (= 1.9.11)
 
 PATH
   remote: ../HelperClasses
@@ -30,7 +30,7 @@ PATH
 PATH
   remote: ../QooxView
   specs:
-    qooxview (1.9.10)
+    qooxview (1.9.11)
       activemodel (= 3.1.1)
       activerecord (= 3.1.1)
       activesupport (= 3.1.1)

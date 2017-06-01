@@ -102,7 +102,7 @@ class CourseGrade < View
   end
 
   def update_students_table(course)
-    reply_table_columns_visible(course.ctype.files_nbr > 0, students: [2]) +
+    reply_table_columns_visible(course.ctype.files_nbr.to_i > 0, students: [2]) +
         reply_table_columns_visible(course.ctype.diploma_type == %w(accredited),
                                     students: [3]) +
         reply(:update,
