@@ -1,9 +1,9 @@
 PATH
   remote: ../AfriCompta
   specs:
-    africompta (1.9.10)
+    africompta (1.9.11)
       prawn (= 1.0.0)
-      qooxview (= 1.9.10)
+      qooxview (= 1.9.11)
 
 PATH
   remote: ../HelperClasses
@@ -31,7 +31,7 @@ PATH
 PATH
   remote: ../QooxView
   specs:
-    qooxview (1.9.10)
+    qooxview (1.9.11)
       activemodel (= 5.1.0)
       activerecord (= 5.1.0)
       activesupport (= 5.1.0)
@@ -124,4 +124,4 @@ DEPENDENCIES
   ttfunk (= 1.1.1)
 
 BUNDLED WITH
-   1.14.6
+   1.15.0
