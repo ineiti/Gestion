@@ -45,7 +45,11 @@ class SelfInternet < View
       return 0
     else
       if session.owner and session.owner.internet_credit
-        return (session.owner.internet_credit.to_i >= Internet.operator.user_cost_max) ?
+        cost_max = 20
+        if Internet.operator
+          cost_max = Internet.operator.user_cost_max
+        end
+        return (session.owner.internet_credit.to_i >= cost_max) ?
             0 : 1
       else
         dputs(0) { "Error: Called with session.owner == nil! #{session.inspect}" }
@@ -96,6 +100,7 @@ class SelfInternet < View
   end
 
   def update_button(session, nobutton = false)
+    #dputs_func
     if nobutton
       return reply(:hide, :connect) +
           reply(:hide, :disconnect) +

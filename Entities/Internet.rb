@@ -48,7 +48,7 @@ class InternetPerson < Entity
   # checks whether that person has an active reference to #InternetClasses
   def is_active?(today = Date.today)
     duration.to_i == 0 ||
-        (start.to_s != '' && (Date.from_web(start) + duration.to_i >= today))
+        (start.to_s != '' && (Date.from_web(start) + duration.to_i > today))
   end
 
   # checks whether a person is active and in limits
@@ -252,7 +252,7 @@ module Internet
     $MobileControl.operator
   end
 
-  # Let's a user connect and adds its IP to the traffic-table
+  # Lets a user connect and adds its IP to the traffic-table
   def user_connect(name, ip)
     return unless @operator_local
 
@@ -260,7 +260,7 @@ module Internet
     Captive.user_connect name, ip, (self.free(name) ? 'yes' : 'no')
   end
 
-  # Disconnects the user and removes it's IP from the traffic-table
+  # Disconnects the user and removes its IP from the traffic-table
   def user_disconnect(name)
     return unless @operator_local
 
