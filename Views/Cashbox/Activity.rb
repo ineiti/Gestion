@@ -15,11 +15,11 @@ class CashboxActivity < View
       end
       gui_vboxg :nogroup do
         gui_vboxg :nogroup do
-          show_entity_person :students, :multi, :full_name,
+          show_entity_person :students, :single, :full_name,
                              :flexheight => 1, :callback => true, :width => 300
           show_str :full_name
-          show_button :new_student, :search_student, :signed_up_students
-          show_print :print_activity
+          show_button :search_student, :new_student, :signed_up_students
+          # show_print :print_activity
         end
       end
       gui_vboxg :nogroup do
@@ -39,20 +39,21 @@ class CashboxActivity < View
   end
 
   def rpc_update(session)
-    reply_print(session) +
-        reply(:update, :date_start => Date.today.to_web)
+    # reply_print(session) +
+    reply(:update, :date_start => Date.today.to_web)
   end
 
   def rpc_button_pay_act(session, data)
-    return unless (data._activities and data._students.length == 1)
-    ActivityPayments.pay(data._activities, data._students.first, session.owner,
+    return unless (data._activities and data._students)
+    # dp data._students
+    ActivityPayments.pay(data._activities, data._students, session.owner,
                          Date.from_web(data._date_start))
     reply(:window_hide) +
         rpc_list_choice_students(session, data)
   end
 
   def rpc_button_delete(session, data)
-    return unless (data._activities and data._students.length == 1 and
+    return unless (data._activities and data._students and
         data._table_activities.length == 1)
 
     act = ActivityPayments.match_by_activitypayment_id(data._table_activities.first)
@@ -77,7 +78,7 @@ class CashboxActivity < View
   def rpc_button_new_student(session, data)
     return unless (data._full_name || data._full_name.to_s.length > 0)
     student = Persons.create({first_name: data._full_name})
-    student.permissions = %w(student)
+    student.permissions = %w(student internet)
     data._full_name = student.login_name
     rpc_button_search_student(session, data) +
         reply(:update, students: [student.person_id])
@@ -95,9 +96,9 @@ class CashboxActivity < View
   end
 
   def rpc_list_choice_students(session, data)
-    return reply(:empty, %w(full_name table_activities)) unless data._students.length == 1
+    return reply(:empty, %w(full_name table_activities)) unless data._students
 
-    act_table = ActivityPayments.for_user(data._students.first).collect { |act|
+    act_table = ActivityPayments.for_user(data._students).collect { |act|
       [act.activitypayment_id, [act.date_start, act.date_end]]
     }.sort { |a, b| a[1] <=> b[1] }.reverse
     reply(:empty_update, :table_activities => act_table) +
@@ -165,6 +166,8 @@ class CashboxActivity < View
   end
 
   def rpc_button_print_activity(session, data)
+    # dp "removed"
+    return nil
     return unless data._students.length >= 1
     acts = data._students.collect { |s|
       if data._table_activities.length == 0

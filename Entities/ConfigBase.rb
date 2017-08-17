@@ -48,7 +48,7 @@ class ConfigBases < Entities
     value_block :operator
     value_int :cost_base
     value_int :cost_shared
-    value_str :allow_free
+    value_list_drop :allow_free, '%w(false true all)'
     value_str :phone_main
     value_str :start_loaded
 
@@ -91,6 +91,10 @@ class ConfigBases < Entities
                         :internet_mobile => [:internet_mobile_autocharge]
     }
     @@functions_conflict = [[:course_server, :course_client]]
+  end
+
+  def migration_10(c)
+    c.allow_free = [c.allow_free]
   end
 
   def migration_9(c)

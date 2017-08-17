@@ -192,7 +192,7 @@ module Internet
   # - InternetPersons, where the different allowed traffics might be stored
   def free(user)
     #dputs_func
-    case ConfigBase.allow_free
+    case ConfigBase.allow_free[0]
       when /all/
         dputs(3) { "User #{user} is free because ALL are free" }
         return true

@@ -123,9 +123,9 @@ class PersonModify < View
         change_pwd =
             reply_one_two(can_change,
                           %i(new_password password_plain change_password), :not_allowed) +
-            reply_visible(p.show_password?(session.owner), :password_plain) +
-            reply(:update, :not_allowed => "<b>Vous n'avez pas le droit<br>" +
-                             'de changer ce mot de passe</b>')
+                reply_visible(p.show_password?(session.owner), :password_plain) +
+                reply(:update, :not_allowed => "<b>Vous n'avez pas le droit<br>" +
+                                 'de changer ce mot de passe</b>')
         dputs(4) { "change_pwd is #{change_pwd.inspect}" }
         reply(:empty_nonlists) + reply(:update, p) +
             reply(:update, update(session)) +
@@ -136,7 +136,9 @@ class PersonModify < View
 
   def update(session)
     if person = session.owner
-      {:your_account_total_due => person.account_total_due}
+      if ConfigBase.has_function? :accounting
+        {:your_account_total_due => person.account_total_due}
+      end
     end
   end
 

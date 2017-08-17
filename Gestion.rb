@@ -63,7 +63,8 @@ begin
                                  'ComptaCheck', 'secretary')
   Permission.add('maintenance', 'Inventory.*,AdminBackup,AdminPower,AdminFiles.*', 'default')
   Permission.add('cybermanager', 'CashboxCredit,FlagAddInternet,' +
-                                   'FlagPersonAdd,CashboxService,InternetMobile', '')
+                                   'FlagPersonAdd,CashboxService,InternetMobile,' +
+                                    'CashboxActivity', '')
   Permission.add('manager', 'Template.*,Internet.*',
                               'director')
   Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,' +

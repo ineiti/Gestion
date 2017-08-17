@@ -21,8 +21,13 @@ class TemplateActivity < View
         show_block :show
         show_list_drop :card_filename, 'Activities.files.sort'
         show_field :tags
+        show_field :internet_limit
         show_button :save
       end
     end
+  end
+
+  def rpc_list_choice_internetClass(session, name, args)
+    # dp name, args
   end
 end

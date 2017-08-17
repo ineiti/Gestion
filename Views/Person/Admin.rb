@@ -92,6 +92,8 @@ class PersonAdmin < View
   end
 
   def update(session)
-    {:your_account_total_due => session.owner.account_total_due}
+    if ConfigBase.has_function? :accounting
+      {:your_account_total_due => session.owner.account_total_due}
+    end
   end
 end

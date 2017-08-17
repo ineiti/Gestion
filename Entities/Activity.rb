@@ -16,6 +16,7 @@ class Activities < Entities
     value_block :hidden
     value_str :card_filename
     value_list :tags, '%w( library internet club )'
+    value_entity_internetClass_all :internet_limit, :drop, :name
   end
 
   def files
@@ -92,15 +93,15 @@ class ActivityPayments < Entities
   # Get start and end of a period respecting overlap lesser periods before
   def self.get_period(date, period, overlap=0)
     case period.to_s
-      when /day/
+      when /daily/
         return [date - overlap, date]
-      when /week/
+      when /weekly/
         ceil = (date + overlap >= week_start(date) + 7)
         start = ceil ? date : week_start(date)
-      when /month/
+      when /monthly/
         ceil = (date + overlap * 7 >= Date.new(date.year, date.month + 1))
         start = ceil ? date : Date.new(date.year, date.month)
-      when /year/
+      when /yearly/
         ceil = (date.next_month(overlap) >= Date.new(date.year + 1))
         start = ceil ? date : Date.new(date.year)
     end

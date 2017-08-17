@@ -43,7 +43,7 @@ class SpecialPlug < View
   end
 
   def rpc_button_recharge(session, data)
-    dp data._plugs
+    # dp data._plugs
   end
 
   def rpc_button_charge(session, data )

@@ -838,7 +838,7 @@ class TC_Course < Test::Unit::TestCase
     assert_equal [12], foo_grade.means
 
     a = {center:Persons.center._login_name, course:@it_101._name}
-    dp ICC.get(:Courses, :grades_get, args: a).inspect
+    # dp ICC.get(:Courses, :grades_get, args: a).inspect
 
     main.kill
   end
