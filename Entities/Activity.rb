@@ -53,7 +53,7 @@ class Activity < Entity
 
   def start_end(s, d = Date.today)
     ActivityPayments.search_by_person_paid(s).select { |ap|
-      ap.date_start <= d and d <= ap.date_end and ap.activity == self
+      ap.date_start <= d && d <= ap.date_end && ap.activity == self
     }.collect { |ap| [ap.date_start, ap.date_end] }.pop || [nil, nil]
   end
 

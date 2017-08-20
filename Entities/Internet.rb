@@ -28,10 +28,10 @@ end
 class InternetClass < Entity
   # Checks whether a given user is in limits of InternetClasses and thus
   # allowed to use the internet
-  def in_limits?(host, today = Date.today)
+  def in_limits?(login, today = Date.today)
     return true if type == ['unlimited']
     return true unless t = Network::Captive.traffic
-    t.get_day(host, 1, today.to_time).flatten[0..1].inject(:+) < limit.to_i * 1_000_000
+    t.get_day(login, 1, today.to_time).flatten[0..1].inject(:+) < limit.to_i * 1_000_000
   end
 end
 
@@ -191,7 +191,7 @@ module Internet
   # - courses (date between :start and :end and internet_free_course)
   # - InternetPersons, where the different allowed traffics might be stored
   def free(user)
-    #dputs_func
+    # dputs_func
     case ConfigBase.allow_free[0]
       when /all/
         dputs(3) { "User #{user} is free because ALL are free" }
@@ -228,6 +228,15 @@ module Internet
         dputs(3) { "User #{login} has internetpersons #{ip.in_limits?}" }
         return ip.in_limits?
       end
+
+      Activities.search_by_tags('internet').each{|act|
+        dputs(3){"Searching activity #{act}"}
+        if act.start_end(user) != [nil, nil]
+          if (il = act.internet_limit) != nil
+            return il.in_limits?(user.login_name)
+          end
+        end
+      }
 
       if ic = ConfigBase.iclass_default
         dputs(3) { "User #{login} falls into default : #{ic.in_limits?(login)}" }
