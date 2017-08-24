@@ -142,6 +142,7 @@ class ActivityPayments < Entities
   end
 
   def self.for_user(s)
+    s == nil and return []
     ActivityPayments.matches_by_person_paid(s)
   end
 end

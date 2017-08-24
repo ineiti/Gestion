@@ -3,7 +3,7 @@ class CashboxActivity < View
 
   def layout
     @update = true
-    @order = 140
+    @order = 15
 
     @functions_need = [:activities]
 
