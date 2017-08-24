@@ -76,7 +76,7 @@ module Internet
       Device.add_observer(self)
       dev, op = if (dev_id = ConfigBase.captive_dev.to_s).length > 0
                   dev_id.sub!(/:.*$/, '')
-                  dputs(2){"Searching for #{dev_id} in #{Network::Device.list}"}
+                  dputs(2) { "Searching for #{dev_id} in #{Network::Device.list}" }
                   [Network::Device.search_dev({uevent: {interface: dev_id}}).first,
                    'add_captive']
                 else
@@ -89,7 +89,7 @@ module Internet
   # Whenever a new device or a new operator is detected, this function
   # updates the internal variables.
   def update(operation, dev = nil)
-    dputs(3){"Updating operation #{operation} with dev #{dev.inspect}"}
+    dputs(3) { "Updating operation #{operation} with dev #{dev.inspect}" }
     case operation
       when /del/
         if @device == dev
@@ -229,10 +229,14 @@ module Internet
         return ip.in_limits?
       end
 
-      Activities.search_by_tags('internet').each{|act|
-        dputs(3){"Searching activity #{act}"}
+      Activities.search_by_tags('internet').each { |act|
+        dputs(3) { "Searching activity #{act}" }
         if act.start_end(user) != [nil, nil]
-          if (il = act.internet_limit) != nil
+          if (il = act.internet_limit) == nil
+            dputs(3) { "User #{user.login_name} goes free" }
+            return true
+          else
+            dputs(3) { "found limit #{il} for user #{user.login_name}" }
             return il.in_limits?(user.login_name)
           end
         end

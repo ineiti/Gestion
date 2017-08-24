@@ -202,7 +202,7 @@ class ConfigBase < Entity
     else
       stop_mobile_control
     end
-    if ConfigBase.has_function?(:accounting)
+    if ConfigBase.has_function?(:accounting) && Entities.is_setup?(:Persons)
       Persons.search_by_permissions('secretary').each{|p|
         p.update_accounts
       }

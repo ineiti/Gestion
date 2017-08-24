@@ -36,7 +36,7 @@ class SelfInternet < View
   # 4 - no internet available
   def can_connect(session)
     noop = Internet.operator == nil
-    # return 4 if noop
+    return 4 if noop
     if not (ag = AccessGroups.allow_user_now(session.owner))[0]
       return ag[1]
     elsif Captive.restricted

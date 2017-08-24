@@ -16,7 +16,7 @@ class Activities < Entities
     value_block :hidden
     value_str :card_filename
     value_list :tags, '%w( library internet club )'
-    value_entity_internetClass_all :internet_limit, :drop, :name
+    value_entity_internetClass_empty_all :internet_limit, :drop, :name
   end
 
   def files
@@ -113,6 +113,7 @@ class ActivityPayments < Entities
   def self.pay(act, p_paid, p_cashed, d_today = Date.today)
     if !p_cashed.account_due
       dputs(0) { "Couldn't make #{p_cashed} pay, as he doesn't have an account_due" }
+      return
     end
     mov = Movements.create("#{p_paid.login_name} paid #{p_cashed.login_name} #{act.cost} "+
                                "for #{act.name}", Date.today, act.cost_mov,
