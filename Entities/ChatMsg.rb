@@ -118,11 +118,18 @@ class ChatMsgs < Entities
   end
 
   def show_list(max = 100)
+    date = ''
     search_all_.reverse[0...max].collect { |cm|
       t = cm.time.class == Time ? cm.time : Time.parse(cm.time)
       name = (ConfigBase.has_function?(:course_server) && cm.center) ?
           "#{cm.login}@#{cm.center.login_name}" : "#{cm.login}"
-      "#{t.strftime('%H:%M')} - #{name}: #{cm.msg}"
+      d = "#{t.strftime('%Y-%m-%d')}\n"
+      if d != date
+        date = d
+      else
+        d = ''
+      end
+      "#{d}#{t.strftime('%H:%M')} - #{name}: #{cm.msg}"
     }.join("\n")
   end
 
