@@ -85,7 +85,7 @@ class ConfigBases < Entities
                                       :internet_mobile, :internet_cyber],
                         :courses => [:course_server, :course_client, :accounting_courses],
                         :accounting => [:accounting_courses, :cashbox],
-                        :cashbox => [:accounting_courses, :internet_cyber],
+                        :cashbox => [:accounting_courses, :internet_cyber, :activities],
                         :activities => [:library],
                         :special => [:plug_admin, :special_vnc],
                         :internet_mobile => [:internet_mobile_autocharge]
@@ -201,6 +201,11 @@ class ConfigBase < Entity
       $MobileControl.autocharge = ConfigBase.has_function?(:internet_mobile_autocharge)
     else
       stop_mobile_control
+    end
+    if ConfigBase.has_function?(:accounting)
+      Persons.search_by_permissions('secretary').each{|p|
+        p.update_accounts
+      }
     end
   end
 

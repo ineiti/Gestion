@@ -92,15 +92,13 @@ class TC_Activity < Test::Unit::TestCase
     d = Date.new(2014, 10, 10)
     d_year = Date.new(2014)
 
-    pay = ActivityPayments.pay(@internet, @student_1, @secretary, d)
     ActivityPayments.pay(@internet, @student_1, @secretary, d.months_ago(1))
-    # pay = ActivityPayments.pay(@internet, @student_1, @secretary, d)
+    pay = ActivityPayments.pay(@internet, @student_1, @secretary, d)
 
     assert_equal d, @internet.start_end(@student_1, d)[0]
-    pay.movement.delete
     pay.delete
-    # assert_equal [nil, nil], @internet.start_end(@student_1, d)
-    pay = ActivityPayments.pay(@internet, @student_1, @secretary, d)
+    assert_equal [nil, nil], @internet.start_end(@student_1, d)
+    ActivityPayments.pay(@internet, @student_1, @secretary, d)
     assert_equal d, @internet.start_end(@student_1, d)[0]
   end
 

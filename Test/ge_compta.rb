@@ -8,6 +8,7 @@ class TC_Compta < Test::Unit::TestCase
     #    Permission.add( 'default', '.*' )
     Permission.add( 'student', '.*' )
     Permission.add( 'teacher', '.*' )
+    Permission.add( 'secretary', 'Cashbox.*')
 #    Entities.delete_all_data()
 
     dputs(1){ 'Resetting SQLite' }
@@ -18,7 +19,7 @@ class TC_Compta < Test::Unit::TestCase
     @admin = Entities.Persons.create( :login_name => 'admin', :password => 'super123',
       :permissions => %w(default teacher), :first_name => 'Admin', :family_name => 'The')
     @secretaire = Entities.Persons.create( :login_name => 'secretaire', :password => 'super',
-      :permissions => %w(default teacher), :first_name => 'Le', :family_name => 'Secretaire')
+      :permissions => %w(default teacher secretary), :first_name => 'Le', :family_name => 'Secretaire')
     @surf = Entities.Persons.create( :login_name => 'surf', :password => 'super',
       :permissions => ['default'], :first_name => 'Internet', :family_name => 'Surfer')
     @net = Entities.Courses.create( :name => 'net_1001')
@@ -55,5 +56,12 @@ class TC_Compta < Test::Unit::TestCase
   
   def teardown
     permissions_init
+  end
+
+  def test_account_due
+    assert_equal nil, @secretaire.account_due
+    dp @secretaire
+    ConfigBase.add_function(:cashbox)
+    assert_not_equal nil, @secretaire.account_due
   end
 end
