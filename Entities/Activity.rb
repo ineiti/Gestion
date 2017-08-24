@@ -33,10 +33,10 @@ class Activities < Entities
   def tagged_users(tags, date = Date.today)
     #dputs_func
     tagged(tags).collect { |a|
-      aps = ActivityPayments.search_by_activity( a )
-      dputs(3){"Found #{aps.inspect} for tag #{a}"}
-      ActivityPayments.active_now( aps, date ).collect{|ap|
-        dputs(3){"Found #{ap.inspect} active for now"}
+      aps = ActivityPayments.search_by_activity(a)
+      dputs(3) { "Found #{aps.inspect} for tag #{a}" }
+      ActivityPayments.active_now(aps, date).collect { |ap|
+        dputs(3) { "Found #{ap.inspect} active for now" }
         ap.person_paid
       }
     }.flatten.uniq
@@ -48,7 +48,9 @@ class Activity < Entity
   attr_accessor :print_card
 
   def setup_instance
-    @print_card = OpenPrint.new("#{ConfigBase.template_dir}/#{card_filename.first}" )
+    if card_filename != nil
+      @print_card = OpenPrint.new("#{ConfigBase.template_dir}/#{card_filename.first}")
+    end
   end
 
   def start_end(s, d = Date.today)
@@ -110,7 +112,7 @@ class ActivityPayments < Entities
 
   def self.pay(act, p_paid, p_cashed, d_today = Date.today)
     if !p_cashed.account_due
-      dputs(0){"Couldn't make #{p_cashed} pay, as he doesn't have an account_due"}
+      dputs(0) { "Couldn't make #{p_cashed} pay, as he doesn't have an account_due" }
     end
     mov = Movements.create("#{p_paid.login_name} paid #{p_cashed.login_name} #{act.cost} "+
                                "for #{act.name}", Date.today, act.cost_mov,

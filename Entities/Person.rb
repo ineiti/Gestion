@@ -607,7 +607,7 @@ class Person < Entity
   end
 
   def update_account_due
-    #dputs_func
+    # dputs_func
     return unless ConfigBase.has_function? :accounting
     if can_view :FlagAddInternet and login_name != 'admin'
       dputs(3) { "Adding account_due to -#{login_name.inspect}-" }

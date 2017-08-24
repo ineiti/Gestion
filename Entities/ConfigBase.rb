@@ -95,6 +95,7 @@ class ConfigBases < Entities
 
   def migration_10(c)
     c.allow_free = [c.allow_free]
+    c.account_activities = c.account_services
   end
 
   def migration_9(c)
