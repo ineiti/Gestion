@@ -26,7 +26,7 @@ class AdminPower < View
     case name
       when /reboot_gestion/ then
         Thread.new {
-          Service.restart('gestion')
+          Platform.restart('gestion')
         }
         msg = '<h1>Recharger le navigateur avec ctrl+r ou F5</h1>'
       when /reboot_dreamplug/ then

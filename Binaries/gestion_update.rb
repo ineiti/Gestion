@@ -32,7 +32,7 @@ def main
       end
       file = IO.read(@file_update)
       update_html('Stopping Gestion')
-      Service.stop('gestion')
+      Platform.stop('gestion')
       update_html("Updating using file #{file}")
       update_html "Calling pacman to update #{file}"
       update = Thread.new {
@@ -57,12 +57,12 @@ def main
       while File.exists? @file_update
         sleep 1
       end
-      Service.stop('gestion')
+      Platform.stop('gestion')
     end
     update_html update_content
     update_html 'Starting Gestion'
-    Service.reload
-    Service.start('gestion')
+    Platform.reload
+    Platform.start('gestion')
     i = 0
     uri = URI('http://localhost:3302')
     loop do

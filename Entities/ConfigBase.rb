@@ -191,9 +191,9 @@ class ConfigBase < Entity
     save_block_to_object :operator, Network::Operator
     Network::Operator.clean_config
     if ConfigBase.has_function?(:share)
-      Service.enable_start(:samba)
+      Platform.enable_start(:samba)
     else
-      Service.stop_disable(:samba)
+      Platform.stop_disable(:samba)
     end
     if ConfigBase.has_function?(:internet_mobile)
       start_mobile_control

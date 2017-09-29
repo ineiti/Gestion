@@ -25,7 +25,7 @@ class SpecialVNC < View
 
   def rpc_button_start_x(session, data)
     @static._password = data._password
-    if Service.system == :ArchLinux
+    if Platform.system == :ArchLinux
       System.run_str("echo #{data._password} | vncpasswd -f > /root/.vnc/passwd")
       IO.write('/root/.xinitrc',
                "xset -dpms; xset s off
@@ -33,7 +33,7 @@ x0vncserver -passwordfile ~/.vnc/passwd &
 vncviewer -fullscreen -shared -viewonly -passwd=/root/.vnc/passwd #{data._ip}")
       System.run_bool('killall -9 xinit')
       System.run_bool('killall -9 Xorg')
-      Service.start 'startx@root'
+      Platform.start 'startx@root'
     end
   end
 end

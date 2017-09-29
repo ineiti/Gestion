@@ -76,7 +76,7 @@ class Shares < Entities
       f.write(a)
     }
 
-    Service.restart('samba')
+    Platform.restart('samba')
   end
 
   def self.is_active?

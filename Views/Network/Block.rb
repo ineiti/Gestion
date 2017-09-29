@@ -82,6 +82,6 @@ class NetworkBlock < View
 
   def rpc_button_update(session, data)
     update_dnsmasq(@hosts.data_str = data._hosts)
-    Service.restart :dnsmasq
+    Platform.restart :dnsmasq
   end
 end
