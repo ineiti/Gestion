@@ -19,6 +19,7 @@ class ConfigBases < Entities
     value_str :label_url
     value_str :html_title
     value_str :upload_files
+    value_str :connection_status_log
 
     value_block :templates
     value_str :template_dir
@@ -190,10 +191,12 @@ class ConfigBase < Entity
     ConfigBase.has_function?(:internet_captive) and Network::Captive.setup
     save_block_to_object :operator, Network::Operator
     Network::Operator.clean_config
-    if ConfigBase.has_function?(:share)
-      Platform.enable_start(:samba)
-    else
-      Platform.stop_disable(:samba)
+    if ConfigBase.samba_simul.to_s == "false"
+      if ConfigBase.has_function?(:share)
+        Platform.enable_start(:samba)
+      else
+        Platform.stop_disable(:samba)
+      end
     end
     if ConfigBase.has_function?(:internet_mobile)
       start_mobile_control
@@ -202,7 +205,7 @@ class ConfigBase < Entity
     else
       stop_mobile_control
     end
-    if ConfigBase.has_function?(:accounting) && Entities.is_setup?(:Persons)
+    if ConfigBase.has_function?(:accounting) && Entities.is_setup?(:Person)
       Persons.search_by_permissions('secretary').each{|p|
         p.update_accounts
       }

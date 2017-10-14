@@ -123,7 +123,7 @@ class Courses < Entities
   end
 
   def self.create_ctype(ctype, date, creator = nil)
-    dputs_func
+    #dputs_func
     needs_center = (ConfigBase.has_function?(:course_server) and
         (creator and creator.has_permission?(:center)))
     dputs(4) { "needs_center is #{needs_center.inspect}" }

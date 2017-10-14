@@ -139,7 +139,9 @@ else
 
   # Initialize network and listen for new devices
   if ConfigBase.has_function? :network
-    Network::Device.start
+    if !get_config(false, :Simulation)
+      Network::Device.start
+    end
   end
 
   # Start up internet-handling (traffic and credit)

@@ -66,17 +66,16 @@ class SelfInternet < View
     dputs(3) { "CanConnect is #{cc}" }
     case cc
       when 0
-        status = Internet.device ? Internet.device.connection_status_old : 0
+        status, status_str = Internet.connection_status
         dputs(3) { "Connection-status is #{status.inspect}" }
         status = status.to_i
         if (0..4).include? status.to_i
-          status_str = %w( None PPP PAP IP VPN )
           status_color = %w( ff0000 ff2200 ff5500 ffff88 88ff88 )
           status_width = %w( 25 30 35 100 150 )
           connection_status = "<td width='#{status_width[status]}" +
               "' bgcolor='" +
               status_color[status] + "'>" +
-              status_str[status] + "</td><td bgcolor='ffffff'></td>"
+              status_str + "</td><td bgcolor='ffffff'></td>"
         else
           dputs(0) { "Error: connection-status was #{status.inspect}" }
           connection_status = 'Comm-error'

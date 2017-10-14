@@ -20,6 +20,7 @@ class Shares < Entities
   end
 
   def save_config(domain)
+    dputs_func
     return unless Shares.is_active?
 
     a = IO.read('Files/smb.conf')

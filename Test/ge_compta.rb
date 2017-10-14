@@ -49,11 +49,11 @@ class TC_Compta < Test::Unit::TestCase
       :address => 'B.P. 1234', :town => 'Sansibar',
       :phone => '+23599999999', :email => 'profeda@gmail.com')
     @center.password = @center.password_plain = '1234'
-    
+
     Sessions.create( @admin, 'default')
-    
+
   end
-  
+
   def teardown
     permissions_init
   end

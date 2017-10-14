@@ -157,6 +157,24 @@ module Internet
     }
   end
 
+  def connection_status
+    return [ 0, "No device" ] unless @device
+    if ConfigBase.connection_status_log && ConfigBase.connection_status_log.length > 0
+      reply = System.run_str("cat #{ConfigBase.connection_status_log}")
+      if reply.length > 0
+        return reply.split(" ")
+      else
+        return [ 2, "Error: #{reply}" ]
+      end
+    else
+      if @device.connection_status == Device::CONNECTED
+        return [ 4, "Up" ]
+      else
+        return [ 2, "Connecting" ]
+      end
+    end
+  end
+
   # Scan for all active courses (date_start <= date_now <= date_end) for a
   # specific +user+, which should be of type #Persons
   def active_course_for(user)

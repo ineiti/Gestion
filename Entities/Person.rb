@@ -325,14 +325,18 @@ class Persons < Entities
       # CashboxCredit-permission is the least for everybody who handles money.
       p.login_name != 'admin' && p.has_permission?(:CashboxCredit)
     }.collect { |p|
-      dputs(4) { "p is #{p.full_name}" }
-      dputs(4) { "account is #{p.account_due.get_path}" }
-      amount = (p.account_due.total.to_f * 1000).to_i.separator
-      name = p.full_name
-      if name.length == 0
-        name = p.login_name
+      if p.account_due != nil
+        dputs(4) { "p is #{p.full_name}" }
+        dputs(4) { "account is #{p.account_due.get_path}" }
+        amount = (p.account_due.total.to_f * 1000).to_i.separator
+        name = p.full_name
+        if name.length == 0
+          name = p.login_name
+        end
+        [p.person_id, "#{amount.to_s.rjust(6)} - #{name}"]
+      else
+        [p.person_id, "0 - #{name}"]
       end
-      [p.person_id, "#{amount.to_s.rjust(6)} - #{name}"]
     }.sort { |a, b|
       a[1] <=> b[1]
     }.reverse
@@ -640,6 +644,7 @@ class Person < Entity
       dputs(3) { "Getting cash account #{acc}" }
       return unless ConfigBase.account_cash
       cc = "#{ConfigBase.account_cash.get_path}::#{acc}"
+      dputs(3){"Account will be #{cc}"}
       self.account_cash = Accounts.get_by_path_or_create(cc, cc, false, -1, true)
       dputs(3) { "Account is #{account_cash.inspect}" }
     end
