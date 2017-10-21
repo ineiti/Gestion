@@ -60,7 +60,7 @@ class TC_Compta < Test::Unit::TestCase
 
   def test_account_due
     assert_equal nil, @secretaire.account_due
-    dp @secretaire
+    dputs(1){"#{@secretaire}"}
     ConfigBase.add_function(:cashbox)
     assert_not_equal nil, @secretaire.account_due
   end

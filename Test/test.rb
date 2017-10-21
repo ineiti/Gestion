@@ -32,9 +32,10 @@ dir = File.expand_path('..', __dir__)
 QooxView.init("#{dir}/Entities", "#{dir}/Views")
 
 tests = Dir.glob('ge_*.rb')
-#tests = %w( activity )
+# tests = %w( activity )
 #tests = %w( compta )
-#tests = %w( internet )
+# tests = %w( internet )
+# tests = %w( usage )
 # tests = %w( configbase )
 
 $LOAD_PATH.push '.'
@@ -42,6 +43,7 @@ tests.each { |t|
   begin
     require "ge_#{t}"
   rescue LoadError => e
+    dputs(1){"Found error #{e}"}
     require t
   end
 }

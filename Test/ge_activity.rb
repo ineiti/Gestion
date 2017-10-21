@@ -13,15 +13,15 @@ class TC_Activity < Test::Unit::TestCase
 
     @library = Activities.create(name: 'library', cost: 3_000,
                                  payment_period: %w(yearly), start_type: %w(period_overlap),
-                                 card_filename: %w( library_card.odg ),
+                                 card_filename: %w( carte_etudiant.odg ),
                                  tags: [:library])
     @internet = Activities.create(name: 'internet', cost: 10_000,
                                   payment_period: %w(monthly), start_type: %w(payment),
-                                  card_filename: %w( library_card.odg),
+                                  card_filename: %w( carte_etudiant.odg),
                                   tags: [:internet])
     @library_plus = Activities.create(name: 'library_internet', cost: 20_000,
                                       payment_period: %w(monthly), start_type: %w(payment),
-                                      card_filename: %w( library_card.odg),
+                                      card_filename: %w( carte_etudiant.odg),
                                       tags: [:internet, :library])
 
     @admin = Persons.create(login_name: 'admin', permissions: %w(admin))
@@ -42,29 +42,29 @@ class TC_Activity < Test::Unit::TestCase
     d_week = Date.new(2014, 10, 5)
     d_month = Date.new(2014, 10)
     d_year = Date.new(2014)
-    assert_equal [d, d], ActivityPayments.get_period(d, :day, 0)
-    assert_equal [d-1, d], ActivityPayments.get_period(d, :day, 1)
-    assert_equal [d_week, d_week + 6], ActivityPayments.get_period(d, :week, 0)
-    assert_equal [d_week, d_week + 6], ActivityPayments.get_period(d, :week, 1)
-    assert_equal [d, d_week + 13], ActivityPayments.get_period(d, :week, 2)
+    assert_equal [d, d], ActivityPayments.get_period(d, :daily, 0)
+    assert_equal [d-1, d], ActivityPayments.get_period(d, :daily, 1)
+    assert_equal [d_week, d_week + 6], ActivityPayments.get_period(d, :weekly, 0)
+    assert_equal [d_week, d_week + 6], ActivityPayments.get_period(d, :weekly, 1)
+    assert_equal [d, d_week + 13], ActivityPayments.get_period(d, :weekly, 2)
     assert_equal [d_month, d_month.next_month - 1],
-                 ActivityPayments.get_period(d, :month, 0)
+                 ActivityPayments.get_period(d, :monthly, 0)
     assert_equal [d_month, d_month.next_month - 1],
-                 ActivityPayments.get_period(d, :month, 1)
+                 ActivityPayments.get_period(d, :monthly, 1)
     assert_equal [d_month, d_month.next_month - 1],
-                 ActivityPayments.get_period(d, :month, 2)
+                 ActivityPayments.get_period(d, :monthly, 2)
     assert_equal [d_month, d_month.next_month - 1],
-                 ActivityPayments.get_period(d, :month, 3)
+                 ActivityPayments.get_period(d, :monthly, 3)
     assert_equal [d, d_month.next_month(2) - 1],
-                 ActivityPayments.get_period(d, :month, 4)
+                 ActivityPayments.get_period(d, :monthly, 4)
     assert_equal [d_year, d_year.next_year - 1],
-                 ActivityPayments.get_period(d, :year, 0)
+                 ActivityPayments.get_period(d, :yearly, 0)
     assert_equal [d_year, d_year.next_year - 1],
-                 ActivityPayments.get_period(d, :year, 1)
+                 ActivityPayments.get_period(d, :yearly, 1)
     assert_equal [d_year, d_year.next_year - 1],
-                 ActivityPayments.get_period(d, :year, 2)
+                 ActivityPayments.get_period(d, :yearly, 2)
     assert_equal [d, d_year.next_year(2) - 1],
-                 ActivityPayments.get_period(d, :year, 3)
+                 ActivityPayments.get_period(d, :yearly, 3)
   end
 
   def test_add_payment

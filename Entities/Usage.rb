@@ -29,7 +29,10 @@ class Usage < Entity
   end
 
   def filter_files
+    #dputs_func
+    dputs(3){"#{fetch_files}"}
     fetch_files.sort.reverse.map { |logfile|
+      dputs(4){"Using file #{logfile}"}
       filter_file(logfile)
     }.flatten
   end

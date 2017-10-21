@@ -37,12 +37,12 @@ class TC_Internet < Test::Unit::TestCase
 
   def libnet_isp_gprs
     @operator.connection_type = Operator::CONNECTION_ONDEMAND
-    ConfigBase.allow_free = false
+    ConfigBase.allow_free = ['false']
   end
 
   def libnet_isp_vsat
     @operator.connection_type = Operator::CONNECTION_ALWAYS
-    ConfigBase.allow_free = true
+    ConfigBase.allow_free = ['true']
   end
 
   def test_take_money
@@ -226,6 +226,8 @@ class TC_Internet < Test::Unit::TestCase
     ip.duration = 1
     assert !ip.is_active?
     ip.duration = 10
+    assert !ip.is_active?
+    ip.duration = 11
     assert ip.is_active?
 
     tr.traffic_init(:test, [0,0])

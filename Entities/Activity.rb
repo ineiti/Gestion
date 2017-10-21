@@ -80,7 +80,7 @@ class ActivityPayments < Entities
 
   def self.get_one_period(date, period, ceil = false)
     [date,
-     case period[0].to_s
+     case period.to_s
        when /daily/
          date + 1
        when /weekly/
@@ -89,6 +89,9 @@ class ActivityPayments < Entities
          (ceil ? Date.new(date.year, date.month + 1) : date).next_month
        when /yearly/
          (ceil ? Date.new(date.year + 1) : date).next_year
+       else
+         raise("Unknown period #{period[0].to_s}!")
+         fail
      end - 1]
   end
 

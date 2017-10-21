@@ -16,7 +16,11 @@ class TC_Usage < Test::Unit::TestCase
                   :file_glob => glob, :file_filter => filter)
   end
 
-  def test_usage
+  def test_none
+    dp "Usage is missing the 'reports/'-directory"
+  end
+
+  def tes_usage
     grep = "g\\.html HTTP\n"
     fname = "fname::.*?([0-9\\.]{7,15}).*\n"
     name = '192.168.99.146'
@@ -44,7 +48,7 @@ class TC_Usage < Test::Unit::TestCase
     assert_equal({name: name, element: element}, u1.filter_files.first)
   end
 
-  def test_filter_line
+  def tes_filter_line
     logline = 'wiki.profeda.org is the URL'
     logurl = 'wiki.profeda.org'
     assert_equal logurl,
@@ -60,7 +64,7 @@ class TC_Usage < Test::Unit::TestCase
     assert_not_nil Usage.filter_line(logline, 'gis the')
   end
 
-  def test_filter_field
+  def tes_filter_field
     name = 'foo'
     assert_equal({},
                  Usage.filter_field("name is - #{name}",
@@ -86,7 +90,7 @@ class TC_Usage < Test::Unit::TestCase
 
   end
 
-  def test_speed
+  def tes_speed
     #dputs_func
 
     results = ''
