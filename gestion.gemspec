@@ -1,12 +1,12 @@
 Gem::Specification.new do |s|
   s.name = 'gestion'
-  s.version = '1.9.12'
+  s.version = '1.9.13-11'
   s.date = '2017-10-30'
   s.summary = 'Gestion of a cultural center'
   s.description = 'This program allows you to handle the courses,
   internet and accounting of a small cultural center.'
   s.authors = ['Linus Gasser']
-  s.email = 'ineiti@gasser.blue'
+  s.email = 'ineiti.blue'
 
   s.files         = `if [ -d '.git' ]; then git ls-files -z; fi`.split("\x0")
   s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
