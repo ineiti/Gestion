@@ -49,6 +49,7 @@ def main
       update_html('Stopping Gestion')
       Platform.stop('gestion')
       update_html("Updating using file #{file}")
+      update = nil
       case Platform.system
         when :ArchLinux
           update_html "Calling pacman to update #{file}"
@@ -60,28 +61,27 @@ def main
             puts System.run_str("/usr/bin/pacman --noconfirm --force -U #{file} > "+
                                     @file_update)
           }
-          while update.alive?
-            dputs(3) { 'Update is alive' }
-            update_html(reverse_update, true)
-            sleep 4
-          end
-          dputs(3) { 'Update should be done' }
-          update_content = reverse_update
-          FileUtils.rm @file_update
         when :Ubuntu
           update_html "Going to install #{file} using deb"
-          dp Platform.has_systemd
           if Platform.has_systemd
-            dp "systemd stop"
+            update_html "systemd stop"
             Platform.stop('gestion')
           else
-            dp "shell stop"
+            update_html "shell stop"
             System.run_bool('/opt/gestion/Binaries/kill_gestion')
           end
           update = Thread.new{
             System.run_str "/usr/bin/dpkg -i #{file}"
           }
       end
+      while update.alive?
+        dputs(3) { 'Update is alive' }
+        update_html(reverse_update, true)
+        sleep 4
+      end
+      dputs(3) { 'Update should be done' }
+      update_content = reverse_update
+      FileUtils.rm @file_update
     else
       update_content = reverse_update
       FileUtils.rm @file_switch_versions
