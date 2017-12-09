@@ -26,7 +26,7 @@ class AdminUpdate < View
   end
 
   def list_tmp
-    Dir.glob('/tmp/{*.pkg.tar.*z,*.rpm}').collect { |f| "file://#{f}" }
+    Dir.glob('/tmp/{*.pkg.tar.*z,*.deb}').collect { |f| "file://#{f}" }
   end
 
   def list_files

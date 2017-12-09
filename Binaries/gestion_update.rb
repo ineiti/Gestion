@@ -38,8 +38,8 @@ def main
             os.exit(1)
           end
         when :Ubuntu
-          if file !~ /rpm$/
-            dputs(0) { 'Cannot install non-rpm file in ubuntu' }
+          if file !~ /deb$/
+            dputs(0) { 'Cannot install non-deb file in ubuntu' }
             os.exit(1)
           end
         else
@@ -69,7 +69,7 @@ def main
           update_content = reverse_update
           FileUtils.rm @file_update
         when :Ubuntu
-          update_html "Going to install #{file} using rpm"
+          update_html "Going to install #{file} using deb"
           update = Thread.new{
             System.run_str '/usr/bin/apt '
           }
