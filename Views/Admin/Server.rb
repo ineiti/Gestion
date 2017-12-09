@@ -217,7 +217,7 @@ class AdminServer < View
               if m._code == 'OK'
                 dp "ok"
                 path = File.join(ConfigBase.exam_dir, course.name, stud)
-                Zip::InputStream.open(StringIO.new(m._data)) do |zip_file|
+                Zip::InputStream.open(StringIO.new(Base64::decode64(m._data))) do |zip_file|
                   while entry = zip_file.get_next_entry
                     File.write(File.join(path, entry.name), entry.get_input_stream.read)
                   end

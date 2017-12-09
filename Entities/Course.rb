@@ -406,7 +406,7 @@ class Courses < Entities
           zipfile.print(File.read(filename))
         end
       end
-      return buffer.string
+      return Base64::encode64(buffer.string)
     else
       log_msg :CourseTypes, "Didn't find #{path.inspect}"
       return "Error: can't find exams"
