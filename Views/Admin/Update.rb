@@ -54,7 +54,9 @@ class AdminUpdate < View
     System.run_bool "#{GESTION_DIR}/Binaries/backup"
     System.run_bool "#{GESTION_DIR}/Binaries/gestion_update.rb #{file}"
     if Platform.has_systemd
-      Platform.start("#{GESTION_DIR}/Binaries/gestion_update.service")
+      Platform.disable('gestion_update')
+      Platform.enable("#{GESTION_DIR}/Binaries/gestion_update.service")
+      Platform.start('gestion_update')
     else
       System.run_bool "nohup #{GESTION_DIR}/Binaries/gestion_update.rb &"
     end
