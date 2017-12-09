@@ -62,6 +62,7 @@ def main
                                     @file_update)
           }
         when :Ubuntu
+          file.split!('file://')
           update_html "Going to install #{file} using deb"
           if Platform.has_systemd
             update_html "systemd stop"

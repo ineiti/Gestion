@@ -22,7 +22,7 @@ VERSION_GESTION='1.9.13' +
     (File.exists?('Gestion.pkgrel') ? '-' + IO.read('Gestion.pkgrel') : '')
 require 'fileutils'
 
-GESTION_DIR=File.dirname(__FILE__)
+GESTION_DIR=File.expand_path(File.dirname(__FILE__))
 $config_file='config.yaml'
 if not FileTest.exists? $config_file
   puts "Config-file doesn't exist, copying a standard one"
