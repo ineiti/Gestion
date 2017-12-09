@@ -53,7 +53,7 @@ class AdminUpdate < View
     log_msg :backup, 'Creating new backup'
     System.run_bool "#{GESTION_DIR}/Binaries/backup"
     System.run_bool "#{GESTION_DIR}/Binaries/gestion_update.rb #{file}"
-    Platform.start 'gestion_update'
+    System.run_bool "nohup #{GESTION_DIR}/Binaries/gestion_update.rb &"
     reply(:eval, "document.location.href='http://local.profeda.org/update_progress.html'")
   end
 
