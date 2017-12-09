@@ -70,8 +70,13 @@ def main
           FileUtils.rm @file_update
         when :Ubuntu
           update_html "Going to install #{file} using deb"
+          if System.has_systemd
+            Platform.stop('gestion')
+          else
+            System.run_bool('/opt/gestion/Binaries/kill_gestion')
+          end
           update = Thread.new{
-            System.run_str '/usr/bin/apt '
+            System.run_str "/usr/bin/dpkg -i #{file}"
           }
       end
     else
