@@ -70,9 +70,12 @@ def main
           FileUtils.rm @file_update
         when :Ubuntu
           update_html "Going to install #{file} using deb"
-          if System.has_systemd
+          dp Platform.has_systemd
+          if Platform.has_systemd
+            dp "systemd stop"
             Platform.stop('gestion')
           else
+            dp "shell stop"
             System.run_bool('/opt/gestion/Binaries/kill_gestion')
           end
           update = Thread.new{
