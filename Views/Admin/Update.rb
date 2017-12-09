@@ -55,8 +55,9 @@ class AdminUpdate < View
     System.run_bool "#{GESTION_DIR}/Binaries/gestion_update.rb #{file}"
     if Platform.has_systemd
       Platform.start("#{GESTION_DIR}/Binaries/gestion_update.service")
+    else
+      System.run_bool "nohup #{GESTION_DIR}/Binaries/gestion_update.rb &"
     end
-    System.run_bool "nohup #{GESTION_DIR}/Binaries/gestion_update.rb &"
     reply(:eval, "document.location.href='http://local.profeda.org/update_progress.html'")
   end
 
