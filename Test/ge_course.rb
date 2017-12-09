@@ -837,7 +837,7 @@ class TC_Course < Test::Unit::TestCase
     @it_101.sync_do
     assert_equal [12], foo_grade.means
 
-    a = {center:Persons.center._login_name, course:@it_101._name}
+    a = {center: Persons.center._login_name, course: @it_101._name}
     # dp ICC.get(:Courses, :grades_get, args: a).inspect
 
     main.kill
@@ -1081,6 +1081,33 @@ class TC_Course < Test::Unit::TestCase
     assert_equal 'it-101:it-301',
                  CourseTypes.icc_fetch({course_type_names: %w( it-101 it-301)}).
                      map { |ct| ct._name }.join(':')
+  end
+
+  def test_icc_get_exams
+    tr = {center: @center.login_name, course: @it_101.name, student: @surf.login_name}
+    path = "#{ConfigBase.exam_dir}/#{tr._center}_#{tr._course}/#{tr._center}_#{tr._student}"
+    dp path
+    FileUtils.rm_rf(path)
+    ret = Courses.icc_get_exams(tr)
+    assert_true ret.start_with?('Error: ')
+    FileUtils.mkdir_p(path)
+    %w(one.doc two.xls).each { |f|
+      File.open(File.join(path, f), 'w') { |fh|
+        fh.puts("exam-file #{f}")
+      }
+      FileUtils.touch(File.join(path, f))
+    }
+    ret = Courses.icc_get_exams({center: @center.login_name, course: @it_101.name, student: @surf.login_name})
+    assert_false ret.start_with?('Error: ')
+    files = 0
+    Zip::InputStream.open(StringIO.new(ret)) do |zip_file|
+      while entry = zip_file.get_next_entry
+        content = entry.get_input_stream.read
+        assert_true content.starts_with?('exam-file')
+        files+=1
+      end
+    end
+    assert_equal 2, files
   end
 
   def test_json_byte

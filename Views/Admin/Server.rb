@@ -152,7 +152,10 @@ class AdminServer < View
             ms.step = 10
             status_list(true, status: "Error: #{ms.data._msg}")
           elsif ms.data._msg
-            status_list(false, list: ms.data._msg.collect { |c| [c._course_id, c._name] })
+            status_list(false, list: ms.data._msg.collect { |c|
+                               c._name.sub!(Persons.center.login_name + '_', '')
+                               [c._course_id, c._name]
+                             })
           else
             ms.step = 10
             ms.auto_update = 0
@@ -195,43 +198,68 @@ class AdminServer < View
                 dputs(3) { "Fetching student #{p}" }
                 get_person(p, ms)
               }
-              course = Courses.create(course)
-
-              # Fetch grades
-              m = ICC.get(:Courses, :grades_get, args: {course: course._name,
-                                                        center: Persons.center._login_name})
-              if m._code == 'OK'
-                m._msg.each { |g|
-                  student = Persons.find_by_login_name(g._student)
-                  if !student
-                    dputs(0) { "Got grade #{g} with unexisting student" }
-                  else
-                    grade = Grades.match_by_course_person(course, student)
-                    if grade
-                      dputs(3) { "Updating for #{g}" }
-                      grade.means = g._means
-                      grade.remark = g._remark
-                      grade.random = g._random
-                    else
-                      dputs(3) { "Making new grade with #{g}" }
-                      g.delete('grade_id')
-                      g._course = course
-                      g._student = student
-                      g._center = nil
-                      grade = Grades.create(g)
-                    end
-                    dputs(3) { "Grade is now #{grade}" }
-                  end
-                }
-              else
-                ms.step = 10
-                ms.status = status_list(true, status: "Error while fetching grades #{m._msg}")
-                return
-              end
             rescue StandardError => e
               ms.step = 10
               ms.auto_update = 0
               ms.status = status_list(true, status: "Couldn't fetch person - #{e}")
+              return
+            end
+
+            course = Courses.create(course)
+
+            # Fetch exam-files
+            course._students.each { |stud|
+              ms.status = status_list(true, status: "Fetching exams for #{name}")
+              dp "fetching exams"
+              m = ICC.get(:Courses, :_get_exams, args: {center: Persons.center._login_name,
+                                                        course: course.name,
+                                                        student: stud})
+              if m._code == 'OK'
+                dp "ok"
+                path = File.join(ConfigBase.exam_dir, course.name, stud)
+                Zip::InputStream.open(StringIO.new(m._data)) do |zip_file|
+                  while entry = zip_file.get_next_entry
+                    File.write(File.join(path, entry.name), entry.get_input_stream.read)
+                  end
+                end
+              else
+                dp "false"
+                ms.step = 10
+                ms.auto_update = 0
+                ms.status = status_list(true, status: "Error while fetching exams #{m._msg}")
+                return
+              end
+            }
+
+            # Fetch grades
+            m = ICC.get(:Courses, :grades_get, args: {course: course.name,
+                                                      center: Persons.center._login_name})
+            if m._code == 'OK'
+              m._msg.each { |g|
+                student = Persons.find_by_login_name(g._student)
+                if !student
+                  dputs(0) { "Got grade #{g} with unexisting student" }
+                else
+                  grade = Grades.match_by_course_person(course, student)
+                  if grade
+                    dputs(3) { "Updating for #{g}" }
+                    grade.means = g._means
+                    grade.remark = g._remark
+                    grade.random = g._random
+                  else
+                    dputs(3) { "Making new grade with #{g}" }
+                    g.delete('grade_id')
+                    g._course = course
+                    g._student = student
+                    g._center = nil
+                    grade = Grades.create(g)
+                  end
+                  dputs(3) { "Grade is now #{grade}" }
+                end
+              }
+            else
+              ms.step = 10
+              ms.status = status_list(true, status: "Error while fetching grades #{m._msg}")
               return
             end
 

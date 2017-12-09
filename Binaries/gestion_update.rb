@@ -31,26 +31,49 @@ def main
         exit
       end
       file = IO.read(@file_update)
+      case Platform.system
+        when :ArchLinux
+          if file !~ /.*pkg.tar.*/
+            dputs(0) { 'Cannot install non-pacman file in archlinux' }
+            os.exit(1)
+          end
+        when :Ubuntu
+          if file !~ /rpm$/
+            dputs(0) { 'Cannot install non-rpm file in ubuntu' }
+            os.exit(1)
+          end
+        else
+          dputs(0) { 'Cannot install in this system' }
+          os.exit(1)
+      end
       update_html('Stopping Gestion')
       Platform.stop('gestion')
       update_html("Updating using file #{file}")
-      update_html "Calling pacman to update #{file}"
-      update = Thread.new {
-        System.run_str '/usr/bin/killall -9 pacman'
-        puts @pacman_lock
-        File.exists?(@pacman_lock) and
-            FileUtils.rm(@pacman_lock)
-        puts System.run_str("/usr/bin/pacman --noconfirm --force -U #{file} > "+
-                                @file_update)
-      }
-      while update.alive?
-        dputs(3) { 'Update is alive' }
-        update_html(reverse_update, true)
-        sleep 4
+      case Platform.system
+        when :ArchLinux
+          update_html "Calling pacman to update #{file}"
+          update = Thread.new {
+            System.run_str '/usr/bin/killall -9 pacman'
+            puts @pacman_lock
+            File.exists?(@pacman_lock) and
+                FileUtils.rm(@pacman_lock)
+            puts System.run_str("/usr/bin/pacman --noconfirm --force -U #{file} > "+
+                                    @file_update)
+          }
+          while update.alive?
+            dputs(3) { 'Update is alive' }
+            update_html(reverse_update, true)
+            sleep 4
+          end
+          dputs(3) { 'Update should be done' }
+          update_content = reverse_update
+          FileUtils.rm @file_update
+        when :Ubuntu
+          update_html "Going to install #{file} using rpm"
+          update = Thread.new{
+            System.run_str '/usr/bin/apt '
+          }
       end
-      dputs(3) { 'Update should be done' }
-      update_content = reverse_update
-      FileUtils.rm @file_update
     else
       update_content = reverse_update
       FileUtils.rm @file_switch_versions

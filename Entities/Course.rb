@@ -298,9 +298,9 @@ class Courses < Entities
   def icc_grades_get(tr)
     # dputs_func
     dputs(3) { "Data is #{tr.inspect}" }
-    course = Courses.match_by_name(tr._course)
-    return "Course #{tr._course} not found" unless course
-    course._students.collect{|s|
+    course = Courses.match_by_name("#{tr._center}_#{tr._course}")
+    return "Error: Course #{tr._course} not found" unless course
+    course._students.collect { |s|
       if grade = Grades.match_by_course_person(course, s)
         g = grade.to_hash
         g._student = grade.student.login_name.sub(/^#{tr._center}_/, '')
@@ -308,7 +308,7 @@ class Courses < Entities
       else
         nil
       end
-    }.select{|g| g}
+    }.select { |g| g }
   end
 
   def icc_courses(tr)
@@ -391,6 +391,26 @@ class Courses < Entities
       course.zip_read(file)
     end
     "Read file #{file}"
+  end
+
+  def icc_get_exams(tr)
+    path = "#{ConfigBase.exam_dir}/#{tr._center}_#{tr._course}/#{tr._center}_#{tr._student}"
+    if File.directory?(path)
+      log_msg :CourseTypes, "Sending files in #{path}"
+      buffer = Zip::OutputStream.write_buffer do |zipfile|
+        Dir.glob("#{path}/*").each do |filename|
+          # Two arguments:
+          # - The name of the file as it will appear in the archive
+          # - The original file, including the path to find it
+          zipfile.put_next_entry(File.basename(filename))
+          zipfile.print(File.read(filename))
+        end
+      end
+      return buffer.string
+    else
+      log_msg :CourseTypes, "Didn't find #{path.inspect}"
+      return "Error: can't find exams"
+    end
   end
 
   def icc_exams_here(tr)
@@ -758,7 +778,7 @@ base_gestion
     #    ( ( ctype.diploma_type[0] == "accredited" ) and grade.random )
     #  @make_pdfs_state[student.login_name] = [ grade.mean, "queued" ]
     if state != 'queued'
-      dputs(2) {"File #{file} is not queued, but #{state} - removing"}
+      dputs(2) { "File #{file} is not queued, but #{state} - removing" }
       FileUtils.rm(file)
     else
       dputs(3) { "New diploma for: #{course_id} - #{student.login_name} - #{grade.to_hash.inspect}" }

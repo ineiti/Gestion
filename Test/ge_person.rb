@@ -370,4 +370,9 @@ class TC_Person < Test::Unit::TestCase
 
     Timing.measure('search all', lvl) { assert_equal 400, Persons.search_in('test_search', max: 400).length }
   end
+
+  def test_icc_get
+    josue = Persons.icc_get(center: @center, name: [@josue.login_name])
+    assert_equal 'josue', josue.login_name
+  end
 end

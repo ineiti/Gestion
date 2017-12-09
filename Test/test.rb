@@ -33,7 +33,7 @@ QooxView.init("#{dir}/Entities", "#{dir}/Views")
 
 tests = Dir.glob('ge_*.rb')
 # tests = %w( activity )
-#tests = %w( compta )
+tests = %w( course )
 # tests = %w( internet )
 # tests = %w( usage )
 # tests = %w( configbase )
