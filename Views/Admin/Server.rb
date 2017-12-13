@@ -210,20 +210,26 @@ class AdminServer < View
             # Fetch exam-files
             course._students.each { |stud|
               ms.status = status_list(true, status: "Fetching exams for #{name}")
-              dp "fetching exams"
+              dp "fetching exams for #{name}"
               m = ICC.get(:Courses, :_get_exams, args: {center: Persons.center._login_name,
                                                         course: course.name,
                                                         student: stud})
               if m._code == 'OK'
-                dp "ok"
-                path = File.join(ConfigBase.exam_dir, course.name, stud)
-                Zip::InputStream.open(StringIO.new(Base64::decode64(m._data))) do |zip_file|
-                  while entry = zip_file.get_next_entry
-                    File.write(File.join(path, entry.name), entry.get_input_stream.read)
+                if m._data != nil
+                  dp "data: #{m._data.size} - #{m._data}"
+                  if m._data.size > 0
+                    path = File.join(ConfigBase.exam_dir, course.name, stud)
+                    Zip::InputStream.open(StringIO.new(Base64::decode64(m._data))) do |zip_file|
+                      while entry = zip_file.get_next_entry
+                        File.write(File.join(path, entry.name), entry.get_input_stream.read)
+                      end
+                    end
                   end
+                else
+                  ms.status = status_list(true, status: "Got bizarre exam-file for #{stud}")
                 end
               else
-                dp "false"
+                dp 'false'
                 ms.step = 10
                 ms.auto_update = 0
                 ms.status = status_list(true, status: "Error while fetching exams #{m._msg}")
