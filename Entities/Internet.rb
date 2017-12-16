@@ -61,6 +61,7 @@ module Internet
   attr_accessor :device
   extend self
   include Network
+  include HelperClasses
 
   @operator_local = nil
 
@@ -72,14 +73,29 @@ module Internet
     dputs(4) { "@traffic is #{@traffic_save.data_str}" }
     if ConfigBase.has_function?(:internet_captive)
       @device = nil
+      connection_cmds_up = ConfigBase.connection_cmds_up
+      connection_services_up = ConfigBase.connection_services_up
+      connection_cmds_down = ConfigBase.connection_cmds_down
+      connection_services_down = ConfigBase.connection_services_down
+      connection_vpns = ConfigBase.connection_vpns
 
       Device.add_observer(self)
       dev, op = if (dev_id = ConfigBase.captive_dev.to_s).length > 0
                   dev_id.sub!(/:.*$/, '')
                   dputs(2) { "Searching for #{dev_id} in #{Network::Device.list}" }
+                  log_msg :Internet, "Found captive dev, putting connection up: #{connection_cmds_up.inspect} " +
+                                       "services: #{connection_services_up}, vpn: #{connection_vpns}"
+                  Platform.connection_run_cmds(connection_cmds_up)
+                  Platform.connection_services(connection_services_up, :start)
+                  Platform.connection_vpn(connection_vpns, :start)
                   [Network::Device.search_dev({uevent: {interface: dev_id}}).first,
                    'add_captive']
                 else
+                  log_msg :Internet, "Waiting for serial interface - launching connection down commands: #{connection_cmds_down.inspect} " +
+                                       "services: #{connection_services_down}, vpn: #{connection_vpns}"
+                  Platform.connection_run_cmds(connection_cmds_down)
+                  Platform.connection_services(connection_services_down, :stop)
+                  Platform.connection_vpn(connection_vpns, :stop)
                   [Network::Device.search_dev({uevent: {driver: 'option'}}).first, 'add']
                 end
       dev and update(op, dev)
@@ -105,7 +121,7 @@ module Internet
           @device.add_observer(self)
           @operator_local = @device.operator
           @operator_local and Captive.setup(@device, @traffic_save.data_str)
-          log_msg :Internet, "Got new device #{@device}"
+          log_msg :Internet, "Got new device #{@device} with operator #{@operator_local}"
         else
           log_msg :Internet, "New device #{dev} that doesn't match option"
         end
@@ -158,19 +174,19 @@ module Internet
   end
 
   def connection_status
-    return [ 0, "No device" ] unless @device
+    return [0, 'No device'] unless @device
     if ConfigBase.connection_status_log && ConfigBase.connection_status_log.length > 0
       reply = System.run_str("cat #{ConfigBase.connection_status_log}")
       if reply.length > 0
-        return reply.split(" ")
+        return reply.split(' ')
       else
-        return [ 2, "Error: #{reply}" ]
+        return [2, "Error: #{reply}"]
       end
     else
       if @device.connection_status == Device::CONNECTED
-        return [ 4, "Up" ]
+        return [4, 'Up']
       else
-        return [ 2, "Connecting" ]
+        return [1, 'Not connected']
       end
     end
   end
@@ -286,6 +302,9 @@ module Internet
   # Lets a user connect and adds its IP to the traffic-table
   def user_connect(name, ip)
     return unless @operator_local
+    if @device.connection_status != Device::CONNECTED
+      $MobileControl and $MobileControl.connect(true)
+    end
 
     # Free users have different auto-disconnect time than non-free users
     Captive.user_connect name, ip, (self.free(name) ? 'yes' : 'no')

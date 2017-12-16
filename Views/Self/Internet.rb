@@ -35,15 +35,21 @@ class SelfInternet < View
   # 3 - AccessGroups-rules
   # 4 - no internet available
   def can_connect(session)
+    # dputs_func
     noop = Internet.operator == nil
+    dputs(3) { "noop is #{noop}" }
     return 4 if noop
     if not (ag = AccessGroups.allow_user_now(session.owner))[0]
+      dputs(3) { "AccessGroup is #{ag}" }
       return ag[1]
     elsif Captive.restricted
+      dputs(3) { 'Restricted' }
       return 2
     elsif Internet.free(session.owner)
+      dputs(3) { 'Internet free' }
       return 0
     else
+      dputs(3) { 'Looking for money' }
       if session.owner and session.owner.internet_credit
         cost_max = 20
         if Internet.operator
