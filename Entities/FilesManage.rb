@@ -115,7 +115,10 @@ class FMDir < Entity
       if FMDirs.search_by_path(d, name)
         next
       end
-      fdirs.push FMDirs.create(name: d, parent: name)
+      newdir = FMDirs.create(name: d, parent: name)
+      FMEntries.load_dir(newdir)
+      newdir.update_files
+      fdirs.push newdir
     }
     fdirs
   end
@@ -135,25 +138,29 @@ class FMEntries < Entities
   end
 
   def load(has_static = true)
-    file_id = 1
+    @file_id = 1
     FMDirs.base_dirs.each { |base|
       FMDirs.sub_dirs(base._name).each { |sub|
-        Dir.glob(File.join(sub.path, '*.file')).each { |f|
-          lines = IO.readlines(f).collect { |l| l.chomp }
-          tags = lines[7] || ''
-          @data[file_id] = {
-              fmentry_id: file_id,
-              name: File.basename(f),
-              url_file: lines[0],
-              url_page: lines[1],
-              description: lines[3],
-              directory: sub,
-              tags: tags.split(',').map{|t| t.sub(' ', '')},
-              changed: false,
-          }
-          file_id += 1
-        }
+        load_dir(sub)
       }
+    }
+  end
+
+  def load_dir(sub)
+    Dir.glob(File.join(sub.path, '*.file')).each { |f|
+      lines = IO.readlines(f).collect { |l| l.chomp }
+      tags = lines[7] || ''
+      @data[@file_id] = {
+          fmentry_id: @file_id,
+          name: File.basename(f),
+          url_file: lines[0],
+          url_page: lines[1],
+          description: lines[3],
+          directory: sub,
+          tags: tags.split(',').map{|t| t.sub(' ', '')},
+          changed: false,
+      }
+      @file_id += 1
     }
   end
 
@@ -168,6 +175,7 @@ class FMEntries < Entities
     e._changed = true
     e._name = e.file_name + '.file'
     e.save_file
+    @file_id += 1
     e
   end
 

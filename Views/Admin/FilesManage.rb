@@ -110,9 +110,6 @@ class AdminFilesManage < View
   def rpc_button_files_search(session, data)
     FMDirs.base_dirs.each { |d|
       d.update_dirs
-      d.sub_dirs.each { |sub|
-        sub.update_files
-      }
     }
   end
 

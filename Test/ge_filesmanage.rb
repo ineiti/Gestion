@@ -6,18 +6,18 @@ class TC_FilesManage < Test::Unit::TestCase
     Entities.delete_all_data
 
     # Seting up files for tests
-    dir = 'fmdirs.test'
-    FMDirs.dir_base = File.join(Dir.pwd, dir)
-    FileUtils.rm_rf(dir)
-    FileUtils.mkdir dir
+    @dir = 'fmdirs.test'
+    FMDirs.dir_base = File.join(Dir.pwd, @dir)
+    FileUtils.rm_rf(@dir)
+    FileUtils.mkdir @dir
     counter = 1
     @fmdirs = []
     @fmentries = []
     %w( windows mac ).each { |base|
-      FileUtils.mkdir File.join(dir, base)
+      FileUtils.mkdir File.join(@dir, base)
       @fmdirs.push FMDirs.create({name: base})
       %w( office utils ).each { |sub|
-        subdir = File.join(dir, base, sub)
+        subdir = File.join(@dir, base, sub)
         @fmdirs.push FMDirs.create({name: sub, parent: base})
         FileUtils.mkdir subdir
         fname = "Test#{counter}.zip"
@@ -31,6 +31,23 @@ class TC_FilesManage < Test::Unit::TestCase
     }
     FMEntries.load
     @fmentries = FMEntries.search_all_
+  end
+
+  def test_existing_file
+    if true
+      subdir = File.join(@dir, 'windows', 'media')
+      FileUtils.mkdir subdir
+      fname = 'Test_existing.zip'
+      FileUtils.touch(File.join(subdir, fname))
+      File.open(File.join(subdir, 'test_exiting.file'), 'w') { |f|
+        f.write("#{fname}\nhttp://base.com\n\n"+
+                    "Description\n\nwindows\noffice\ntag1, tag2")
+      }
+    end
+    newdirs = @fmdirs[0].update_dirs
+    assert_equal 1, newdirs.size
+    newfiles = newdirs[0].update_files
+    assert_equal [], newfiles
   end
 
   def teardown
@@ -130,9 +147,9 @@ class TC_FilesManage < Test::Unit::TestCase
     assert_equal 6, FMDirs.search_all_.size
     FMDirs.create(name: 'windows')
     assert_equal 6, FMDirs.search_all_.size
-    FMDirs.create(parent: 'windows', name:'utils')
+    FMDirs.create(parent: 'windows', name: 'utils')
     assert_equal 6, FMDirs.search_all_.size
-    FMDirs.create(parent: 'windows', name:'utils2')
+    FMDirs.create(parent: 'windows', name: 'utils2')
     assert_equal 7, FMDirs.search_all_.size
     FMDirs.create(name: 'windows2')
     assert_equal 8, FMDirs.search_all_.size
@@ -143,7 +160,7 @@ class TC_FilesManage < Test::Unit::TestCase
     FileUtils.touch(File.join(@fmdirs[1].path, 'éducation française mots.exe'))
     f = @fmdirs[1].update_files
     assert_equal 2, f.size
-    f.each{|fi|
+    f.each { |fi|
       assert fi.name !~ / /
       assert fi.file_name !~ / /
       assert fi.description.size > 0
