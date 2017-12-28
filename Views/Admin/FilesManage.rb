@@ -104,7 +104,7 @@ class AdminFilesManage < View
     rpc_update(session) +
         reply(:window_show, :win_update) +
         reply(:update, update_txt: 'Update might take quite some time<br>'+
-                         'Check on <a href="http://local.bardai.profeda.org" target="other">local.bardai.profeda.org</a>')
+                         'Check on <a href="http://files.profeda.org" target="other">files.profeda.org</a>')
   end
 
   def rpc_button_files_search(session, data)
