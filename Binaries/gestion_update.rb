@@ -65,14 +65,14 @@ def main
           file = file.sub('file://', '')
           update_html "Going to install #{file} using deb"
           if Platform.has_systemd
-            update_html "systemd stop"
+            update_html 'systemd stop'
             Platform.stop('gestion')
           else
-            update_html "shell stop"
+            update_html 'shell stop'
             System.run_bool('/opt/gestion/Binaries/kill_gestion')
           end
           update = Thread.new{
-            System.run_str "/usr/bin/dpkg -i #{file}"
+            puts System.run_str "/usr/bin/dpkg -i #{file}"
           }
       end
       while update.alive?
