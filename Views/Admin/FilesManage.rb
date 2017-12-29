@@ -87,7 +87,7 @@ class AdminFilesManage < View
 
   def rpc_button_win_add_os(session, data)
     data._win_list.each { |name|
-      if FMDirs.search_by_name(name).size == 0
+      if FMDirs.search_by_path(name, '') == nil
         FMDirs.create({name: name})
       else
         dputs(1) { "Os-dir #{name} already exists" }

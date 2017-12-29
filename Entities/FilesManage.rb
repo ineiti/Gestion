@@ -35,7 +35,9 @@ class FMDirs < Entities
     if p
       filter_by(name: "^#{n}$", parent: "^#{p}$").first
     else
-      find_by_name("^#{n}$")
+      search_by_name(n).select{|dir|
+        (dir._parent == nil) || dir._parent =~ /^$/
+      }.first
     end
   end
 

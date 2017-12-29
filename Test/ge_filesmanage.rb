@@ -50,6 +50,11 @@ class TC_FilesManage < Test::Unit::TestCase
     assert_equal [], newfiles
   end
 
+  def test_double_names
+    assert_equal nil, FMDirs.search_by_path('office', '')
+    assert_not_equal nil, FMDirs.create({name: 'office'})
+  end
+
   def teardown
     #@dirs.each{|dir| FileUtils.rm_rf dir}
   end
