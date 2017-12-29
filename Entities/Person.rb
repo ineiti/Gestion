@@ -702,7 +702,7 @@ class Person < Entity
       }
       FileUtils.chown login_name, login_name, Dir.glob("/home/#{login_name}/**/**")
     end
-    squirrel_base = '/srv/http/squirrelmail/config/var/data'
+    squirrel_base = '/opt/http/squirrelmail/config/var/data'
     if Files.exists? squirrel_base
       squirrel_pref = "#{squirrel_base}/#{login_name}.pref"
       if !File.exists? squirrel_pref

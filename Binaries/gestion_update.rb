@@ -10,7 +10,7 @@ include HelperClasses::DPuts
 @file_update = '/tmp/gestion.update'
 @file_switch_versions = '/tmp/gestion.switch_versions'
 @html_txt = []
-@html_dir = '/srv/http/local'
+@html_dir = '/opt/http/local'
 @pacman_lock = '/var/lib/pacman/db.lck'
 @html_file = "#{@html_dir}/update_progress.html"
 DEBUG_LVL = 2
