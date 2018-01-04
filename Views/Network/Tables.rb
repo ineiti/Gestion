@@ -4,7 +4,7 @@ class NetworkTables < View
     #@visible = false
     @order = 100
     @update = true
-    @functions_need = [:network]
+    @functions_need = [:network, :network_pro]
 
     gui_vbox do
       show_block :captive

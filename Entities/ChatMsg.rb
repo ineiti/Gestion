@@ -102,7 +102,7 @@ class ChatMsgs < Entities
 
   # if @wait_counter is bigger or equal to @wait_counter, it checks for
   # new messages.
-  # That way we save precious bandwith
+  # That way we save precious bandwidth
   def wait_counter_add
     is_remote? or return
     @wait_counter += 1

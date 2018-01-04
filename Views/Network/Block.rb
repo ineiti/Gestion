@@ -1,6 +1,6 @@
 class NetworkBlock < View
   def layout
-    @functions_need = [:network]
+    @functions_need = [:network, :network_pro]
     @order = 100
     @blocking = Entities.Statics.get(:NetworkBlock)
     @blocking.data_str.class != Array and @blocking.data_str = []
