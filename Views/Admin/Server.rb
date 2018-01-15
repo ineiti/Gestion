@@ -6,6 +6,7 @@ class AdminServer < View
     gui_vbox do
       show_button :import_ctypes
       show_button :import_courses
+      show_button :import_center
 
       gui_window :win_import do
         show_html :status
@@ -43,21 +44,18 @@ class AdminServer < View
         when 0
           ms.auto_update = -1
           downloading, status = check_availability(:CourseTypes)
+          ms.step = (downloading ? 1 : 3)
           reply(:window_show, :win_import) +
-              if downloading
-                status_list(true, status: status)
-              else
-                ms.step = 3
-                status_list(true, status: "Error: #{status}")
-              end
+              status_list(true, status: status)
         when 1
-          res = ICC.get(:CourseTypes, :list)
-          if res._code == 'Error'
+          ms.auto_update = 0
+          ms.data = ICC.get(:CourseTypes, :list)
+          if ms.data._code == 'Error'
             ms.step = 3
-            status_list(true, status: "Error: #{res._msg}")
+            status_list(true, status: "Error: #{ms.data._msg}")
           else
-            ms.auto_update = 0
-            status_list(false, list: res._msg)
+            status_list(false, list: ms.data._msg.collect { |c|
+                               [c, c] })
           end
         when 2
           ms.auto_update = -1
@@ -71,6 +69,50 @@ class AdminServer < View
             }
             ms.auto_update = 0
             status_list(true, status: "Downloaded #{cts_names.length} CourseTypes")
+          end
+        when 3
+          ms.auto_update = 0
+          reply(:window_hide)
+      end
+    }
+
+    ms.make_step(session, data)
+  end
+
+  def rpc_button_import_center(session, data)
+    ms = MakeSteps.new(session, -1) { |session, data, step|
+      case step
+        when 0
+          ms.auto_update = -1
+          ms.step = 1
+          reply(:window_show, :win_import) +
+              status_list(true, status: 'Fetching list of centers')
+        when 1
+          ms.auto_update = 0
+          ms.data = ICC.get(:Persons, :list_centers)
+          if ms.data._code == 'Error'
+            ms.step = 3
+            status_list(true, status: "Error: #{ms.data._msg}")
+          else
+            status_list(false, list: ms.data._msg)
+          end
+        when 2
+          ms.auto_update = -1
+          if (center_name = data._import_list).length != 1
+            log_msg :Center_download, 'Please chose exactly one center'
+            status_list(true, status: 'Please chose exactly one center')
+          else
+            ms.status = status_list(true, status: "Downloading #{center_name[0]}")
+            ms.data = ICC.get(:Persons, :get_center,
+                          args: {login_name: center_name[0]})
+            ms.auto_update = 0
+            if ms.data._code == 'Error'
+              ms.step = 3
+              status_list(true, status: "Error: #{ms.data._msg}")
+            else
+              Persons.create(ms.data._msg.to_sym)
+              status_list(true, status: "Downloaded #{center_name[0]}")
+            end
           end
         when 3
           ms.auto_update = 0
@@ -188,7 +230,7 @@ class AdminServer < View
             course._ctype = ctype
             sleep 2
             begin
-              %w(teacher responsible assistant).each { |p|
+              %w(teacher responsible assistant center).each { |p|
                 person = course[p]
                 if person.to_s.length == 0 || person.first == 0
                   course[p] = 0

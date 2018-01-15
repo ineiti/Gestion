@@ -590,6 +590,23 @@ class Persons < Entities
       "Error: Didn't find #{login_name}"
     end
   end
+
+  def icc_list_centers(tr)
+    Persons.centers.collect{|p|
+      [p.login_name, p.full_name]
+    }
+  end
+
+  def icc_get_center(tr)
+    if p = Persons.match_by_login_name(tr._login_name)
+      p = p.to_hash
+      p._password = ''
+      p._password_plain = ''
+      p
+    else
+      "Error: didn't find #{tr._login_name}"
+    end
+  end
 end
 
 #
