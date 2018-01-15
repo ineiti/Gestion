@@ -84,6 +84,7 @@ class ConfigBases < Entities
                         :internet => [:internet_simple, :internet_captive,
                                       :internet_free_course, :internet_free_staff,
                                       :internet_mobile, :internet_cyber],
+                        :internet_captive => [:internet_cyber],
                         :courses => [:course_server, :course_client, :accounting_courses],
                         :accounting => [:accounting_courses, :cashbox],
                         :cashbox => [:accounting_courses, :internet_cyber, :activities],

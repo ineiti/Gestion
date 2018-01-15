@@ -324,6 +324,7 @@ class Courses < Entities
         ret._assistant = no_center(c.assistant.login_name, center)
       end
       ret._responsible = no_center(c.responsible.login_name, center)
+      ret._center = c.center.login_name
       ret
     }
     log_msg :ICC_courses, "Returning #{courses}"

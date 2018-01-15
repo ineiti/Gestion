@@ -153,7 +153,6 @@ class AdminServer < View
             status_list(true, status: "Error: #{ms.data._msg}")
           elsif ms.data._msg
             if ms.data._msg.size > 0
-              dp ms.data._msg.inspect
               status_list(false, list: ms.data._msg.collect { |c|
                                  c._name.sub!(Persons.center.login_name + '_', '')
                                  [c._course_id, c._name]
@@ -217,14 +216,11 @@ class AdminServer < View
             # Fetch exam-files
             course._students.each { |stud|
               ms.status = status_list(true, status: "Fetching exams for #{stud}")
-              dp "fetching exams for #{stud}"
               m = ICC.get(:Courses, :_get_exams, args: {center: Persons.center._login_name,
                                                         course: course.name,
                                                         student: stud})
-              dp m.inspect
               if m._code == 'OK'
                 if m._msg != nil
-                  dp "msg: #{m._msg.size} - #{m._msg}"
                   if m._msg.size > 0
                     path = File.join(ConfigBase.exam_dir, course.name, stud)
                     Zip::InputStream.open(StringIO.new(Base64::decode64(m._msg))) do |zip_file|
@@ -237,7 +233,6 @@ class AdminServer < View
                   ms.status = status_list(true, status: "Got bizarre exam-file for #{stud}")
                 end
               else
-                dp 'false'
                 ms.step = 10
                 ms.auto_update = 0
                 ms.status = status_list(true, status: "Error while fetching exams #{m._msg}")

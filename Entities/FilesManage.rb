@@ -114,7 +114,8 @@ class FMDir < Entity
     fdirs = []
     Dir.glob(File.join(path, '*/')).each{|d|
       d = File.basename(d)
-      if FMDirs.search_by_path(d, name)
+      if ( fmd = FMDirs.search_by_path(d, name) )
+        fmd.update_files
         next
       end
       newdir = FMDirs.create(name: d, parent: name)
