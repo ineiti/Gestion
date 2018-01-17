@@ -97,7 +97,7 @@ class AdminServer < View
             status_list(false, list: ms.data._msg)
           end
         when 2
-          ms.auto_update = -1
+          ms.auto_update = 0
           if (center_name = data._import_list).length != 1
             log_msg :Center_download, 'Please chose exactly one center'
             status_list(true, status: 'Please chose exactly one center')
