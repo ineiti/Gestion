@@ -92,7 +92,7 @@ class AdminServer < View
           ms.data = ICC.get(:Persons, :list_centers)
           if ms.data._code == 'Error'
             ms.step = 3
-            status_list(true, status: "Error: #{ms.data._msg}")
+            status_list(true, status: "#{ms.data._msg}")
           else
             status_list(false, list: ms.data._msg)
           end
@@ -108,7 +108,7 @@ class AdminServer < View
             ms.auto_update = 0
             if ms.data._code == 'Error'
               ms.step = 3
-              status_list(true, status: "Error: #{ms.data._msg}")
+              status_list(true, status: "#{ms.data._msg}")
             else
               Persons.create(ms.data._msg.to_sym)
               status_list(true, status: "Downloaded #{center_name[0]}")
@@ -192,7 +192,7 @@ class AdminServer < View
           ms.data = ICC.get(:Courses, :courses, args: {center: Persons.center})
           if ms.data._code == 'Error'
             ms.step = 10
-            status_list(true, status: "Error: #{ms.data._msg}")
+            status_list(true, status: "#{ms.data._msg}")
           elsif ms.data._msg
             if ms.data._msg.size > 0
               status_list(false, list: ms.data._msg.collect { |c|
