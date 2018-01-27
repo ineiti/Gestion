@@ -185,12 +185,12 @@ class Persons < Entities
   def accents_replace(login)
     login = login.downcase.gsub(/ /, '_')
     accents = Hash[*%w( a àáâä e éèêë i ìíîï o òóôöœ u ùúûü c ç ss ß )]
-    dputs(2) { "Login was #{login}" }
+    oldlogin = login
     accents.each { |k, v|
       login.gsub!(/[#{v}]/, k)
     }
     login.gsub!(/[^a-z0-9_-]/, '_')
-    dputs(2) { "Login is #{login}" }
+    dputs(2) { "Login is changed from #{oldlogin} to #{login}" }
     login
   end
 

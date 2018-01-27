@@ -70,6 +70,7 @@ module Internet
   def setup
     #dputs_func
     @traffic_save = Statics.get(:GestionTraffic)
+    @drivers = %w(option cdc_acm usb_generic)
     dputs(4) { "@traffic is #{@traffic_save.data_str}" }
     if ConfigBase.has_function?(:internet_captive)
       @device = nil
@@ -80,31 +81,36 @@ module Internet
       connection_vpns = ConfigBase.connection_vpns
 
       Device.add_observer(self)
-      dev, op = if (dev_id = ConfigBase.captive_dev.to_s).length > 0
-                  dev_id.sub!(/:.*$/, '')
-                  dputs(2) { "Searching for #{dev_id} in #{Network::Device.list}" }
-                  log_msg :Internet, "Found captive dev, putting connection up: #{connection_cmds_up.inspect} " +
-                                       "services: #{connection_services_up}, vpn: #{connection_vpns}"
-                  Platform.connection_run_cmds(connection_cmds_up)
-                  Platform.connection_services(connection_services_up, :start)
-                  Platform.connection_vpn(connection_vpns, :start)
-                  [Network::Device.search_dev({uevent: {interface: dev_id}}).first,
-                   'add_captive']
-                else
-                  log_msg :Internet, "Waiting for serial interface - launching connection down commands: #{connection_cmds_down.inspect} " +
-                                       "services: #{connection_services_down}, vpn: #{connection_vpns}"
-                  Platform.connection_run_cmds(connection_cmds_down)
-                  Platform.connection_services(connection_services_down, :stop)
-                  Platform.connection_vpn(connection_vpns, :stop)
-                  [Network::Device.search_dev({uevent: {driver: 'option'}}).first, 'add']
-                end
-      dev and update(op, dev)
+      if (dev_id = ConfigBase.captive_dev.to_s).length > 0
+        dev_id.sub!(/:.*$/, '')
+        dputs(2) { "Searching for #{dev_id} in #{Network::Device.list}" }
+        log_msg :Internet, "Found captive dev, putting connection up: #{connection_cmds_up.inspect} " +
+                             "services: #{connection_services_up}, vpn: #{connection_vpns}"
+        Platform.connection_run_cmds(connection_cmds_up)
+        Platform.connection_services(connection_services_up, :start)
+        Platform.connection_vpn(connection_vpns, :start)
+        update('add_captive', Network::Device.search_dev({uevent: {interface: dev_id}}).first)
+      else
+        log_msg :Internet, "Waiting for serial interface - launching connection down commands: #{connection_cmds_down.inspect} " +
+                             "services: #{connection_services_down}, vpn: #{connection_vpns}"
+        Platform.connection_run_cmds(connection_cmds_down)
+        Platform.connection_services(connection_services_down, :stop)
+        Platform.connection_vpn(connection_vpns, :stop)
+        @drivers.each { |d|
+          dputs(3) { "Searching driver #{d}" }
+          update('add', Network::Device.search_dev({uevent: {driver: d}}).first)
+        }
+      end
     end
   end
 
   # Whenever a new device or a new operator is detected, this function
   # updates the internal variables.
   def update(operation, dev = nil)
+    if operation != 'operator' && (dev == nil || dev.to_s.length == 0)
+      dputs(3) { "Not updating with empty device. Operation = #{operation}" }
+      return
+    end
     dputs(3) { "Updating operation #{operation} with dev #{dev.inspect}" }
     case operation
       when /del/
@@ -115,7 +121,7 @@ module Internet
           Captive.accept_all
         end
       when /add/
-        if dev && dev.dev._uevent && dev.dev._uevent._driver == 'option' ||
+        if dev && dev.dev._uevent && @drivers.include?(dev.dev._uevent._driver) ||
             operation == 'add_captive'
           @device = dev
           @device.add_observer(self)
@@ -303,6 +309,7 @@ module Internet
   def user_connect(name, ip)
     return unless @operator_local
     if @device.connection_status != Device::CONNECTED
+      dputs(2) { 'Going to connect' }
       $MobileControl and $MobileControl.connect(true)
     end
 

@@ -55,6 +55,7 @@ class ConfigBases < Entities
 
     value_block :internet
     value_entity_internetClass_empty_all :iclass_default, :drop, :name
+    value_list_drop :operator, '%w(auto direct tigo airtel mbudget)'
 
     value_block :mobilecontrol
     value_text :connection_cmds_up
@@ -93,6 +94,10 @@ class ConfigBases < Entities
                         :internet_mobile => [:internet_mobile_autocharge]
     }
     @@functions_conflict = [[:course_server, :course_client]]
+  end
+
+  def migration_11(c)
+    c.operator = [:auto]
   end
 
   def migration_10(c)
