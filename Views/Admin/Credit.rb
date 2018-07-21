@@ -4,29 +4,29 @@ class AdminCredit < View
   def layout
     @order = 300
     @visible = false
-		
+
     gui_vbox do
       show_text :user_credit
       show_button :update_credits
     end
   end
-	
-  def rpc_button_update_credits( session, data )
-    data['user_credit'].split(/\n/).each{|l|
+
+  def rpc_button_update_credits(session, data)
+    data['user_credit'].split(/\n/).each { |l|
       u, c = l.split
       if user = Persons.match_by_login_name(u)
         log_msg :admincredit, "Setting credit of #{u}:#{user.full_name} to #{c}"
         user.internet_credit = c.to_i
-        if not user.permissions 
-          user.permissions = ['internet']
+        if not user.permissions
+          user.permissions = %w(internet default)
         elsif not user.permissions.index('internet')
           user.permissions.push 'internet'
         end
       else
-        dputs(0){"Error: Didn't find #{u}"}
+        dputs(0) { "Error: Didn't find #{u}" }
       end
     }
     Entities.save_all
-    reply( :empty_nonlists )
+    reply(:empty_nonlists)
   end
 end

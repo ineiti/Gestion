@@ -28,7 +28,7 @@ class CourseResponsible < View
       if data["family_name"] or data["first_name"]
         resp = Persons.create( data.to_sym.merge(
             {:login_name_prefix => "#{session.owner.login_name}_"} ) )
-        resp.permissions = %w( internet teacher )
+        resp.permissions = %w( internet teacher default )
         selection = resp.id
       end
     end

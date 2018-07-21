@@ -71,6 +71,7 @@ class ConfigBases < Entities
     value_entity_account :account_cash, :drop, :path
 
     @@functions = %w( network share network_pro
+    africompta
     courses course_server course_client
     files_manage
     internet internet_simple internet_captive
@@ -87,11 +88,11 @@ class ConfigBases < Entities
                                       :internet_mobile, :internet_cyber],
                         :internet_captive => [:internet_cyber],
                         :courses => [:course_server, :course_client, :accounting_courses],
-                        :accounting => [:accounting_courses, :cashbox],
+                        :accounting => [:accounting_courses, :cashbox, :africompta],
                         :cashbox => [:accounting_courses, :internet_cyber, :activities],
                         :activities => [:library],
                         :special => [:plug_admin, :special_vnc],
-                        :internet_mobile => [:internet_mobile_autocharge]
+                        :internet_mobile => [:internet_mobile_autocharge],
     }
     @@functions_conflict = [[:course_server, :course_client]]
   end

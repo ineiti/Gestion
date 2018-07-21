@@ -641,12 +641,12 @@ class Person < Entity
       lending = "#{ConfigBase.account_lending.get_path}::#{acc}"
       service = ConfigBase.account_services.get_path
       dputs(2) { "Preparing accounts for #{full_name} - #{acc}" }
-      if !self.account_due
+      if !self.account_due || !self.account_due.is_a?(Account)
         dputs(2) { "Creating account #{lending}" }
         self.account_due = Accounts.get_by_path_or_create(lending,
                                                           acc, false, -1, true)
       end
-      if !self.account_due_paid
+      if !self.account_due_paid || !self.account_due_paid.is_a?(Account)
         dputs(2) { "Creating account #{lending}::Paid" }
         self.account_due_paid = Accounts.get_by_path_or_create("#{lending}::Paid",
                                                                acc, false, -1, true)

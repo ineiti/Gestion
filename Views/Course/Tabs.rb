@@ -102,7 +102,7 @@ class CourseTabs < View
     if args._new_teacher and args._new_teacher.size > 0
       dputs(3) { 'Creating Teacher' }
       teacher = Persons.create_person(args._new_teacher, session.owner)
-      teacher.permissions = ['teacher']
+      teacher.permissions = %w(teacher default)
       dputs(1) { "New teacher #{teacher.inspect}" }
     end
     if args._new_center and args._new_center.size > 0

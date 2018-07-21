@@ -45,8 +45,6 @@ end
 
 begin
   # Our default-permission is to only login!
-  Permission.add('default', ',Welcome,SelfShow')
-  Permission.add('quiz', 'SelfChat,SelfConcours,SelfResults', '')
   Permission.add('internet', 'SelfInternet,SelfChat', 'default')
   Permission.add('student', '', 'internet')
   Permission.add('librarian', 'LibraryPerson,FlagInternetFree', 'student')
@@ -61,12 +59,9 @@ begin
   Permission.add('accounting', 'ComptaTransfer,FlagAccounting,' +
                                  'ComptaReport,ComptaShow,ComptaEdit.*,Cashbox.*,Report.*,' +
                                  'ComptaCheck', 'secretary')
-  Permission.add('maintenance', 'Inventory.*,AdminBackup,AdminPower,AdminFiles.*', 'default')
   Permission.add('cybermanager', 'CashboxCredit,FlagAddInternet,' +
                                    'FlagPersonAdd,CashboxService,InternetMobile,' +
                                     'CashboxActivity', '')
-  Permission.add('manager', 'Template.*,Internet.*',
-                              'director')
   Permission.add('director', 'FlagAdminCourse,FlagAdminPerson,' +
                                'PersonAdmin,PersonCourse,InternetConnection,CourseStats,Report.*,' +
                  'secretary,cybermanager,teacher')
@@ -75,7 +70,6 @@ begin
                              'FlagRemoteCourse,SelfShow,SelfChat,FlagAdminPerson,' +
                              'PersonCenter,FlagDeletePerson', '')
   Permission.add('admin', '.*', '.*')
-  Permission.add('email', 'SelfEmail', '')
 
   QooxView::init('Entities', 'Views')
 
@@ -83,7 +77,7 @@ begin
   admin = Entities.Persons.match_by_login_name('admin')
   if not admin
     dputs(1) { 'OK, creating admin' }
-    admin = Entities.Persons.create(:login_name => 'admin', :password => 'super123', :permissions => ["admin"],
+    admin = Entities.Persons.create(:login_name => 'admin', :password => 'super123', :permissions => ['admin'],
                                     :internet_credit => '100')
   else
     admin.permissions = ['admin'];
